@@ -35,7 +35,7 @@ REPO = "neuronpedia/jacobian-lens"
 # Neuronpedia slug -> (HF model id for the unembedding, lens filename)
 MODELS = {
     "gpt2-small": ("openai-community/gpt2",
-                   "gpt2-small/jlens/Salesforce-wikitext/gpt2-small_jacobian_lens.pt"),
+                   "gpt2-small/jlens/Salesforce-wikitext/gpt2_jacobian_lens.pt"),
     "pythia-70m-deduped": ("EleutherAI/pythia-70m-deduped",
                    "pythia-70m-deduped/jlens/Salesforce-wikitext/pythia-70m-deduped_jacobian_lens.pt"),
 }
@@ -49,11 +49,14 @@ def main() -> None:
     args = ap.parse_args()
 
     import jlens
+    from huggingface_hub import hf_hub_download
     from transformers import AutoModelForCausalLM
 
     hf_id, lens_file = MODELS[args.model]
     print(f"model={args.model}  ({hf_id})")
-    lens = jlens.JacobianLens.from_pretrained(REPO, filename=lens_file)
+    # Download ONLY this model's lens file (not all 38), then load locally.
+    local_lens = hf_hub_download(REPO, filename=lens_file)
+    lens = jlens.JacobianLens.load(local_lens)
     print("lens:", lens)
 
     model = AutoModelForCausalLM.from_pretrained(hf_id, torch_dtype=torch.float32)
