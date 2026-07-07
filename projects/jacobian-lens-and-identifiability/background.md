@@ -146,6 +146,14 @@ Split cleanly by **activation access**:
   explicitly future work. "Jacobians are universally helpful" = "applies to any model
   admitting a Jacobian," not "solves interpretability."
 
+## Related work (neuroscience lineage)
+
+The "middle layers are special / workspace layers" idea and the broader **brain–LLM
+alignment** program (Schrimpf, Caucheteux & King, Huth, Goldstein, Toneva…) predate and
+parallel J-space — Jean-Rémi King's thread makes the case for crediting it. Documented,
+with the primary sources and the directions it opens (esp. bridging our band to
+brain-alignment), in **[related-work.md](related-work.md)**.
+
 ## Sources
 
 - [Global workspace in LMs](https://transformer-circuits.pub/2026/workspace) (Anthropic) · [announcement](https://www.anthropic.com/research/global-workspace)

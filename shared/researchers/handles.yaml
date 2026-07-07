@@ -1,0 +1,122 @@
+# Researcher X/Twitter handles — LLM-behavior / interpretability / neuro-AI.
+#
+# Purpose: a reusable, machine-readable registry so we can later stand up a
+# DAILY SCAN of active researchers' posts → a daily digest of new research.
+# (See README.md in this folder for the intended tool.)
+#
+# Honesty: `name`/`affiliation` are annotated where we're confident; entries
+# marked `verify: true` are inferred from context and need confirmation before
+# use in anything public. Do not fabricate affiliations.
+#
+# Schema per entry:
+#   handle       (str)  X/Twitter handle, no leading @
+#   name         (str)  best-known real name ("" if unknown)
+#   affiliation  (str)  lab/company ("" if unknown)
+#   focus        (str)  research area
+#   tags         (list) topic tags for filtering the future scan
+#   source       (str)  where we first logged them
+#   verify       (bool) true = attribution unconfirmed, check before public use
+
+researchers:
+  - handle: JeanRemiKing
+    name: Jean-Rémi King
+    affiliation: Meta AI / CNRS / ENS-PSL
+    focus: brain–LLM alignment, neuro-AI, language in the brain, brain decoding
+    tags: [neuro-ai, brain-alignment, interpretability, language]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+
+  # Anthropic interpretability — J-space / "Global Workspace" paper authors
+  - handle: wesg52
+    name: Wes Gurnee
+    affiliation: Anthropic
+    focus: interpretability; J-space / global-workspace paper; coined "Workspace Layers"
+    tags: [interpretability, anthropic, j-space, workspace-layers]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: sofroniewn
+    name: Nicholas Sofroniew
+    affiliation: Anthropic (interpretability)
+    focus: interpretability; "Workspace Layers"; emotional-intensity representations
+    tags: [interpretability, anthropic, workspace-layers]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: true
+  - handle: anthropic
+    name: Anthropic
+    affiliation: Anthropic
+    focus: org account
+    tags: [org, anthropic]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+
+  # Brain–LLM alignment / computational neuro-linguistics community
+  - handle: martin_schrimpf
+    name: Martin Schrimpf
+    affiliation: EPFL (Neuro-AI); Brain-Score
+    focus: integrative modeling, brain-score, LM–brain alignment (Schrimpf et al. 2021)
+    tags: [neuro-ai, brain-alignment, brain-score]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: mtoneva1
+    name: Mariya Toneva
+    affiliation: Max Planck Institute for Software Systems
+    focus: brain–LLM alignment, representation learning, interpretability
+    tags: [neuro-ai, brain-alignment, interpretability]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: ev_fedorenko
+    name: Evelina Fedorenko
+    affiliation: MIT (McGovern)
+    focus: the brain's language network; language vs. thought
+    tags: [neuroscience, language-network]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: roger_p_levy
+    name: Roger Levy
+    affiliation: MIT (BCS)
+    focus: computational psycholinguistics, surprisal, prediction
+    tags: [psycholinguistics, prediction]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: tallinzen
+    name: Tal Linzen
+    affiliation: NYU / Google
+    focus: syntax & generalization in LMs, computational linguistics
+    tags: [interpretability, linguistics, generalization]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: lakretz
+    name: Yair Lakretz
+    affiliation: CNRS / NeuroSpin
+    focus: syntax/number in LMs & brains, mechanistic linguistics
+    tags: [neuro-ai, linguistics, interpretability]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: chrplr
+    name: Christophe Pallier
+    affiliation: CNRS / NeuroSpin
+    focus: language neuroscience, fMRI of syntax/semantics
+    tags: [neuroscience, language]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: tommmitchell
+    name: Tom M. Mitchell
+    affiliation: Carnegie Mellon University
+    focus: ML; brain reading / neural representation of meaning
+    tags: [ml, neuro-ai]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: false
+  - handle: alex_ander
+    name: ""
+    affiliation: ""
+    focus: named in King's brain–LLM thread (possibly Alexander Huth — VERIFY)
+    tags: [neuro-ai, brain-alignment]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: true
+  - handle: akgokce0
+    name: ""
+    affiliation: ""
+    focus: named in King's brain–LLM thread — VERIFY
+    tags: [neuro-ai]
+    source: https://x.com/jeanremiking/status/2074500550947680368
+    verify: true

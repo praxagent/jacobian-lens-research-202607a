@@ -5,7 +5,9 @@ learned representation the *real* one?) to Anthropic's frontier-scale **J-lens /
 "global workspace," endorsed as a GNW landmark by **Dehaene & Naccache**.
 
 Start with **[background.md](background.md)** — the literature, the through-line, the
-honesty flags, and why any of this matters for Prax.
+honesty flags, and why any of this matters for Prax. See also
+**[related-work.md](related-work.md)** — the brain–LLM alignment / "workspace layers"
+lineage (via Jean-Rémi King's thread) that predates and contextualizes J-space.
 
 ## Sources reproduced / assessed
 
