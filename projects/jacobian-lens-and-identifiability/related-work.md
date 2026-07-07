@@ -92,7 +92,35 @@ daily research scan.
    treat "the model has a workspace" claims — and our own linear-CKA band — as lower
    bounds on structure, not the whole story. Worth stating plainly.
 
+## Community reception (discourse, not evidence)
+
+The J-space paper drew a spectrum of public reaction worth tracking — not as findings, but
+as the discourse our empirical audit sits within:
+
+- **Sympathetic expert — Dehaene & Naccache** (GNW originators): "a landmark," with
+  specific caveats (ignition undemonstrated; capacity likely ~6 not ~25). See
+  [background.md](background.md).
+- **Prior-art credit — Jean-Rémi King** (Meta / CNRS): the "middle layers / workspace"
+  result and brain–LLM comparison have a decade-deep lineage the paper under-credits, and
+  GWT is primarily about *perception*, not language (this doc, above).
+- **Deflationary critique — [@ziv_ravid](https://x.com/ziv_ravid/status/2074581837746176021)**
+  (Meta): the core interpretability result is fine and the J-lens is a reasonable tool, but
+  the consciousness / GWT / "brain" framing is a *separable packaging choice* that adds
+  nothing to the linear algebra — "the choice is the product, not the science." Extends to a
+  broader claim that much of Anthropic's output is PR.
+
+**Our stance.** The framing critique (Ravid, King) aligns with this project's thesis, and
+our data supports it: the mid-band is **family-dependent and instruct-reduced**, not the
+universal phenomenon the framing implies. But "it's all PR" is itself a narrative overreach
+— the GWT connection is *contestable science* (its originators engaged it seriously), not
+mere marketing. The useful response to both the hype and the anti-hype is **measurement**,
+which is what this project brings: not picking a side in the discourse, but publishing the
+curve. Reaction handles are logged in
+[`shared/researchers/handles.yaml`](../../shared/researchers/handles.yaml).
+
 ## Sources
 
 - King thread (2026): [x.com/jeanremiking/status/2074500550947680368](https://x.com/jeanremiking/status/2074500550947680368)
-- All papers linked inline above (from the thread).
+- Ravid critique (2026): [x.com/ziv_ravid/status/2074581837746176021](https://x.com/ziv_ravid/status/2074581837746176021)
+- Dehaene & Naccache commentary: [unicog.org PDF](https://unicog.org/wp_2025/wp-content/uploads/2026/07/Dehaene-and-Naccache-Workspace-commentary-on-Gurnee-Lindsey-June-2026.pdf)
+- All papers linked inline above (from the King thread).

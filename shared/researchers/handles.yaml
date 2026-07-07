@@ -69,6 +69,15 @@ researchers:
     source: https://unicog.org/wp_2025/wp-content/uploads/2026/07/Dehaene-and-Naccache-Workspace-commentary-on-Gurnee-Lindsey-June-2026.pdf
     verify: true   # X handle unknown — find/confirm before scanning
 
+  # J-space community reaction (critique / discourse)
+  - handle: ziv_ravid
+    name: Ziv Ravid
+    affiliation: Meta
+    focus: ML; public deflationary critique of the J-space consciousness framing ("core result fine, the framing is packaging")
+    tags: [interpretability, discourse, critique, meta]
+    source: https://x.com/ziv_ravid/status/2074581837746176021
+    verify: true   # exact name/role inferred from handle + user note (Meta)
+
   # Brain–LLM alignment / computational neuro-linguistics community
   - handle: martin_schrimpf
     name: Martin Schrimpf
