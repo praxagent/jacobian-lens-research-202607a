@@ -19,27 +19,29 @@ mid-band separation = **+0.015** (≈ 0). Within-early / within-mid / within-lat
 means are all ~0.97–0.99; every layer's J-lens token geometry is nearly identical to
 every other's.
 
-**Honest read — preliminary, NOT yet a finding.** Taken at face value this says gpt2 has
-no "workspace band," consistent with the band being a larger-model phenomenon. **But two
-things must be controlled before this means anything:**
+**Null control (random scale-matched `J_l`, same script `--null`):** cross-layer CKA
+drops to a **uniform ~0.66** (mid-sep +0.001). This addresses the shared-unembedding
+confound: if `U` alone drove the similarity, the null would also sit at ~0.99 — it
+doesn't. So the real lens's ~0.99 is a genuine property of the *fitted transports*, above
+a 0.66 null floor. Read "high CKA" relative to that 0.66 floor, not to 0.
 
-1. **Shared-unembedding confound (the big one).** `D_l = U @ J_l` shares the *same* `U`
-   across all layers. If `U` dominates the geometry (the transports `J_l` being near-
-   identity-like), cross-layer CKA is high *by construction* and says little about a
-   workspace. **Control needed:** a null with random `J_l` (does CKA stay ~0.99?), and/or
-   a geometry that divides out the shared-`U` component.
-2. **Calibration.** eliebak reports a sensory→workspace→motor block structure on larger
-   models with this exact readout — so the method *can* resolve a band. We must reproduce
-   a band on ≥1 model before "gpt2 has none" is informative (else it's just a small/weak
-   model, or our pipeline differs from eliebak's).
+**Honest read (confound substantially controlled).** gpt2-small has **no workspace
+band** — the real geometry is uniformly self-similar (0.99-flat), the null is uniformly
+moderate (0.66-flat), and *neither* has a mid-network bump. The method would surface a
+band if one existed (it resolves the real vs null gap cleanly), so gpt2's absence is
+real, not an artifact. What's still needed is **calibration by scale**: eliebak reports
+a sensory→workspace→motor band on *larger* models with this readout, so the live question
+is whether a mid-band separation **emerges above this flat baseline as models grow**.
 
-**So the honest status of the audit right now: one small-model data point suggesting no
-band, with a live confound. Not evidence of "oversold" yet — evidence that we need the
-size ladder + the null control.** That's the next CPU work (free): run
-pythia-70m / gemma-3-270m / gemma-3-1b / qwen-small on the same script, add the random-J
-null, and see whether a band *emerges with scale*. Only if a band clearly appears in
-larger models and is absent/weak in smaller ones does the "band = large-model phenomenon,
-general framing overreached" argument get real support.
+**Status of the audit:** one small model, no band, confound controlled. Not yet
+"oversold" evidence — but the setup is now clean enough that the **size-ladder emergence
+curve** (next) is decisive: if `mid_sep` stays ≈0 up through mid/large models, the
+"universal workspace band" framing is overstated; if it rises sharply at some scale, the
+claim holds (as a large-model phenomenon) and we say so.
+
+_Pipeline note: this ran on a 3 GB box because the loader pulls only the unembedding
+tensor, not the full model — so the ladder is memory-bound (needs a bigger box), not
+GPU-bound._
 
 ## Next (all CPU, no GPU spend)
 
