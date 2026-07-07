@@ -49,6 +49,26 @@ researchers:
     source: https://x.com/jeanremiking/status/2074500550947680368
     verify: false
 
+  # Global Neuronal Workspace theory — wrote the expert commentary on J-space
+  # ("Does Claude possess a conscious global workspace?"). They publish mainly via
+  # papers; X handles unconfirmed, so do NOT add to a scan until verified. Their
+  # commentary is already a first-class reference in the jacobian project's
+  # background.md / related-work.md.
+  - handle: ""
+    name: Stanislas Dehaene
+    affiliation: Collège de France / CEA-INSERM NeuroSpin
+    focus: consciousness (Global Neuronal Workspace theory), reading & number cognition; co-authored the J-space GNW commentary
+    tags: [neuroscience, consciousness, gnw]
+    source: https://unicog.org/wp_2025/wp-content/uploads/2026/07/Dehaene-and-Naccache-Workspace-commentary-on-Gurnee-Lindsey-June-2026.pdf
+    verify: true   # X handle unknown — find/confirm before scanning
+  - handle: ""
+    name: Lionel Naccache
+    affiliation: Sorbonne Université / Pitié-Salpêtrière (PICNIC Lab), Paris Brain Institute
+    focus: consciousness, clinical neurophysiology; co-authored the J-space GNW commentary
+    tags: [neuroscience, consciousness, gnw]
+    source: https://unicog.org/wp_2025/wp-content/uploads/2026/07/Dehaene-and-Naccache-Workspace-commentary-on-Gurnee-Lindsey-June-2026.pdf
+    verify: true   # X handle unknown — find/confirm before scanning
+
   # Brain–LLM alignment / computational neuro-linguistics community
   - handle: martin_schrimpf
     name: Martin Schrimpf
