@@ -21,6 +21,17 @@ import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from cka_layers import REPO, parse_params  # noqa: E402
+
+
+def all_slugs() -> list[str]:
+    """Every model with a pre-fitted lens on Neuronpedia, small→large."""
+    from huggingface_hub import HfApi
+    files = HfApi().list_repo_files(REPO)
+    slugs = sorted({f.split("/")[0] for f in files if "/jlens/" in f})
+    slugs.sort(key=lambda s: parse_params(s) if parse_params(s) == parse_params(s) else 1e18)
+    return slugs
 
 # Dense size-ordered sweep. The resolver pulls the exact HF id from each lens's
 # config.yaml; gated repos (Gemma, Llama — need a HF token) and missing repos
@@ -68,10 +79,14 @@ def run_one(slug: str, null: bool = False) -> bool:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--slugs", nargs="*", default=DEFAULT_LADDER)
+    ap.add_argument("--slugs", nargs="*", default=None,
+                    help="explicit slugs; default = ALL pre-fitted models on Neuronpedia")
     ap.add_argument("--null-every", type=int, default=3,
                     help="also run a null control every Nth model (0=never)")
     args = ap.parse_args()
+    if not args.slugs:
+        args.slugs = all_slugs()
+        print(f"running ALL {len(args.slugs)} models with pre-fitted lenses")
 
     ok = []
     for i, slug in enumerate(args.slugs):
