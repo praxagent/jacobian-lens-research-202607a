@@ -22,6 +22,8 @@ the research:
    (`python shared/runpod/launch.py pods`). Prefer on-demand/spot over persistent.
 4. **Never start a paid pod without the user's explicit go-ahead** for that specific run.
    Estimate the cost first (GPU $/hr × expected minutes) and say it out loud.
+   Full compute inventory, access, and the snapshot/teardown cost analysis live in
+   [`shared/infra.md`](shared/infra.md).
 5. **Get everything ready on CPU so a GPU run is short.** Code, configs, a CPU smoke of
    the exact command, and results plumbing should all be done *before* the pod starts —
    so the paid pod only does the irreducibly-GPU part.
