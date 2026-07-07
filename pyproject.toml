@@ -1,0 +1,31 @@
+[project]
+name = "research-and-replications"
+version = "0.0.1"
+description = "Independent research and paper replications by the praxagent team (separate from the Prax harness)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+]
+
+[project.optional-dependencies]
+# Heavy / optional — only the nonlinear (normalizing-flow) replications need these.
+torch = [
+    "torch>=2.2",
+]
+# The jacobian_lens experiment builds on Anthropic's Apache-2.0 reference package
+# (github.com/anthropics/jacobian-lens) + HuggingFace. Install on the GPU pod (or
+# locally for a tiny-model / pre-fitted-lens CPU prototype).
+jlens = [
+    "jlens",
+    "transformers>=5.5",
+    "huggingface_hub",
+]
+
+[tool.uv]
+# Match the Prax house convention: don't resolve a release younger than a week.
+exclude-newer = "7 days"
+
+[tool.setuptools]
+# This repo is a collection of standalone experiment scripts, not an installed package.
+py-modules = []

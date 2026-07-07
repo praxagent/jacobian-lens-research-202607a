@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Experiment artifacts (keep results.md, not raw dumps)
+*.pt
+*.ckpt
+*.npy
+*.npz
+runs/
+wandb/
+data/
+
+# Secrets — RunPod key never in git
+shared/runpod/.env
+.env
+
+# OS
+.DS_Store
