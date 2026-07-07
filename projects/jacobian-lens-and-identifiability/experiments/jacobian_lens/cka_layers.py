@@ -39,6 +39,25 @@ from unembed import load_unembedding  # noqa: E402
 REPO = "neuronpedia/jacobian-lens"
 EMERGENCE_CSV = Path(__file__).with_name("emergence.csv")
 
+# odd cases the regex can't parse; everything else comes from the slug (e.g. "4b")
+_PARAM_OVERRIDE = {
+    "gpt2-small": 0.124e9, "pythia-70m-deduped": 0.070e9,
+    "gemma-4-e2b": 2.0e9, "gemma-4-e4b": 4.0e9,  # "effective" param sizes
+}
+
+
+def parse_params(slug: str) -> float:
+    """Best-effort parameter count from a Neuronpedia slug. Log-x scale only
+    needs order-of-magnitude, so approximate 'nb'/'nm' tokens are fine."""
+    import re
+    if slug in _PARAM_OVERRIDE:
+        return _PARAM_OVERRIDE[slug]
+    m = re.search(r"(\d+\.?\d*)\s*([bm])", slug.lower())
+    if not m:
+        return float("nan")
+    val = float(m.group(1))
+    return val * (1e9 if m.group(2) == "b" else 1e6)
+
 
 def resolve(slug: str) -> tuple[str, str]:
     """Return (hf_model_id, lens_filename) for a Neuronpedia slug."""
@@ -125,18 +144,19 @@ def main() -> None:
     print(f"mid-band separation = {s['mid_sep']:+.3f}  "
           f"(>0 sizeable => distinct workspace band; ~0 => none)")
 
-    # append to the emergence ledger (skip null runs)
-    if not args.null:
-        new = not EMERGENCE_CSV.exists()
-        with open(EMERGENCE_CSV, "a", newline="") as f:
-            w = csv.writer(f)
-            if new:
-                w.writerow(["slug", "hf_id", "d_model", "n_layers", "mid_sep",
-                            "within_mid", "within_early", "within_late"])
-            w.writerow([args.slug, hf_id, d_model, L, f"{s['mid_sep']:.4f}",
-                        f"{s['within_mid']:.4f}", f"{s['within_early']:.4f}",
-                        f"{s['within_late']:.4f}"])
-        print(f"appended to {EMERGENCE_CSV.name}")
+    # append to the emergence ledger — real and null runs to separate files, so
+    # the plot can show the real curve rising while the null floor stays flat.
+    out = EMERGENCE_CSV.with_name("emergence_null.csv") if args.null else EMERGENCE_CSV
+    new = not out.exists()
+    with open(out, "a", newline="") as f:
+        w = csv.writer(f)
+        if new:
+            w.writerow(["slug", "hf_id", "params", "d_model", "n_layers",
+                        "mid_sep", "within_mid", "within_early", "within_late"])
+        w.writerow([args.slug, hf_id, f"{parse_params(args.slug):.3e}", d_model, L,
+                    f"{s['mid_sep']:.4f}", f"{s['within_mid']:.4f}",
+                    f"{s['within_early']:.4f}", f"{s['within_late']:.4f}"])
+    print(f"appended to {out.name}")
 
 
 if __name__ == "__main__":
