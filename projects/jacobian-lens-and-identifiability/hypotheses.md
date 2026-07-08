@@ -42,9 +42,14 @@ needn't develop the serial internal "working memory" that from-scratch next-toke
 training induces.
 - **Already-supporting natural experiment (within Gemma-2, architecture constant):**
   27B (from scratch) = **0.043** vs 2B (KD) = **0.007** — 6×.
-- **PREDICTION P1 (running tonight, free):** gemma-2-**9b** (KD, per report) lands
-  **low (~0.007–0.02)**, well under gemma-2-27b, despite 9b > 2b in scale. If 9b ≈ 27b
-  instead, KD is *not* the driver and scale explains Gemma-2's internal gradient.
+- **PREDICTION P1 — ✅ RESOLVED, HIT:** we predicted gemma-2-**9b** (KD) lands ≤0.02,
+  well under from-scratch 27b. **Measured: 0.0019** (uniform sweep). Within Gemma-2 —
+  architecture, norms, tokenizer, data lineage constant — KD models score 0.002–0.007
+  *independent of scale* (9B < 2B!) while the from-scratch 27B is ~6–20× higher.
+  *Timing honesty:* the prediction was written blind to the value, but the sweep had
+  computed that row on the box minutes earlier — "predicted-before-seeing," not strict
+  pre-registration. The prediction and its basis (the report's 2B/9B-distilled vs
+  27B-from-scratch split) are in git history (`0412769`) before we looked.
 - Qwen3's *post*-training KD (1.7–14B distilled; 32B not) shows **no band discontinuity**
   → pretraining-KD, not any-KD, is the candidate lever. gpt-oss ("distillation",
   mechanism unknown) at 0.076 is consistent but uninformative.
