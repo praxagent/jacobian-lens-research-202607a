@@ -108,6 +108,27 @@ as the discourse our empirical audit sits within:
   the consciousness / GWT / "brain" framing is a *separable packaging choice* that adds
   nothing to the linear algebra — "the choice is the product, not the science." Extends to a
   broader claim that much of Anthropic's output is PR.
+- **Philosophical critique — Elan Barenholtz ([@ebarenholtz](https://x.com/ebarenholtz/status/2074892196038181299),
+  cognitive scientist, Florida Atlantic U.; thread 2026-07-08):** "Good science. Really
+  good marketing. Bad philosophy." Two arguments: (1) **the wedge** — reportability and
+  deliberate reasoning are *co-extensive* with phenomenal experience in humans but don't
+  *entail* it, and LLMs prove the dissociation: "linguistic report turns out to be a
+  self-contained generative process that can run in full, workspace and all, without any
+  sensory grounding" — so the paper *strengthens* the case that reportability and
+  phenomenal experience come apart (the better the workspace result, the weaker the
+  consciousness inference — novel among the critiques). (2) **the integration objection**
+  — human GWT's bottleneck integrates *many* processing kinds (perceptual, motor,
+  memory); in an LLM "linguistic processing is the only kind there is," so the finding
+  reduces to "some internal processing shapes output, some doesn't," true of any layered
+  system ("Should I call my .docx… a 'global workspace'?").
+  **Our assessment:** (1) is serious philosophy worth citing. (2) is Eleos's
+  "Modules-condition-unmet / privileged-set≠workspace" point stated polemically — but
+  the MS-Word reduction *proves too much*, and **our data answers it**: if the band were
+  a triviality of layered computation, every trained transformer would show it — Gemma
+  barely does, small models don't, the null doesn't. Contingent, recipe-dependent,
+  causally-load-bearing structure is precisely what .docx internals lack. (Also:
+  "linguistic-only" is shaky for multimodal models, though the missing cross-*module*
+  integration point stands per Eleos.)
 - **Technical-deflationary critique — Andrew Trask (@iamtrask, OpenMined; thread
   2026-07-08):** "very nice mech interp research," but the result is *expected*: models
   learn only through gradients so "the gradients will have semantic structure," and

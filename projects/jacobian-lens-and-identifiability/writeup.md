@@ -97,6 +97,16 @@ fit reproduces Neuronpedia's at CKA 0.999); the *universal-workspace framing* is
 supported by the open-model evidence — the phenomenon is family-dependent, instruct-
 sensitive, and (crucially) **untested at frontier scale**.]
 
+**The consciousness-framing question (separable from the science).** Even granting the
+mechanism, the "access consciousness" label does inferential work the data can't
+support: reportability is *co-extensive* with phenomenal experience in humans but does
+not *entail* it, and — Barenholtz's inversion — an LLM running "linguistic report,
+workspace and all, without sensory grounding" arguably *strengthens* the dissociation
+between reportability and experience. The Eleos tiering (privileged set < stream < GWT
+workspace, with only the first firmly established) is the rigorous version of the same
+gap. Our audit takes no position on phenomenal consciousness; we test the *structural
+universality* the framing presupposes — and find it contingent.
+
 **The symmetric error (candidate thesis for the conclusion).** The hype ("a global
 workspace, like conscious access") and the anti-hype ("trivially expected — models learn
 via gradients and have residual streams"; cf. Trask) make the **same mistake: treating

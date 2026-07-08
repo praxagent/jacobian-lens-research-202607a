@@ -101,6 +101,14 @@ researchers:
     source: https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf
     verify: true   # X handle unknown; Derek Shiller, Dillon Plunkett (co-authors) + Camila Blank, Agam Bhatia (Nanda's replication team, MATS) also not-yet-registered — add when handles confirmed
 
+  - handle: ebarenholtz
+    name: Elan Barenholtz
+    affiliation: Florida Atlantic University (psychology; Center for Complex Systems & Brain Sciences)
+    focus: cognition/perception; "language as autonomous generative process" thesis; philosophical J-space critique (reportability/phenomenality wedge; "good science, bad philosophy")
+    tags: [philosophy-of-mind, cognitive-science, discourse, critique, j-space]
+    source: https://x.com/ebarenholtz/status/2074892196038181299
+    verify: true   # affiliation from public profile knowledge — confirm before public use
+
   - handle: iamtrask
     name: Andrew Trask
     affiliation: OpenMined (founder); DPhil Oxford
