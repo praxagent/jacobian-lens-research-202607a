@@ -107,13 +107,21 @@ def main() -> None:
                          "emergence_shared.csv")
     args = ap.parse_args()
 
-    import jlens
+    # jlens no longer needed here: we torch.load the raw fp16 checkpoint directly
     from huggingface_hub import hf_hub_download
 
     hf_id, lens_file = resolve(args.slug)
     print(f"slug={args.slug}  hf={hf_id}  null={args.null}")
-    lens = jlens.JacobianLens.load(hf_hub_download(REPO, filename=lens_file))
-    print("lens:", lens)
+    # Load the RAW fp16 checkpoint ourselves. JacobianLens.load() casts the whole
+    # dict to fp32 at load (peak ~32GB for the 70B: fp16 source + fp32 copies) —
+    # we keep it fp16 and upcast one layer at a time instead.
+    ckpt = torch.load(hf_hub_download(REPO, filename=lens_file),
+                      map_location="cpu", weights_only=True)
+    jacobians = {int(l): J for l, J in ckpt["J"].items()}  # fp16 as saved
+    source_layers = sorted(jacobians)
+    d_model_lens = next(iter(jacobians.values())).shape[0]
+    print(f"lens: {len(source_layers)} source layers, d_model={d_model_lens}, "
+          f"dtype={next(iter(jacobians.values())).dtype} (raw, no fp32 dict)")
 
     U = load_unembedding(hf_id)  # (vocab, d_model) float32 CPU
     vocab, d_model = U.shape
@@ -133,18 +141,18 @@ def main() -> None:
     Up = U[probe]  # (n_probe, d_model)
     del U
 
-    layers = lens.source_layers
-    # Memory: a 70B lens is ~21.5GB fp32 (80 x 8192^2) + ~10.7GB fp32 geometries
-    # — over a 30GB box (observed swap-thrash on llama3.3-70b-it). Store the
-    # transports and geometries fp16, compute in fp32 per step: peak ~17GB.
+    layers = source_layers
+    # Memory discipline (70B = 80 x 8192^2): lens stays fp16 as loaded; upcast ONE
+    # layer to fp32 transiently for the matmul; store its geometry fp16; free the
+    # layer if nulling. Peak ~16.5GB for the 70B on a 30GB box.
     Up_t = torch.tensor(Up) if not isinstance(Up, torch.Tensor) else Up
+    Up_t = Up_t.float()
     geom = {}
     for l in layers:
-        J = lens.jacobians[l]
+        J = jacobians[l]
         if args.null:
             J = torch.randn(d_model, d_model) * J.float().std()  # scale-matched random
-        geom[l] = (Up_t.float() @ J.float()).to(torch.float16)  # store fp16
-        lens.jacobians[l] = J.to(torch.float16)  # shrink retained lens copy
+        geom[l] = (Up_t @ J.float()).to(torch.float16)  # fp32 compute, fp16 store
 
     L = len(layers)
     M = np.eye(L)
