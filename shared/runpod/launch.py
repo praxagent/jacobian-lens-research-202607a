@@ -59,7 +59,12 @@ def _gql(query: str, variables: dict | None = None) -> dict:
     body = json.dumps({"query": query, "variables": variables or {}}).encode()
     req = urllib.request.Request(
         f"{API_URL}?api_key={key}", data=body,
-        headers={"Content-Type": "application/json"}, method="POST",
+        headers={
+            "Content-Type": "application/json",
+            # Cloudflare 1010-blocks the default Python-urllib User-Agent.
+            "User-Agent": "praxagent-research/1.0",
+        },
+        method="POST",
     )
     try:
         with urllib.request.urlopen(req, timeout=60) as r:
@@ -152,6 +157,50 @@ def _gpu_price(display: str) -> float | None:
     return None
 
 
+DEFAULT_IMAGE_FIT = "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04"
+
+
+def _pubkey() -> str:
+    from pathlib import Path
+    return (Path.home() / ".ssh" / "id_rsa.pub").read_text().strip()
+
+
+def cmd_create(args) -> None:
+    """Create an on-demand GPU pod with SSH (our id_rsa.pub injected)."""
+    q = """mutation($in: PodFindAndDeployOnDemandInput){
+        podFindAndDeployOnDemand(input:$in){ id imageName machineId costPerHr }
+    }"""
+    inp = {
+        "cloudType": args.cloud, "gpuCount": 1, "gpuTypeId": args.gpu_id,
+        "name": args.name, "imageName": args.image,
+        "containerDiskInGb": args.disk, "volumeInGb": 0,
+        "minVcpuCount": 2, "minMemoryInGb": 8, "ports": "22/tcp", "dockerArgs": "",
+        "env": [{"key": "PUBLIC_KEY", "value": _pubkey()}],
+    }
+    d = _gql(q, {"in": inp})
+    pod = d.get("podFindAndDeployOnDemand")
+    if not pod:
+        sys.exit("create returned nothing — no GPU available for that type/cloud? "
+                 "try --cloud ALL or another --gpu-id.")
+    print(f"created pod {pod['id']}  ({pod.get('costPerHr')} $/hr)  "
+          f">>> TERMINATE when done: launch.py terminate --pod {pod['id']}")
+
+
+def cmd_sshinfo(args) -> None:
+    """Poll until the pod exposes a public SSH port, then print the ssh command."""
+    q = """query($id:String!){ pod(input:{podId:$id}){
+        desiredStatus runtime { ports { ip publicPort privatePort type isIpPublic } }
+    } }"""
+    for _ in range(90):
+        rt = (_gql(q, {"id": args.pod}).get("pod") or {}).get("runtime")
+        for p in (rt or {}).get("ports") or []:
+            if p.get("privatePort") == 22 and p.get("isIpPublic"):
+                print(f"ssh -o StrictHostKeyChecking=accept-new root@{p['ip']} -p {p['publicPort']}")
+                return
+        time.sleep(10)
+    sys.exit("no public SSH port after 15 min — check `launch.py pods`.")
+
+
 def cmd_terminate(args) -> None:
     q = "mutation($id:String!){ podTerminate(input:{podId:$id}) }"
     _gql(q, {"id": args.pod})
@@ -171,6 +220,15 @@ def main() -> None:
     r.add_argument("--max-minutes", type=int, default=60)
     r.add_argument("--yes", action="store_true", help="confirm this specific paid run")
     r.set_defaults(func=cmd_run)
+    c = sub.add_parser("create")
+    c.add_argument("--gpu-id", required=True, help="gpuType id (see `gpus`)")
+    c.add_argument("--name", default="praxagent")
+    c.add_argument("--image", default=DEFAULT_IMAGE_FIT)
+    c.add_argument("--disk", type=int, default=40, help="container disk GB")
+    c.add_argument("--cloud", default="ALL", help="ALL | SECURE | COMMUNITY")
+    c.set_defaults(func=cmd_create)
+    si = sub.add_parser("sshinfo"); si.add_argument("--pod", required=True)
+    si.set_defaults(func=cmd_sshinfo)
     t = sub.add_parser("terminate"); t.add_argument("--pod", required=True)
     t.set_defaults(func=cmd_terminate)
     args = p.parse_args()
