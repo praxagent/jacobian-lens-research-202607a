@@ -49,6 +49,17 @@ agrees). The contestable part is the *universality* and the *framing*.
 - **Honesty:** `mid_sep` is *our* statistic, not a standard metric; we report it as a
   CKA-block measure with the null floor alongside, and cross-check with [pending: an
   alternative metric + a probe-token bootstrap].
+- **Numerical-precision note (methods honesty).** Mid-experiment we hit a real
+  constraint: the 70B model's lens (~21.5 GB fp32) + geometries exceeded the analysis
+  box's 30 GB RAM. Fix: geometry matrices are *stored* fp16 between steps; **all
+  computation (transport matmul, CKA) remains fp32**. Context: the source lenses are
+  already distributed in fp16 (Anthropic's own `lens.save()` default), so fp16 was
+  always in the pipeline; this adds one intermediate rounding. To keep results
+  untainted: (a) **every published number comes from one uniform code version** — the
+  full sweep is re-run under the final path (cheap; lenses cached), no mixed-path
+  ledger; (b) an fp32-vs-fp16-storage **A/B across several models/families** is
+  reported in the appendix (gpt2: identical, +0.015 both paths; max |Δ| across the A/B
+  set: [pending]).
 
 ## Results (living — filled from `experiments/*/results.md`)
 
