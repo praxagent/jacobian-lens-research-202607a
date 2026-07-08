@@ -88,15 +88,35 @@ sensitive, and (crucially) **untested at frontier scale**.]
 
 ## Limitations (up front, not buried)
 
-- **The sub-frontier-transient risk (the big one).** Our largest point is 70B; the
-  ≤70B window may not capture asymptotic behavior. We could be over-claiming from a
-  small-scale transient — the exact error we're auditing. Frontier (>70B) fitting is the
-  key open question (future work).
+- **⚠️ The tokenizer/vocabulary confound (from Eleos's commentary — possibly our biggest).**
+  J-space is *defined by the model's token vocabulary*; it's an approximation to a
+  vocabulary-independent "W-space." Different families have different tokenizers, so
+  cross-family J-lens measures may not be commensurable — **our headline Qwen≫Gemma
+  family-dependence could be partly a cross-tokenizer artifact.** Mitigation (in progress):
+  restrict the CKA probe set to tokens *shared across all tokenizers* (as the eliebak
+  explorer did) and report a sensitivity analysis. Until then, family-dependence is stated
+  with this caveat explicit.
+- **The sub-frontier-transient risk.** Our largest point is 70B; the ≤70B window may not
+  capture asymptotic behavior — we could be over-claiming from a small-scale transient (the
+  exact error we're auditing). *Now addressable:* Nanda's commentary shows frontier fitting
+  is cheap (n≈10–25 prompts, `O(n·d_model)`; ~1 h on 8×H200s for a ~400B MoE), so the
+  frontier test is a concrete affordable follow-up, not a wall.
 - **`mid_sep` is our own statistic** — reported with the null floor; cross-checks pending.
 - **Linear readout = lower bound.** The J-lens (and our CKA on it) is linear; brain–LLM
   work (TRIBE) shows linear maps *underestimate* structure. Our band is a lower bound.
 - **One lens per model** for the pre-fitted set → the seed-stability tier-1 fit addresses
-  this directly.
+  this (validated: our own fit reproduces Neuronpedia's at CKA 0.999).
+
+## Independent corroboration (Neel Nanda, DeepMind)
+
+Nanda et al. **independently replicated** J-space on **Qwen 3.6 27B** and found the CKA
+workspace bands *"notably less clean than the paper's"* (two-to-three overlapping bands),
+with poetry/arithmetic failing to replicate and the multihop result reversing on a
+too-easy dataset. **This corroborates our family-dependence finding from an independent
+lab** — the crisp band is a Claude/best-case property, messier elsewhere. He also declines
+to endorse the "global workspace" framing (his "least interesting" claim), separating the
+real *working-memory* finding from the GWT branding — the same distinction our audit draws.
+Full deep read of all three invited commentaries: [expert-commentary.md](expert-commentary.md).
 
 ## Credit
 

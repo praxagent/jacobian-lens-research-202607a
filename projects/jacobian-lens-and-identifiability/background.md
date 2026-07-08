@@ -173,7 +173,7 @@ brain-alignment), in **[related-work.md](related-work.md)**.
 ## Sources
 
 - [Global workspace in LMs](https://transformer-circuits.pub/2026/workspace) (Anthropic) · [announcement](https://www.anthropic.com/research/global-workspace) · [X thread](https://x.com/anthropicai/status/2074185348142280912) (2026-07-06)
-- [**Invited expert perspectives** (Anthropic-hosted PDF)](https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf) — neuroscience / philosophy / interpretability commentaries Anthropic solicited on the work. **Primary source, not yet deep-read** — likely overlaps the Dehaene & Naccache commentary above; worth a full read for more expert cautions/tests.
+- [**Invited expert perspectives** (Anthropic-hosted PDF, 53pp)](https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf) — three commentaries (Dehaene & Naccache; Butlin/Shiller/Plunkett/Long @ Eleos; **Neel Nanda**, incl. an independent open-model replication). **Deep-read in [expert-commentary.md](expert-commentary.md)** — surfaced two audit-reshaping findings: the **tokenizer/vocabulary confound** on cross-family comparison (Eleos) and **Nanda's Qwen replication corroborating family-dependence** (bands "notably less clean").
 - [Neuronpedia J-lens interactive demo](https://neuronpedia.org/jlens) (official Anthropic×Neuronpedia partnership — the source of our pre-fitted open-model lenses)
 - [2206.07751](https://arxiv.org/abs/2206.07751) · [2311.00866](https://arxiv.org/abs/2311.00866) · [2604.17568](https://arxiv.org/abs/2604.17568)
 - Adjacent: [Jacobian SAEs 2502.18147](https://arxiv.org/abs/2502.18147) · [Identifiable SAEs 2605.31245](https://arxiv.org/abs/2605.31245)

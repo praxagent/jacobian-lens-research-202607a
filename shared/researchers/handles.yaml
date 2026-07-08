@@ -78,6 +78,29 @@ researchers:
     source: https://x.com/ziv_ravid/status/2074581837746176021
     verify: true   # exact name/role inferred from handle + user note (Meta)
 
+  # J-space invited-commentary authors (Anthropic's external-commentary PDF)
+  - handle: NeelNanda5
+    name: Neel Nanda
+    affiliation: Google DeepMind (leads the LM/mechanistic interpretability team)
+    focus: mechanistic interpretability; independently replicated J-space on Qwen 3.6 27B (bands "less clean"); separates the working-memory finding from the GWT framing
+    tags: [interpretability, deepmind, j-space, replication]
+    source: https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf
+    verify: false
+  - handle: rgblong
+    name: Robert Long
+    affiliation: Eleos AI Research
+    focus: AI consciousness & moral status; co-author "Consciousness in AI" (2023); J-space commentary (privileged-set/stream/workspace tiering; tokenizer-confound caution)
+    tags: [ai-consciousness, moral-status, eleos]
+    source: https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf
+    verify: true   # handle unconfirmed
+  - handle: ""
+    name: Patrick Butlin
+    affiliation: Eleos AI Research
+    focus: AI consciousness (lead author, "Consciousness in AI" 2023); J-space commentary co-author
+    tags: [ai-consciousness, eleos]
+    source: https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf
+    verify: true   # X handle unknown; Derek Shiller, Dillon Plunkett (co-authors) + Camila Blank, Agam Bhatia (Nanda's replication team, MATS) also not-yet-registered — add when handles confirmed
+
   # Brain–LLM alignment / computational neuro-linguistics community
   - handle: martin_schrimpf
     name: Martin Schrimpf
