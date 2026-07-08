@@ -29,6 +29,24 @@ approval + terminate-on-done discipline below.
 over plain SSH at its public IP/port — the private key never leaves this box; the pod only
 ever sees the public half. Same trust model as the Lightsail box.
 
+### Where the SSH key comes from (we do NOT mint a new one)
+
+There is **no RunPod-specific SSH key**. We reuse the dev box's existing keypair —
+`~/.ssh/id_rsa` (private) and `~/.ssh/id_rsa.pub` (public) — the **same key already used
+for GitHub and the Lightsail box** (the passphrase-free key at `~/.ssh/id_rsa`). The flow:
+
+1. `launch.py:_pubkey()` reads **`~/.ssh/id_rsa.pub`** (public half only) at `create` time.
+2. It's passed to RunPod as the pod's `PUBLIC_KEY` env var → RunPod writes it into the
+   pod's `~/.ssh/authorized_keys` on boot.
+3. `sshinfo` returns the pod's public IP + mapped port; we `ssh -i ~/.ssh/id_rsa` (the
+   default) into it, and `tar`-over-SSH the code across (the pods are private/rsync-less).
+
+So: **the private key never leaves the dev box**, the pod only ever receives the *public*
+half, and nothing new is generated or stored. Not registering a key in RunPod's account
+settings is deliberate — the per-pod `PUBLIC_KEY` injection keeps access scoped to pods we
+launch, and revoking is just deleting the pod. (RunPod's own SSH-proxy `ssh.runpod.io`
+would instead require registering the key on the account; we don't use it.)
+
 ## Commands
 
 ```bash
