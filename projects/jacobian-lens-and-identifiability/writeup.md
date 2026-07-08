@@ -74,9 +74,17 @@ qwen3-4b 3-seed fit — high CKA = stable/real; low = fitting-dependent.]
 
 ## Interrogation — does this support "oversold"?
 
-[Synthesis once results are complete. Current shape: the *measurement* replicates; the
-*universal-workspace framing* is not supported by the open-model evidence — the phenomenon
-is family-dependent, instruct-sensitive, and (crucially) **untested at frontier scale**.]
+**Fairness first — the honest target.** Anthropic's *own* framing is hedged: their
+announcement explicitly claims a mechanism for **access consciousness**, *not* phenomenal
+experience ("does not show Claude can have experiences or feel things"), and pitches J-space
+as a practical alignment tool. So the target is **not** "they said models are conscious"
+(they didn't) — it's whether the **access-consciousness + universal-workspace** framing is
+supported. Our data speaks to the *universality* half.
+
+[Synthesis once results are complete. Current shape: the *measurement* replicates (our own
+fit reproduces Neuronpedia's at CKA 0.999); the *universal-workspace framing* is not
+supported by the open-model evidence — the phenomenon is family-dependent, instruct-
+sensitive, and (crucially) **untested at frontier scale**.]
 
 ## Limitations (up front, not buried)
 

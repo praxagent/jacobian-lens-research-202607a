@@ -34,6 +34,19 @@ ethical test and exposed "fraud"/"secretly" patterns in misaligned models; steer
 "counterfactual reflection training" reduced deceptive behavior. (Authors: Gurnee,
 Lindsey et al., Anthropic.)
 
+**Anthropic's own framing is deliberately hedged** (announcement thread, post 9): they
+claim Claude "has developed a mechanism for **conscious access** — which many philosophers
+distinguish from **phenomenal experience**," and state the work does *not* show Claude "can
+have experiences or feel things (it's unclear whether any experiment could)." So the
+scientifically contested claim is **access-consciousness + universality**, not naive
+sentience — a distinction our audit respects, and one that undercuts the "it's all PR"
+reading (they hedged the strong claim themselves). They pitch J-space mainly as a practical
+alignment tool — "read, audit, and shape what Claude is actively thinking about" — with two
+concrete demos: **hidden goals** (a model secretly trained to sabotage code shows
+"fake"/"secretly"/"fraud" in its J-space at the start of otherwise-unremarkable responses)
+and **situational awareness** (a blackmail-bait eval shows "fake"/"fictional" — Claude has
+privately flagged the scenario as staged).
+
 ### Expert commentary — Dehaene & Naccache (June 2026)
 
 The originators of Global Neuronal Workspace (GNW) theory, **Stanislas Dehaene &
@@ -104,7 +117,10 @@ The J-lens is no longer Claude-only: Anthropic released the companion code —
 **[`anthropics/jacobian-lens`](https://github.com/anthropics/jacobian-lens)**, **Apache
 2.0**, running on **open-weights HuggingFace decoders** (`jlens.from_hf`, demos on Qwen)
 — and **Neuronpedia** hosts pre-fitted lenses
-(`huggingface.co/neuronpedia/jacobian-lens`). Elie Bakouch's open
+(`huggingface.co/neuronpedia/jacobian-lens`) as an **official Anthropic×Neuronpedia
+partnership** (announced in Anthropic's thread; demo: [neuronpedia.org/jlens](https://neuronpedia.org/jlens)),
+so the open-weights lenses our audit runs on are the *authoritative* release, not a
+third-party reimplementation. Elie Bakouch's open
 **[J-lens CKA Explorer](https://eliebak.com/viz/jspace-open)** already compares J-lens
 layer geometries across **38 open models** (Gemma/Qwen/…) via CKA, surfacing a
 sensory→workspace→motor band and cross-model matched-depth alignment. This upgrades the
@@ -156,6 +172,8 @@ brain-alignment), in **[related-work.md](related-work.md)**.
 
 ## Sources
 
-- [Global workspace in LMs](https://transformer-circuits.pub/2026/workspace) (Anthropic) · [announcement](https://www.anthropic.com/research/global-workspace)
+- [Global workspace in LMs](https://transformer-circuits.pub/2026/workspace) (Anthropic) · [announcement](https://www.anthropic.com/research/global-workspace) · [X thread](https://x.com/anthropicai/status/2074185348142280912) (2026-07-06)
+- [**Invited expert perspectives** (Anthropic-hosted PDF)](https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf) — neuroscience / philosophy / interpretability commentaries Anthropic solicited on the work. **Primary source, not yet deep-read** — likely overlaps the Dehaene & Naccache commentary above; worth a full read for more expert cautions/tests.
+- [Neuronpedia J-lens interactive demo](https://neuronpedia.org/jlens) (official Anthropic×Neuronpedia partnership — the source of our pre-fitted open-model lenses)
 - [2206.07751](https://arxiv.org/abs/2206.07751) · [2311.00866](https://arxiv.org/abs/2311.00866) · [2604.17568](https://arxiv.org/abs/2604.17568)
 - Adjacent: [Jacobian SAEs 2502.18147](https://arxiv.org/abs/2502.18147) · [Identifiable SAEs 2605.31245](https://arxiv.org/abs/2605.31245)
