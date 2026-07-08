@@ -108,14 +108,35 @@ as the discourse our empirical audit sits within:
   the consciousness / GWT / "brain" framing is a *separable packaging choice* that adds
   nothing to the linear algebra — "the choice is the product, not the science." Extends to a
   broader claim that much of Anthropic's output is PR.
+- **Technical-deflationary critique — Andrew Trask (@iamtrask, OpenMined; thread
+  2026-07-08):** "very nice mech interp research," but the result is *expected*: models
+  learn only through gradients so "the gradients will have semantic structure," and
+  residual streams ("passthrough gradients") make cross-layer transport unsurprising —
+  "it would be more surprising if it didn't work." Plus: "I miss peer review."
+  **Our assessment (both directions):** the argument conflates training gradients
+  (∂L/∂θ) with the frozen forward function's Jacobian (∂h_final/∂h_l) — a random-init
+  network has equally-computed Jacobians with no semantic structure, so structure is a
+  property of the *learned function*, not of backprop per se. The residual-stream
+  steelman is real for mere decodability (it's why logit lens works) — but **our data
+  refutes the "architecture-guarantees-it" form**: Gemma-3-12b (residual + backprop) has
+  essentially **no** band (0.0007) while qwen3-14b has a strong one (0.21); small models
+  show none; the random-transport null shows none; and Nanda finds J-lens *beats* logit
+  lens (information beyond passthrough). His peer-review point, however, lands — and is
+  corroborated by Dehaene & Naccache's note that the paper evolved during their
+  commentary exchange (no pre-registration).
 
 **Our stance.** The framing critique (Ravid, King) aligns with this project's thesis, and
 our data supports it: the mid-band is **family-dependent and instruct-reduced**, not the
 universal phenomenon the framing implies. But "it's all PR" is itself a narrative overreach
 — the GWT connection is *contestable science* (its originators engaged it seriously), not
-mere marketing. The useful response to both the hype and the anti-hype is **measurement**,
-which is what this project brings: not picking a side in the discourse, but publishing the
-curve. Reaction handles are logged in
+mere marketing. And the Trask thread sharpens the symmetric point: **the hype and the
+anti-hype make the same mistake — treating the phenomenon as *necessary*** (either "a
+workspace like consciousness" or "a trivial consequence of backprop + residual streams")
+**when the data shows it is *contingent***: a learned, family-dependent structure that some
+training recipes produce strongly (Qwen) and others barely at all (Gemma), absent in small
+models and in the null. The useful response to both is **measurement**, which is what this
+project brings: not picking a side in the discourse, but publishing the curve. Reaction
+handles are logged in
 [`shared/researchers/handles.yaml`](../../shared/researchers/handles.yaml).
 
 ## Sources

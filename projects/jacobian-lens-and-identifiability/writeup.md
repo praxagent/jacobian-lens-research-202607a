@@ -97,6 +97,17 @@ fit reproduces Neuronpedia's at CKA 0.999); the *universal-workspace framing* is
 supported by the open-model evidence — the phenomenon is family-dependent, instruct-
 sensitive, and (crucially) **untested at frontier scale**.]
 
+**The symmetric error (candidate thesis for the conclusion).** The hype ("a global
+workspace, like conscious access") and the anti-hype ("trivially expected — models learn
+via gradients and have residual streams"; cf. Trask) make the **same mistake: treating
+the phenomenon as necessary.** Our data says it is **contingent**: a learned structure
+that some families develop strongly (Qwen ~0.15–0.21) and others barely at all
+(Gemma-3 ≤0.05, ~0.001 at 12B) — absent in small models, absent under the random-
+transport null, *reduced* by instruct-tuning, and partially language-bound in early
+layers. Contingent structure is more scientifically interesting than either narrative:
+it demands an explanation (what in the training recipe/architecture produces it?) rather
+than a label.
+
 ## Limitations (up front, not buried)
 
 - **⚠️ The tokenizer/vocabulary confound (from Eleos's commentary — possibly our biggest).**

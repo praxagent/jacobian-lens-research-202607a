@@ -101,6 +101,14 @@ researchers:
     source: https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf
     verify: true   # X handle unknown; Derek Shiller, Dillon Plunkett (co-authors) + Camila Blank, Agam Bhatia (Nanda's replication team, MATS) also not-yet-registered — add when handles confirmed
 
+  - handle: iamtrask
+    name: Andrew Trask
+    affiliation: OpenMined (founder); DPhil Oxford
+    focus: privacy-preserving ML; technical-deflationary J-space critique ("gradients will have semantic structure... I miss peer review")
+    tags: [ml, discourse, critique, j-space]
+    source: X thread 2026-07-08 (provided by TJ; id not captured)
+    verify: true   # affiliation details to confirm
+
   # Brain–LLM alignment / computational neuro-linguistics community
   - handle: martin_schrimpf
     name: Martin Schrimpf
