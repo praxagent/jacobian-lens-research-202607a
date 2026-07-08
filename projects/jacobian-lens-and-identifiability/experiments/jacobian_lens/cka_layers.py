@@ -100,6 +100,11 @@ def main() -> None:
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--null", action="store_true",
                     help="confound control: replace J_l with scale-matched random matrices")
+    ap.add_argument("--shared-probe", default=None,
+                    help="path to shared_tokens.json (from shared_vocab.py): probe with "
+                         "token STRINGS shared across all models' tokenizers — the "
+                         "tokenizer-confound mitigation (Eleos). Results go to "
+                         "emergence_shared.csv")
     args = ap.parse_args()
 
     import jlens
@@ -114,8 +119,17 @@ def main() -> None:
     vocab, d_model = U.shape
     print(f"unembed U = ({vocab}, {d_model})")
 
-    rng = np.random.default_rng(args.seed)
-    probe = rng.choice(vocab, size=min(args.n_probe, vocab), replace=False)
+    if args.shared_probe:
+        import json
+        from shared_vocab import resolve_ids
+        spec = json.load(open(args.shared_probe))
+        ids_map = resolve_ids(hf_id, spec["strings"])
+        probe = np.array(sorted(ids_map.values()), dtype=np.int64)
+        print(f"shared-probe: {len(probe)}/{len(spec['strings'])} strings resolved "
+              f"to single tokens in this tokenizer")
+    else:
+        rng = np.random.default_rng(args.seed)
+        probe = rng.choice(vocab, size=min(args.n_probe, vocab), replace=False)
     Up = U[probe]  # (n_probe, d_model)
     del U
 
@@ -144,9 +158,14 @@ def main() -> None:
     print(f"mid-band separation = {s['mid_sep']:+.3f}  "
           f"(>0 sizeable => distinct workspace band; ~0 => none)")
 
-    # append to the emergence ledger — real and null runs to separate files, so
-    # the plot can show the real curve rising while the null floor stays flat.
-    out = EMERGENCE_CSV.with_name("emergence_null.csv") if args.null else EMERGENCE_CSV
+    # append to the emergence ledger — real / null / shared-probe runs to separate
+    # files, so the plot can overlay them.
+    if args.null:
+        out = EMERGENCE_CSV.with_name("emergence_null.csv")
+    elif args.shared_probe:
+        out = EMERGENCE_CSV.with_name("emergence_shared.csv")
+    else:
+        out = EMERGENCE_CSV
     new = not out.exists()
     with open(out, "a", newline="") as f:
         w = csv.writer(f)
