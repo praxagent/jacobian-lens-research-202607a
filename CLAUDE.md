@@ -68,5 +68,13 @@ self-contained so humans and agents can navigate by folder alone.
   and implement it there — the experiment code stays here.
 - **Cite the claim, reproduce the metric.** Each experiment names the exact
   theorem/figure and the paper's own success metric.
-- **Secrets never land in git.** `RUNPOD_API_KEY` lives in the environment or a
+- **Secrets never land in git.** `RUNPOD_API_KEY` / `HF_TOKEN` live in the environment or a
   gitignored `shared/runpod/.env` — never committed. Sweep staged files before commit.
+- **⚠️ Secrets never land on a remote box either — `.gitignore` does NOT protect
+  `rsync`/`tar`/`scp`.** Those copy whatever is on disk, including the gitignored
+  `shared/runpod/.env`. **When transferring code to a RunPod pod or Lightsail, ALWAYS
+  exclude the env file** — `tar --exclude=.venv --exclude='.env' …` /
+  `rsync --exclude='.env' …`. A tar-over-SSH to a fit pod once shipped `shared/runpod/.env`
+  (our RunPod + HF keys) onto a third-party GPU box; if it happens, **`rm` it from the box
+  immediately**. For a model that needs a token, pass it inline for that one command, not
+  as a file left on the pod.
