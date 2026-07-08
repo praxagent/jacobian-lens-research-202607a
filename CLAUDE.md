@@ -55,6 +55,18 @@ research-and-replications/
 `results.md`. Add a row to the top-level `README.md` index. Keep every project
 self-contained so humans and agents can navigate by folder alone.
 
+## Checkpoint discipline (session survival)
+
+Maintain **`checkpoint.md`** at the repo root (gitignored — state, not history). It exists
+so a disrupted session can be resumed by a fresh Claude or by TJ without re-derivation.
+**Update it frequently** — after every significant step, not just at milestones: when an
+experiment starts/finishes, when a result lands, when infrastructure spins up or down
+(especially anything BILLING, with its kill-command), when a finding or confound changes
+the plan, and when the next-steps order changes. It must always answer: what's running
+right now (and what it costs), what the results so far are, what's next in order, and the
+gotchas a cold session would trip on. If checkpoint.md and reality disagree, trust
+reality, then fix checkpoint.md.
+
 ## House rules
 
 - **`uv` for envs.** The CPU torch wheel isn't on PyPI for cp312 under the default
