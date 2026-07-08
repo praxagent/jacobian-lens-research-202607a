@@ -41,15 +41,17 @@ Chosen because it's the cheapest AWS-family option (helps for tax/accounting).
 - **Gated models (Gemma/Llama):** need `HF_TOKEN` (in the gitignored `shared/runpod/.env`)
   **and** the account to have accepted the model licence on HuggingFace.
 
-## RunPod — the GPU backend (for later; launcher ready, not yet spent)
+## RunPod — the GPU backend (launcher validated live 2026-07-08)
 
 - **Purpose:** the genuinely GPU-first work — fitting our own lenses, and the
   ignition/capacity experiments (live forward passes on real LLMs). Lightsail can't do this.
-- **Launcher:** [`shared/runpod/`](runpod/) — stdlib-only, runs on the dev box. Prints
-  $/hr, **refuses to spend without `--yes`**, `terminate-on-done`, `pods` lists what's
-  billing. API key in the gitignored `shared/runpod/.env`.
-- **Discipline:** never start a paid pod without explicit per-run approval; **terminate the
-  moment a run finishes**; prefer the cheapest GPU that fits the VRAM.
+- **Launcher:** [`shared/runpod/`](runpod/) — stdlib-only, runs on the dev box. `create` /
+  `sshinfo` / `terminate` are validated (RTX A2000 test, ~$0.02). **How the API key is
+  stored/used is documented in [`shared/runpod/README.md`](runpod/README.md)** — gitignored
+  `.env`, GraphQL over HTTPS with a User-Agent header, our `id_rsa.pub` injected for SSH.
+- **Discipline:** never start a paid pod without explicit per-run approval + a $/hr
+  estimate; **terminate the moment a run finishes** (`pods` shows what's billing); cheapest
+  GPU that fits the VRAM.
 
 ## Cost model + the snapshot question (2026-07-07)
 
