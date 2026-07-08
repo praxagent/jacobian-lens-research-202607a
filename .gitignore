@@ -18,5 +18,8 @@ data/
 shared/runpod/.env
 .env
 
+# Session-survival scratch (state lives here between disruptions; not history)
+checkpoint.md
+
 # OS
 .DS_Store
