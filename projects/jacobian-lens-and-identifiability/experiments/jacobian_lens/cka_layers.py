@@ -134,18 +134,25 @@ def main() -> None:
     del U
 
     layers = lens.source_layers
+    # Memory: a 70B lens is ~21.5GB fp32 (80 x 8192^2) + ~10.7GB fp32 geometries
+    # — over a 30GB box (observed swap-thrash on llama3.3-70b-it). Store the
+    # transports and geometries fp16, compute in fp32 per step: peak ~17GB.
+    Up_t = torch.tensor(Up) if not isinstance(Up, torch.Tensor) else Up
     geom = {}
     for l in layers:
-        J = lens.jacobians[l].float()
+        J = lens.jacobians[l]
         if args.null:
-            J = torch.randn(d_model, d_model) * J.std()  # scale-matched random transport
-        geom[l] = (Up @ J).numpy()
+            J = torch.randn(d_model, d_model) * J.float().std()  # scale-matched random
+        geom[l] = (Up_t.float() @ J.float()).to(torch.float16)  # store fp16
+        lens.jacobians[l] = J.to(torch.float16)  # shrink retained lens copy
 
     L = len(layers)
     M = np.eye(L)
     for i in range(L):
+        gi = geom[layers[i]].float().numpy()
         for j in range(i + 1, L):
-            M[i, j] = M[j, i] = linear_cka(geom[layers[i]], geom[layers[j]])
+            M[i, j] = M[j, i] = linear_cka(gi, geom[layers[j]].float().numpy())
+        del gi
 
     print(f"\nlayer x layer CKA ({L} source layers){' [NULL]' if args.null else ''}:")
     print("      " + " ".join(f"{l:4d}" for l in layers))
