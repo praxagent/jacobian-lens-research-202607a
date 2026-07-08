@@ -17,10 +17,30 @@ validates the whole pipeline end-to-end (fit_lens.py, our jlens usage, and the C
 methodology the emergence sweep rests on), so bigger fits are trustworthy. It also means
 the emergence-sweep numbers — which use these lenses — sit on a faithful foundation.
 
-## 2. Seed/corpus stability — qwen3-4b (in progress)
+## 2. Seed/corpus stability — qwen3-4b (PASSED, 2026-07-08)
 
-Fitting Qwen3-4B on 3 different corpus subsets (seeds 0/1/2, 100 prompts, dim_batch 16),
-then pairwise CKA. **Question:** is J-space a stable property of the model, or dependent
-on the fitting seed/corpus? High cross-seed CKA → stable/real (strengthens every emergence
-claim and closes the "one lens per model" limitation). Low → fitting-dependent (a real,
-honest limitation to report). [Numbers on completion.]
+Fit Qwen3-4B on 3 **disjoint** wikitext subsets (seeds 0/1/2, 100 prompts each,
+dim_batch 16), then pairwise CKA of the lenses' token geometry across all 35 shared
+layers:
+
+```
+seed0 vs seed1: mean CKA = 0.9971  (min 0.976, max 1.000)
+seed0 vs seed2: mean CKA = 0.9981  (min 0.989, max 1.000)
+```
+
+**J-space is corpus-sample-stable.** Re-fitting on different English text recovers
+essentially the same lens — the structure is a property of the *model*, not estimation
+noise. This closes the "one lens per model / can't test stability" limitation with a
+positive result, and puts a foundation under every lens-based claim (Anthropic's,
+eliebak's, and our 38-model sweep). Scope note: this is **within-distribution** stability
+(all wikitext); the cross-**language** test is next.
+
+## 3. Language dependence — qwen3-4b, Chinese-Wikipedia lens (in progress)
+
+Fit the same model on **Chinese Wikipedia** (streaming, 100 passages) and compare to the
+English-fit lens. If CKA(zh, en) ≈ the en↔en baseline (~0.997), the J-space transport is
+**language-independent** — a structural property of the model, not of the estimation
+language. If much lower, the "workspace" has a language-dependent component (relevant to
+Wendler et al. 2024 "Do Llamas Work in English?", Anthropic's multilingual claims, and
+Nanda's multilingual-artifact caution). Qwen3-4B is the right subject (strong Chinese).
+[Numbers on completion.]

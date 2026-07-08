@@ -23,18 +23,41 @@ import random
 from pathlib import Path
 
 
-def load_corpus(n_prompts: int, seed: int, min_chars: int = 200) -> list[str]:
-    """N text passages from wikitext (the paper's pretraining-like corpus).
+def load_corpus(n_prompts: int, seed: int, corpus: str = "wikitext",
+                min_chars: int = 200) -> list[str]:
+    """N text passages for lens fitting.
 
-    The seed shuffles which passages are used, so different seeds = different
-    corpus subsets — the basis of the stability test.
+    corpus:
+      - "wikitext"      — English wikitext-103 (the paper's pretraining-like corpus)
+      - "wikipedia-zh"  — Chinese Wikipedia (streaming; language-dependence test)
+      - "wikipedia-fr"  — French Wikipedia (streaming)
+
+    The seed shuffles which passages are used: different seeds = different
+    corpus subsets (stability test); different corpora = different estimation
+    distributions/languages (language-dependence test).
     """
     from datasets import load_dataset
-    ds = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")
-    texts = [t for t in ds["text"] if len(t) >= min_chars]
-    rng = random.Random(seed)
-    rng.shuffle(texts)
-    return texts[:n_prompts]
+    if corpus == "wikitext":
+        ds = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")
+        texts = [t for t in ds["text"] if len(t) >= min_chars]
+        rng = random.Random(seed)
+        rng.shuffle(texts)
+        return texts[:n_prompts]
+    if corpus.startswith("wikipedia-"):
+        lang = corpus.split("-", 1)[1]
+        # Streaming + shuffle-buffer: avoids downloading a multi-GB dump for 100 texts.
+        ds = load_dataset("wikimedia/wikipedia", f"20231101.{lang}",
+                          split="train", streaming=True)
+        ds = ds.shuffle(seed=seed, buffer_size=10_000)
+        texts = []
+        for row in ds:
+            t = row.get("text") or ""
+            if len(t) >= min_chars:
+                texts.append(t)
+            if len(texts) >= n_prompts:
+                break
+        return texts
+    raise ValueError(f"unknown corpus {corpus!r}")
 
 
 def main() -> None:
@@ -44,6 +67,7 @@ def main() -> None:
     ap.add_argument("--dim-batch", type=int, default=8)
     ap.add_argument("--max-seq-len", type=int, default=128)
     ap.add_argument("--seed", type=int, default=0)
+    ap.add_argument("--corpus", default="wikitext", help="wikitext | wikipedia-zh | wikipedia-fr")
     ap.add_argument("--out", required=True, help="output lens .pt path")
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
@@ -54,7 +78,7 @@ def main() -> None:
 
     dev = args.device if (args.device != "cuda" or torch.cuda.is_available()) else "cpu"
     print(f"fitting lens: model={args.model} n_prompts={args.n_prompts} "
-          f"dim_batch={args.dim_batch} seed={args.seed} device={dev}")
+          f"dim_batch={args.dim_batch} seed={args.seed} corpus={args.corpus} device={dev}")
 
     hf = transformers.AutoModelForCausalLM.from_pretrained(
         args.model, torch_dtype=torch.bfloat16 if dev == "cuda" else torch.float32,
@@ -62,7 +86,7 @@ def main() -> None:
     tok = transformers.AutoTokenizer.from_pretrained(args.model)
     model = jlens.from_hf(hf, tok)
 
-    prompts = load_corpus(args.n_prompts, args.seed)
+    prompts = load_corpus(args.n_prompts, args.seed, corpus=args.corpus)
     print(f"corpus: {len(prompts)} passages")
 
     out = Path(args.out)
