@@ -35,12 +35,33 @@ positive result, and puts a foundation under every lens-based claim (Anthropic's
 eliebak's, and our 38-model sweep). Scope note: this is **within-distribution** stability
 (all wikitext); the cross-**language** test is next.
 
-## 3. Language dependence — qwen3-4b, Chinese-Wikipedia lens (in progress)
+## 3. Language dependence — qwen3-4b, Chinese-Wikipedia lens (RESULT, 2026-07-08)
 
-Fit the same model on **Chinese Wikipedia** (streaming, 100 passages) and compare to the
-English-fit lens. If CKA(zh, en) ≈ the en↔en baseline (~0.997), the J-space transport is
-**language-independent** — a structural property of the model, not of the estimation
-language. If much lower, the "workspace" has a language-dependent component (relevant to
-Wendler et al. 2024 "Do Llamas Work in English?", Anthropic's multilingual claims, and
-Nanda's multilingual-artifact caution). Qwen3-4B is the right subject (strong Chinese).
-[Numbers on completion.]
+Fit the same model on **Chinese Wikipedia** (streaming, 100 passages; domain ≈ held
+constant since wikitext is also encyclopedic) and CKA-compared to the English-fit lenses:
+
+```
+zh vs en-seed0: mean CKA = 0.8932  (min 0.706, max 0.986)
+zh vs en-seed1: mean CKA = 0.8960  (min 0.725, max 0.986)   <- robustness: not seed-specific
+en vs en baseline:        0.9971 / 0.9981  (min 0.976)
+per-layer (zh vs en-seed1, layers 0->34):
+0.73 0.73 0.73 0.77 0.85 0.85 0.86 0.86 0.89 0.90 0.91 0.91 0.91 0.92 0.92 0.92 0.92
+0.92 0.92 0.92 0.92 0.92 0.92 0.92 0.92 0.93 0.93 0.93 0.94 0.94 0.94 0.94 0.94 0.96 0.99
+```
+
+**Finding: the J-space transport has a real, layer-structured language-dependent
+component.** zh↔en agreement (0.89) sits far below the en↔en noise floor (0.997), so the
+estimation language genuinely matters — but the disagreement is **concentrated in the
+early layers** (0.73) and **vanishes monotonically with depth** (0.99 by the top). Read:
+**early-layer verbalization dispositions are language-bound; the deeper (workspace-band)
+transport geometry is close to language-general.** This refines rather than refutes
+Anthropic's multilingual claim — the workspace-adjacent layers do look language-general,
+with a precise statement of where that breaks (and a nuance for Wendler et al. 2024:
+the English-anchoring we detect lives early, not in the deep concept space).
+
+Caveats: one model (qwen3-4b, Chinese-strong Qwen); one language pair; wikipedia-zh vs
+wikitext is same-domain but not identical text distribution. Cross-model + French
+replication is cheap future work (fit_lens.py --corpus wikipedia-fr is already wired).
+
+**Artifacts:** all five fitted lenses preserved at `artifacts/lenses/` on the dev box
+(gitignored; qwen4b seeds 0/1/2 + zh + gpt2). Pod terminated after this run.
