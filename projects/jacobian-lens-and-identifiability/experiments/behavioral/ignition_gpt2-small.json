@@ -1,0 +1,22 @@
+{
+ "slug": "gpt2-small",
+ "hf_id": "openai-community/gpt2",
+ "band": [
+  3,
+  4,
+  5,
+  6
+ ],
+ "n_alpha": 6,
+ "pairs": 3,
+ "carriers": 2,
+ "median_transition_width": 0.6871081790951585,
+ "frac_sharp_lt_0.25": 0.0,
+ "n_curves": 24,
+ "per_layer_median_width": {
+  "3": 0.6847734617739067,
+  "4": 0.6877596400373172,
+  "5": 0.747358552848749,
+  "6": 0.6255699855699857
+ }
+}
