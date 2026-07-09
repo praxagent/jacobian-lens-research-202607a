@@ -1,0 +1,35 @@
+{
+ "slug": "gpt-oss-20b",
+ "hf_id": "openai/gpt-oss-20b",
+ "band": [
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14
+ ],
+ "n_alpha": 11,
+ "pairs": 12,
+ "carriers": 4,
+ "median_transition_width": 0.17284834915524927,
+ "frac_sharp_lt_0.25": 0.6923076923076923,
+ "n_curves": 52,
+ "n_readouts": 384,
+ "median_share_span": 0.5231449933801369,
+ "median_share_max": 0.8416404157731101,
+ "median_share_min": 0.3161504863848751,
+ "frac_readouts_resolved": 0.13541666666666666,
+ "per_layer_median_width": {
+  "7": 0.8377084591068865,
+  "8": null,
+  "9": null,
+  "10": 0.18773410035155014,
+  "11": null,
+  "12": 0.13560614676570715,
+  "13": 0.17426283018370062,
+  "14": 0.16577527501309586
+ }
+}

@@ -62,9 +62,9 @@ controls, re-fit our own lenses to check stability, and asked one question:
    Chinese Wikipedia agrees with an English-fit lens at 0.99 in the deepest layers but
    only ~0.73 in the earliest.
 6. **The band has a functional correlate — strong, but it's mostly a family effect.** We
-   ran Anthropic's own causal experiments across 22 open models. Whether an injected concept
+   ran Anthropic's own causal experiments across 23 open models. Whether an injected concept
    *resolves in the model's verbalizable workspace* tracks the geometric band at **Spearman
-   ρ = +0.784** (n=22, p < 0.001), and steering-to-flip-output tracks it too (ρ = +0.759):
+   ρ = +0.786** (n=23, p < 0.001), and steering-to-flip-output tracks it too (ρ = +0.761):
    every Gemma fails to route the concept into the readout (share ≈ 0.000), while
    Qwen/Llama/OLMo route it cleanly (0.95–0.99). But two committed-in-advance
    confound-breakers show the band itself isn't the causal variable: `qwen2.5-7b-it` has
@@ -202,10 +202,10 @@ weak secondary hypothesis.)
 ## Finding 3: Post-training and language
 
 **The band predicts a behavior (geometry → function) — strongly, but it's mostly a family
-effect.** We ran Anthropic's own causal experiments across 22 open models and correlated
+effect.** We ran Anthropic's own causal experiments across 23 open models and correlated
 them with the geometric band. The cleanest link: whether interpolating a concept into a
 token makes that concept *resolve in the J-lens readout* (`share_span`) tracks `mid_sep` at
-**ρ = +0.784 (n = 22, p < 0.001)**, and steering-to-flip-output at ρ = +0.759 — every Gemma
+**ρ = +0.786 (n = 23, p < 0.001)**, and steering-to-flip-output at ρ = +0.761 — every Gemma
 at 0.000 (the concept never reaches the verbalizable workspace), Qwen/Llama/OLMo at
 0.95–0.99.
 
@@ -223,7 +223,7 @@ Finding 2), and the cross-model correlation is largely that Gemma-vs-rest split.
 "Band = workspace" is too strong; "band predicts the behavior across families, but a matched
 comparison pins the cause on family" is the defensible claim. The smaller n=13 sample had
 suggested a cleaner ρ=0.835; more data and the confound-breakers made it more honest. The
-weakest leg is all-or-none "ignition" sharpness (ρ = 0.47, n = 14, borderline), so we do
+weakest leg is all-or-none "ignition" sharpness (ρ = 0.46, n = 15, borderline), so we do
 *not* claim the workspace shows human-like ignition. One model, gemma-2-9b, is a separate
 oddity: steerable (swap 0.82) yet zero concept-resolution and near-zero band. Full numbers
 + method:
@@ -286,7 +286,7 @@ workspace result, the weaker the consciousness inference.
 
 - **Geometry vs. behavior — a correlation confounded by family.** `mid_sep` is our own CKA
   block-structure statistic, not Anthropic's full ablation battery. We tested the link
-  directly (above): concept-resolution tracks the band at ρ = 0.784 (n = 22, p<0.001), real
+  directly (above): concept-resolution tracks the band at ρ = 0.786 (n = 23, p<0.001), real
   reassurance that a low `mid_sep` usually reflects a functional difference. But two
   confound-breakers (a no-band Qwen that resolves, banded Gemmas that don't) and a matched-
   band pair (gemma-4-e4b 0.050→0.000 vs qwen3-4b 0.056→0.976) show the causal variable is

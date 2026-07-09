@@ -7,19 +7,24 @@ The geometry→function test. All runs on GPU (A6000 + A100); data in
 
 ## The headline: behavioral workspace signatures track the geometric band — but not perfectly
 
-N = **22** open models, band range 0.0007 → 0.21, 5 families (Gemma-2/3/4, Qwen2.5/3/3.5,
-Llama, OLMo, Pythia, GPT-2). Rank correlations with the geometric `mid_sep`:
+N = **23** open models, band range 0.0007 → 0.21, 6 families (Gemma-2/3/4, Qwen2.5/3/3.5,
+Llama, OLMo, GPT-OSS, Pythia, GPT-2). Rank correlations with the geometric `mid_sep`:
 
 | behavioral measure | what it tests | Spearman ρ vs mid_sep | n | sig. |
 |---|---|---|---|---|
-| **share_span** | does an injected concept *resolve* in the J-lens readout (A-vs-B) | **+0.784** | 22 | p<0.001 |
-| swap_best | can steering the J-space direction flip the output | **+0.759** | 20 | p<0.001 |
-| ign_sharp | is concept entry all-or-none (ignition), among resolvers | **+0.473** | 14 | p<0.05 |
+| **share_span** | does an injected concept *resolve* in the J-lens readout (A-vs-B) | **+0.786** | 23 | p<0.001 |
+| swap_best | can steering the J-space direction flip the output | **+0.761** | 21 | p<0.001 |
+| ign_sharp | is concept entry all-or-none (ignition), among resolvers | **+0.464** | 15 | p<0.05 |
+
+`gpt-oss-20b` (OpenAI MoE, band 0.076) is the cleanest *intermediate* point — share_span
+0.52, with only 13.5% of readouts resolving: a genuinely *partial* workspace, exactly where
+its moderate band predicts. It's the datum that shows the relationship isn't purely two
+clusters, and it's a sixth family that isn't Qwen or Gemma.
 
 **The correlation is real and highly significant** (share_span/swap clear p<0.001), but
 going higher n made it more honest, not more impressive: the n=13 snapshot (share_span
-0.835) was optimistic; at n=22 it's ρ≈0.78, a strong correlation, not a near-identity.
-(swap n=20: the two Gemma-4 base models don't answer the reportability prompt, so swap is
+0.835) was optimistic; at n=23 it's ρ≈0.79, a strong correlation, not a near-identity.
+(swap n=21: the two Gemma-4 base models don't answer the reportability prompt, so swap is
 undefined for them — their `share_span` from the interpolation test is valid and included.)
 
 ### ⚠️ The correlation is largely a FAMILY effect — two confound-breakers prove it
@@ -47,39 +52,41 @@ hosts a workspace our statistic under-scores; the H5 self-critique). Fair claim:
 strongly predicts the behavior across families, but a matched-band comparison shows family,
 not the band itself, is the causal variable.**
 
-**share_span is near-categorical by family:**
+**share_span splits mostly by family — two clusters plus a couple of intermediate points:**
 
 | models | share_span | band |
 |---|---|---|
 | all Gemma-2/3/4 (2b/9b/27b, 3-1b/4b/12b, 4-e2b/e4b) | **0.000** — never resolves | 0.0007–0.050 |
 | Qwen (incl. low-band qwen2.5-7b-it), Llama, OLMo | **0.95–0.99** — resolves cleanly | 0.003–0.21 |
+| GPT-OSS-20B (MoE) | **0.52** — partially resolves | 0.076 |
 | Pythia-70M (tiny) | 0.31 — barely | ~0 |
 
 ## Honest limits of the behavioral result (do not overclaim)
 
 - **Gemma-4 verbal-report is undefined (base models don't answer).** `gemma-4-e2b`/`e4b`
   emit empty greedy output for "Think of a {cat}. Answer in one word:", so swap/reportability
-  are undefined and excluded (swap n=20). Their **ignition `share_span` is valid** — it
+  are undefined and excluded (swap n=21). Their **ignition `share_span` is valid** — it
   interpolates embeddings and reads the J-lens, no answer needed — so the mirror test (banded
   Gemma → 0.000) stands. (Fixing the runner needed an embed-output-hook injection because
   Gemma-4's forward rejects arbitrary `inputs_embeds`; validated to reproduce qwen3-4b's
   number within bf16 noise.)
-- **Ignition is the weakest leg (ρ=0.473, n=14, borderline p<0.05).** It is only defined
-  for the 14 models whose concepts resolve at all, and it is not monotone within them
+- **Ignition is the weakest leg (ρ=0.464, n=15, borderline p<0.05).** It is only defined
+  for the 15 models whose concepts resolve at all, and it is not monotone within them
   (qwen3.5-0.8b band 0.146 → sharp 0.00; olmo-3 band 0.076 → sharp 0.39 are low outliers).
   Fair claim: "ignition sharpness weakly tracks the band among models that form one," not
   "the workspace shows human-like ignition."
-- **Steerability tracks the band** (ρ=0.759, n=20): most Gemmas have low swap (0.01–0.41),
+- **Steerability tracks the band** (ρ=0.761, n=21): most Gemmas have low swap (0.01–0.41),
   Qwen/Llama/OLMo high (0.79–1.00). gemma-2-9b (swap 0.82, zero concept-resolution, near-zero
   band) remains a genuine odd case — steerable yet nothing resolves.
 - **The correlate is closer to two clusters than a smooth gradient** (Gemma≈0 vs the rest
   ≈0.97), with qwen2.5-7b-it in the "resolves" cluster despite a Gemma-like band and the
   Gemma-4s in the "never resolves" cluster despite mid-range bands — the matched-band
   datum that makes this a family split, not a band gradient.
-- **n = 22** (share_span; swap n=20, ign_sharp n=14). Added this round: qwen2.5-7b-it,
+- **n = 23** (share_span; swap n=21, ign_sharp n=15). Added this round: qwen2.5-7b-it,
   qwen3-1.7b/8b, qwen3.5-0.8b/9b-pt, olmo-3-1025-7b (new family), gemma-3-12b (lowest band
   0.0007, never resolves — as predicted), gemma-4-e2b/e4b (banded Gemma → 0.000, the mirror
-  test). Still failing: gpt-oss-20b (mxfp4 — dequantize-to-bf16 retry in progress).
+  test), and gpt-oss-20b (now works via mxfp4→bf16 dequant; share_span 0.52 — the
+  intermediate point). No models remain failing.
 - Geometry↔function here is *correlational*; we did not run Anthropic's full ablation
   battery. `share_span`/`swap`/`ign` are our operationalizations of their experiments.
 
