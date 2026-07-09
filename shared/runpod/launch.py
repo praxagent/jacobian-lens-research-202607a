@@ -171,12 +171,14 @@ def cmd_create(args) -> None:
         podFindAndDeployOnDemand(input:$in){ id imageName machineId costPerHr }
     }"""
     inp = {
-        "cloudType": args.cloud, "gpuCount": 1, "gpuTypeId": args.gpu_id,
+        "cloudType": args.cloud, "gpuCount": args.gpu_count, "gpuTypeId": args.gpu_id,
         "name": args.name, "imageName": args.image,
         "containerDiskInGb": args.disk, "volumeInGb": 0,
         "minVcpuCount": 2, "minMemoryInGb": 8, "ports": "22/tcp", "dockerArgs": "",
         "env": [{"key": "PUBLIC_KEY", "value": _pubkey()}],
     }
+    if args.gpu_count > 1:
+        print(f"requesting {args.gpu_count}× {args.gpu_id}")
     d = _gql(q, {"in": inp})
     pod = d.get("podFindAndDeployOnDemand")
     if not pod:
@@ -222,6 +224,7 @@ def main() -> None:
     r.set_defaults(func=cmd_run)
     c = sub.add_parser("create")
     c.add_argument("--gpu-id", required=True, help="gpuType id (see `gpus`)")
+    c.add_argument("--gpu-count", type=int, default=1, help="GPUs per pod (multi-GPU sharding)")
     c.add_argument("--name", default="praxagent")
     c.add_argument("--image", default=DEFAULT_IMAGE_FIT)
     c.add_argument("--disk", type=int, default=40, help="container disk GB")
