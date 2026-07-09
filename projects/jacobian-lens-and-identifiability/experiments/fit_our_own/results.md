@@ -119,22 +119,45 @@ band number.** What we did get, all receipted (`logs397b/`):
   numerically identical (`tp_fit.py`, `tp_test.py`).
 
 **What blocked (the two-layer infra gap):**
-1. **`device_map` is compute-bound at this scale.** It shards layers but executes them
-   sequentially — 1 GPU active at a time. A 2-prompt fit didn't finish in 2.3 h; a
-   converged n=24 fit extrapolates to ~$175+ of idle-heavy H200 time. `device_map` buys
-   memory, not compute.
-2. **`tp_plan="auto"` breaks on this architecture.** transformers 5.13 ships no `_tp_plan`
-   for `qwen3_5_moe`; auto-sharding the projections makes the **linear-attention module's
-   reshape** fail (`shape '[2, 128, -1, 256]' invalid for input of size 16384`) — the
-   reshape expects config-shaped heads, but TP sharded the weights under it.
+1. **`device_map` is compute-bound at this scale — and our config made it far worse.** It
+   shards layers but executes them sequentially — 1 GPU active at a time. Worse (found in
+   the post-mortem): jlens.fit's cost is `n_prompts × ceil(d_model/dim_batch)` graph
+   traversals, and we ran `dim_batch=2` → **2,048 traversals per prompt** at d_model 4096.
+   The 2-prompt fit didn't finish in 2.3 h. `device_map` buys memory, not compute — and a
+   tiny dim_batch converts spare VRAM into pure overhead.
+2. **`tp_plan="auto"` breaks on this checkpoint.** ~~[CORRECTED 2026-07-09; the original
+   version of this section misattributed both details]~~ transformers 5.13 **does** ship a
+   `base_model_tp_plan` for `qwen3_5_moe` (the linear-attn entries were even fixed
+   upstream in PR #47041) — but it marks the **full-attention** `k_proj`/`v_proj` as
+   `colwise`, and this checkpoint has only **2 KV heads** (head_dim 256 → k width 512).
+   Colwise chunk-sharding is head-count-blind, so at world_size=8 each rank gets 64
+   features — a quarter of one head — and the config-shaped reshape at
+   `modeling_qwen3_5_moe.py:692` (`self.k_proj(hidden_states).view(hidden_shape)`, in
+   **full attention, not linear attention**) fails with
+   `shape '[2, 128, -1, 256]' invalid for input of size 16384`. The shipped plan needs
+   ws ≤ 2 (KV heads) but the 807 GB model needs ws ≥ 6 (memory) — **it can never run this
+   checkpoint**. Upstream considers the identical gpt-oss-120b failure by-design
+   (issue #40953); the supported path is a hand-written `tp_plan` dict
+   (`from_pretrained(tp_plan=<dict>)` fully replaces the class plan).
 
-**The affordable path forward (cheap-first, when we return):** the same linear-attention
-modules exist in **Qwen3.5-0.8B** — the reshape failure should reproduce across 2 GPUs at
-$0.44/hr. Hand-write a `tp_plan` that keeps linear-attn modules replicated and shards the
-MoE experts/MLPs, validate numerics against the single-GPU 0.1443, *then* re-acquire an
-8×H200 (~1 h of poll-looping; the re-download is only ~$9 at the ~1 GB/s we measured).
+**The affordable path forward:** fully worked out in [`GAMEPLAN-397B.md`](GAMEPLAN-397B.md)
+(post-mortem investigation, 2026-07-09). Headlines: (a) the traversal arithmetic shows
+**Nanda's ~1 h for n=4 on the same hardware is fully explained by a sane dim_batch (~16)
+under device_map-style sharding** — no exotic parallelism needed; our dim_batch=2 was the
+self-inflicted 16× overhead; (b) a **custom tp_plan dict is already written and
+CPU-validated** (forward parity 4.2e-7 vs single-process, retain_graph repeated-backward
+grad-norm parity, on a tiny qwen3_5_moe in the exact failing 1-KV-head regime):
+`colwise_gather_output` for the full-attention projections (KV-head-safe at any ws),
+`packed_colwise`/`rowwise`/`moe_tp_experts` for the 512-expert MLPs — experts are 96% of
+params, so the compute win lands where it matters; (c) validate on Qwen3.5-0.8B vs the
+known 0.1443, measure one traversal, extrapolate, *then* re-acquire the 8×H200 (~$9
+re-download).
 
 **Honest status:** our band statistic at 397B remains unmeasured; Nanda's replication
-stands as the only public frontier datum. Total spent on the attempt ≈ $110 of H200 time —
-most of it burned by validating *correctness* without measuring *throughput* first, now
-codified as a standing rule (CLAUDE.md lessons 7–10).
+stands as the only public frontier datum (with his own caveat: "didn't sanity check very
+hard", n=4). Total spent on the attempt ≈ $110 of H200 time — most of it burned by
+validating *correctness* without measuring *throughput* first, now codified as a standing
+rule (CLAUDE.md lessons 7–10). ⚠️ Our earlier "~$175 for n=24" extrapolation is
+inconsistent with the traversal arithmetic (it implies 0.7 s/traversal where the Nanda
+reconciliation suggests ~3.5 s); per-traversal time at 397B is bounded 0.7–3.3 s until
+re-measured — the game plan's step-4 measurement phase settles it before any spend.
