@@ -61,18 +61,21 @@ controls, re-fit our own lenses to check stability, and asked one question:
 5. **The transport is language-general deep, language-bound early:** a lens fit on
    Chinese Wikipedia agrees with an English-fit lens at 0.99 in the deepest layers but
    only ~0.73 in the earliest.
-6. **The band has a functional correlate — strong, but dissociable.** We ran Anthropic's
-   own causal experiments across 20 open models. Whether an injected concept actually
+6. **The band has a functional correlate — strong, but it's mostly a family effect.** We
+   ran Anthropic's own causal experiments across 22 open models. Whether an injected concept
    *resolves in the model's verbalizable workspace* tracks the geometric band at **Spearman
-   ρ = +0.735** (n=20, p < 0.001), and steering-to-flip-output tracks it equally
-   (ρ = +0.736); every Gemma (no band) fails to route the concept into the readout
-   (share ≈ 0.000), while Qwen/Llama/OLMo (band present) route it cleanly (0.95–0.99). So
-   the geometry predicts a behavior — **but the band is not *necessary* for it.** Our
-   sharpest test of that: `qwen2.5-7b-it` has essentially no geometric band (0.003, like a
-   Gemma) yet resolves concepts fully (0.965). Either the behavior tracks a family-level
-   factor the band only correlates with, or our band statistic under-measures a real
-   workspace. We predicted this model would *fail* like Gemma; it didn't, and we report the
-   miss. The bridge is real at ρ≈0.74 — not the near-identity a smaller sample suggested.
+   ρ = +0.784** (n=22, p < 0.001), and steering-to-flip-output tracks it too (ρ = +0.759):
+   every Gemma fails to route the concept into the readout (share ≈ 0.000), while
+   Qwen/Llama/OLMo route it cleanly (0.95–0.99). But two committed-in-advance
+   confound-breakers show the band itself isn't the causal variable: `qwen2.5-7b-it` has
+   *no* band (0.003, Gemma-like) yet resolves fully (0.965), and the *banded* Gemma-4s
+   (0.047–0.050) still resolve at 0.000. The clean tell is a matched-band pair — at the same
+   band, `gemma-4-e4b` (0.050) resolves 0.000 while `qwen3-4b` (0.056) resolves 0.976. Same
+   geometry, opposite behavior: the discriminating variable is *family*, not the band. So
+   the band strongly predicts the behavior across families (because Gemma uniquely lacks
+   both), but a matched comparison shows family — plausibly the same KD-pretraining that
+   suppresses the band — is what's causal. We predicted both breakers would go the other
+   way; they didn't, and we report the miss.
 
 Everything — code, per-model CSVs, fitted lenses, this post — is in
 [our repo](https://github.com/praxagent/research-and-replications), with a
@@ -198,29 +201,30 @@ weak secondary hypothesis.)
 
 ## Finding 3: Post-training and language
 
-**The band predicts a behavior (geometry → function) — strongly, but not perfectly.** We
-ran Anthropic's own causal experiments across 20 open models and correlated them with the
-geometric band. The cleanest link: whether interpolating a concept into a token makes that
-concept *resolve in the J-lens readout* (`share_span`) tracks `mid_sep` at
-**ρ = +0.735 (n = 20, p < 0.001)**, and steering-to-flip-output tracks it equally at
-ρ = +0.736 — every Gemma at 0.000 (the concept never reaches the verbalizable workspace),
-Qwen/Llama/OLMo at 0.95–0.99. Models with the band functionally route concepts into a
-workspace; models without it, mostly, don't.
+**The band predicts a behavior (geometry → function) — strongly, but it's mostly a family
+effect.** We ran Anthropic's own causal experiments across 22 open models and correlated
+them with the geometric band. The cleanest link: whether interpolating a concept into a
+token makes that concept *resolve in the J-lens readout* (`share_span`) tracks `mid_sep` at
+**ρ = +0.784 (n = 22, p < 0.001)**, and steering-to-flip-output at ρ = +0.759 — every Gemma
+at 0.000 (the concept never reaches the verbalizable workspace), Qwen/Llama/OLMo at
+0.95–0.99.
 
-**But we found the boundary of that claim, and it's the most interesting datum here.** We
-added `qwen2.5-7b-it` specifically to test whether the *band* or the model *family* drives
-the behavior — it's a Qwen with an almost non-existent geometric band (0.003, Gemma-range).
-We committed the prediction that it would fail to resolve, like Gemma. It resolved fully
-(0.965). So the geometric band is **sufficient-ish but not necessary**: this model has the
-function without the geometry. Two honest readings — the behavior tracks a family-level
-training factor the band merely correlates with, or our `mid_sep` statistic misses a real
-workspace whose geometry it doesn't key on. Either way, "band = workspace" is too strong;
-"band predicts workspace at ρ≈0.74, with clear exceptions" is the defensible claim. The
-smaller n=13 sample had suggested a cleaner ρ=0.835; more data made it more honest. The
-weakest leg is all-or-none "ignition" sharpness (ρ = 0.46, n = 14, borderline), so we do
-*not* claim the workspace shows human-like ignition. (Two Gemma-4 runs meant as the mirror
-test — banded Gemmas — produced empty output on a chat-template mismatch and are excluded,
-not counted as negatives; fixing that is open work.) One model, gemma-2-9b, is a separate
+**But two committed-in-advance confound-breakers show the band itself isn't the causal
+variable — and this is the most interesting result here.** We added `qwen2.5-7b-it` (a Qwen
+with an almost non-existent band, 0.003) and the *banded* Gemma-4s (0.047–0.050) precisely
+to separate "band drives behavior" from "family drives both." Both predictions missed, in
+the same direction: the no-band Qwen resolves fully (0.965), and the banded Gemmas still
+resolve at 0.000. The decisive datum is a matched-band pair — at essentially the same
+geometric band, `gemma-4-e4b` (0.050) resolves **0.000** while `qwen3-4b` (0.056) resolves
+**0.976**. Same geometry, opposite behavior: the discriminating variable is *family*, not
+`mid_sep`. So the ρ≈0.78 correlation is real but confounded — Gemma uniquely lacks both the
+band and the function (plausibly the same KD-pretraining that suppresses the band, from
+Finding 2), and the cross-model correlation is largely that Gemma-vs-rest split.
+"Band = workspace" is too strong; "band predicts the behavior across families, but a matched
+comparison pins the cause on family" is the defensible claim. The smaller n=13 sample had
+suggested a cleaner ρ=0.835; more data and the confound-breakers made it more honest. The
+weakest leg is all-or-none "ignition" sharpness (ρ = 0.47, n = 14, borderline), so we do
+*not* claim the workspace shows human-like ignition. One model, gemma-2-9b, is a separate
 oddity: steerable (swap 0.82) yet zero concept-resolution and near-zero band. Full numbers
 + method:
 [`experiments/behavioral/results.md`](https://github.com/praxagent/research-and-replications/blob/main/projects/jacobian-lens-and-identifiability/experiments/behavioral/results.md).
@@ -280,14 +284,15 @@ workspace result, the weaker the consciousness inference.
 
 ## Limitations, up front
 
-- **Geometry vs. behavior — partly addressed, with a known exception.** `mid_sep` is our
-  own CKA block-structure statistic, not Anthropic's full ablation battery. We tested the
-  link directly (above): concept-resolution tracks the band at ρ = 0.735 (n = 20, p<0.001),
-  real reassurance that a low `mid_sep` usually reflects a functional difference, not just
-  a measurement one. But it's *correlational*, the effect is clustered rather than smoothly
-  graded, and — crucially — `qwen2.5-7b-it` resolves concepts fully with a near-zero band,
-  so the band is not *necessary* for the behavior. We don't claim `mid_sep` is a complete
-  functional characterization of a "workspace"; it's a strong-but-imperfect proxy.
+- **Geometry vs. behavior — a correlation confounded by family.** `mid_sep` is our own CKA
+  block-structure statistic, not Anthropic's full ablation battery. We tested the link
+  directly (above): concept-resolution tracks the band at ρ = 0.784 (n = 22, p<0.001), real
+  reassurance that a low `mid_sep` usually reflects a functional difference. But two
+  confound-breakers (a no-band Qwen that resolves, banded Gemmas that don't) and a matched-
+  band pair (gemma-4-e4b 0.050→0.000 vs qwen3-4b 0.056→0.976) show the causal variable is
+  *family*, not the band itself — the two are entangled because Gemma uniquely lacks both.
+  We don't claim `mid_sep` is a complete functional characterization of a "workspace"; it's
+  a strong-but-confounded proxy.
 - **Sub-frontier scope.** Our ceiling is [PENDING-70B: ~70B]. Everything here could be a
   sub-frontier transient — the exact overclaim-from-limited-scale error we're auditing.
   Nanda's scaling data (a ~400B lens fit in ~1 hour on 8×H200s) makes the frontier check
