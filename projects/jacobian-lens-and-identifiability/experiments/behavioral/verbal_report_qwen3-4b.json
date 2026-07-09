@@ -1,0 +1,120 @@
+{
+ "slug": "qwen3-4b",
+ "hf_id": "Qwen/Qwen3-4B",
+ "band": [
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22
+ ],
+ "strengths": [
+  0.0,
+  2.0,
+  4.0,
+  8.0,
+  12.0
+ ],
+ "per_category": [
+  {
+   "category": "country",
+   "answer": "the",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "color",
+   "answer": "red",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "fruit",
+   "answer": "Apple",
+   "reported_in_band": false,
+   "n_candidates": 12
+  },
+  {
+   "category": "sport",
+   "answer": "football",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "instrument",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 8
+  },
+  {
+   "category": "planet",
+   "answer": "__",
+   "reported_in_band": false,
+   "n_candidates": 11
+  },
+  {
+   "category": "tree",
+   "answer": "What",
+   "reported_in_band": false,
+   "n_candidates": 11
+  },
+  {
+   "category": "bird",
+   "answer": "__",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "language",
+   "answer": "What",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "profession",
+   "answer": "teacher",
+   "reported_in_band": false,
+   "n_candidates": 12
+  },
+  {
+   "category": "beverage",
+   "answer": "water",
+   "reported_in_band": false,
+   "n_candidates": 10
+  },
+  {
+   "category": "organ",
+   "answer": "heart",
+   "reported_in_band": false,
+   "n_candidates": 10
+  },
+  {
+   "category": "city",
+   "answer": "__",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "river",
+   "answer": "the",
+   "reported_in_band": false,
+   "n_candidates": 7
+  }
+ ],
+ "reportability_hit_rate": 0.0,
+ "swap_success_rate": {
+  "0.0": 0.0,
+  "2.0": 0.9111111111111111,
+  "4.0": 0.9111111111111111,
+  "8.0": 0.9111111111111111,
+  "12.0": 0.9111111111111111
+ },
+ "swap_total": 135
+}

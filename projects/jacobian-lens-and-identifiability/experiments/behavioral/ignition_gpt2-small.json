@@ -13,6 +13,11 @@
  "median_transition_width": 0.6871081790951585,
  "frac_sharp_lt_0.25": 0.0,
  "n_curves": 24,
+ "n_readouts": 24,
+ "median_share_span": 0.9010522337590008,
+ "median_share_max": 0.9682459677419355,
+ "median_share_min": 0.06316489361702128,
+ "frac_readouts_resolved": 1.0,
  "per_layer_median_width": {
   "3": 0.6847734617739067,
   "4": 0.6877596400373172,

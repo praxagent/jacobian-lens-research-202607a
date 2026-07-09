@@ -102,6 +102,7 @@ def main() -> None:
         return hook
 
     per_layer_widths = {l: [] for l in band}
+    share_spans, share_max, share_min = [], [], []
     for a_word, b_word in pairs:
         a_id, b_id = single_id(tok, a_word), single_id(tok, b_word)
         for carrier in carriers:
@@ -131,9 +132,14 @@ def main() -> None:
             for h in handles:
                 h.remove()
             for l in band:
-                w = transition_width(alphas, np.array(shares[l]))
+                sh = np.array(shares[l])
+                w = transition_width(alphas, sh)
                 if not np.isnan(w):
                     per_layer_widths[l].append(w)
+                # diagnostic: the A-share RANGE actually swept (disambiguates
+                # "no ignition" from "readout never resolved / stayed ~0.5")
+                share_spans.append(float(sh.max() - sh.min()))
+                share_max.append(float(sh.max())); share_min.append(float(sh.min()))
 
     all_widths = [w for ws in per_layer_widths.values() for w in ws]
     result = {
@@ -142,6 +148,11 @@ def main() -> None:
         "median_transition_width": float(np.median(all_widths)) if all_widths else None,
         "frac_sharp_lt_0.25": float(np.mean([w < 0.25 for w in all_widths])) if all_widths else None,
         "n_curves": len(all_widths),
+        "n_readouts": len(share_spans),
+        "median_share_span": float(np.median(share_spans)) if share_spans else None,
+        "median_share_max": float(np.median(share_max)) if share_max else None,
+        "median_share_min": float(np.median(share_min)) if share_min else None,
+        "frac_readouts_resolved": (len(all_widths) / len(share_spans)) if share_spans else None,
         "per_layer_median_width": {str(l): (float(np.median(ws)) if ws else None)
                                    for l, ws in per_layer_widths.items()},
     }
