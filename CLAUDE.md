@@ -24,6 +24,25 @@ the research:
    Estimate the cost first (GPU $/hr × expected minutes) and say it out loud.
    Full compute inventory, access, and the snapshot/teardown cost analysis live in
    [`shared/infra.md`](shared/infra.md).
+5. **⚠️ Validate the code path on the CHEAPEST hardware that exercises it, BEFORE the
+   expensive run.** Never debug on an expensive node. A bug found at $0.98/hr is free;
+   the same bug on 8×H200 at ~$29/hr is money set on fire while you read a traceback.
+   This has already caught two real bugs (an incomplete fp16 lens loader; an
+   accelerate CPU-offload crash in the sharded fit) — each would have surfaced on the
+   costly node otherwise. Concretely:
+   - **Smoke every runner on CPU / a tiny model first** (e.g. gpt2) — proves imports,
+     shapes, and control behavior. Do this before ANY GPU pod.
+   - **Exercise the actual mechanism at minimum scale on the cheapest GPU that has it.**
+     Multi-GPU sharding? Validate on 2×A6000 ($0.98/hr) forcing a small model to split —
+     NOT on the 8×H200. Big fit? Prove the fit+readout pipeline on a small model first.
+   - **Make the cheap test a CORRECTNESS check, not just a smoke test** where possible:
+     reproduce a known number (e.g. our sharded qwen3-4b fit must land at Neuronpedia's
+     mid_sep ≈ 0.056). A green run that produces the wrong number is still a caught bug.
+   - **Mirror the expensive path exactly.** The cheap validation must use the *same code
+     path* (same sharding mode, same precision, same dtype) — a validation that skips the
+     risky part (e.g. tests CPU-offload when the real run is pure-GPU) validates nothing.
+   - Only after the cheap test passes: launch the expensive node, and terminate it the
+     instant the run (or a failure) is confirmed.
 5. **Get everything ready on CPU so a GPU run is short.** Code, configs, a CPU smoke of
    the exact command, and results plumbing should all be done *before* the pod starts —
    so the paid pod only does the irreducibly-GPU part.
