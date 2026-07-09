@@ -1,3 +1,12 @@
+# TODO — MOONSHOT ($150 budget approved 2026-07-09)
+
+TJ: fix the sharding bug (valuable in itself → own blog post), REPLICATE Nanda's 397B
+claim (builds respect), fix the 3 behavioral failures. "Shoot for the moon."
+LIVE: shard-fix pod 1wdh59m0886l28 (2×A6000 $0.98) — eager-attn fix, validate qwen3-4b
+sharded→0.056. behav-retry pod 9lbonb7xuwvo0k (A100 $1.39) — rerun qwen3-14b/qwen3.5-27b/
+gpt-oss with accelerate+xet-off. THEN 8×H200 for Qwen3.5-397B once sharding validated.
+Budget: ~$50-70 of $150. Both pods TERMINATE on done.
+
 # TODO — beef plan for the J-space audit (approved by TJ 2026-07-09)
 
 _The gap: we measure geometry, not behavior. These three upgrades convert the post from
