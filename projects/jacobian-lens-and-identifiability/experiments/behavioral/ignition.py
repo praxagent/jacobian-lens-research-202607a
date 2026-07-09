@@ -78,8 +78,8 @@ def main() -> None:
     dev = args.device if (args.device != "cuda" or torch.cuda.is_available()) else "cpu"
     hf_id, lens_file = resolve(args.slug)
     print(f"slug={args.slug} hf={hf_id} device={dev}")
-    hf = transformers.AutoModelForCausalLM.from_pretrained(
-        hf_id, torch_dtype=torch.bfloat16 if dev == "cuda" else torch.float32).to(dev).eval()
+    from _loader import load_hf_model  # handles mxfp4 dequant (gpt-oss) + torch shim
+    hf = load_hf_model(hf_id, dev)
     tok = transformers.AutoTokenizer.from_pretrained(hf_id)
     model = jlens.from_hf(hf, tok)
     lens = jlens.JacobianLens.load(hf_hub_download(REPO, filename=lens_file))
