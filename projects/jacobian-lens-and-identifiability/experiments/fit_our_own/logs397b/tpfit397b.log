@@ -1,0 +1,567 @@
+=== 397B TENSOR-PARALLEL FIT Thu Jul  9 15:58:10 UTC 2026 ===
+--- upgrade torch to 2.5 (needed for tp_plan) ---
+env 2.5.1+cu124 5.13.0
+GPUs=8
+--- TP SMOKE n=2 (does the MoE shard + go fast under TP?) Thu Jul  9 16:05:49 UTC 2026 ---
+W0709 16:05:50.800000 6408 torch/distributed/run.py:793] 
+W0709 16:05:50.800000 6408 torch/distributed/run.py:793] *****************************************
+W0709 16:05:50.800000 6408 torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0709 16:05:50.800000 6408 torch/distributed/run.py:793] *****************************************
+[TPFIT] world=8  model=Qwen/Qwen3.5-397B-A17B  tp_plan=auto  backbone=model.language_model
+[TPFIT] multimodal TP load: Qwen3_5MoeForConditionalGeneration
+Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s]Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 5242.04it/s]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s]Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 5436.63it/s]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   0%|          | 1/1371 [00:00<07:22,  3.10it/s]Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s]Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s]Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 5231.54it/s]
+Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 6341.72it/s]
+Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s]Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s][transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 5111.69it/s]
+Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 6337.84it/s]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s]Fetching 94 files:   0%|          | 0/94 [00:00<?, ?it/s][transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 5434.08it/s]
+Fetching 94 files: 100%|██████████| 94/94 [00:00<00:00, 5326.96it/s]
+Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s][transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   1%|          | 13/1371 [00:00<01:16, 17.74it/s]Loading weights:   0%|          | 2/1371 [00:00<03:42,  6.15it/s]Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   0%|          | 1/1371 [00:00<02:51,  7.97it/s]Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   0%|          | 0/1371 [00:00<?, ?it/s]Loading weights:   1%|          | 15/1371 [00:01<01:57, 11.57it/s]Loading weights:   0%|          | 1/1371 [00:00<03:20,  6.84it/s]Loading weights:   0%|          | 2/1371 [00:00<04:25,  5.16it/s]Loading weights:   0%|          | 2/1371 [00:00<05:48,  3.93it/s]Loading weights:   0%|          | 1/1371 [00:00<09:38,  2.37it/s]Loading weights:   0%|          | 1/1371 [00:00<10:15,  2.23it/s]Loading weights:   1%|          | 13/1371 [00:00<01:33, 14.60it/s]Loading weights:   0%|          | 1/1371 [00:00<08:17,  2.76it/s]Loading weights:   0%|          | 2/1371 [00:00<06:34,  3.47it/s]Loading weights:   4%|▎         | 50/1371 [00:01<00:34, 38.39it/s]Loading weights:   4%|▍         | 58/1371 [00:01<00:31, 41.07it/s]Loading weights:   1%|          | 15/1371 [00:01<02:07, 10.65it/s]Loading weights:   1%|          | 13/1371 [00:01<01:37, 13.95it/s]Loading weights:   1%|          | 13/1371 [00:01<01:38, 13.74it/s]Loading weights:   1%|          | 13/1371 [00:01<01:34, 14.35it/s]Loading weights:   1%|          | 13/1371 [00:01<01:39, 13.71it/s]Loading weights:   1%|          | 13/1371 [00:00<01:31, 14.80it/s]Loading weights:   2%|▏         | 32/1371 [00:01<00:49, 27.21it/s]Loading weights:   5%|▍         | 63/1371 [00:02<00:40, 32.03it/s]Loading weights:   1%|          | 15/1371 [00:01<02:02, 11.11it/s]Loading weights:   1%|          | 15/1371 [00:01<02:07, 10.60it/s]Loading weights:   1%|          | 13/1371 [00:01<02:08, 10.56it/s]Loading weights:   1%|          | 15/1371 [00:01<02:21,  9.59it/s]Loading weights:   1%|          | 15/1371 [00:01<02:21,  9.58it/s]Loading weights:   2%|▏         | 32/1371 [00:01<00:44, 29.86it/s]Loading weights:   6%|▌         | 83/1371 [00:02<00:31, 40.42it/s]Loading weights:   2%|▏         | 32/1371 [00:01<00:45, 29.16it/s]Loading weights:   1%|          | 15/1371 [00:01<02:16,  9.95it/s]Loading weights:   4%|▎         | 49/1371 [00:01<00:32, 41.10it/s]Loading weights:   4%|▎         | 49/1371 [00:01<00:34, 37.99it/s]Loading weights:   4%|▎         | 49/1371 [00:01<00:34, 38.11it/s]Loading weights:   4%|▎         | 49/1371 [00:01<00:33, 39.67it/s]Loading weights:   7%|▋         | 101/1371 [00:02<00:27, 45.44it/s]Loading weights:   4%|▎         | 49/1371 [00:01<00:32, 41.14it/s]Loading weights:   4%|▎         | 50/1371 [00:02<00:51, 25.49it/s]Loading weights:   4%|▍         | 54/1371 [00:02<00:43, 30.57it/s]Loading weights:   4%|▍         | 55/1371 [00:02<00:43, 30.30it/s]Loading weights:   4%|▍         | 56/1371 [00:02<00:42, 30.98it/s]Loading weights:   4%|▍         | 59/1371 [00:02<00:51, 25.54it/s]Loading weights:   1%|          | 14/1371 [00:02<03:51,  5.86it/s]Loading weights:   4%|▍         | 54/1371 [00:02<00:49, 26.84it/s]Loading weights:   9%|▊         | 119/1371 [00:03<00:32, 39.08it/s]Loading weights:   4%|▍         | 59/1371 [00:02<00:50, 26.09it/s]Loading weights:   4%|▍         | 59/1371 [00:02<00:48, 26.94it/s]Loading weights:   4%|▍         | 60/1371 [00:02<00:52, 25.18it/s]Loading weights:   4%|▍         | 61/1371 [00:02<00:49, 26.44it/s]Loading weights:   4%|▍         | 56/1371 [00:02<00:52, 24.84it/s]Loading weights:   9%|▉         | 128/1371 [00:03<00:33, 37.58it/s]Loading weights:   6%|▌         | 83/1371 [00:03<00:41, 30.78it/s]Loading weights:   4%|▍         | 61/1371 [00:02<00:56, 23.05it/s]Loading weights:   4%|▎         | 50/1371 [00:02<00:58, 22.39it/s]Loading weights:   6%|▌         | 83/1371 [00:03<00:40, 31.88it/s]Loading weights:  11%|█         | 152/1371 [00:04<00:27, 44.89it/s]Loading weights:   6%|▌         | 83/1371 [00:03<00:41, 31.09it/s]Loading weights:   6%|▌         | 83/1371 [00:03<00:41, 31.35it/s]Loading weights:   6%|▌         | 83/1371 [00:03<00:41, 30.73it/s]Loading weights:   7%|▋         | 100/1371 [00:03<00:36, 35.26it/s]Loading weights:   4%|▍         | 58/1371 [00:03<00:52, 25.16it/s]Loading weights:   6%|▌         | 83/1371 [00:03<00:37, 34.62it/s]Loading weights:   7%|▋         | 100/1371 [00:03<00:31, 40.51it/s]Loading weights:  12%|█▏        | 170/1371 [00:04<00:26, 44.65it/s]Loading weights:   7%|▋         | 101/1371 [00:03<00:36, 34.75it/s]Loading weights:   7%|▋         | 101/1371 [00:03<00:37, 34.31it/s]Loading weights:   7%|▋         | 101/1371 [00:03<00:36, 34.91it/s]Loading weights:   7%|▋         | 100/1371 [00:03<00:32, 39.25it/s]Loading weights:   8%|▊         | 104/1371 [00:04<00:46, 27.49it/s]Loading weights:   8%|▊         | 105/1371 [00:03<00:38, 32.98it/s]Loading weights:   4%|▍         | 61/1371 [00:03<01:09, 18.83it/s]Loading weights:   9%|▊         | 119/1371 [00:04<00:32, 38.50it/s]Loading weights:   9%|▊         | 119/1371 [00:03<00:32, 38.11it/s]Loading weights:   9%|▊         | 119/1371 [00:03<00:32, 38.28it/s]Loading weights:   9%|▉         | 127/1371 [00:04<00:31, 38.91it/s]Loading weights:   8%|▊         | 105/1371 [00:03<00:42, 29.98it/s]Loading weights:  14%|█▎        | 188/1371 [00:05<00:29, 39.55it/s]Loading weights:   9%|▊         | 119/1371 [00:04<00:38, 32.77it/s]Loading weights:   9%|▊         | 119/1371 [00:04<00:36, 33.98it/s]Loading weights:   9%|▉         | 128/1371 [00:04<00:32, 38.29it/s]Loading weights:   9%|▉         | 128/1371 [00:04<00:35, 35.33it/s]Loading weights:   9%|▊         | 119/1371 [00:04<00:34, 35.89it/s]Loading weights:  14%|█▍        | 197/1371 [00:05<00:28, 40.49it/s]Loading weights:   9%|▉         | 128/1371 [00:04<00:35, 34.53it/s]Loading weights:   9%|▉         | 128/1371 [00:04<00:35, 35.32it/s]Loading weights:   6%|▌         | 83/1371 [00:04<00:52, 24.54it/s]Loading weights:  11%|█         | 151/1371 [00:04<00:23, 51.42it/s]Loading weights:  10%|▉         | 133/1371 [00:04<00:47, 26.16it/s]Loading weights:   9%|▉         | 128/1371 [00:04<00:38, 32.15it/s]Loading weights:  16%|█▌        | 221/1371 [00:05<00:23, 48.32it/s]Loading weights:   7%|▋         | 101/1371 [00:04<00:41, 30.39it/s]Loading weights:  11%|█         | 151/1371 [00:04<00:24, 50.46it/s]Loading weights:  11%|█         | 152/1371 [00:04<00:31, 38.42it/s]Loading weights:  12%|█▏        | 159/1371 [00:04<00:29, 40.92it/s]Loading weights:   9%|▊         | 118/1371 [00:04<00:30, 41.48it/s]Loading weights:  11%|█         | 152/1371 [00:04<00:32, 37.36it/s]Loading weights:  17%|█▋        | 238/1371 [00:05<00:22, 50.91it/s]Loading weights:  11%|█         | 152/1371 [00:05<00:42, 28.70it/s]Loading weights:  12%|█▏        | 170/1371 [00:05<00:29, 40.60it/s]Loading weights:  12%|█▏        | 158/1371 [00:05<00:32, 37.67it/s]Loading weights:  11%|█         | 152/1371 [00:05<00:41, 29.70it/s]Loading weights:  18%|█▊        | 244/1371 [00:06<00:27, 41.04it/s]Loading weights:  12%|█▏        | 170/1371 [00:05<00:34, 34.39it/s]Loading weights:  12%|█▏        | 170/1371 [00:05<00:29, 40.13it/s]Loading weights:  12%|█▏        | 170/1371 [00:05<00:30, 38.97it/s]Loading weights:  14%|█▎        | 187/1371 [00:05<00:26, 44.61it/s]Loading weights:   9%|▉         | 125/1371 [00:05<00:43, 28.83it/s]Loading weights:  19%|█▊        | 257/1371 [00:06<00:24, 45.21it/s]Loading weights:  19%|█▉        | 265/1371 [00:06<00:22, 48.30it/s]Loading weights:  12%|█▏        | 170/1371 [00:05<00:35, 33.80it/s]Loading weights:  14%|█▎        | 188/1371 [00:05<00:31, 37.15it/s]Loading weights:  20%|█▉        | 271/1371 [00:06<00:25, 43.76it/s]Loading weights:  14%|█▍        | 194/1371 [00:05<00:31, 37.07it/s]Loading weights:  12%|█▏        | 170/1371 [00:06<00:45, 26.55it/s]Loading weights:  14%|█▍        | 197/1371 [00:05<00:28, 40.57it/s]Loading weights:  21%|██        | 289/1371 [00:06<00:16, 64.08it/s]Loading weights:  14%|█▎        | 188/1371 [00:06<00:33, 35.34it/s]Loading weights:  10%|▉         | 131/1371 [00:05<00:57, 21.56it/s]Loading weights:  14%|█▎        | 188/1371 [00:06<00:37, 31.33it/s]Loading weights:  14%|█▎        | 188/1371 [00:05<00:34, 33.92it/s]Loading weights:  15%|█▍        | 199/1371 [00:06<00:42, 27.62it/s]Loading weights:  22%|██▏       | 298/1371 [00:07<00:24, 43.62it/s]Loading weights:  16%|█▌        | 220/1371 [00:06<00:25, 44.41it/s]Loading weights:  16%|█▌        | 221/1371 [00:06<00:27, 42.10it/s]Loading weights:  14%|█▎        | 188/1371 [00:06<00:42, 28.03it/s]Loading weights:  14%|█▍        | 197/1371 [00:06<00:37, 31.00it/s]Loading weights:  14%|█▍        | 197/1371 [00:06<00:35, 32.68it/s]Loading weights:  17%|█▋        | 227/1371 [00:06<00:25, 45.59it/s]Loading weights:  14%|█▍        | 197/1371 [00:06<00:37, 30.94it/s]Loading weights:  11%|█         | 152/1371 [00:06<00:45, 26.57it/s]Loading weights:  22%|██▏       | 308/1371 [00:07<00:28, 37.64it/s]Loading weights:  16%|█▌        | 220/1371 [00:07<00:25, 44.65it/s]Loading weights:  16%|█▌        | 221/1371 [00:06<00:29, 39.37it/s]Loading weights:  17%|█▋        | 238/1371 [00:06<00:24, 46.00it/s]Loading weights:  17%|█▋        | 238/1371 [00:06<00:24, 47.20it/s]Loading weights:  16%|█▌        | 221/1371 [00:06<00:27, 41.66it/s]Loading weights:  18%|█▊        | 244/1371 [00:06<00:24, 45.18it/s]Loading weights:  12%|█▏        | 170/1371 [00:06<00:38, 31.04it/s]Loading weights:  17%|█▋        | 239/1371 [00:07<00:35, 32.32it/s]Loading weights:  18%|█▊        | 245/1371 [00:07<00:26, 42.12it/s]Loading weights:  16%|█▌        | 221/1371 [00:07<00:32, 34.95it/s]Loading weights:  24%|██▍       | 326/1371 [00:08<00:28, 37.24it/s]Loading weights:  17%|█▋        | 239/1371 [00:07<00:26, 42.35it/s]Loading weights:  19%|█▊        | 256/1371 [00:07<00:26, 42.84it/s]Loading weights:  24%|██▍       | 335/1371 [00:08<00:25, 40.55it/s]Loading weights:  17%|█▋        | 227/1371 [00:07<00:38, 30.08it/s]Loading weights:  19%|█▊        | 257/1371 [00:07<00:28, 38.45it/s]Loading weights:  17%|█▋        | 238/1371 [00:07<00:26, 42.80it/s]Loading weights:  19%|█▉        | 263/1371 [00:07<00:27, 40.88it/s]Loading weights:  18%|█▊        | 244/1371 [00:07<00:27, 40.36it/s]Loading weights:  17%|█▋        | 239/1371 [00:08<00:35, 31.95it/s]Loading weights:  19%|█▊        | 257/1371 [00:07<00:32, 34.41it/s]Loading weights:  26%|██▌       | 359/1371 [00:08<00:21, 46.16it/s]Loading weights:  14%|█▎        | 188/1371 [00:07<00:41, 28.44it/s]Loading weights:  19%|█▊        | 257/1371 [00:07<00:29, 38.31it/s]Loading weights:  19%|█▉        | 266/1371 [00:07<00:36, 30.18it/s]Loading weights:  19%|█▊        | 257/1371 [00:08<00:27, 41.24it/s]Loading weights:  27%|██▋       | 376/1371 [00:08<00:17, 56.11it/s]Loading weights:  19%|█▉        | 266/1371 [00:07<00:31, 35.17it/s]Loading weights:  19%|█▉        | 266/1371 [00:07<00:29, 37.85it/s]Loading weights:  20%|█▉        | 269/1371 [00:08<00:41, 26.55it/s]Loading weights:  14%|█▍        | 197/1371 [00:08<00:44, 26.59it/s]Loading weights:  19%|█▉        | 265/1371 [00:08<00:31, 35.02it/s]Loading weights:  19%|█▊        | 257/1371 [00:08<00:37, 29.82it/s]Loading weights:  21%|██        | 290/1371 [00:08<00:29, 36.55it/s]Loading weights:  21%|██        | 290/1371 [00:08<00:27, 39.34it/s]Loading weights:  28%|██▊       | 383/1371 [00:09<00:24, 40.07it/s]Loading weights:  22%|██▏       | 308/1371 [00:08<00:21, 48.51it/s]Loading weights:  21%|██        | 290/1371 [00:08<00:28, 38.06it/s]Loading weights:  20%|█▉        | 270/1371 [00:08<00:35, 30.88it/s]Loading weights:  21%|██        | 290/1371 [00:08<00:24, 44.03it/s]Loading weights:  19%|█▉        | 266/1371 [00:08<00:36, 30.33it/s]Loading weights:  29%|██▉       | 395/1371 [00:09<00:24, 40.40it/s]Loading weights:  22%|██▏       | 308/1371 [00:08<00:27, 38.91it/s]Loading weights:  21%|██        | 290/1371 [00:08<00:25, 42.95it/s]Loading weights:  22%|██▏       | 308/1371 [00:08<00:22, 46.74it/s]Loading weights:  22%|██▏       | 308/1371 [00:08<00:27, 38.80it/s]Loading weights:  29%|██▉       | 404/1371 [00:09<00:26, 36.79it/s]Loading weights:  16%|█▌        | 221/1371 [00:08<00:40, 28.15it/s]Loading weights:  21%|██        | 290/1371 [00:09<00:31, 34.19it/s]Loading weights:  24%|██▍       | 326/1371 [00:09<00:27, 37.99it/s]Loading weights:  22%|██▏       | 307/1371 [00:09<00:23, 45.18it/s]Loading weights:  17%|█▋        | 239/1371 [00:09<00:33, 34.18it/s]Loading weights:  24%|██▍       | 326/1371 [00:09<00:29, 35.38it/s]Loading weights:  24%|██▍       | 335/1371 [00:09<00:28, 36.72it/s]Loading weights:  22%|██▏       | 308/1371 [00:09<00:28, 36.77it/s]Loading weights:  24%|██▍       | 326/1371 [00:09<00:27, 37.58it/s]Loading weights:  23%|██▎       | 313/1371 [00:09<00:31, 34.08it/s]Loading weights:  24%|██▍       | 326/1371 [00:09<00:31, 33.25it/s]Loading weights:  31%|███       | 428/1371 [00:10<00:27, 34.53it/s]Loading weights:  19%|█▊        | 257/1371 [00:09<00:30, 36.34it/s]Loading weights:  24%|██▍       | 335/1371 [00:09<00:26, 39.13it/s]Loading weights:  24%|██▍       | 335/1371 [00:09<00:31, 33.29it/s]Loading weights:  24%|██▍       | 326/1371 [00:09<00:25, 40.85it/s]Loading weights:  33%|███▎      | 446/1371 [00:10<00:21, 42.94it/s]Loading weights:  26%|██▌       | 359/1371 [00:09<00:20, 49.47it/s]Loading weights:  19%|█▉        | 265/1371 [00:09<00:32, 34.26it/s]Loading weights:  24%|██▍       | 334/1371 [00:10<00:27, 38.29it/s]Loading weights:  26%|██▌       | 359/1371 [00:10<00:26, 37.81it/s]Loading weights:  26%|██▌       | 359/1371 [00:10<00:22, 44.41it/s]Loading weights:  26%|██▌       | 359/1371 [00:09<00:21, 46.79it/s]Loading weights:  27%|██▋       | 376/1371 [00:10<00:16, 58.98it/s]Loading weights:  27%|██▋       | 376/1371 [00:10<00:20, 48.98it/s]Loading weights:  27%|██▋       | 376/1371 [00:10<00:20, 49.64it/s]Loading weights:  34%|███▍      | 464/1371 [00:11<00:20, 44.08it/s]Loading weights:  24%|██▍       | 326/1371 [00:10<00:37, 28.01it/s]Loading weights:  25%|██▍       | 339/1371 [00:10<00:33, 30.72it/s]Loading weights:  27%|██▋       | 376/1371 [00:10<00:20, 48.44it/s]Loading weights:  20%|█▉        | 269/1371 [00:10<00:41, 26.41it/s]Loading weights:  28%|██▊       | 385/1371 [00:10<00:23, 42.79it/s]Loading weights:  24%|██▍       | 335/1371 [00:10<00:33, 31.05it/s]Loading weights:  35%|███▍      | 473/1371 [00:11<00:21, 41.22it/s]Loading weights:  28%|██▊       | 384/1371 [00:10<00:24, 40.34it/s]Loading weights:  28%|██▊       | 382/1371 [00:10<00:23, 41.73it/s]Loading weights:  28%|██▊       | 382/1371 [00:10<00:23, 42.01it/s]Loading weights:  29%|██▉       | 395/1371 [00:11<00:25, 37.56it/s]Loading weights:  26%|██▌       | 359/1371 [00:10<00:31, 31.88it/s]Loading weights:  21%|██        | 290/1371 [00:10<00:34, 31.20it/s]Loading weights:  29%|██▉       | 395/1371 [00:10<00:24, 40.52it/s]Loading weights:  29%|██▉       | 395/1371 [00:11<00:25, 38.98it/s]Loading weights:  29%|██▉       | 395/1371 [00:11<00:30, 32.14it/s]Loading weights:  26%|██▌       | 359/1371 [00:11<00:28, 35.61it/s]Loading weights:  36%|███▋      | 497/1371 [00:12<00:20, 41.92it/s]Loading weights:  29%|██▉       | 404/1371 [00:11<00:27, 34.67it/s]Loading weights:  29%|██▉       | 404/1371 [00:11<00:26, 36.08it/s]Loading weights:  22%|██▏       | 308/1371 [00:11<00:30, 35.01it/s]Loading weights:  27%|██▋       | 377/1371 [00:11<00:27, 35.61it/s]Loading weights:  29%|██▉       | 404/1371 [00:11<00:27, 35.70it/s]Loading weights:  29%|██▉       | 404/1371 [00:11<00:32, 29.38it/s]Loading weights:  38%|███▊      | 515/1371 [00:12<00:19, 43.55it/s]Loading weights:  29%|██▉       | 395/1371 [00:11<00:26, 36.94it/s]Loading weights:  39%|███▉      | 533/1371 [00:12<00:18, 45.88it/s]Loading weights:  31%|███       | 428/1371 [00:11<00:24, 38.38it/s]Loading weights:  31%|███       | 428/1371 [00:11<00:27, 34.22it/s]Loading weights:  29%|██▉       | 404/1371 [00:12<00:24, 39.72it/s]Loading weights:  27%|██▋       | 377/1371 [00:12<00:35, 28.10it/s]Loading weights:  31%|███       | 428/1371 [00:11<00:27, 33.96it/s]Loading weights:  31%|███       | 428/1371 [00:12<00:28, 33.48it/s]Loading weights:  40%|███▉      | 542/1371 [00:13<00:20, 41.00it/s]Loading weights:  24%|██▍       | 326/1371 [00:12<00:37, 27.93it/s]Loading weights:  29%|██▉       | 395/1371 [00:12<00:29, 33.58it/s]Loading weights:  33%|███▎      | 446/1371 [00:12<00:23, 40.16it/s]Loading weights:  33%|███▎      | 446/1371 [00:12<00:24, 37.32it/s]Loading weights:  33%|███▎      | 446/1371 [00:12<00:25, 35.82it/s]Loading weights:  33%|███▎      | 446/1371 [00:12<00:23, 39.94it/s]Loading weights:  30%|███       | 413/1371 [00:12<00:21, 44.50it/s]Loading weights:  31%|███       | 428/1371 [00:12<00:24, 39.00it/s]Loading weights:  34%|███▍      | 464/1371 [00:12<00:20, 44.65it/s]Loading weights:  24%|██▍       | 335/1371 [00:12<00:39, 26.55it/s]Loading weights:  34%|███▍      | 464/1371 [00:12<00:20, 43.98it/s]Loading weights:  34%|███▍      | 464/1371 [00:12<00:20, 44.96it/s]Loading weights:  41%|████▏     | 566/1371 [00:13<00:19, 40.55it/s]Loading weights:  34%|███▍      | 472/1371 [00:12<00:19, 46.97it/s]Loading weights:  34%|███▍      | 472/1371 [00:12<00:18, 47.96it/s]Loading weights:  34%|███▍      | 464/1371 [00:12<00:24, 37.03it/s]Loading weights:  35%|███▍      | 473/1371 [00:12<00:21, 41.30it/s]Loading weights:  33%|███▎      | 446/1371 [00:13<00:22, 40.58it/s]Loading weights:  36%|███▌      | 496/1371 [00:13<00:14, 61.41it/s]Loading weights:  35%|███▍      | 478/1371 [00:12<00:21, 40.69it/s]Loading weights:  35%|███▍      | 478/1371 [00:13<00:22, 39.58it/s]Loading weights:  35%|███▍      | 473/1371 [00:13<00:25, 35.29it/s]Loading weights:  43%|████▎     | 584/1371 [00:14<00:18, 41.49it/s]Loading weights:  31%|███       | 427/1371 [00:13<00:29, 32.05it/s]Loading weights:  44%|████▍     | 602/1371 [00:14<00:15, 50.81it/s]Loading weights:  44%|████▍     | 610/1371 [00:14<00:14, 51.35it/s]Loading weights:  36%|███▋      | 497/1371 [00:13<00:20, 41.84it/s]Loading weights:  37%|███▋      | 507/1371 [00:13<00:18, 45.54it/s]Loading weights:  26%|██▌       | 359/1371 [00:13<00:38, 26.27it/s]Loading weights:  36%|███▋      | 497/1371 [00:13<00:23, 37.87it/s]Loading weights:  36%|███▋      | 497/1371 [00:13<00:23, 37.87it/s]Loading weights:  45%|████▍     | 616/1371 [00:14<00:16, 45.39it/s]Loading weights:  27%|██▋       | 376/1371 [00:13<00:31, 32.06it/s]Loading weights:  38%|███▊      | 515/1371 [00:14<00:25, 33.38it/s]Loading weights:  46%|████▌     | 634/1371 [00:15<00:15, 47.16it/s]Loading weights:  34%|███▍      | 464/1371 [00:14<00:32, 28.05it/s]Loading weights:  28%|██▊       | 380/1371 [00:14<00:33, 29.27it/s]Loading weights:  32%|███▏      | 434/1371 [00:14<00:43, 21.46it/s]Loading weights:  38%|███▊      | 515/1371 [00:14<00:23, 36.49it/s]Loading weights:  38%|███▊      | 515/1371 [00:14<00:23, 36.29it/s]Loading weights:  38%|███▊      | 515/1371 [00:14<00:23, 35.71it/s]Loading weights:  36%|███▋      | 497/1371 [00:14<00:18, 46.86it/s]Loading weights:  47%|████▋     | 639/1371 [00:15<00:17, 42.78it/s]Loading weights:  39%|███▉      | 533/1371 [00:14<00:17, 47.44it/s]Loading weights:  39%|███▉      | 533/1371 [00:14<00:21, 39.19it/s]Loading weights:  39%|███▉      | 541/1371 [00:14<00:16, 49.81it/s]Loading weights:  39%|███▉      | 533/1371 [00:14<00:21, 39.72it/s]Loading weights:  39%|███▉      | 533/1371 [00:14<00:21, 39.74it/s]Loading weights:  48%|████▊     | 653/1371 [00:15<00:15, 45.02it/s]Loading weights:  34%|███▍      | 464/1371 [00:15<00:29, 30.34it/s]Loading weights:  38%|███▊      | 515/1371 [00:14<00:19, 44.52it/s]Loading weights:  40%|███▉      | 542/1371 [00:14<00:22, 36.31it/s]Loading weights:  40%|████      | 549/1371 [00:14<00:20, 39.91it/s]Loading weights:  40%|███▉      | 542/1371 [00:14<00:21, 38.20it/s]Loading weights:  40%|███▉      | 542/1371 [00:14<00:22, 37.49it/s]Loading weights:  29%|██▉       | 395/1371 [00:14<00:39, 24.92it/s]Loading weights:  29%|██▉       | 403/1371 [00:14<00:33, 28.89it/s]Loading weights:  39%|███▉      | 532/1371 [00:15<00:18, 46.43it/s]Loading weights:  41%|████      | 565/1371 [00:15<00:18, 44.37it/s]Loading weights:  49%|████▉     | 670/1371 [00:16<00:18, 36.97it/s]Loading weights:  39%|███▉      | 540/1371 [00:15<00:18, 45.81it/s]Loading weights:  49%|████▉     | 675/1371 [00:16<00:18, 37.19it/s]Loading weights:  35%|███▍      | 473/1371 [00:15<00:35, 25.16it/s]Loading weights:  41%|████▏     | 566/1371 [00:15<00:19, 40.62it/s]Loading weights:  41%|████▏     | 566/1371 [00:15<00:20, 39.98it/s]Loading weights:  30%|██▉       | 408/1371 [00:15<00:39, 24.10it/s]Loading weights:  41%|████▏     | 566/1371 [00:15<00:23, 33.71it/s]Loading weights:  42%|████▏     | 571/1371 [00:15<00:24, 32.91it/s]Loading weights:  50%|████▉     | 680/1371 [00:16<00:20, 33.71it/s]Loading weights:  40%|███▉      | 547/1371 [00:15<00:23, 35.79it/s]Loading weights:  43%|████▎     | 584/1371 [00:15<00:18, 41.85it/s]Loading weights:  43%|████▎     | 584/1371 [00:15<00:20, 38.78it/s]Loading weights:  43%|████▎     | 584/1371 [00:15<00:18, 43.38it/s]Loading weights:  43%|████▎     | 584/1371 [00:15<00:18, 42.28it/s]Loading weights:  41%|████▏     | 566/1371 [00:15<00:19, 41.91it/s]Loading weights:  36%|███▋      | 497/1371 [00:16<00:30, 28.79it/s]Loading weights:  44%|████▍     | 602/1371 [00:16<00:18, 40.50it/s]Loading weights:  31%|███       | 428/1371 [00:16<00:37, 25.06it/s]Loading weights:  44%|████▍     | 602/1371 [00:16<00:18, 42.54it/s]Loading weights:  44%|████▍     | 602/1371 [00:16<00:18, 41.82it/s]Loading weights:  38%|███▊      | 515/1371 [00:16<00:23, 36.22it/s]Loading weights:  44%|████▍     | 602/1371 [00:16<00:20, 37.66it/s]Loading weights:  44%|████▍     | 610/1371 [00:16<00:19, 39.99it/s]Loading weights:  51%|█████▏    | 704/1371 [00:17<00:22, 29.48it/s]Loading weights:  33%|███▎      | 446/1371 [00:16<00:28, 32.74it/s]Loading weights:  45%|████▍     | 611/1371 [00:16<00:19, 38.42it/s]Loading weights:  53%|█████▎    | 722/1371 [00:17<00:15, 41.89it/s]Loading weights:  45%|████▍     | 611/1371 [00:16<00:20, 37.53it/s]Loading weights:  43%|████▎     | 584/1371 [00:16<00:21, 37.26it/s]Loading weights:  39%|███▉      | 533/1371 [00:17<00:22, 37.40it/s]Loading weights:  44%|████▍     | 602/1371 [00:16<00:16, 47.62it/s]Loading weights:  45%|████▍     | 615/1371 [00:16<00:23, 32.37it/s]Loading weights:  45%|████▍     | 611/1371 [00:16<00:25, 29.93it/s]Loading weights:  39%|███▉      | 541/1371 [00:17<00:20, 40.12it/s]Loading weights:  54%|█████▍    | 740/1371 [00:17<00:13, 47.44it/s]Loading weights:  46%|████▋     | 635/1371 [00:16<00:17, 42.11it/s]Loading weights:  46%|████▋     | 635/1371 [00:17<00:17, 42.53it/s]Loading weights:  34%|███▍      | 464/1371 [00:16<00:28, 31.59it/s]Loading weights:  46%|████▋     | 635/1371 [00:17<00:19, 37.30it/s]Loading weights:  46%|████▋     | 635/1371 [00:17<00:19, 37.05it/s]Loading weights:  55%|█████▍    | 748/1371 [00:18<00:16, 38.06it/s]Loading weights:  45%|████▍     | 611/1371 [00:17<00:21, 35.06it/s]Loading weights:  48%|████▊     | 653/1371 [00:17<00:15, 46.02it/s]Loading weights:  40%|███▉      | 547/1371 [00:17<00:28, 28.72it/s]Loading weights:  46%|████▌     | 634/1371 [00:17<00:13, 52.96it/s]Loading weights:  48%|████▊     | 653/1371 [00:17<00:16, 44.26it/s]Loading weights:  48%|████▊     | 653/1371 [00:17<00:16, 43.88it/s]Loading weights:  55%|█████▍    | 754/1371 [00:18<00:17, 34.71it/s]Loading weights:  35%|███▍      | 473/1371 [00:17<00:32, 27.98it/s]Loading weights:  48%|████▊     | 653/1371 [00:17<00:17, 40.46it/s]Loading weights:  47%|████▋     | 644/1371 [00:17<00:15, 46.55it/s]Loading weights:  49%|████▉     | 671/1371 [00:17<00:15, 44.82it/s]Loading weights:  49%|████▉     | 671/1371 [00:17<00:15, 43.94it/s]Loading weights:  56%|█████▋    | 773/1371 [00:18<00:13, 42.90it/s]Loading weights:  49%|████▉     | 671/1371 [00:17<00:15, 43.76it/s]Loading weights:  41%|████▏     | 566/1371 [00:18<00:26, 30.44it/s]Loading weights:  50%|████▉     | 680/1371 [00:17<00:16, 42.38it/s]Loading weights:  50%|████▉     | 680/1371 [00:18<00:16, 41.68it/s]Loading weights:  49%|████▉     | 671/1371 [00:18<00:18, 37.10it/s]Loading weights:  44%|████▍     | 601/1371 [00:18<00:15, 50.71it/s]Loading weights:  48%|████▊     | 653/1371 [00:18<00:19, 36.54it/s]Loading weights:  49%|████▉     | 671/1371 [00:18<00:13, 51.31it/s]Loading weights:  50%|████▉     | 680/1371 [00:18<00:17, 39.07it/s]Loading weights:  36%|███▋      | 497/1371 [00:18<00:30, 28.56it/s]Loading weights:  50%|████▉     | 680/1371 [00:18<00:19, 34.66it/s]Loading weights:  51%|█████▏    | 704/1371 [00:18<00:14, 46.36it/s]Loading weights:  58%|█████▊    | 791/1371 [00:19<00:17, 33.73it/s]Loading weights:  38%|███▊      | 515/1371 [00:18<00:25, 33.80it/s]Loading weights:  59%|█████▉    | 809/1371 [00:19<00:12, 43.42it/s]Loading weights:  51%|█████▏    | 704/1371 [00:18<00:17, 39.09it/s]Loading weights:  44%|████▍     | 608/1371 [00:19<00:22, 34.67it/s]Loading weights:  51%|█████▏    | 704/1371 [00:18<00:15, 42.63it/s]Loading weights:  51%|█████▏    | 704/1371 [00:18<00:16, 41.13it/s]Loading weights:  50%|████▉     | 681/1371 [00:18<00:20, 33.34it/s]Loading weights:  60%|█████▉    | 818/1371 [00:19<00:13, 40.74it/s]Loading weights:  53%|█████▎    | 721/1371 [00:19<00:13, 47.30it/s]Loading weights:  53%|█████▎    | 722/1371 [00:18<00:15, 41.72it/s]Loading weights:  53%|█████▎    | 722/1371 [00:19<00:16, 39.65it/s]Loading weights:  39%|███▉      | 533/1371 [00:19<00:25, 33.01it/s]Loading weights:  51%|█████▏    | 704/1371 [00:19<00:15, 42.55it/s]Loading weights:  45%|████▍     | 614/1371 [00:19<00:27, 27.46it/s]Loading weights:  61%|██████▏   | 841/1371 [00:20<00:10, 49.53it/s]Loading weights:  53%|█████▎    | 727/1371 [00:19<00:16, 38.87it/s]Loading weights:  53%|█████▎    | 722/1371 [00:19<00:17, 37.00it/s]Loading weights:  54%|█████▍    | 740/1371 [00:19<00:15, 41.05it/s]Loading weights:  54%|█████▍    | 740/1371 [00:19<00:15, 41.00it/s]Loading weights:  54%|█████▍    | 740/1371 [00:19<00:14, 44.88it/s]Loading weights:  62%|██████▏   | 847/1371 [00:20<00:13, 39.80it/s]Loading weights:  55%|█████▍    | 749/1371 [00:19<00:15, 40.33it/s]Loading weights:  55%|█████▍    | 749/1371 [00:19<00:15, 41.09it/s]Loading weights:  54%|█████▍    | 740/1371 [00:19<00:16, 37.36it/s]Loading weights:  40%|███▉      | 542/1371 [00:19<00:29, 28.12it/s]Loading weights:  53%|█████▎    | 722/1371 [00:19<00:17, 36.71it/s]Loading weights:  63%|██████▎   | 860/1371 [00:20<00:12, 41.53it/s]Loading weights:  54%|█████▍    | 740/1371 [00:19<00:13, 48.37it/s]Loading weights:  46%|████▋     | 635/1371 [00:20<00:26, 28.28it/s]Loading weights:  55%|█████▍    | 749/1371 [00:20<00:16, 38.27it/s]Loading weights:  55%|█████▍    | 749/1371 [00:20<00:16, 36.85it/s]Loading weights:  56%|█████▋    | 773/1371 [00:20<00:12, 47.47it/s]Loading weights:  48%|████▊     | 653/1371 [00:20<00:19, 36.70it/s]Loading weights:  56%|█████▋    | 773/1371 [00:20<00:13, 43.72it/s]Loading weights:  56%|█████▋    | 772/1371 [00:20<00:11, 50.45it/s]Loading weights:  41%|████▏     | 566/1371 [00:20<00:24, 33.41it/s]Loading weights:  64%|██████▍   | 878/1371 [00:21<00:11, 42.04it/s]Loading weights:  58%|█████▊    | 790/1371 [00:20<00:10, 54.93it/s]Loading weights:  55%|█████▍    | 749/1371 [00:20<00:16, 37.65it/s]Loading weights:  43%|████▎     | 584/1371 [00:20<00:19, 40.02it/s]Loading weights:  56%|█████▋    | 773/1371 [00:20<00:15, 39.10it/s]Loading weights:  56%|█████▋    | 772/1371 [00:20<00:10, 55.28it/s]Loading weights:  57%|█████▋    | 779/1371 [00:20<00:14, 39.90it/s]Loading weights:  49%|████▉     | 671/1371 [00:21<00:19, 36.32it/s]Loading weights:  58%|█████▊    | 791/1371 [00:20<00:14, 39.77it/s]Loading weights:  58%|█████▊    | 798/1371 [00:20<00:14, 39.80it/s]Loading weights:  65%|██████▍   | 887/1371 [00:21<00:15, 31.60it/s]Loading weights:  57%|█████▋    | 783/1371 [00:20<00:12, 45.62it/s]Loading weights:  50%|████▉     | 679/1371 [00:21<00:20, 34.21it/s]Loading weights:  58%|█████▊    | 791/1371 [00:21<00:15, 36.70it/s]Loading weights:  58%|█████▊    | 791/1371 [00:21<00:14, 39.45it/s]Loading weights:  44%|████▍     | 602/1371 [00:20<00:20, 37.78it/s]Loading weights:  59%|█████▉    | 809/1371 [00:21<00:13, 42.30it/s]Loading weights:  66%|██████▋   | 911/1371 [00:22<00:10, 45.22it/s]Loading weights:  59%|█████▉    | 809/1371 [00:21<00:15, 36.05it/s]Loading weights:  44%|████▍     | 610/1371 [00:21<00:19, 39.06it/s]Loading weights:  59%|█████▉    | 809/1371 [00:21<00:13, 42.12it/s]Loading weights:  59%|█████▉    | 809/1371 [00:21<00:12, 44.16it/s]Loading weights:  60%|█████▉    | 818/1371 [00:21<00:13, 40.81it/s]Loading weights:  58%|█████▊    | 791/1371 [00:21<00:15, 37.68it/s]Loading weights:  60%|█████▉    | 818/1371 [00:21<00:14, 39.15it/s]Loading weights:  68%|██████▊   | 929/1371 [00:22<00:09, 48.56it/s]Loading weights:  50%|████▉     | 684/1371 [00:21<00:27, 25.29it/s]Loading weights:  59%|█████▉    | 809/1371 [00:21<00:12, 46.77it/s]Loading weights:  60%|█████▉    | 818/1371 [00:21<00:13, 40.60it/s]Loading weights:  61%|██████▏   | 842/1371 [00:21<00:11, 46.37it/s]Loading weights:  69%|██████▉   | 947/1371 [00:22<00:09, 46.72it/s]Loading weights:  45%|████▍     | 615/1371 [00:21<00:29, 25.55it/s]Loading weights:  61%|██████▏   | 842/1371 [00:21<00:12, 41.30it/s]Loading weights:  60%|█████▉    | 818/1371 [00:21<00:18, 30.68it/s]Loading weights:  60%|█████▉    | 818/1371 [00:22<00:15, 35.34it/s]Loading weights:  51%|█████▏    | 704/1371 [00:22<00:23, 28.86it/s]Loading weights:  61%|██████▏   | 842/1371 [00:22<00:11, 44.53it/s]Loading weights:  63%|██████▎   | 859/1371 [00:22<00:11, 45.05it/s]Loading weights:  63%|██████▎   | 860/1371 [00:22<00:12, 41.64it/s]Loading weights:  53%|█████▎    | 722/1371 [00:22<00:17, 37.11it/s]Loading weights:  46%|████▋     | 635/1371 [00:22<00:23, 31.39it/s]Loading weights:  61%|██████▏   | 842/1371 [00:22<00:13, 38.73it/s]Loading weights:  63%|██████▎   | 865/1371 [00:22<00:11, 44.62it/s]Loading weights:  70%|██████▉   | 956/1371 [00:23<00:11, 35.47it/s]Loading weights:  61%|██████▏   | 842/1371 [00:22<00:12, 41.83it/s]Loading weights:  48%|████▊     | 653/1371 [00:22<00:17, 41.34it/s]Loading weights:  63%|██████▎   | 860/1371 [00:22<00:11, 43.00it/s]Loading weights:  71%|███████▏  | 980/1371 [00:23<00:08, 46.79it/s]Loading weights:  64%|██████▍   | 878/1371 [00:22<00:11, 41.39it/s]Loading weights:  63%|██████▎   | 860/1371 [00:22<00:13, 37.66it/s]Loading weights:  63%|██████▎   | 860/1371 [00:22<00:11, 44.49it/s]Loading weights:  64%|██████▍   | 878/1371 [00:22<00:13, 36.58it/s]Loading weights:  64%|██████▍   | 878/1371 [00:23<00:10, 48.06it/s]Loading weights:  65%|██████▍   | 887/1371 [00:23<00:12, 39.50it/s]Loading weights:  54%|█████▍    | 740/1371 [00:23<00:19, 32.14it/s]Loading weights:  64%|██████▍   | 878/1371 [00:23<00:12, 40.66it/s]Loading weights:  65%|██████▍   | 886/1371 [00:22<00:13, 36.24it/s]Loading weights:  73%|███████▎  | 998/1371 [00:24<00:08, 42.92it/s]Loading weights:  49%|████▉     | 671/1371 [00:23<00:20, 34.39it/s]Loading weights:  65%|██████▍   | 887/1371 [00:23<00:11, 42.33it/s]Loading weights:  64%|██████▍   | 878/1371 [00:23<00:10, 45.57it/s]Loading weights:  65%|██████▍   | 890/1371 [00:23<00:15, 30.93it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:24<00:07, 49.14it/s]Loading weights:  65%|██████▍   | 887/1371 [00:23<00:13, 36.74it/s]Loading weights:  66%|██████▋   | 911/1371 [00:23<00:11, 41.69it/s]Loading weights:  65%|██████▍   | 887/1371 [00:23<00:11, 40.80it/s]Loading weights:  55%|█████▍    | 749/1371 [00:24<00:23, 26.31it/s]Loading weights:  66%|██████▋   | 910/1371 [00:23<00:08, 51.70it/s]Loading weights:  66%|██████▋   | 911/1371 [00:23<00:10, 45.90it/s]Loading weights:  50%|████▉     | 680/1371 [00:23<00:24, 28.29it/s]Loading weights:  66%|██████▋   | 911/1371 [00:23<00:13, 35.21it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:24<00:09, 38.14it/s]Loading weights: 100%|██████████| 1371/1371 [00:24<00:00, 54.97it/s]
+Loading weights:  68%|██████▊   | 929/1371 [00:23<00:10, 41.65it/s]Loading weights:  68%|██████▊   | 928/1371 [00:24<00:09, 47.47it/s]Loading weights:  66%|██████▋   | 911/1371 [00:24<00:10, 45.13it/s]Loading weights:  67%|██████▋   | 918/1371 [00:24<00:10, 42.74it/s]Loading weights:  68%|██████▊   | 929/1371 [00:23<00:09, 45.33it/s]Loading weights:  56%|█████▋    | 773/1371 [00:24<00:18, 31.55it/s]Loading weights:  68%|██████▊   | 933/1371 [00:24<00:10, 43.42it/s]Loading weights:  68%|██████▊   | 929/1371 [00:24<00:09, 48.84it/s]Loading weights:  58%|█████▊    | 791/1371 [00:24<00:14, 40.43it/s]Loading weights:  51%|█████▏    | 704/1371 [00:24<00:20, 32.52it/s]Loading weights:  69%|██████▉   | 947/1371 [00:24<00:10, 42.30it/s]Loading weights:  68%|██████▊   | 929/1371 [00:24<00:12, 35.55it/s]Loading weights:  53%|█████▎    | 722/1371 [00:24<00:16, 40.18it/s]Loading weights:  69%|██████▉   | 947/1371 [00:24<00:10, 39.59it/s]Loading weights:  69%|██████▉   | 947/1371 [00:24<00:08, 49.24it/s]Loading weights:  69%|██████▉   | 947/1371 [00:24<00:09, 44.44it/s]Loading weights:  70%|██████▉   | 956/1371 [00:24<00:11, 37.70it/s]Loading weights:  59%|█████▉    | 809/1371 [00:25<00:13, 41.35it/s]Loading weights:  69%|██████▉   | 947/1371 [00:24<00:11, 35.92it/s]Loading weights:  70%|██████▉   | 956/1371 [00:25<00:11, 35.49it/s]Loading weights:  54%|█████▍    | 740/1371 [00:24<00:15, 40.16it/s]Loading weights:  60%|█████▉    | 817/1371 [00:25<00:14, 38.97it/s]Loading weights:  70%|██████▉   | 956/1371 [00:25<00:09, 41.74it/s]Loading weights:  55%|█████▍    | 748/1371 [00:25<00:16, 38.55it/s]Loading weights:  71%|███████▏  | 980/1371 [00:25<00:09, 39.98it/s]Loading weights:  70%|██████▉   | 956/1371 [00:25<00:14, 29.38it/s]Loading weights:  70%|██████▉   | 956/1371 [00:25<00:13, 31.55it/s]Loading weights:  60%|█████▉    | 822/1371 [00:25<00:17, 30.84it/s]Loading weights:  71%|███████▏  | 980/1371 [00:25<00:08, 47.31it/s]Loading weights:  71%|███████▏  | 980/1371 [00:25<00:10, 38.33it/s]Loading weights:  61%|██████▏   | 842/1371 [00:26<00:12, 41.25it/s]Loading weights:  71%|███████▏  | 980/1371 [00:25<00:09, 40.17it/s]Loading weights:  71%|███████▏  | 980/1371 [00:25<00:10, 36.35it/s]Loading weights:  55%|█████▍    | 753/1371 [00:25<00:22, 27.33it/s]Loading weights:  73%|███████▎  | 998/1371 [00:25<00:07, 47.33it/s]Loading weights:  73%|███████▎  | 998/1371 [00:25<00:08, 43.64it/s]Loading weights:  63%|██████▎   | 859/1371 [00:26<00:09, 52.50it/s]Loading weights:  73%|███████▎  | 998/1371 [00:25<00:10, 36.04it/s]Loading weights:  73%|███████▎  | 998/1371 [00:25<00:09, 39.62it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:26<00:07, 48.66it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:26<00:08, 41.51it/s]Loading weights:  56%|█████▋    | 773/1371 [00:26<00:17, 34.93it/s]Loading weights:  63%|██████▎   | 866/1371 [00:26<00:13, 37.62it/s]Loading weights:  58%|█████▊    | 791/1371 [00:26<00:12, 45.24it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:26<00:08, 40.59it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:26<00:09, 38.63it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:26<00:07, 43.51it/s]Loading weights:  73%|███████▎  | 998/1371 [00:26<00:11, 32.41it/s]Loading weights: 100%|██████████| 1371/1371 [00:26<00:00, 51.69it/s]
+Loading weights:  97%|█████████▋| 1324/1371 [00:26<00:00, 342.44it/s]Loading weights:  64%|██████▍   | 878/1371 [00:26<00:12, 39.61it/s]Loading weights: 100%|██████████| 1371/1371 [00:26<00:00, 51.58it/s] 
+Loading weights:  75%|███████▍  | 1025/1371 [00:26<00:08, 41.41it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:26<00:09, 39.25it/s]Loading weights: 100%|██████████| 1371/1371 [00:26<00:00, 51.49it/s]
+Loading weights:  74%|███████▍  | 1016/1371 [00:26<00:08, 43.11it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:26<00:09, 37.87it/s]Loading weights: 100%|██████████| 1371/1371 [00:26<00:00, 51.28it/s]
+Loading weights:  59%|█████▉    | 809/1371 [00:26<00:14, 39.76it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:26<00:08, 39.56it/s]Loading weights:  65%|██████▍   | 887/1371 [00:27<00:14, 33.35it/s]Loading weights: 100%|██████████| 1371/1371 [00:27<00:00, 50.65it/s]
+Loading weights:  60%|█████▉    | 818/1371 [00:27<00:14, 37.94it/s]Loading weights:  66%|██████▋   | 911/1371 [00:27<00:10, 44.70it/s]Loading weights:  68%|██████▊   | 929/1371 [00:28<00:09, 45.99it/s]Loading weights:  69%|██████▉   | 947/1371 [00:28<00:07, 57.37it/s]Loading weights:  61%|██████▏   | 842/1371 [00:27<00:13, 38.26it/s]Loading weights:  63%|██████▎   | 860/1371 [00:27<00:10, 50.40it/s]Loading weights:  70%|██████▉   | 956/1371 [00:28<00:09, 43.16it/s]Loading weights:  64%|██████▍   | 878/1371 [00:28<00:10, 46.36it/s]Loading weights:  71%|███████▏  | 979/1371 [00:28<00:06, 60.13it/s]Loading weights:  72%|███████▏  | 988/1371 [00:29<00:07, 48.21it/s]Loading weights:  65%|██████▍   | 887/1371 [00:28<00:13, 35.66it/s]Loading weights:  73%|███████▎  | 998/1371 [00:29<00:08, 44.22it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:29<00:06, 55.14it/s]Loading weights:  66%|██████▋   | 911/1371 [00:29<00:10, 42.89it/s]Loading weights:  68%|██████▊   | 929/1371 [00:29<00:07, 55.51it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:30<00:09, 37.20it/s]Loading weights:  69%|██████▉   | 947/1371 [00:29<00:08, 51.23it/s]Loading weights: 100%|██████████| 1371/1371 [00:30<00:00, 45.32it/s]
+Loading weights:  70%|██████▉   | 956/1371 [00:30<00:10, 40.03it/s]Loading weights:  71%|███████▏  | 980/1371 [00:30<00:08, 46.66it/s]Loading weights:  73%|███████▎  | 998/1371 [00:30<00:06, 56.19it/s]Loading weights:  74%|███████▍  | 1016/1371 [00:31<00:06, 55.29it/s]Loading weights:  75%|███████▍  | 1025/1371 [00:31<00:08, 42.35it/s]Loading weights: 100%|██████████| 1371/1371 [00:31<00:00, 43.47it/s]
+[TPFIT] loaded; n_layers=60; corpus n=2; fitting (all GPUs) ...
+[TPFIT] FAILED: RuntimeError shape '[2, 128, -1, 256]' is invalid for input of size 16384
+Traceback (most recent call last):
+  File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+    main()
+  File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+    lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+    per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+                                     ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+    model.forward(replicated_ids)
+  File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+    return self._text_module(input_ids=input_ids, use_cache=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+    output = func(self, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+    outputs = func(self, *args, **kwargs)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+    hidden_states = decoder_layer(
+                    ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+    return super().__call__(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+    return inner()
+           ^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+    result = forward_call(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+    hidden_states, _ = self.self_attn(
+                       ^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+    key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+TPFIT_DONE
+[rank4]: Traceback (most recent call last):
+[rank4]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank4]:     main()
+[rank4]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank4]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank4]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank4]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank4]:     model.forward(replicated_ids)
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank4]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank4]:     output = func(self, *args, **kwargs)
+[rank4]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank4]:     outputs = func(self, *args, **kwargs)
+[rank4]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank4]:     hidden_states = decoder_layer(
+[rank4]:                     ^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank4]:     return super().__call__(*args, **kwargs)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank4]:     return inner()
+[rank4]:            ^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank4]:     result = forward_call(*args, **kwargs)
+[rank4]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank4]:     hidden_states, _ = self.self_attn(
+[rank4]:                        ^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank4]:     return self._call_impl(*args, **kwargs)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank4]:     return forward_call(*args, **kwargs)
+[rank4]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank4]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank4]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank4]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank3]: Traceback (most recent call last):
+[rank3]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank3]:     main()
+[rank3]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank3]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank3]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank3]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank3]:     model.forward(replicated_ids)
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank3]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank3]:     output = func(self, *args, **kwargs)
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank3]:     outputs = func(self, *args, **kwargs)
+[rank3]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank3]:     hidden_states = decoder_layer(
+[rank3]:                     ^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank3]:     return super().__call__(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank3]:     return inner()
+[rank3]:            ^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank3]:     result = forward_call(*args, **kwargs)
+[rank3]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank3]:     hidden_states, _ = self.self_attn(
+[rank3]:                        ^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank3]:     return self._call_impl(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank3]:     return forward_call(*args, **kwargs)
+[rank3]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank3]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank3]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank3]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank5]: Traceback (most recent call last):
+[rank5]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank5]:     main()
+[rank5]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank5]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank5]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank5]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank5]:     model.forward(replicated_ids)
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank5]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank5]:     output = func(self, *args, **kwargs)
+[rank5]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank5]:     outputs = func(self, *args, **kwargs)
+[rank5]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank5]:     hidden_states = decoder_layer(
+[rank5]:                     ^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank5]:     return super().__call__(*args, **kwargs)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank5]:     return inner()
+[rank5]:            ^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank5]:     result = forward_call(*args, **kwargs)
+[rank5]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank5]:     hidden_states, _ = self.self_attn(
+[rank5]:                        ^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank5]:     return self._call_impl(*args, **kwargs)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank5]:     return forward_call(*args, **kwargs)
+[rank5]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank5]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank5]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank5]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank7]: Traceback (most recent call last):
+[rank7]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank7]:     main()
+[rank7]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank7]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank7]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank7]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank7]:     model.forward(replicated_ids)
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank7]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank7]:     output = func(self, *args, **kwargs)
+[rank7]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank7]:     outputs = func(self, *args, **kwargs)
+[rank7]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank7]:     hidden_states = decoder_layer(
+[rank7]:                     ^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank7]:     return super().__call__(*args, **kwargs)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank7]:     return inner()
+[rank7]:            ^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank7]:     result = forward_call(*args, **kwargs)
+[rank7]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank7]:     hidden_states, _ = self.self_attn(
+[rank7]:                        ^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank7]:     return self._call_impl(*args, **kwargs)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank7]:     return forward_call(*args, **kwargs)
+[rank7]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank7]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank7]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank7]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank6]: Traceback (most recent call last):
+[rank6]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank6]:     main()
+[rank6]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank6]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank6]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank6]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank6]:     model.forward(replicated_ids)
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank6]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank6]:     output = func(self, *args, **kwargs)
+[rank6]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank6]:     outputs = func(self, *args, **kwargs)
+[rank6]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank6]:     hidden_states = decoder_layer(
+[rank6]:                     ^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank6]:     return super().__call__(*args, **kwargs)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank6]:     return inner()
+[rank6]:            ^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank6]:     result = forward_call(*args, **kwargs)
+[rank6]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank6]:     hidden_states, _ = self.self_attn(
+[rank6]:                        ^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank6]:     return self._call_impl(*args, **kwargs)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank6]:     return forward_call(*args, **kwargs)
+[rank6]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank6]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank6]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank6]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank1]: Traceback (most recent call last):
+[rank1]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank1]:     main()
+[rank1]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank1]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank1]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank1]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank1]:     model.forward(replicated_ids)
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank1]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank1]:     output = func(self, *args, **kwargs)
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank1]:     outputs = func(self, *args, **kwargs)
+[rank1]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank1]:     hidden_states = decoder_layer(
+[rank1]:                     ^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank1]:     return super().__call__(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank1]:     return inner()
+[rank1]:            ^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank1]:     result = forward_call(*args, **kwargs)
+[rank1]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank1]:     hidden_states, _ = self.self_attn(
+[rank1]:                        ^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank1]:     return self._call_impl(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank1]:     return forward_call(*args, **kwargs)
+[rank1]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank1]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank1]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank1]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank2]: Traceback (most recent call last):
+[rank2]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank2]:     main()
+[rank2]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank2]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank2]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank2]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank2]:     model.forward(replicated_ids)
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank2]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank2]:     output = func(self, *args, **kwargs)
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank2]:     outputs = func(self, *args, **kwargs)
+[rank2]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank2]:     hidden_states = decoder_layer(
+[rank2]:                     ^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank2]:     return super().__call__(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank2]:     return inner()
+[rank2]:            ^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank2]:     result = forward_call(*args, **kwargs)
+[rank2]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank2]:     hidden_states, _ = self.self_attn(
+[rank2]:                        ^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank2]:     return self._call_impl(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank2]:     return forward_call(*args, **kwargs)
+[rank2]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank2]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank2]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank2]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 110, in <module>
+[rank0]:     main()
+[rank0]:   File "/root/rr/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/tp_fit.py", line 75, in main
+[rank0]:     lens = jlens.fit(model, prompts, dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 335, in fit
+[rank0]:     per_prompt_J, seq_len, n_valid = jacobian_for_prompt(
+[rank0]:                                      ^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/jlens/fitting.py", line 165, in jacobian_for_prompt
+[rank0]:     model.forward(replicated_ids)
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/jlens/hf.py", line 164, in forward
+[rank0]:     return self._text_module(input_ids=input_ids, use_cache=False)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/generic.py", line 1040, in wrapper
+[rank0]:     output = func(self, *args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/transformers/utils/output_capturing.py", line 252, in wrapper
+[rank0]:     outputs = func(self, *args, **kwargs)
+[rank0]:               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 1316, in forward
+[rank0]:     hidden_states = decoder_layer(
+[rank0]:                     ^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/transformers/modeling_layers.py", line 93, in __call__
+[rank0]:     return super().__call__(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1844, in _call_impl
+[rank0]:     return inner()
+[rank0]:            ^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1790, in inner
+[rank0]:     result = forward_call(*args, **kwargs)
+[rank0]:              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 876, in forward
+[rank0]:     hidden_states, _ = self.self_attn(
+[rank0]:                        ^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+[rank0]:     return self._call_impl(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+[rank0]:     return forward_call(*args, **kwargs)
+[rank0]:            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]:   File "/usr/local/lib/python3.11/dist-packages/transformers/models/qwen3_5_moe/modeling_qwen3_5_moe.py", line 692, in forward
+[rank0]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank0]:                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[rank0]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank0]:[W709 16:07:04.476569847 ProcessGroupNCCL.cpp:1250] Warning: WARNING: process group has NOT been destroyed before we destruct ProcessGroupNCCL. On normal program exit, the application should call destroy_process_group to ensure that any pending NCCL operations have finished in this process. In rare cases this process can exit before this point and block the progress of another member of the process group. This constraint has always been present,  but this warning has only been added since PyTorch 2.4 (function operator())
+W0709 16:07:05.345000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6473 closing signal SIGTERM
+W0709 16:07:05.346000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6474 closing signal SIGTERM
+W0709 16:07:05.347000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6475 closing signal SIGTERM
+W0709 16:07:05.347000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6476 closing signal SIGTERM
+W0709 16:07:05.347000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6477 closing signal SIGTERM
+W0709 16:07:05.348000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6479 closing signal SIGTERM
+W0709 16:07:05.348000 6408 torch/distributed/elastic/multiprocessing/api.py:897] Sending process 6480 closing signal SIGTERM
+E0709 16:07:06.691000 6408 torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: 1) local_rank: 5 (pid: 6478) of binary: /usr/bin/python
+Traceback (most recent call last):
+  File "/usr/local/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+============================================================
+tp_fit.py FAILED
+------------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+------------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-07-09_16:07:05
+  host      : ab3725bb3213
+  rank      : 5 (local_rank: 5)
+  exitcode  : 1 (pid: 6478)
+  error_file: <N/A>
+  traceback : To enable traceback see: https://pytorch.org/docs/stable/elastic/errors.html
+============================================================
+!!! TP SMOKE FAILED — MoE/multimodal did not shard or jlens+TP broke. Terminate + inspect.
+TPFIT_ALL_DONE

@@ -1,0 +1,20 @@
+[rank5]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank5]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank7]: Traceback (most recent call last):
+[rank7]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank7]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank6]: Traceback (most recent call last):
+[rank6]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank6]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank1]: Traceback (most recent call last):
+[rank1]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank1]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank2]: Traceback (most recent call last):
+[rank2]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank2]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+[rank0]: Traceback (most recent call last):
+[rank0]:     key_states = self.k_norm(self.k_proj(hidden_states).view(hidden_shape)).transpose(1, 2)
+[rank0]: RuntimeError: shape '[2, 128, -1, 256]' is invalid for input of size 16384
+Traceback (most recent call last):
+tp_fit.py FAILED
+!!! TP SMOKE FAILED — MoE/multimodal did not shard or jlens+TP broke. Terminate + inspect.

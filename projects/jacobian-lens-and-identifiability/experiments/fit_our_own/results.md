@@ -98,3 +98,43 @@ directly calibrated the 397B fit's prompt count).
 `mid_sep` = **0.1443** vs Neuronpedia's **0.1456** — converged at n=16 again, and a
 correctness check that jlens.fit's repeated-backward is numerically exact through
 linear-attention layers (relevant to fitting the Qwen3.5 frontier models).
+
+## 5. The 397B frontier attempt — pipeline validated, compute infra gap found (2026-07-09)
+
+We attempted to fit a lens on **Qwen/Qwen3.5-397B-A17B** (807 GB, 60-layer 512-expert MoE
+with hybrid linear attention, inside a multimodal wrapper) on 8×H200, to measure the band
+at 0.4T scale and independently replicate Nanda's "fits at 397B" claim. **We did not get a
+band number.** What we did get, all receipted (`logs397b/`):
+
+**What worked (real, reusable):**
+- **The multimodal load recipe.** `AutoModelForCausalLM` silently mismatches this
+  checkpoint's keys (`model.language_model.layers.*`; no conversion mapping) — it would
+  load garbage. Loading the checkpoint's own class + `jlens layout=model.language_model`
+  works; caught on a **meta-device dry run costing $0** (`fit_at_scale.py --backbone-path`).
+- **The 807 GB model loads and shards across 8×H200** (device_map), and jlens's
+  retained-graph repeated-backward ran through the sharded hybrid-linear MoE for 2+ hours
+  **without a single crash** — the eager-attention fix holds at 0.4T scale.
+- **Tensor parallelism works with jlens on dense models**: `tp_plan="auto"` (torch 2.5,
+  torchrun) fit qwen3-4b across 2 GPUs with `mid_sep` 0.0360 vs 0.0362 single-GPU —
+  numerically identical (`tp_fit.py`, `tp_test.py`).
+
+**What blocked (the two-layer infra gap):**
+1. **`device_map` is compute-bound at this scale.** It shards layers but executes them
+   sequentially — 1 GPU active at a time. A 2-prompt fit didn't finish in 2.3 h; a
+   converged n=24 fit extrapolates to ~$175+ of idle-heavy H200 time. `device_map` buys
+   memory, not compute.
+2. **`tp_plan="auto"` breaks on this architecture.** transformers 5.13 ships no `_tp_plan`
+   for `qwen3_5_moe`; auto-sharding the projections makes the **linear-attention module's
+   reshape** fail (`shape '[2, 128, -1, 256]' invalid for input of size 16384`) — the
+   reshape expects config-shaped heads, but TP sharded the weights under it.
+
+**The affordable path forward (cheap-first, when we return):** the same linear-attention
+modules exist in **Qwen3.5-0.8B** — the reshape failure should reproduce across 2 GPUs at
+$0.44/hr. Hand-write a `tp_plan` that keeps linear-attn modules replicated and shards the
+MoE experts/MLPs, validate numerics against the single-GPU 0.1443, *then* re-acquire an
+8×H200 (~1 h of poll-looping; the re-download is only ~$9 at the ~1 GB/s we measured).
+
+**Honest status:** our band statistic at 397B remains unmeasured; Nanda's replication
+stands as the only public frontier datum. Total spent on the attempt ≈ $110 of H200 time —
+most of it burned by validating *correctness* without measuring *throughput* first, now
+codified as a standing rule (CLAUDE.md lessons 7–10).
