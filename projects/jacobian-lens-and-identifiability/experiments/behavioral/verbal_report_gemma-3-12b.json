@@ -1,0 +1,122 @@
+{
+ "slug": "gemma-3-12b",
+ "hf_id": "google/gemma-3-12b-pt",
+ "band": [
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30
+ ],
+ "strengths": [
+  0.0,
+  4.0,
+  8.0,
+  12.0
+ ],
+ "per_category": [
+  {
+   "category": "country",
+   "answer": "What",
+   "reported_in_band": true,
+   "n_candidates": 14
+  },
+  {
+   "category": "color",
+   "answer": "What",
+   "reported_in_band": true,
+   "n_candidates": 14
+  },
+  {
+   "category": "fruit",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "sport",
+   "answer": "What",
+   "reported_in_band": true,
+   "n_candidates": 14
+  },
+  {
+   "category": "instrument",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 10
+  },
+  {
+   "category": "planet",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "tree",
+   "answer": "What",
+   "reported_in_band": true,
+   "n_candidates": 12
+  },
+  {
+   "category": "bird",
+   "answer": "what",
+   "reported_in_band": true,
+   "n_candidates": 14
+  },
+  {
+   "category": "language",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "profession",
+   "answer": "What",
+   "reported_in_band": true,
+   "n_candidates": 14
+  },
+  {
+   "category": "beverage",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "organ",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "city",
+   "answer": "what",
+   "reported_in_band": true,
+   "n_candidates": 14
+  },
+  {
+   "category": "river",
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 14
+  }
+ ],
+ "reportability_hit_rate": 0.5,
+ "swap_success_rate": {
+  "0.0": 0.0,
+  "4.0": 0.1,
+  "8.0": 0.1,
+  "12.0": 0.1
+ },
+ "swap_total": 140
+}

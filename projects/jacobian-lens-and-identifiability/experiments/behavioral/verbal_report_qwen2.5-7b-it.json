@@ -1,0 +1,115 @@
+{
+ "slug": "qwen2.5-7b-it",
+ "hf_id": "Qwen/Qwen2.5-7B-Instruct",
+ "band": [
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17
+ ],
+ "strengths": [
+  0.0,
+  4.0,
+  8.0,
+  12.0
+ ],
+ "per_category": [
+  {
+   "category": "country",
+   "answer": "France",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "color",
+   "answer": "Blue",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "fruit",
+   "answer": "__",
+   "reported_in_band": true,
+   "n_candidates": 13
+  },
+  {
+   "category": "sport",
+   "answer": "Basketball",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "instrument",
+   "answer": "Viol",
+   "reported_in_band": false,
+   "n_candidates": 8
+  },
+  {
+   "category": "planet",
+   "answer": "Earth",
+   "reported_in_band": false,
+   "n_candidates": 10
+  },
+  {
+   "category": "tree",
+   "answer": "__",
+   "reported_in_band": true,
+   "n_candidates": 11
+  },
+  {
+   "category": "bird",
+   "answer": "Penguin",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "language",
+   "answer": "Spanish",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "profession",
+   "answer": "Teacher",
+   "reported_in_band": false,
+   "n_candidates": 11
+  },
+  {
+   "category": "beverage",
+   "answer": "Coffee",
+   "reported_in_band": false,
+   "n_candidates": 9
+  },
+  {
+   "category": "organ",
+   "answer": "Heart",
+   "reported_in_band": false,
+   "n_candidates": 9
+  },
+  {
+   "category": "city",
+   "answer": "Paris",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "river",
+   "answer": "Water",
+   "reported_in_band": false,
+   "n_candidates": 7
+  }
+ ],
+ "reportability_hit_rate": 0.14285714285714285,
+ "swap_success_rate": {
+  "0.0": 0.0,
+  "4.0": 0.7894736842105263,
+  "8.0": 0.7894736842105263,
+  "12.0": 0.7894736842105263
+ },
+ "swap_total": 133
+}
