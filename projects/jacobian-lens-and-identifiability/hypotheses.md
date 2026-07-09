@@ -45,7 +45,7 @@ training induces.
 - **PREDICTION P1 — ✅ RESOLVED, HIT:** we predicted gemma-2-**9b** (KD) lands ≤0.02,
   well under from-scratch 27b. **Measured: 0.0019** (uniform sweep). Within Gemma-2 —
   architecture, norms, tokenizer, data lineage constant — KD models score 0.002–0.007
-  *independent of scale* (9B < 2B!) while the from-scratch 27B is ~6–20× higher.
+  *independent of scale* (9B < 2B!) while the from-scratch 27B is ~7–23× higher (27B/2B=6.6×, 27B/9B=22.6×).
   *Timing honesty:* the prediction was written blind to the value, but the sweep had
   computed that row on the box minutes earlier — "predicted-before-seeing," not strict
   pre-registration. The prediction and its basis (the report's 2B/9B-distilled vs
