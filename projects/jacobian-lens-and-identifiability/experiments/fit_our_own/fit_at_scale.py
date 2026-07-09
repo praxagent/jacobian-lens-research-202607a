@@ -46,6 +46,10 @@ def main() -> None:
     ap.add_argument("--n-probe", type=int, default=4096)
     ap.add_argument("--max-memory-gb", type=int, default=0,
                     help="if >0, cap per-GPU memory (forces sharding for validation)")
+    ap.add_argument("--attn-impl", default="eager",
+                    help="attention backend. 'eager' = pure-PyTorch, robust for jlens's "
+                         "retained-graph + repeated-backward under device_map sharding "
+                         "(SDPA/flash backward kernels can index-assert in that pattern).")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -56,10 +60,15 @@ def main() -> None:
     print(f"model={args.model}  GPUs={n_gpu}  "
           f"({[torch.cuda.get_device_name(i) for i in range(n_gpu)]})")
 
-    kw = dict(torch_dtype=torch.bfloat16, device_map="auto")
-    if args.max_memory_gb > 0:
+    # PURE-GPU sharding only. accelerate CPU-offload hooks break jlens.fit
+    # (retain_graph + repeated backward passes over offloaded layers →
+    # device-side index asserts), and the real 8×H200 run never offloads
+    # anyway (1128GB >> 794GB), so we never put layers on CPU.
+    kw = dict(torch_dtype=torch.bfloat16, device_map="auto",
+              attn_implementation=args.attn_impl)
+    if args.max_memory_gb > 0:  # validation: cap per-GPU to FORCE a multi-GPU split
         kw["max_memory"] = {i: f"{args.max_memory_gb}GiB" for i in range(n_gpu)}
-        kw["max_memory"]["cpu"] = "64GiB"
+        # deliberately NO "cpu" key — force pure-GPU sharding, error if it won't fit
     hf = transformers.AutoModelForCausalLM.from_pretrained(args.model, **kw).eval()
     tok = transformers.AutoTokenizer.from_pretrained(args.model)
     model = jlens.from_hf(hf, tok, compile=False)  # compile OFF: required with device_map
