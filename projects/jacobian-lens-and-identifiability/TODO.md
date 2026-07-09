@@ -4,7 +4,30 @@ _The gap: we measure geometry, not behavior. These three upgrades convert the po
 "solid replication" to "definitive independent study." Statuses updated as work lands;
 session state in `/checkpoint.md` (gitignored)._
 
-## 1. Behavioral battery per family — **IN PROGRESS** (~$10–30 GPU)
+## 1+2 FOLDED — **RUNNING on pod w01s4uz8s2nqfi** (A6000 $0.49/hr, ssh -p 41556 root@38.147.83.32)
+Both behavioral tests on the triple, one pod (saves money). Log `/root/behavioral.log`,
+marker `BEHAVIORAL_DONE`. Watcher: task bril6oi33. ON DONE: pull `verbal_report_*.json`
++ `ignition_*.json` → git, write post section, **TERMINATE pod**
+(`launch.py terminate --pod w01s4uz8s2nqfi`). HF_TOKEN passed inline (not on pod).
+
+### INTERIM RESULTS (2026-07-09, pod running)
+- **Verbal-report causal SWAP does NOT discriminate band vs no-band:** qwen3-4b (band
+  0.20) swap **91%**; gemma-2-9b (band **0.0019**) swap **84%**, reportability **0.71**.
+  Both strong; strength-0 control 0/140 (clean). → the *privileged-set* tier (Eleos:
+  reportable + steerable) is present even where the geometric band is absent. Honest,
+  important: our `mid_sep` does NOT track this behavior.
+- **Ignition DOES look discriminating so far:** qwen3-4b width **0.123, 93% sharp**
+  (strongly all-or-none) vs gpt2 baseline 0.69/0% (gradual). **gemma-2-9b ignition =
+  the decisive number, running now.** If gradual → clean story: swaps generic, but
+  *ignition (all-or-none workspace entry) tracks the band*. If sharp → reframe: Gemma
+  has a functional workspace that just isn't geometrically differentiated (H5).
+- **gemma-2-27b FAILED (OOM: 27B bf16 ~54GB > A6000 48GB).** The from-scratch banded
+  sibling — needs an A100-80GB rerun for both tests to complete the triple. Decide
+  after gemma-2-9b ignition lands.
+- This maps onto Eleos's privileged-SET < STREAM < WORKSPACE tiering — likely the
+  post's behavioral framing.
+
+## 1. Behavioral battery per family — **RUNNING (folded)** (~$10–30 GPU)
 Run Anthropic's released causal experiments (`anthropics/jacobian-lens
 data/experiments/`: verbal-report, probe-swap, directed modulation/top-down-summoning;
 methods per their README + Nanda's replication recipe) on the **killer triple**:
