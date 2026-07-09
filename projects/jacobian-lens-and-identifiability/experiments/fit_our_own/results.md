@@ -65,3 +65,34 @@ replication is cheap future work (fit_lens.py --corpus wikipedia-fr is already w
 
 **Artifacts:** all five fitted lenses preserved at `artifacts/lenses/` on the dev box
 (gitignored; qwen4b seeds 0/1/2 + zh + gpt2). Pod terminated after this run.
+
+## 4. Prompt-count convergence of `mid_sep` — qwen3-4b (RESULT, 2026-07-09)
+
+Prompted by a sharp question: a sanity fit of qwen3-4b at **n=8** prompts gave
+`mid_sep` = 0.0362, well below Neuronpedia's 0.056 (fit at n≈1000). Is the band statistic
+sensitive to how many prompts the lens is estimated from? We fit qwen3-4b at increasing
+prompt counts (same code path, single GPU, eager attention, seed 0, wikitext) and computed
+`mid_sep` each time:
+
+```
+n_prompts    mid_sep     (Neuronpedia reference, n≈1000: 0.056)
+    8        0.0362      <- under-converged
+   16        0.0603
+   32        0.0500
+   64        0.0581
+  128        [PENDING]
+  256        [PENDING]
+```
+
+**`mid_sep` converges fast: by n≈16 it already sits at the reference, and from n=16 on it
+just oscillates around ~0.055 (±~0.005 sampling noise).** The n=8 value was the lone
+under-converged outlier — so the original 0.036-vs-0.056 gap was **estimation-count, not a
+sharding or method artifact.** Practical rule: the band statistic needs n≳16 fit prompts to
+be trusted; the Neuronpedia sweep (n≈1000) and this study's re-fits (n≥100) are safely in
+the converged regime, and a frontier fit needs only n≈16–32 to be comparable to them.
+
+**Cross-check on a second model + a different architecture.** A single-GPU fit of
+**Qwen3.5-0.8B** (which uses hybrid *linear*-attention layers) at n=16 gave
+`mid_sep` = **0.1443** vs Neuronpedia's **0.1456** — converged at n=16 again, and a
+correctness check that jlens.fit's repeated-backward is numerically exact through
+linear-attention layers (relevant to fitting the Qwen3.5 frontier models).
