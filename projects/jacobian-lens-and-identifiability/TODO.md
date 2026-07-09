@@ -10,6 +10,17 @@ marker `BEHAVIORAL_DONE`. Watcher: task bril6oi33. ON DONE: pull `verbal_report_
 + `ignition_*.json` → git, write post section, **TERMINATE pod**
 (`launch.py terminate --pod w01s4uz8s2nqfi`). HF_TOKEN passed inline (not on pod).
 
+### STRONG RESULT emerging (2026-07-09, A100 batch ~8/13)
+Two-level, maps to Eleos privileged-set < workspace:
+- **Steerability (verbal-report swap): UNIVERSAL** — works ~0.84-0.91 in banded AND
+  bandless (privileged-SET tier present everywhere).
+- **Concept-propagation + ignition: TRACKS THE BAND.** share_span diagnostic:
+  Qwen 0.96-0.98 (readout cleanly flips A→B), Gemma ≈0.0 (injected concept NEVER
+  resolves in readout — real, not metric artifact), gpt2 0.90-but-gradual (ign_sharp 0).
+  ign_sharp: qwen3-4b 0.91, qwen3.5-4b 0.75, qwen3.5-2b 0.27, gpt2 0.0, Gemma None.
+  → the correlation (correlate.py) will quantify: ignition-sharpness/share-span +tracks
+  mid_sep; swap flat. THIS is the frontier behavioral result.
+
 ### INTERIM RESULTS (2026-07-09, pod running)
 - **Verbal-report causal SWAP does NOT discriminate band vs no-band:** qwen3-4b (band
   0.20) swap **91%**; gemma-2-9b (band **0.0019**) swap **84%**, reportability **0.71**.
