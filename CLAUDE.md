@@ -43,6 +43,12 @@ the research:
      risky part (e.g. tests CPU-offload when the real run is pure-GPU) validates nothing.
    - Only after the cheap test passes: launch the expensive node, and terminate it the
      instant the run (or a failure) is confirmed.
+6. **Budget ceiling behavior (TJ, 2026-07-09): never kill a RUNNING experiment to stay
+   under budget.** If cumulative spend nears the ceiling (currently $150/session),
+   **stop launching anything NEW and bring it to TJ to discuss** — do not cut off live
+   work mid-run. Terminating a pod the moment its job *completes* (to stop idle billing)
+   is always correct and is NOT "killing an experiment" — that's ending waste. The rule
+   only protects in-progress runs.
 5. **Get everything ready on CPU so a GPU run is short.** Code, configs, a CPU smoke of
    the exact command, and results plumbing should all be done *before* the pod starts —
    so the paid pod only does the irreducibly-GPU part.
