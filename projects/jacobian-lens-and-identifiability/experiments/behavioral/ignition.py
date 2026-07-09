@@ -103,6 +103,21 @@ def main() -> None:
 
     per_layer_widths = {l: [] for l in band}
     share_spans, share_max, share_min = [], [], []
+    # Inject the A/B interpolation at the carrier slot via an embedding-OUTPUT hook and
+    # feed input_ids — mathematically identical to passing interpolated inputs_embeds
+    # (any post-embedding scaling the model applies, e.g. Gemma's sqrt(d), lands on both
+    # the same way), but it goes through input_ids so Gemma-4's forward accepts it.
+    # Gemma-4 rejects arbitrary inputs_embeds ("Gemma4 needs to reverse the embedding …
+    # provide exact inputs_embeds"), which is exactly what interpolation violates.
+    inject = {}  # {pos: vector} applied at the current alpha; empty => no-op passthrough
+    def embed_inject_hook(_m, _i, out):
+        if not inject:
+            return out
+        out = out.clone()
+        for p, v in inject.items():
+            out[0, p] = v.to(out.dtype)
+        return out
+    emb_inj_handle = hf.get_input_embeddings().register_forward_hook(embed_inject_hook)
     for a_word, b_word in pairs:
         a_id, b_id = single_id(tok, a_word), single_id(tok, b_word)
         for carrier in carriers:
@@ -114,14 +129,13 @@ def main() -> None:
             if len(pos_matches) == 0:
                 continue
             wpos = int(pos_matches[-1])
-            base_emb = emb[ids[0]].clone().to(dev)  # [seq, d]
             shares = {l: [] for l in band}
             handles = [model.layers[l].register_forward_hook(cap_hook(l)) for l in band]
             for al in alphas:
-                mixed = base_emb.clone()
-                mixed[wpos] = al * emb[a_id].to(dev) + (1 - al) * emb[b_id].to(dev)
+                inject.clear()
+                inject[wpos] = al * emb[a_id].to(dev) + (1 - al) * emb[b_id].to(dev)
                 with torch.no_grad():
-                    hf(inputs_embeds=mixed.unsqueeze(0).to(hf.dtype))
+                    hf(input_ids=ids)
                 for l in band:
                     h = captured[l][0, wpos].float()
                     ll = U @ (lens.jacobians[l].to(dev).float() @ h)  # lens logits
@@ -129,6 +143,7 @@ def main() -> None:
                     rank = {int(t): i + 1 for i, t in enumerate(order[:2000])}
                     ra = rank.get(a_id, 2001); rb = rank.get(b_id, 2001)
                     shares[l].append((1 / ra) / ((1 / ra) + (1 / rb)))
+            inject.clear()
             for h in handles:
                 h.remove()
             for l in band:
@@ -141,6 +156,7 @@ def main() -> None:
                 share_spans.append(float(sh.max() - sh.min()))
                 share_max.append(float(sh.max())); share_min.append(float(sh.min()))
 
+    emb_inj_handle.remove()
     all_widths = [w for ws in per_layer_widths.values() for w in ws]
     result = {
         "slug": args.slug, "hf_id": hf_id, "band": band,

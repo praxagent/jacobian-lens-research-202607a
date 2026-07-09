@@ -57,6 +57,13 @@ def spearman(xs, ys) -> float:
     return cov / (vx * vy) if vx and vy else float("nan")
 
 
+# verbal_report is invalid for these: the Gemma-4 base models emit empty greedy output
+# for "Think of a {cat}. Answer in one word:" (they don't answer bare instructions), so
+# swap/reportability are meaningless. Their ignition (share_span) IS valid — it interpolates
+# embeddings and reads the J-lens, no answer needed — so we keep share_span, drop swap only.
+_BROKEN_VERBAL_REPORT = {"gemma-4-e2b", "gemma-4-e4b"}
+
+
 def main() -> None:
     midsep = load_midsep()
     rows = []
@@ -69,11 +76,15 @@ def main() -> None:
         swap_best = max((float(x) for x in ssr.values()), default=float("nan"))
         def nn(x):
             return float("nan") if x is None else float(x)
+        report_hit = nn(v.get("reportability_hit_rate"))
+        if slug in _BROKEN_VERBAL_REPORT:
+            swap_best = float("nan")   # empty greedy answers -> swap undefined (keep share_span)
+            report_hit = float("nan")
         rows.append({
             "slug": slug,
             "mid_sep": midsep.get(slug, float("nan")),
             "swap_best": swap_best,
-            "report_hit": nn(v.get("reportability_hit_rate")),
+            "report_hit": report_hit,
             "ign_sharp": nn(ig.get("frac_sharp_lt_0.25")),
             "ign_width": nn(ig.get("median_transition_width")),
             "ign_share_span": nn(ig.get("median_share_span")),
