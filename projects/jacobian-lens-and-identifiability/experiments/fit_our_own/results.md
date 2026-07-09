@@ -76,20 +76,22 @@ prompt counts (same code path, single GPU, eager attention, seed 0, wikitext) an
 
 ```
 n_prompts    mid_sep     (Neuronpedia reference, n≈1000: 0.056)
-    8        0.0362      <- under-converged
+    8        0.0362      <- under-converged (the lone outlier)
    16        0.0603
    32        0.0500
    64        0.0581
-  128        [PENDING]
-  256        [PENDING]
+  128        0.0595
+  256        0.0606
 ```
 
-**`mid_sep` converges fast: by n≈16 it already sits at the reference, and from n=16 on it
-just oscillates around ~0.055 (±~0.005 sampling noise).** The n=8 value was the lone
-under-converged outlier — so the original 0.036-vs-0.056 gap was **estimation-count, not a
-sharding or method artifact.** Practical rule: the band statistic needs n≳16 fit prompts to
-be trusted; the Neuronpedia sweep (n≈1000) and this study's re-fits (n≥100) are safely in
-the converged regime, and a frontier fit needs only n≈16–32 to be comparable to them.
+**`mid_sep` converges fast: by n≈16 it is already at the reference, and from n=16 on it
+sits in a tight 0.050–0.061 band, settling to ~0.058–0.060** (a hair above Neuronpedia's
+0.056 — within seed/sampling noise; both are in the converged regime). The n=8 value was the
+lone under-converged outlier — so the original 0.036-vs-0.056 gap was **estimation-count,
+not a sharding or method artifact.** Practical rule: the band statistic needs n≳16 fit
+prompts to be trusted; the Neuronpedia sweep (n≈1000) and this study's re-fits (n≥100) are
+safely converged, and a frontier fit needs only n≈16–32 to be comparable to them (this
+directly calibrated the 397B fit's prompt count).
 
 **Cross-check on a second model + a different architecture.** A single-GPU fit of
 **Qwen3.5-0.8B** (which uses hybrid *linear*-attention layers) at n=16 gave
