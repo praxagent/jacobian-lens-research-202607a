@@ -50,6 +50,14 @@ def main() -> None:
                     help="attention backend. 'eager' = pure-PyTorch, robust for jlens's "
                          "retained-graph + repeated-backward under device_map sharding "
                          "(SDPA/flash backward kernels can index-assert in that pattern).")
+    ap.add_argument("--backbone-path", default=None,
+                    help="for multimodal wrappers (e.g. Qwen3.5-397B-A17B = "
+                         "Qwen3_5MoeForConditionalGeneration), the module path to the text "
+                         "backbone, e.g. 'model.language_model'. AutoModelForCausalLM expects "
+                         "model.layers.* but the checkpoint stores it under "
+                         "model.language_model.layers.* with NO conversion mapping, so it "
+                         "would SILENTLY load uninitialized text weights. This loads the "
+                         "checkpoint's real arch class (keys match) + an explicit jlens Layout.")
     ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
@@ -69,9 +77,20 @@ def main() -> None:
     if args.max_memory_gb > 0:  # validation: cap per-GPU to FORCE a multi-GPU split
         kw["max_memory"] = {i: f"{args.max_memory_gb}GiB" for i in range(n_gpu)}
         # deliberately NO "cpu" key — force pure-GPU sharding, error if it won't fit
-    hf = transformers.AutoModelForCausalLM.from_pretrained(args.model, **kw).eval()
     tok = transformers.AutoTokenizer.from_pretrained(args.model)
-    model = jlens.from_hf(hf, tok, compile=False)  # compile OFF: required with device_map
+    if args.backbone_path:
+        # Multimodal wrapper: load the checkpoint's real arch class (keys match) and point
+        # jlens at the text backbone. Verified on meta device for Qwen3.5-397B-A17B:
+        # Layout(path='model.language_model') -> 60 layers, d_model 4096, lm_head resolves.
+        from jlens import Layout
+        cfg = transformers.AutoConfig.from_pretrained(args.model)
+        cls = getattr(transformers, cfg.architectures[0])
+        print(f"multimodal load: {cls.__name__}  backbone={args.backbone_path}")
+        hf = cls.from_pretrained(args.model, **kw).eval()
+        model = jlens.from_hf(hf, tok, compile=False, layout=Layout(path=args.backbone_path))
+    else:
+        hf = transformers.AutoModelForCausalLM.from_pretrained(args.model, **kw).eval()
+        model = jlens.from_hf(hf, tok, compile=False)  # compile OFF: required w/ device_map
 
     prompts = load_corpus(args.n_prompts, args.seed, corpus="wikitext")
     print(f"corpus: {len(prompts)} prompts; fitting (this is the slow part)...")
