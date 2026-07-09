@@ -5,18 +5,24 @@ open models via jlens, then correlated against our geometric band statistic (`mi
 The geometry→function test. All runs on GPU (A6000 + A100); data in
 `behavioral_correlation.csv` + per-model `verbal_report_*.json` / `ignition_*.json`._
 
-## The headline: concept-propagation to the workspace tracks the band (ρ = +0.76)
+## The headline: behavioral workspace signatures track the geometric band
 
-N = 11 open models, band range 0.002 → 0.20, 4 families (Gemma-2/3, Qwen3/3.5, Llama,
+N = 13 open models, band range 0.002 → 0.21, 4 families (Gemma-2/3, Qwen3/3.5, Llama,
 Pythia, GPT-2). Rank correlations with the geometric `mid_sep`:
 
-| behavioral measure | what it tests | Spearman ρ vs mid_sep | n |
-|---|---|---|---|
-| **share_span** | does an injected concept *resolve* in the J-lens readout (A-vs-B) | **+0.76** | 11 |
-| swap_best | can steering the J-space direction flip the output | +0.53 | 11 |
-| ign_sharp | is concept entry all-or-none (ignition), among resolvers | +0.49 | 6 |
+| behavioral measure | what it tests | Spearman ρ vs mid_sep | n | sig. |
+|---|---|---|---|---|
+| **share_span** | does an injected concept *resolve* in the J-lens readout (A-vs-B) | **+0.835** | 13 | p<0.001 |
+| ign_sharp | is concept entry all-or-none (ignition), among resolvers | **+0.714** | 8 | p<0.05 |
+| swap_best | can steering the J-space direction flip the output | **+0.698** | 13 | p<0.01 |
 
-**share_span is the clean result** — and it's close to a categorical separation:
+**All three behavioral measures track the band; share_span most strongly.** The two
+highest-band models anchor the high end exactly as predicted — qwen3-14b (band 0.21) →
+ignition-sharp 0.98 / share_span 0.99, qwen3.5-27b (0.20) → sharp 0.97 / span 0.99.
+(These n=13 numbers supersede an earlier n=11 pass; adding the two high-band anchors
+raised every correlation — share_span 0.76→0.835, ign_sharp 0.49→0.714, swap 0.53→0.698.)
+
+**share_span is the cleanest result** — close to a categorical separation:
 
 | models | share_span | band |
 |---|---|---|
@@ -25,27 +31,29 @@ Pythia, GPT-2). Rank correlations with the geometric `mid_sep`:
 | Pythia-70M (tiny) | 0.31 — barely | ~0 |
 
 Read: **models with a geometric workspace band actually route an injected concept into
-their verbalizable workspace; models without one (all of Gemma) do not.** ρ = 0.76 at
-n = 11 exceeds the p < 0.01 critical value (~0.735) — a real geometry→function bridge.
+their verbalizable workspace; models without one (all of Gemma) do not.** ρ = 0.835 at
+n = 13 clears the p < 0.001 critical value (~0.78) — a real geometry→function bridge.
 
 ## Honest limits of the behavioral result (do not overclaim)
 
-- **Ignition is NOT well-supported.** ign_sharp only correlates at ρ = 0.49 and only n = 6
-  (the 5 Gemmas never resolve concepts, so sharpness is undefined for them). Within the
-  resolvers it's noisy (qwen3-4b band 0.056 → sharp 0.91, but qwen3.5-2b band 0.147 →
-  sharp 0.27). So "all-or-none ignition tracks the band" is **not** established; the
-  honest claim is only "among models that resolve concepts, some show sharp entry."
-- **Steerability is not universal after all.** An earlier read (swap works everywhere)
-  was based on gemma-2-9b (swap 0.82) — an *outlier*. Most Gemmas have low swap too
-  (0.01–0.41), so swap partially tracks the band (ρ = 0.53), not a flat privileged-set
-  signal. gemma-2-9b (high swap, zero concept-resolution, near-zero band) is a genuine
-  odd case worth a sentence, not a headline.
+- **Ignition tracks the band but on n=8.** ign_sharp correlates at ρ = 0.714 (p<0.05) —
+  now genuinely supported (the two high-band anchors are also the sharpest: qwen3-14b
+  0.98, qwen3.5-27b 0.97), but it is only defined for the 8 models whose concepts resolve
+  at all (the 5 Gemmas never resolve, so sharpness is undefined for them — itself part of
+  the finding). Within the resolvers it's not perfectly monotone (qwen3.5-2b band 0.147 →
+  sharp 0.27 is a low outlier). Fair claim: "ignition sharpness tracks the band among
+  models that form one," not "the workspace shows human-like ignition."
+- **Steerability also tracks the band (not universal).** An earlier read (swap works
+  everywhere) was wrong — based on gemma-2-9b (swap 0.82), an *outlier*. Most Gemmas have
+  low swap (0.01–0.41), so swap tracks the band too (ρ = 0.698). gemma-2-9b (high swap,
+  zero concept-resolution, near-zero band) remains a genuine odd case worth a sentence.
 - **The correlate is a two-cluster separation** (Gemma≈0 vs Qwen/Llama≈0.97) more than a
   smooth gradient — a strong effect, honestly characterized as clustered.
-- **n = 11.** Three high-band models (qwen3-14b, qwen3.5-27b, gpt-oss-20b) failed on
-  trivial infra issues (flaky HF download; gpt-oss mxfp4 needs accelerate) — retryable
-  for ~$4 but the high band is already represented (qwen3.5-4b = 0.20), so we shipped
-  n=11 on budget. Re-adding them is cheap future work.
+- **n = 13.** Two of the three earlier infra failures were recovered (qwen3-14b band 0.21,
+  qwen3.5-27b band 0.20) and both landed as the highest-band anchors — adding them raised
+  every correlation. gpt-oss-20b still fails (mxfp4 backward incompatible with jlens's
+  repeated-backward under the current stack); it is the one remaining gap. Going higher n
+  means fitting behavioral runs on more of the 38 lensed models — cheap but GPU-bound.
 - Geometry↔function here is *correlational*; we did not run Anthropic's full ablation
   battery. `share_span`/`swap`/`ign` are our operationalizations of their experiments.
 

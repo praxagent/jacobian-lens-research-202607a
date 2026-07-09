@@ -1,0 +1,117 @@
+{
+ "slug": "qwen3-14b",
+ "hf_id": "Qwen/Qwen3-14B",
+ "band": [
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25
+ ],
+ "strengths": [
+  0.0,
+  4.0,
+  8.0
+ ],
+ "per_category": [
+  {
+   "category": "country",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "color",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "fruit",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "sport",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "instrument",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 8
+  },
+  {
+   "category": "planet",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 11
+  },
+  {
+   "category": "tree",
+   "answer": "what",
+   "reported_in_band": false,
+   "n_candidates": 11
+  },
+  {
+   "category": "bird",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 13
+  },
+  {
+   "category": "language",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "profession",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 12
+  },
+  {
+   "category": "beverage",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 10
+  },
+  {
+   "category": "organ",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 10
+  },
+  {
+   "category": "city",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "river",
+   "answer": "\"",
+   "reported_in_band": false,
+   "n_candidates": 7
+  }
+ ],
+ "reportability_hit_rate": 0.0,
+ "swap_success_rate": {
+  "0.0": 0.0,
+  "4.0": 0.9925925925925926,
+  "8.0": 0.9925925925925926
+ },
+ "swap_total": 135
+}
