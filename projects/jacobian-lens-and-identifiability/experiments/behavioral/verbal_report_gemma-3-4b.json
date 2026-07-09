@@ -1,7 +1,9 @@
 {
- "slug": "gemma-2-9b",
- "hf_id": "google/gemma-2-9b",
+ "slug": "gemma-3-4b",
+ "hf_id": "google/gemma-3-4b-pt",
  "band": [
+  11,
+  12,
   13,
   14,
   15,
@@ -10,12 +12,7 @@
   18,
   19,
   20,
-  21,
-  22,
-  23,
-  24,
-  25,
-  26
+  21
  ],
  "strengths": [
   0.0,
@@ -25,94 +22,94 @@
  "per_category": [
   {
    "category": "country",
-   "answer": "What",
+   "answer": "",
    "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "color",
-   "answer": "What",
-   "reported_in_band": true,
+   "answer": "",
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "fruit",
-   "answer": "What",
-   "reported_in_band": true,
+   "answer": "",
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "sport",
-   "answer": "What",
-   "reported_in_band": true,
+   "answer": "",
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "instrument",
    "answer": "",
-   "reported_in_band": true,
-   "n_candidates": 14
+   "reported_in_band": false,
+   "n_candidates": 10
   },
   {
    "category": "planet",
-   "answer": "What",
+   "answer": "",
    "reported_in_band": false,
    "n_candidates": 13
   },
   {
    "category": "tree",
-   "answer": "What",
-   "reported_in_band": true,
-   "n_candidates": 13
+   "answer": "",
+   "reported_in_band": false,
+   "n_candidates": 12
   },
   {
    "category": "bird",
-   "answer": "What",
-   "reported_in_band": true,
+   "answer": "",
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "language",
    "answer": "",
-   "reported_in_band": true,
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "profession",
    "answer": "",
-   "reported_in_band": true,
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "beverage",
-   "answer": "What",
-   "reported_in_band": true,
+   "answer": "",
+   "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "organ",
    "answer": "",
-   "reported_in_band": true,
+   "reported_in_band": false,
    "n_candidates": 13
   },
   {
    "category": "city",
-   "answer": "What",
+   "answer": "",
    "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "river",
-   "answer": "What",
-   "reported_in_band": true,
+   "answer": "",
+   "reported_in_band": false,
    "n_candidates": 14
   }
  ],
- "reportability_hit_rate": 0.7857142857142857,
+ "reportability_hit_rate": 0.0,
  "swap_success_rate": {
   "0.0": 0.0,
-  "4.0": 0.8214285714285714,
-  "8.0": 0.8214285714285714
+  "4.0": 0.07142857142857142,
+  "8.0": 0.06428571428571428
  },
  "swap_total": 140
 }

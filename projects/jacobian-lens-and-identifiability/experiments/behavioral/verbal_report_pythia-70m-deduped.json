@@ -1,19 +1,9 @@
 {
- "slug": "qwen3-4b",
- "hf_id": "Qwen/Qwen3-4B",
+ "slug": "pythia-70m-deduped",
+ "hf_id": "EleutherAI/pythia-70m-deduped",
  "band": [
-  11,
-  12,
-  13,
-  14,
-  15,
-  16,
-  17,
-  18,
-  19,
-  20,
-  21,
-  22
+  1,
+  2
  ],
  "strengths": [
   0.0,
@@ -23,85 +13,85 @@
  "per_category": [
   {
    "category": "country",
-   "answer": "What",
+   "answer": "",
    "reported_in_band": false,
    "n_candidates": 14
   },
   {
    "category": "color",
-   "answer": "red",
+   "answer": "",
    "reported_in_band": false,
-   "n_candidates": 14
+   "n_candidates": 13
   },
   {
    "category": "fruit",
-   "answer": "apple",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 13
+   "n_candidates": 7
   },
   {
    "category": "sport",
-   "answer": "football",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 14
+   "n_candidates": 9
   },
   {
    "category": "instrument",
-   "answer": "",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 8
+   "n_candidates": 6
   },
   {
    "category": "planet",
-   "answer": "__",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 11
+   "n_candidates": 9
   },
   {
    "category": "tree",
-   "answer": "What",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 11
+   "n_candidates": 6
   },
   {
    "category": "bird",
-   "answer": "__",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 13
+   "n_candidates": 9
   },
   {
    "category": "language",
-   "answer": "English",
+   "answer": "",
    "reported_in_band": false,
    "n_candidates": 13
   },
   {
    "category": "profession",
-   "answer": "teacher",
+   "answer": "",
    "reported_in_band": false,
-   "n_candidates": 12
+   "n_candidates": 11
   },
   {
    "category": "beverage",
    "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 10
+   "n_candidates": 7
   },
   {
    "category": "organ",
-   "answer": "heart",
+   "answer": "",
    "reported_in_band": false,
-   "n_candidates": 10
+   "n_candidates": 8
   },
   {
    "category": "city",
-   "answer": "__",
+   "answer": "\"",
    "reported_in_band": false,
-   "n_candidates": 14
+   "n_candidates": 13
   },
   {
    "category": "river",
-   "answer": "the",
+   "answer": "\"",
    "reported_in_band": false,
    "n_candidates": 7
   }
@@ -109,8 +99,8 @@
  "reportability_hit_rate": 0.0,
  "swap_success_rate": {
   "0.0": 0.0,
-  "4.0": 0.8814814814814815,
-  "8.0": 0.8814814814814815
+  "4.0": 0.0,
+  "8.0": 0.2288135593220339
  },
- "swap_total": 135
+ "swap_total": 118
 }

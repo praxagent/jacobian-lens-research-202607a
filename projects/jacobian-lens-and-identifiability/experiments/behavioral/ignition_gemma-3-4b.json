@@ -1,7 +1,9 @@
 {
- "slug": "gemma-2-9b",
- "hf_id": "google/gemma-2-9b",
+ "slug": "gemma-3-4b",
+ "hf_id": "google/gemma-3-4b-pt",
  "band": [
+  11,
+  12,
   13,
   14,
   15,
@@ -10,12 +12,7 @@
   18,
   19,
   20,
-  21,
-  22,
-  23,
-  24,
-  25,
-  26
+  21
  ],
  "n_alpha": 11,
  "pairs": 8,
@@ -23,12 +20,14 @@
  "median_transition_width": null,
  "frac_sharp_lt_0.25": null,
  "n_curves": 0,
- "n_readouts": 336,
+ "n_readouts": 264,
  "median_share_span": 0.0,
  "median_share_max": 0.5,
  "median_share_min": 0.5,
  "frac_readouts_resolved": 0.0,
  "per_layer_median_width": {
+  "11": null,
+  "12": null,
   "13": null,
   "14": null,
   "15": null,
@@ -37,11 +36,6 @@
   "18": null,
   "19": null,
   "20": null,
-  "21": null,
-  "22": null,
-  "23": null,
-  "24": null,
-  "25": null,
-  "26": null
+  "21": null
  }
 }

@@ -1,0 +1,23 @@
+{
+ "slug": "pythia-70m-deduped",
+ "hf_id": "EleutherAI/pythia-70m-deduped",
+ "band": [
+  1,
+  2
+ ],
+ "n_alpha": 11,
+ "pairs": 8,
+ "carriers": 3,
+ "median_transition_width": 0.2994117647058824,
+ "frac_sharp_lt_0.25": 0.2,
+ "n_curves": 5,
+ "n_readouts": 48,
+ "median_share_span": 0.3087798275502519,
+ "median_share_max": 0.6742161525266548,
+ "median_share_min": 0.3863790658477959,
+ "frac_readouts_resolved": 0.10416666666666667,
+ "per_layer_median_width": {
+  "1": null,
+  "2": 0.2994117647058824
+ }
+}
