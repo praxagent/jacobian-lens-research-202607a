@@ -1,0 +1,34 @@
+{
+ "slug": "gpt2-small",
+ "hf_id": "openai-community/gpt2",
+ "band": [
+  3,
+  4,
+  5,
+  6
+ ],
+ "strengths": [
+  0.0,
+  8.0
+ ],
+ "per_category": [
+  {
+   "category": "country",
+   "answer": "America",
+   "reported_in_band": false,
+   "n_candidates": 14
+  },
+  {
+   "category": "color",
+   "answer": "blue",
+   "reported_in_band": false,
+   "n_candidates": 14
+  }
+ ],
+ "reportability_hit_rate": 0.0,
+ "swap_success_rate": {
+  "0.0": 0.0,
+  "8.0": 0.8
+ },
+ "swap_total": 20
+}
