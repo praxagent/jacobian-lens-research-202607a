@@ -53,6 +53,32 @@ the research:
    the exact command, and results plumbing should all be done *before* the pod starts —
    so the paid pod only does the irreducibly-GPU part.
 
+## Lessons learned the expensive way (2026-07-09, the 397B fit — ~$80 lesson)
+
+7. **⚠️ Validate THROUGHPUT at scale, not just correctness.** The cheap-validation ladder
+   (rule 5) proved the 397B pipeline *correct* (load, sharding, numerics) but never *timed*
+   it — and a correctness-clean path can still be 10–100× too slow. A "quick n=2 smoke" on
+   8×H200 ran 2.3h at $35/hr before being killed. Before any expensive run: **measure one
+   unit of work on the cheap node** (one backward pass, one prompt) **and multiply** —
+   walk away from the launch if the extrapolated wall-clock × $/hr isn't affordable.
+8. **`device_map="auto"` buys MEMORY, not COMPUTE.** It shards whole layers and executes
+   them *sequentially* — on an 8-GPU pod, 7 GPUs idle at any instant. It exists to make
+   too-big models *fit*, not go fast. For big-model **fitting/training-style workloads, plan
+   tensor parallelism from the start**: `tp_plan="auto"` (transformers ≥5.x native TP,
+   needs **torch≥2.5**, `torchrun --nproc_per_node=N`). Validated: jlens.fit's
+   retain_graph + repeated-backward survives TP with numerically identical results
+   (`tp_fit.py` / `tp_test.py` in fit_our_own). vLLM is inference-only — no backward, not
+   an option for lens fitting.
+9. **Big-GPU supply is scarce — treat an acquired pod as an asset.** Getting an 8×H200
+   took ~1h of poll-looping (`scratchpad/h200_retry.sh` pattern: retry a config list every
+   90s). Before terminating a rare pod mid-investigation, weigh re-acquisition time + the
+   re-download of any cached giant model against the idle $/hr of keeping it briefly.
+   Corollary: **RunPod "stop" does NOT preserve the container disk** — only *volume* disk
+   survives a stop, and our pods are created with `volumeInGb: 0`. Stopping ≠ caching.
+10. **Long SSH commands to pods hang on detach** (nohup-launch then exit). Launch with a
+   short `timeout`, expect exit 143, and **verify with a separate fresh SSH** — don't
+   re-run the launch because the channel hung (double-launching a fit is an expensive bug).
+
 ## Folder structure (built to add research easily)
 
 ```
