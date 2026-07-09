@@ -61,9 +61,13 @@ controls, re-fit our own lenses to check stability, and asked one question:
 5. **The transport is language-general deep, language-bound early:** a lens fit on
    Chinese Wikipedia agrees with an English-fit lens at 0.99 in the deepest layers but
    only ~0.73 in the earliest.
-6. **[PENDING-BEHAVIORAL] the geometry-vs-function test:** we ran Anthropic's own causal
-   experiments (answer-swaps, ignition) on a matched triple (qwen3-4b / gemma-2-9b /
-   gemma-2-27b) — does causal workspace *behavior* track the band?
+6. **The band has a functional correlate.** We ran Anthropic's own causal experiments
+   across 11 open models. Whether an injected concept actually *resolves in the model's
+   verbalizable workspace* tracks the geometric band at **Spearman ρ = +0.76** (p < 0.01):
+   all five Gemma models (no band) fail to route the concept into the readout
+   (share ≈ 0.000), while Qwen/Llama (band present) route it cleanly (0.96–0.98). Steering
+   and ignition-sharpness track the band more weakly (ρ ≈ 0.5). So the geometry isn't just
+   geometry — it predicts a behavior.
 
 Everything — code, per-model CSVs, fitted lenses, this post — is in
 [our repo](https://github.com/praxagent/research-and-replications), with a
@@ -189,6 +193,21 @@ weak secondary hypothesis.)
 
 ## Finding 3: Post-training and language
 
+**The band predicts a behavior (geometry → function).** We ran Anthropic's own causal
+experiments across 11 open models and correlated them with the geometric band. The
+cleanest link: whether interpolating a concept into a token makes that concept *resolve
+in the J-lens readout* (`share_span`) tracks `mid_sep` at **ρ = +0.76 (n = 11, p < 0.01)**
+— a near-categorical split, with all five Gemma models at 0.000 (the concept never
+reaches the verbalizable workspace) and Qwen/Llama at 0.96–0.98. This is the strongest
+evidence that the geometric band is not a measurement curiosity: models with the band
+functionally route concepts into a workspace; models without it don't. Honestly, the
+other two behavioral measures are weaker — steering-to-flip-output and all-or-none
+"ignition" sharpness each track the band at only ρ ≈ 0.5 (and ignition is measurable on
+just the 6 models whose concepts resolve at all), so we do *not* claim the workspace
+shows human-like ignition. One model, gemma-2-9b, is a genuine oddity: steerable
+(swap 0.82) yet zero concept-resolution and near-zero band. Full numbers + method:
+[`experiments/behavioral/results.md`](https://github.com/praxagent/research-and-replications/blob/main/projects/jacobian-lens-and-identifiability/experiments/behavioral/results.md).
+
 **Instruct-tuning shrinks the band in every pair we could measure.** gemma-3-4b:
 0.046 → 0.015. gemma-2-2b: 0.007 → 0.001. llama-3.1-8b: 0.087 → 0.079. This is geometry,
 not content — but it is at least in tension with a casual reading of "post-training
@@ -244,12 +263,13 @@ workspace result, the weaker the consciousness inference.
 
 ## Limitations, up front
 
-- **We measure geometry, not behavior — for the sweep.** `mid_sep` is our own CKA
-  block-structure statistic, not Anthropic's causal battery. A family could conceivably
-  pass causal workspace tests while scoring low on our statistic. This is exactly why we
-  ran the behavioral triple [PENDING-BEHAVIORAL]; our null control partially guards it,
-  but a low `mid_sep` could mean "no workspace" *or* "an undifferentiated one our
-  statistic can't see." A homogeneity-robust re-analysis is running.
+- **Geometry vs. behavior — partly addressed, not fully.** `mid_sep` is our own CKA
+  block-structure statistic, not Anthropic's full ablation battery. We tested the link
+  directly (above): concept-resolution tracks the band at ρ = 0.76, which is real
+  reassurance that a low `mid_sep` reflects a functional difference, not just a
+  measurement one. But it's *correlational* across 11 models, the effect is clustered
+  rather than smoothly graded, and the other behavioral measures are weaker — so we don't
+  claim the band is a complete functional characterization of a "workspace."
 - **Sub-frontier scope.** Our ceiling is [PENDING-70B: ~70B]. Everything here could be a
   sub-frontier transient — the exact overclaim-from-limited-scale error we're auditing.
   Nanda's scaling data (a ~400B lens fit in ~1 hour on 8×H200s) makes the frontier check
