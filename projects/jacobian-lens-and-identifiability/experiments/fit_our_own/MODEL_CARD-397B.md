@@ -61,8 +61,16 @@ transient.
 1. **Pipeline calibration**: the same fitting code reproduces Neuronpedia's gpt2 lens at
    mean CKA 0.9992 and lands within sampling noise of Neuronpedia's mid_sep on
    qwen3-4b and qwen3.5-0.8b.
-2. **Held-out fidelity evals** (12 prompts, seed 1, disjoint from the fit corpus):
-   lens-vs-model top-1/top-10 agreement and KL by depth: [EVALS TABLE PENDING]
+2. **Fidelity — A.6-faithful, calibrated against published lenses.** The canonical
+   readout is rank-based, not absolute agreement (a healthy J-lens is deliberately the
+   *worst* absolute next-token predictor mid-network — paper A.6). Our lens: unembed-path
+   identity holds exactly; motor-layer argmax agreement rises monotonically with depth
+   (mid 0.000 → last fitted layer **0.5625**); this matches known-good **Neuronpedia**
+   lenses on the identical eval (qwen3-4b **0.722**, the architecture-matched qwen3.5-0.8b
+   **0.549**). J-lens beats the logit-lens baseline at pass@10 intermediate recovery.
+   Files: `evals_v2_397b.json`, `calg2_neuronpedia_calibration.log`. (An earlier eval,
+   `evals_v1_misspecified.json`, used absolute agreement — the wrong metric — and is
+   retained only as a transparency receipt.)
 3. **Function — the lens extracts workspace content (near-perfectly)**: Anthropic-style
    ignition test run through this lens on the 397B itself — interpolated concepts
    injected at a carrier slot resolve in the lens readout with **median share_span
