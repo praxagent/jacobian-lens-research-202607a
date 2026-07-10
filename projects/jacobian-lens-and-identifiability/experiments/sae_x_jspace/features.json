@@ -1,0 +1,23 @@
+{
+  "_meta": {
+    "sae": "Goodfire/Llama-3.3-70B-Instruct-SAE-l50",
+    "sae_arch": "dense ReLU, no top-k, no pre-bias; state-dict keys encoder_linear.{weight,bias} / decoder_linear.{weight,bias}; steering direction for feature i = decoder_linear.weight[:, i]",
+    "hook": "residual stream after decoder layer 50 of meta-llama/Llama-3.3-70B-Instruct (model.layers.50 output), d_model 8192, dict 65536, L0 121, trained on LMSYS-Chat-1M (toxic latents zeroed)",
+    "lens": "neuronpedia/jacobian-lens llama3.3-70b-it (10.6 GB, fit on wikitext-103, early-stopped at 125 prompts, 2026-06-16)",
+    "labels_source": "target labels validated in TJ's clean-room activation study (praxagent.ai/blog/posts/how-to-read-an-sae-feature-id); control labels to be pulled from Neuronpedia slug llama3.3-70b-it-gf / 50-resid-post-gf BEFORE the run and frozen here",
+    "controls": "index-adjacent = ids +/-3 of each target (same SAE, unrelated concept — the blog post's own control discipline); plus 12 random same-layer features drawn with seed 0, excluding targets and adjacents"
+  },
+  "targets": [
+    {"id": 30032, "label": "Characters pretending or feigning behavior"},
+    {"id": 58667, "label": "Maintaining deception or cover stories"},
+    {"id": 22004, "label": "Assistant actively roleplaying a persona"},
+    {"id": 30686, "label": "Tactical deception and misdirection"},
+    {"id": 41533, "label": "Acts of deception and dishonesty"},
+    {"id": 23893, "label": "Concealing artificial nature / maintaining roleplay"}
+  ],
+  "index_adjacent_controls": [30029, 30035, 58664, 58670, 22001, 22007, 30683, 30689, 41530, 41536, 23890, 23896],
+  "random_control_seed": 0,
+  "n_random_controls": 12,
+  "deception_probe_tokens": ["lie", "lies", "lying", "deceive", "deception", "pretend", "pretending", "fake", "dishonest", "trick", "mislead", "cover", "secret", "hide", "roleplay", "persona"],
+  "_probe_note": "single-token status checked per tokenizer at runtime; misses logged. This token set is FROZEN at pre-registration; readout metrics report both this set and full-vocab top-k shifts so the set choice cannot cherry-pick."
+}
