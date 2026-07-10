@@ -128,6 +128,14 @@ reality, then fix checkpoint.md.
 
 ## House rules
 
+- **Pre-register before running, formally when reasonable (TJ, 2026-07-10).** Before
+  any experiment whose outcome we might publish: freeze the design (prompts, metrics,
+  gates, controls, predictions) and commit it BEFORE results exist — git pre-registration
+  is the floor (see `experiments/lens_demo/` for the pattern). When the experiment is
+  substantial enough that we'd blog/tweet the result, ALSO file an OSF or AsPredicted
+  pre-registration if reasonable (needs TJ's account — ask him; cite the registration
+  ID in the results ledger and blog). "Not reasonable" = quick mechanics smokes,
+  debugging runs, exploratory sweeps explicitly labeled exploratory in the ledger.
 - **`uv` for envs.** The CPU torch wheel isn't on PyPI for cp312 under the default
   resolver; install it by direct URL (see README "Running") — pyproject keeps torch in
   an extra so the light path stays clean.

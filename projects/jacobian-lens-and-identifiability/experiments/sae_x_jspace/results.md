@@ -91,3 +91,34 @@ clean-room study; expressing them as percentiles of his natural-text distributio
 needs the per-feature stats from `llm_selfref_pre` — queued as the write-up step.
 
 Total experiment cost: ≈ **$2.6**.
+
+## Solidification round (2026-07-10, follow-ups from the 70B run)
+
+**The 22004/23893 anomaly is RESOLVED — it was a label problem, not model concealment.**
+Three free checks converged:
+1. **Neuronpedia's independent autointerp of the same Goodfire checkpoint** labels
+   22004 "role followed by 'I would' or 'you are'" (syntactic template) and 23893
+   "mention specific topics" — neither matches the AE-notebook labels ("persona
+   roleplay" / "concealing artificial nature"). The namespace-transfer risk TJ's Part-I
+   post flagged as unverified is real for 2 of the 6 IDs. The four IDs whose labels DO
+   agree across dictionaries are exactly the four the J-lens named and that bridged.
+2. **Baseline audit on TJ's 1,120-text corpus** (data local in llm_selfref_pre;
+   text_format=raw, max-over-positions, 4-bit caveat): 22004 fires ONLY on
+   roleplay_persona (38 texts, peak 0.42, template-locked on " and"); 23893 fires on
+   18.8% of texts, strongest on deception_cover_story (81% nonzero), and EXACTLY ZERO
+   on all three AI-identity/self-reference categories. Neither is dead; neither is a
+   concealment detector. Also: 4 of 12 index-adjacent controls are fully dead on the
+   corpus — adjacency confers no selectivity.
+3. **Percentile calibration:** natural maxima for the six features are 0.42–7.1
+   (p99 0.42–7.0). Our Stage-B steered deltas (+46…+1132) are ~10–450× beyond natural
+   p99 — the reverse bridge shows coupling SPECIFICITY under a supra-physiological
+   intervention, not natural-range modulation. Follow-up: low-strength dose-response
+   through the natural range.
+
+**Verdict for the would-be "hiding features are hidden" post: retracted before
+publication.** The J-lens's refusal to name 22004/23893 was a correct label audit,
+detected before the label mismatch was known. That (label-auditing) is the defensible
+finding, and it strengthens Part I's thesis.
+
+**Still open:** κ-stratified sweep of the full dictionary (base rate of lens-legibility
+vs κ) — runner queued.
