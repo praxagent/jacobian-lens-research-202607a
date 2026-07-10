@@ -153,11 +153,69 @@ params, so the compute win lands where it matters; (c) validate on Qwen3.5-0.8B 
 known 0.1443, measure one traversal, extrapolate, *then* re-acquire the 8×H200 (~$9
 re-download).
 
-**Honest status:** our band statistic at 397B remains unmeasured; Nanda's replication
-stands as the only public frontier datum (with his own caveat: "didn't sanity check very
-hard", n=4). Total spent on the attempt ≈ $110 of H200 time — most of it burned by
-validating *correctness* without measuring *throughput* first, now codified as a standing
-rule (CLAUDE.md lessons 7–10). ⚠️ Our earlier "~$175 for n=24" extrapolation is
-inconsistent with the traversal arithmetic (it implies 0.7 s/traversal where the Nanda
-reconciliation suggests ~3.5 s); per-traversal time at 397B is bounded 0.7–3.3 s until
-re-measured — the game plan's step-4 measurement phase settles it before any spend.
+**Honest status (superseded by §6):** attempt #1 ended with the band unmeasured; ≈$110 of
+H200 time, mostly burned by validating *correctness* without measuring *throughput* first
+(CLAUDE.md lessons 7–10). Round 2 (below) executed GAMEPLAN-397B.md and got the number.
+
+## 6. 397B round 2 — THE BAND AT 0.4T (2026-07-10)
+
+_Everything per GAMEPLAN-397B.md; every step receipted (`logs397b/`, `/root` logs pulled
+into `artifacts/lenses-397b/`)._
+
+### Gates (in order, as run)
+
+1. **CPU smoke ($0, this box):** shipped tp_plan reproduces the k_proj reshape failure
+   exactly; our custom plan → forward parity **4.172e-07** vs single-process + clean
+   retain_graph double-backward (tp_smoke_cpu.py, 2-proc gloo, tiny qwen3_5_moe in the
+   failing 1-KV-head regime).
+2. **NCCL numerics gate (2×3090, ~$1.50):** custom-plan TP fit of Qwen3.5-0.8B, n=2,
+   vs single-GPU same-seed: **0.1582 vs 0.1622** — same structure, Δ attributable to
+   sdpa-vs-eager bf16 backend numerics; a sharding bug would be orders off. PASSED.
+   (Side-finding: gather-output TP on PCIe-only pods ≈ 8 s/traversal — NVLink matters.)
+3. **TP on the 397B (8×H200): killed by throughput go/no-go.** The plan loads and runs —
+   but the OOM ladder (db=16 ✗, db=8 ✗ — MoE saved-activations dominate the retained
+   graph) forced **db=4**, where the 8-way expert sharding is overhead-dominated:
+   ≥30 min without completing prompt 1 (≥1.7 s/traversal ⇒ n=16 ≈ $265). Pre-agreed
+   kill criterion → fallback. **TP finding:** `colwise_gather_output` TP trades
+   activation memory for parallelism; at 141 GB/rank and 60 layers the trade doesn't
+   clear for jlens fitting. Correct plan, wrong regime.
+4. **Winner: device_map + right-sized dim_batch** (the boring path, likely Nanda's):
+   after two memory receipts (auto-layout put 133 GB on one rank → `--max-memory-gb 110`
+   even spread; db=32 retained graph >25 GB → db=16), the fit ran metronome-stable:
+   **~10 min/prompt = ~2.35 s/traversal** (256 traversals/prompt) — dead-center in the
+   reconciliation's predicted band, further evidence Nanda's ~1 h/n=4 was this same
+   configuration class.
+
+### The result
+
+```
+Qwen3.5-397B-A17B  (60 layers, d_model 4096, 512-expert MoE, multimodal wrapper)
+fit: device_map even-spread 110GB, eager attn, dim_batch 16, wikitext-103 seed 0,
+     max_seq_len 128, n=24 prompts (per-prompt checkpointed)
+
+INTERIM n=16:  mid_sep = +0.3796   (within early/MID/late = 0.887/0.898/0.815)
+FINAL   n=24:  mid_sep = [PENDING-FINAL]
+```
+
+**The workspace band is not a sub-70B transient — it is the strongest band we have
+measured anywhere,** nearly 2× the previous maximum in our 36-model sweep (qwen3-14b
+0.2114). Within-lineage scale trend: qwen3.5-27B 0.197 → llama3.3-70B-it 0.148 →
+**qwen3.5-397B ~0.38**. This is, to our knowledge, the first band statistic published at
+0.4T scale (Nanda ran evals only, "didn't sanity check very hard", n=4).
+
+### Release-verification battery (the "is it legit" protocol)
+
+1. **Fidelity** — held-out A.6-style evals (12 prompts, seed 1, disjoint from fit):
+   lens-vs-model top-1/top-10/KL agreement by depth: [PENDING-EVALS]
+2. **Function** — ignition run through this exact lens on the 397B (8 pairs × 3 carriers
+   × 9 α, 480 band-layer curves): share_span / ign_sharp = [PENDING-IGNITION]. Extends
+   the behavioral correlation to n=24 with the frontier point.
+3. **Consumer path** — post-upload: fresh HF download on the CPU box → sha256 vs pod
+   originals → recompute mid_sep from the public fp16 copy = [PENDING-CONSUMER].
+
+### Cost ledger (honest)
+
+Attempt #1 ≈ $110 · round-2 gates ≈ $2 · round-2 H200 ≈ [PENDING ≈$220–240 incl. TP
+experiment + fallback iterations] · **duplicate-pod incident ≈ $143** (retry loop
+survived a self-matching pkill and idled 4.1 h — caught by TJ; CLAUDE.md lesson 11).
+Session total across the whole J-space audit ≈ [PENDING ≈$500].
