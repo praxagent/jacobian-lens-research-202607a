@@ -87,10 +87,19 @@ stdin env; never written to pod disk. Pod terminated at +22 min; `pods` audited.
 - **The lens's directions are causally load-bearing:** 32/50 steered swaps flip the
   output; strength-0 and norm-matched random directions flip **0/50 each**.
 - **Honest deltas vs the 27B gate run** (0.85 / 1.00 there): absolute rates are lower
-  at 397B. Confounded explanations we can't separate here: (a) our lens is fit on
-  n=24 prompts vs the Neuronpedia n≈1000-class lens used at 27B — consistent with
-  fit-corpus size buying readout quality (the planned eval-vs-n ladder tests exactly
-  this); (b) 248k vs 152k vocab makes top-20 a harsher bar; (c) model scale itself.
+  at 397B. NOT a vocab artifact — qwen3.5-27b uses the same 248k vocabulary
+  (a first draft of this section wrongly listed vocab size as a confound; that applies
+  only to the qwen3-4b mechanics run at 152k). The real candidates, confounded here:
+  (a) lens fit-corpus size — ours n=24 vs the Neuronpedia n≈1000-class lens used at
+  27B. Plausible (a mean over 24 per-prompt Jacobians is noisier), but NOT established:
+  on the motor-convergence fidelity metric our n=24 lens (0.5625) actually beats the
+  arch-matched Neuronpedia lens (0.549), so n is not obviously the driver.
+  (b) model scale/architecture — the 397B is a 512-expert MoE (~17B active/token),
+  multimodal, hybrid linear attention; sparse routing may distribute workspace content
+  differently, and our own audit shows band geometry does not predict readout function.
+  (c) steering calibration — act 3 ran a single strength (8), tuned on small models.
+  The clean discriminating test: extend the 397B lens to n≈100–250 (exact warm-start)
+  and re-run this demo — if rates rise, it was n.
   What is NOT in doubt: both effects are large against both controls, and a fake or
   corrupted lens produces the random-J row.
 

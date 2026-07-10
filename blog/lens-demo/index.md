@@ -95,9 +95,14 @@ vector of identical magnitude at identical layers does *nothing*.
   (their A.6: the J-lens is deliberately bad at next-token reading). We report the
   drop because a demo that hides its dead ends isn't a verification.
 - **Rates are lower at 397B than at 27B** (bridge hit 0.30 vs 0.85; flips 64% vs 100%
-  with a Neuronpedia-fit lens there). We can't yet separate the causes: our 397B lens
-  is fit on 24 prompts (theirs ~1000), the 397B vocabulary is 1.6× larger, and scale
-  itself may matter. What's not in doubt: every effect is large against both controls.
+  with a Neuronpedia-fit lens there — same 248k vocabulary, so that's not it). We
+  can't yet separate the causes: our 397B lens is fit on 24 prompts (theirs ~1000) —
+  though on the motor-convergence fidelity metric our n=24 lens actually *beats* the
+  architecture-matched Neuronpedia lens, so fit-size is plausible but unproven; the
+  397B's sparse 512-expert routing may spread workspace content differently; and our
+  steering strength was calibrated on small models. The discriminating experiment
+  (extend the lens to more prompts — the math warm-starts exactly — and re-run) is
+  queued. What's not in doubt: every effect is large against both controls.
 - **This is one model, one lineage, twenty items per act.** It's a verification demo,
   not a survey — the [35-model survey is here](../jspace-audit/).
 
