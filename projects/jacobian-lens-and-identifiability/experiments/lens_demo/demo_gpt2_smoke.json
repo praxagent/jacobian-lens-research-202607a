@@ -1,0 +1,753 @@
+{
+ "model": "openai-community/gpt2",
+ "lens_path": "/home/ubuntu/.cache/huggingface/hub/models--neuronpedia--jacobian-lens/snapshots/a4114d7752d11eb546e6cf372213d7e75526d3a1/gpt2-small/jlens/Salesforce-wikitext/gpt2_jacobian_lens.pt",
+ "lens_sha256": "d1800a1335ada089ef2e1ec0e4bd4d5bd61e6011eacc31f8618fdb3d10aae762",
+ "band": [
+  3,
+  4,
+  5,
+  6
+ ],
+ "topk": 20,
+ "act1": {
+  "items": [
+   {
+    "prompt": "The large gray animal with a long trunk and big flapping ears is the",
+    "target": "elephant",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 2182,
+     "cand_rank": 5
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 414,
+     "cand_rank": 4
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 15005,
+     "cand_rank": 5
+    }
+   },
+   {
+    "prompt": "The yellow sour citrus fruit that makes your face pucker is the",
+    "target": "lemon",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 330,
+     "cand_rank": 2
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 2935,
+     "cand_rank": 9
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 30776,
+     "cand_rank": 6
+    }
+   },
+   {
+    "prompt": "The king of the jungle with a golden mane is the",
+    "target": "lion",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 232,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 153,
+     "cand_rank": 2
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 3240,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The red planet, fourth from the sun, is called",
+    "target": "Mars",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 351,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 87,
+     "cand_rank": 1
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 9659,
+     "cand_rank": 3
+    }
+   },
+   {
+    "prompt": "The instrument with 88 black and white keys is the",
+    "target": "piano",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 3310,
+     "cand_rank": 4
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 3061,
+     "cand_rank": 5
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 1400,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The frozen solid form of water is called",
+    "target": "ice",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 1836,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1250,
+     "cand_rank": 2
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 12084,
+     "cand_rank": 6
+    }
+   },
+   {
+    "prompt": "The buzzing insect that pollinates flowers and makes honey is the",
+    "target": "bee",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 5488,
+     "cand_rank": 8
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1295,
+     "cand_rank": 6
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 6516,
+     "cand_rank": 4
+    }
+   },
+   {
+    "prompt": "The organ that pumps blood through the body is the",
+    "target": "heart",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 1342,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 21,
+     "cand_rank": 1
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2542,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The season after winter and before summer is",
+    "target": "spring",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 204,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 483,
+     "cand_rank": 1
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 809,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The magnetic metal that rusts when it gets wet is",
+    "target": "iron",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 17539,
+     "cand_rank": 7
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 5864,
+     "cand_rank": 5
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 11781,
+     "cand_rank": 3
+    }
+   },
+   {
+    "prompt": "The hot molten rock that erupts from a volcano is called",
+    "target": "lava",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 367,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 9801,
+     "cand_rank": 6
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 8494,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The small device worn on the wrist to tell time is a",
+    "target": "watch",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 1802,
+     "cand_rank": 2
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 5460,
+     "cand_rank": 7
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2252,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The sweet golden substance that bees produce is called",
+    "target": "honey",
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 10417,
+     "cand_rank": 7
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1668,
+     "cand_rank": 3
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2406,
+     "cand_rank": 3
+    }
+   }
+  ],
+  "skipped": [
+   {
+    "target": "giraffe",
+    "reason": "multi-token"
+   },
+   {
+    "target": "penguin",
+    "reason": "multi-token"
+   },
+   {
+    "target": "zebra",
+    "reason": "multi-token"
+   }
+  ],
+  "summary": {
+   "jlens": {
+    "n": 13,
+    "hit_rate_top20": 0.0,
+    "n_clean": 13,
+    "hit_rate_top20_clean": 0.0,
+    "median_cand_rank": 2
+   },
+   "logit_lens": {
+    "n": 13,
+    "hit_rate_top20": 0.0,
+    "n_clean": 13,
+    "hit_rate_top20_clean": 0.0,
+    "median_cand_rank": 4
+   },
+   "random_J": {
+    "n": 13,
+    "hit_rate_top20": 0.0,
+    "n_clean": 13,
+    "hit_rate_top20_clean": 0.0,
+    "median_cand_rank": 3
+   }
+  }
+ },
+ "act1_secret": {
+  "items": [],
+  "skipped": [],
+  "summary": {}
+ },
+ "act2": {
+  "items": [
+   {
+    "prompt": "The capital of the country where Mount Fuji stands is",
+    "target": "Japan",
+    "continuation": " the capital of the world's largest mountain",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 15356,
+     "cand_rank": 3
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 921,
+     "cand_rank": 2
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 688,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The capital of the country famous for the Taj Mahal is",
+    "target": "India",
+    "continuation": " now home to the world's largest Taj",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 3949,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 565,
+     "cand_rank": 1
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 378,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The capital of the country where the Colosseum stands is",
+    "target": "Italy",
+    "continuation": " the capital of the Republic of Colombia.",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 17155,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1398,
+     "cand_rank": 5
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2717,
+     "cand_rank": 6
+    }
+   },
+   {
+    "prompt": "The capital of the country where kangaroos live in the wild is",
+    "target": "Australia",
+    "continuation": " now home to a new breed of k",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 3159,
+     "cand_rank": 2
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 632,
+     "cand_rank": 3
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2235,
+     "cand_rank": 6
+    }
+   },
+   {
+    "prompt": "The capital of the country that gifted the Statue of Liberty to America is",
+    "target": "France",
+    "continuation": " now home to a new museum dedicated to",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 4636,
+     "cand_rank": 7
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1571,
+     "cand_rank": 9
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 1898,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The capital of the country where Machu Picchu is located is",
+    "target": "Peru",
+    "continuation": " the largest city in the world. It",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 20693,
+     "cand_rank": 10
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 8263,
+     "cand_rank": 14
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 38,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The capital of the country where the pyramids of Giza stand is",
+    "target": "Egypt",
+    "continuation": " the capital of the United States.\n",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 25620,
+     "cand_rank": 8
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 3665,
+     "cand_rank": 8
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 3952,
+     "cand_rank": 5
+    }
+   },
+   {
+    "prompt": "The capital of the largest country in South America is",
+    "target": "Brazil",
+    "continuation": " now home to the world's largest population",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 536,
+     "cand_rank": 5
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1055,
+     "cand_rank": 8
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 1010,
+     "cand_rank": 4
+    }
+   },
+   {
+    "prompt": "The capital of the country whose flag shows a red maple leaf is",
+    "target": "Canada",
+    "continuation": " the capital of the country whose flag shows",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 1191,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 544,
+     "cand_rank": 1
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 1593,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The capital of the country famous for tulips and windmills is",
+    "target": "Netherlands",
+    "continuation": " now home to a new breed of tul",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 1532,
+     "cand_rank": 1
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 9988,
+     "cand_rank": 20
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 89,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The capital of the country that built the Great Wall is",
+    "target": "China",
+    "continuation": " now home to a new generation of Chinese",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 15858,
+     "cand_rank": 15
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 475,
+     "cand_rank": 2
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2822,
+     "cand_rank": 7
+    }
+   },
+   {
+    "prompt": "The capital of the country where the tango originated is",
+    "target": "Argentina",
+    "continuation": " now home to the world's largest musical",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 8143,
+     "cand_rank": 6
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 825,
+     "cand_rank": 6
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 857,
+     "cand_rank": 3
+    }
+   },
+   {
+    "prompt": "The capital of the country famous for fjords and Vikings is",
+    "target": "Norway",
+    "continuation": " now home to a new museum dedicated to",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 4865,
+     "cand_rank": 4
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 3826,
+     "cand_rank": 11
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2160,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The capital of the country where the Kremlin stands is",
+    "target": "Russia",
+    "continuation": " the capital of the Russian Federation, which",
+    "output_leaked": true,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 5494,
+     "cand_rank": 10
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 746,
+     "cand_rank": 5
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 449,
+     "cand_rank": 1
+    }
+   },
+   {
+    "prompt": "The capital of the country where K-pop originated is",
+    "target": "Korea",
+    "continuation": " now a hotbed of hip-hop",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 10449,
+     "cand_rank": 4
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 821,
+     "cand_rank": 9
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 6918,
+     "cand_rank": 7
+    }
+   },
+   {
+    "prompt": "The capital of the country where flamenco dancing originated is",
+    "target": "Spain",
+    "continuation": " now a hotbed of crime.\n",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 19041,
+     "cand_rank": 5
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 6084,
+     "cand_rank": 17
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 1246,
+     "cand_rank": 2
+    }
+   },
+   {
+    "prompt": "The capital of the country where the ancient Olympic Games began is",
+    "target": "Greece",
+    "continuation": " now home to the world's largest concentration",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 20696,
+     "cand_rank": 6
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 3238,
+     "cand_rank": 10
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 12132,
+     "cand_rank": 13
+    }
+   },
+   {
+    "prompt": "The capital of the country famous for Oktoberfest is",
+    "target": "Germany",
+    "continuation": " now home to the world's largest beer",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 24842,
+     "cand_rank": 13
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 1115,
+     "cand_rank": 6
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2934,
+     "cand_rank": 4
+    }
+   },
+   {
+    "prompt": "The capital of the country of IKEA and ABBA is",
+    "target": "Sweden",
+    "continuation": " the capital of the country of IKE",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 18718,
+     "cand_rank": 17
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 2944,
+     "cand_rank": 9
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 4989,
+     "cand_rank": 3
+    }
+   },
+   {
+    "prompt": "The capital of the country home to the Maasai Mara reserve is",
+    "target": "Kenya",
+    "continuation": " now home to a large number of Ma",
+    "output_leaked": false,
+    "jlens": {
+     "hit_top20": false,
+     "best_rank": 7096,
+     "cand_rank": 5
+    },
+    "logit_lens": {
+     "hit_top20": false,
+     "best_rank": 4419,
+     "cand_rank": 10
+    },
+    "random_J": {
+     "hit_top20": false,
+     "best_rank": 2895,
+     "cand_rank": 4
+    }
+   }
+  ],
+  "skipped": [],
+  "summary": {
+   "jlens": {
+    "n": 20,
+    "hit_rate_top20": 0.0,
+    "n_clean": 19,
+    "hit_rate_top20_clean": 0.0,
+    "median_cand_rank": 5
+   },
+   "logit_lens": {
+    "n": 20,
+    "hit_rate_top20": 0.0,
+    "n_clean": 19,
+    "hit_rate_top20_clean": 0.0,
+    "median_cand_rank": 8
+   },
+   "random_J": {
+    "n": 20,
+    "hit_rate_top20": 0.0,
+    "n_clean": 19,
+    "hit_rate_top20_clean": 0.0,
+    "median_cand_rank": 3
+   }
+  }
+ }
+}

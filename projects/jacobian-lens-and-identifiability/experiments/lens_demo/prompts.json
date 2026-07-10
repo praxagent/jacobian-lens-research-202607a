@@ -1,0 +1,53 @@
+{
+  "_meta": {
+    "purpose": "Pre-registered prompt sets for the lens release demo (3 acts). FROZEN before the 397B run — the git hash of the freezing commit is cited in the blog. Items are constructed, novel text (not drawn from wikitext-103, the lens fit corpus). Per-model, items are auto-skipped at runtime if the target word is not a single token in that model's tokenizer, or if a leakage assert fires (target appearing as a substring of the prompt); every skip is logged in the receipt.",
+    "scoring": "Deterministic: a HIT means the target token id is in the readout top-20 at >=1 band layer (position = last prompt token). Also recorded per item: best full-vocab rank across band layers, and rank among the act's mutual candidate set. Baselines run on the same items, same layers, same positions: logit-lens (identity transport through the same readout path) and random-J (seeded, Frobenius-scale-matched random transports through the same readout path)."
+  },
+  "act1_riddles": [
+    {"prompt": "The large gray animal with a long trunk and big flapping ears is the", "answer": "elephant"},
+    {"prompt": "The yellow sour citrus fruit that makes your face pucker is the", "answer": "lemon"},
+    {"prompt": "The king of the jungle with a golden mane is the", "answer": "lion"},
+    {"prompt": "The red planet, fourth from the sun, is called", "answer": "Mars"},
+    {"prompt": "The instrument with 88 black and white keys is the", "answer": "piano"},
+    {"prompt": "The frozen solid form of water is called", "answer": "ice"},
+    {"prompt": "The tallest animal, with a very long neck, is the", "answer": "giraffe"},
+    {"prompt": "The buzzing insect that pollinates flowers and makes honey is the", "answer": "bee"},
+    {"prompt": "The organ that pumps blood through the body is the", "answer": "heart"},
+    {"prompt": "The season after winter and before summer is", "answer": "spring"},
+    {"prompt": "The magnetic metal that rusts when it gets wet is", "answer": "iron"},
+    {"prompt": "The black and white flightless bird of Antarctica is the", "answer": "penguin"},
+    {"prompt": "The hot molten rock that erupts from a volcano is called", "answer": "lava"},
+    {"prompt": "The small device worn on the wrist to tell time is a", "answer": "watch"},
+    {"prompt": "The African wild horse with black and white stripes is the", "answer": "zebra"},
+    {"prompt": "The sweet golden substance that bees produce is called", "answer": "honey"}
+  ],
+  "act1_secret_template": "Q: {clue}? I know the answer, but I will keep it secret and reply only with the word 'ready'. A: ready",
+  "act2_twohop": [
+    {"prompt": "The capital of the country where Mount Fuji stands is", "bridge": "Japan", "expected_answer": "Tokyo"},
+    {"prompt": "The capital of the country famous for the Taj Mahal is", "bridge": "India", "expected_answer": "Delhi"},
+    {"prompt": "The capital of the country where the Colosseum stands is", "bridge": "Italy", "expected_answer": "Rome"},
+    {"prompt": "The capital of the country where kangaroos live in the wild is", "bridge": "Australia", "expected_answer": "Canberra"},
+    {"prompt": "The capital of the country that gifted the Statue of Liberty to America is", "bridge": "France", "expected_answer": "Paris"},
+    {"prompt": "The capital of the country where Machu Picchu is located is", "bridge": "Peru", "expected_answer": "Lima"},
+    {"prompt": "The capital of the country where the pyramids of Giza stand is", "bridge": "Egypt", "expected_answer": "Cairo"},
+    {"prompt": "The capital of the largest country in South America is", "bridge": "Brazil", "expected_answer": "Brasilia"},
+    {"prompt": "The capital of the country whose flag shows a red maple leaf is", "bridge": "Canada", "expected_answer": "Ottawa"},
+    {"prompt": "The capital of the country famous for tulips and windmills is", "bridge": "Netherlands", "expected_answer": "Amsterdam"},
+    {"prompt": "The capital of the country that built the Great Wall is", "bridge": "China", "expected_answer": "Beijing"},
+    {"prompt": "The capital of the country where the tango originated is", "bridge": "Argentina", "expected_answer": "Buenos"},
+    {"prompt": "The capital of the country famous for fjords and Vikings is", "bridge": "Norway", "expected_answer": "Oslo"},
+    {"prompt": "The capital of the country where the Kremlin stands is", "bridge": "Russia", "expected_answer": "Moscow"},
+    {"prompt": "The capital of the country where K-pop originated is", "bridge": "Korea", "expected_answer": "Seoul"},
+    {"prompt": "The capital of the country where flamenco dancing originated is", "bridge": "Spain", "expected_answer": "Madrid"},
+    {"prompt": "The capital of the country where the ancient Olympic Games began is", "bridge": "Greece", "expected_answer": "Athens"},
+    {"prompt": "The capital of the country famous for Oktoberfest is", "bridge": "Germany", "expected_answer": "Berlin"},
+    {"prompt": "The capital of the country of IKEA and ABBA is", "bridge": "Sweden", "expected_answer": "Stockholm"},
+    {"prompt": "The capital of the country home to the Maasai Mara reserve is", "bridge": "Kenya", "expected_answer": "Nairobi"}
+  ],
+  "act3": {
+    "note": "Act 3 reuses Anthropic's own vendored verbal-report.json categories (Apache-2.0) — the causal swap with strength-0 and random-direction controls. No new prompts needed.",
+    "strengths": [0.0, 8.0],
+    "max_categories": 10,
+    "max_swaps_per_category": 5
+  }
+}
