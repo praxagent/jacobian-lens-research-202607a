@@ -1,0 +1,69 @@
+[notice] To update, run: python -m pip install --upgrade pip
+[notice] To update, run: python -m pip install --upgrade pip
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files:   9%|▉         | 1/11 [00:37<06:19, 37.91s/it]Fetching 11 files:  18%|█▊        | 2/11 [00:42<02:42, 18.08s/it]Fetching 11 files:  73%|███████▎  | 8/11 [00:44<00:09,  3.29s/it]Fetching 11 files:  82%|████████▏ | 9/11 [00:53<00:08,  4.34s/it]Fetching 11 files: 100%|██████████| 11/11 [00:53<00:00,  4.90s/it]
+[transformers] The fast path is not available because one of the required library is not installed. Falling back to torch implementation. To install follow https://github.com/fla-org/flash-linear-attention#installation and https://github.com/Dao-AILab/causal-conv1d
+Loading weights:   0%|          | 0/851 [00:00<?, ?it/s]Loading weights: 100%|██████████| 851/851 [00:00<00:00, 9457.29it/s]
+model=Qwen/Qwen3.5-27B  lens=/root/.cache/huggingface/hub/models--neuronpedia--jacobian-lens/snapshots/a4114d7752d11eb546e6cf372213d7e75526d3a1/qwen3.5-27b/jlens/Salesforce-wikitext/Qwen3.5-27B_jacobian_lens.pt
+lens sha256=bb2e080ae9c9c20825adfa66c115be214ae027d867e525246a6879cb7fe6bbd6
+band layers (middle third): [21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41]
+
+== Act 1: secret thought (riddle reportability) ==
+  [act1]     elephant: jlens: top20=True rank=8  logit_lens: top20=False rank=102  random_J: top20=False rank=6143
+  [act1]        lemon: jlens: top20=False rank=94  logit_lens: top20=False rank=42605  random_J: top20=False rank=4118
+  [act1]         lion: jlens: top20=True rank=11  logit_lens: top20=False rank=21  random_J: top20=False rank=29458
+  [act1]         Mars: jlens: top20=False rank=387  logit_lens: top20=False rank=16995  random_J: top20=False rank=867
+  [act1]        piano: jlens: top20=True rank=1  logit_lens: top20=True rank=5  random_J: top20=False rank=18872
+  [act1]          ice: jlens: top20=False rank=131  logit_lens: top20=False rank=71  random_J: top20=False rank=1442
+  [act1]          bee: jlens: top20=True rank=10  logit_lens: top20=True rank=17  random_J: top20=False rank=12251
+  [act1]        heart: jlens: top20=False rank=51  logit_lens: top20=True rank=2  random_J: top20=False rank=4627
+  [act1]       spring: jlens: top20=False rank=37  logit_lens: top20=False rank=973  random_J: top20=False rank=3601
+  [act1]         iron: jlens: top20=False rank=24  logit_lens: top20=True rank=18  random_J: top20=False rank=14093
+  [act1]         lava: jlens: top20=False rank=364  logit_lens: top20=False rank=591  random_J: top20=False rank=12748
+  [act1]        watch: jlens: top20=False rank=216  logit_lens: top20=False rank=109  random_J: top20=False rank=4333
+  [act1]        honey: jlens: top20=False rank=607  logit_lens: top20=False rank=8928  random_J: top20=False rank=9114
+  [act1_secret]     elephant: jlens: top20=False rank=39073  logit_lens: top20=False rank=7869  random_J: top20=False rank=12745
+  [act1_secret]        lemon: jlens: top20=False rank=31049  logit_lens: top20=False rank=28930  random_J: top20=False rank=4542
+  [act1_secret]         lion: jlens: top20=False rank=22659  logit_lens: top20=False rank=51912  random_J: top20=False rank=4628
+  [act1_secret]         Mars: jlens: top20=False rank=75638  logit_lens: top20=False rank=6990  random_J: top20=False rank=26161
+  [act1_secret]        piano: jlens: top20=False rank=14000  logit_lens: top20=False rank=6843  random_J: top20=False rank=4093
+  [act1_secret]          ice: jlens: top20=False rank=17970  logit_lens: top20=False rank=7627  random_J: top20=False rank=1709
+  [act1_secret]          bee: jlens: top20=False rank=3732  logit_lens: top20=False rank=1330  random_J: top20=False rank=17557
+  [act1_secret]        heart: jlens: top20=False rank=7257  logit_lens: top20=False rank=27759  random_J: top20=False rank=1871
+  [act1_secret]       spring: jlens: top20=False rank=4402  logit_lens: top20=False rank=2581  random_J: top20=False rank=6139
+  [act1_secret]         iron: jlens: top20=False rank=9064  logit_lens: top20=False rank=2468  random_J: top20=False rank=48115
+  [act1_secret]         lava: jlens: top20=False rank=71093  logit_lens: top20=False rank=10964  random_J: top20=False rank=4366
+  [act1_secret]        watch: jlens: top20=False rank=690  logit_lens: top20=False rank=70  random_J: top20=False rank=1280
+  [act1_secret]        honey: jlens: top20=False rank=8032  logit_lens: top20=False rank=3294  random_J: top20=False rank=1092
+
+== Act 2: hidden step (two-hop bridge) ==
+  [act2]        Japan: jlens: top20=True rank=4  logit_lens: top20=False rank=353  random_J: top20=False rank=31420
+  [act2]        India: jlens: top20=True rank=6  logit_lens: top20=False rank=1814  random_J: top20=False rank=50945
+  [act2]        Italy: jlens: top20=True rank=7  logit_lens: top20=False rank=3549  random_J: top20=False rank=69033
+  [act2]    Australia: jlens: top20=True rank=1  logit_lens: top20=True rank=7  random_J: top20=False rank=16478
+  [act2]       France: jlens: top20=True rank=15  logit_lens: top20=False rank=4161  random_J: top20=False rank=20204
+  [act2]         Peru: jlens: top20=True rank=17  logit_lens: top20=False rank=4454  random_J: top20=False rank=13762
+  [act2]        Egypt: jlens: top20=True rank=1  logit_lens: top20=False rank=1327  random_J: top20=False rank=11823
+  [act2]       Brazil: jlens: top20=False rank=26  logit_lens: top20=False rank=18077  random_J: top20=False rank=37941
+  [act2]       Canada: jlens: top20=True rank=1  logit_lens: top20=True rank=2  random_J: top20=False rank=24306
+  [act2]  Netherlands: jlens: top20=False rank=28  logit_lens: top20=False rank=16328  random_J: top20=False rank=4011
+  [act2]        China: jlens: top20=True rank=1  logit_lens: top20=False rank=47  random_J: top20=False rank=11542
+  [act2]    Argentina: jlens: top20=True rank=4  logit_lens: top20=False rank=3138  random_J: top20=False rank=15092
+  [act2]       Norway: jlens: top20=True rank=1  logit_lens: top20=False rank=1085  random_J: top20=False rank=9947
+  [act2]       Russia: jlens: top20=True rank=4  logit_lens: top20=False rank=2658  random_J: top20=False rank=33549
+  [act2]        Korea: jlens: top20=False rank=35  logit_lens: top20=False rank=4188  random_J: top20=False rank=34301
+  [act2]        Spain: jlens: top20=True rank=7  logit_lens: top20=False rank=11097  random_J: top20=False rank=25217
+  [act2]       Greece: jlens: top20=True rank=18  logit_lens: top20=False rank=34226  random_J: top20=False rank=19791
+  [act2]      Germany: jlens: top20=True rank=4  logit_lens: top20=False rank=2209  random_J: top20=False rank=30159
+  [act2]       Sweden: jlens: top20=True rank=1  logit_lens: top20=False rank=411  random_J: top20=False rank=3476
+  [act2]        Kenya: jlens: top20=True rank=2  logit_lens: top20=False rank=1453  random_J: top20=False rank=21806
+
+== Act 3: causal flip (swap + controls) ==
+  [act3] n=50  strength0=0.00  steer=1.00  random_dir=0.00
+
+wrote /root/demo_qwen3.5-27b.json
+act1: jlens=0.31  logit_lens=0.31  random_J=0.00
+act1_secret: jlens=0.00  logit_lens=0.00  random_J=0.00
+act2: jlens=0.85  logit_lens=0.10  random_J=0.00
+DEMO_GATE_DONE

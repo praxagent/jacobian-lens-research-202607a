@@ -33,7 +33,31 @@ NOT the gate model — prior data says readout reportability is a scale capabili
 Receipts: `demo_qwen3-4b.json`, `demo_val.log`. Pod terminated after run (verified
 `pods` empty).
 
-## qwen3.5-27b GATE validation — PENDING (A100 80GB, launched 2026-07-10)
+## qwen3.5-27b GATE validation (2026-07-10, A100 80GB @ $1.39/hr, ~25 min ≈ $0.60)
 
-Gates were frozen in README.md and committed BEFORE this run completed. Results land
-here when the pod reports.
+Gates were frozen in README.md and committed (`8102510`) BEFORE this run completed.
+
+| act | jlens | logit-lens | random-J | gate | verdict |
+|---|---|---|---|---|---|
+| 1 report | 0.31 | 0.31 | 0.00 | ≥0.5 AND ≥2× logit | **FAIL — DROPPED from 397B** |
+| 2 bridge | **0.85** (clean 0.85, 0 leaks/20) | 0.10 | 0.00 | ≥0.4 clean AND ≥2× logit AND rand ≤0.05 | **PASS (8.5× baseline)** |
+| 3 flip | **1.00** / str-0 0.00 / rand-dir 0.00 | — | — | ≥0.6 / ≤0.05 / ≤0.10 | **PASS (perfect)** |
+
+- **Act 2 is the money act:** bridge entities at full-vocab rank **1** (Sweden), 2
+  (Kenya), 4 (Germany) out of 248k-class vocabs, while the model's continuation never
+  mentions them (0 leaks in 20 items — the "neither input nor output" property held
+  universally). Logit-lens at the same layers/positions: 0.10.
+- **Act 1's failure is itself informative** (and we report it): when the answer is the
+  *next token*, logit-lens ties the J-lens (0.31 = 0.31) — the info is already in the
+  output pipeline, so the act doesn't discriminate. The J-lens's distinctive power is
+  *intermediate* content (Act 2) — exactly Anthropic's A.6 characterization. The
+  keep-it-secret variant scored 0.00 on this base model (doesn't hold instructions).
+- Act 3 matches the historical swap rate for this model (1.00) exactly.
+- Metric honesty: `median_cand_rank` saturates at 1 even for random-J (min over 21
+  band layers × 20 candidates — multiple comparisons); it is NOT a discriminating
+  metric and is not used in gates or headline claims. Full-vocab top-20 + best-rank
+  are the metrics that matter (random-J: 0.00 hits, ranks in the thousands).
+
+Receipts: `demo_qwen3.5-27b.json`, `demo_gate.log`. Pod terminated (verified empty).
+
+**397B run ships Acts 2 + 3 only, per pre-registration.**
