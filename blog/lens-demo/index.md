@@ -73,6 +73,7 @@ Anthropic's [J-space paper](https://transformer-circuits.pub/2026/workspace/inde
 | Base model | [`Qwen/Qwen3.5-397B-A17B`](https://huggingface.co/Qwen/Qwen3.5-397B-A17B) |
 | Fit corpus | WikiText-103, `max_seq_len` 128, **n=24** prompts (fixed; band statistic already converged by n≈16 on smaller Qwen) |
 | Fitting code | **Anthropic's own `jlens.fit`** (running-mean of per-prompt Jacobians — the same package Neuronpedia wraps), via our thin wrapper `fit_at_scale.py` (adds multimodal backbone layout, device_map sharding, eager attention, per-prompt checkpoints). We did **not** replicate Neuronpedia's convergence logger (`run-all-fit-lens.py`'s per-prompt `mean_rel_change` CSV + early-stop) — which is why this lens ships without a matrix-convergence record; any future extension will log it |
+| Exact fit run | 8×H200 pod (on-demand, $35.12/hr), bf16, `device_map` even-spread (`max_memory` 110 GiB/GPU), `attn_implementation="eager"` (required: SDPA's backward kernel crashes under jlens's retained-graph repeated-backward when sharded), torch 2.5.1 / transformers 5.13. Command: `python fit_at_scale.py --model Qwen/Qwen3.5-397B-A17B --backbone-path model.language_model --attn-impl eager --n-prompts 24 --dim-batch 16 --max-seq-len 128 --seed 0 --out lenses/qwen35_397b.pt`. Observed throughput ≈ 2.35 s per dimension-batch traversal, 256 traversals/prompt → **~10 min/prompt**, n=24 ≈ 4 h. `device_map` executes layers sequentially (one GPU busy at a time) — it buys memory, not speed; a tensor-parallel fit was attempted and killed on throughput (full saga: [results.md §5–6](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/fit_our_own)) |
 | Neuronpedia contrast | Their pipeline *requests* `n_prompts: 1000` but **early-stops** on a matrix-stability criterion with per-lens thresholds. The lens this note's rate comparison actually uses — **qwen3.5-27b** — fitted **672** prompts at `stop_at_delta: 0.002` ([config.yaml](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/qwen3.5-27b/jlens/Salesforce-wikitext/config.yaml)); their Llama-3.3-70B lens fitted **125** at the looser 0.012 ([config.yaml](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/llama3.3-70b-it/jlens/Salesforce-wikitext/config.yaml)). Honest contrast here: **n=24 vs n=672** |
 | Lens sha256 (downloaded) | `668c3bf1…99e97` (byte-identical to fit-machine original) |
 | Pre-registration commit | `8102510` (prompts, scoring, gates — before 397B) |
@@ -333,6 +334,21 @@ Record model and lens revisions, CUDA stack, source commit, and output hashes. P
 Jacobian fitting is an **online average** of per-prompt Jacobians. Publishing an n=24 lens for a model Neuronpedia does not cover (~0.4T) is the contribution; anyone who wants a longer average can **continue from our checkpoint** instead of fitting from scratch.
 
 Neuronpedia's own records replace the flat "they used 1000, we used 24" framing with per-lens numbers: the qwen3.5-27b lens this note compares against fitted **672** prompts ([config.yaml](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/qwen3.5-27b/jlens/Salesforce-wikitext/config.yaml)) — so 28×, not 42× — while other lenses early-stop far lower (Llama-3.3-70B Instruct: **125** ([config.yaml](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/llama3.3-70b-it/jlens/Salesforce-wikitext/config.yaml))). Check each lens's `results.prompts_fitted` before comparing.
+
+**What extending this lens costs** (warm-start from n=24; observed throughput ~10 min/prompt on 8×H200 @ $35.12/hr; ~1 h fixed for pod setup + the 807 GB model download, re-paid per session; predicted matrix-delta via the 1/n law fit to Neuronpedia's own 70B curve — an extrapolation, not a promise):
+
+| target n | new prompts | wall-clock | est. cost | predicted mean-rel-change (~1.2/n) |
+|---:|---:|---:|---:|---|
+| 30 | 6 | ~2 h | **~$70** | ~0.040 — but yields the first *measured* convergence deltas |
+| 40 | 16 | ~3.7 h | ~$130 | ~0.030 |
+| 50 | 26 | ~5.3 h | ~$190 | ~0.024 |
+| 60 | 36 | ~7 h | ~$250 | ~0.020 |
+| 100 | 76 | ~13.7 h | ~$480 | ~0.012 — **reaches the 70B lens's stop threshold** |
+| 125 | 101 | ~17.8 h | ~$630 | ~0.010 (70B-lens parity in fitted n) |
+| 250 | 226 | ~38.7 h | ~$1,360 | ~0.005 |
+| 672 | 648 | ~109 h | ~$3,830 | ~0.002 — **reaches the 27B comparison lens's threshold** |
+
+Costs assume one continuous session and the naive sequential `device_map` path; a working batched/tensor-parallel harness would cut them several-fold but is unvalidated at this scale. Community/spot pricing can roughly halve the $/hr.
 
 To push our 397B lens further (same WikiText seed 0, `max_seq_len` 128 — required for a valid resume):
 
