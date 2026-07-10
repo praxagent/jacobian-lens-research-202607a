@@ -101,6 +101,34 @@ Exactly the two features the lens refused to name are the two whose notebook lab
 
 That is the practical takeaway of this note: **a lens readout is a label auditor.** Before steering a feature you believe means something, project its decoder column through the lens. If the model doesn't name it, treat the label as unconfirmed for your checkpoint.
 
+## How Special Is a Named Feature? The Dictionary Base Rate
+
+Four of six features coming back "named" invites a question the six-feature table cannot answer: *is that normal?* Maybe every feature projects to something legible and the lens is a universal captioner — in which case the audit result is unimpressive. So we swept a seed-1 random sample of **2,048 features** from the full 65,536-feature dictionary through the identical projection (receipt: [`kappa_sweep_70b.json`](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/sae_x_jspace); one A6000, ~25 min, no model forward passes).
+
+| κ distribution (2,048 random features) | value |
+|---|---|
+| median | 6.2 |
+| p90 | 22.9 |
+| p95 | 48.0 |
+| p99 | 143.3 |
+| fraction with κ > 10 | **23.7%** |
+| fraction with κ > 20 | **11.1%** |
+
+Lens-legibility is a **minority property** of the dictionary: the median feature projects to roughly the same peakedness as our junk readouts, and strongly peaked projections (κ > 20) are about one feature in nine. (κ measures peakedness, not semantics — a feature can peak on a family of formatting tokens — so these are *upper bounds* on verbalizability; the token identities still carry the semantic weight.)
+
+Where the six Part-I features land in that population:
+
+| feature | κ | dictionary percentile | top-1 readout token |
+|---|---|---|---|
+| 30686 | 37.4 | **94th** | ` deception` |
+| 58667 | 10.0 | 76th | ` fake` |
+| 41533 | 8.1 | 69th | ` deception` |
+| 23893 | 6.5 | 55th | (non-Latin fragment) |
+| 22004 | 6.1 | 49th | (whitespace) |
+| 30032 | 5.0 | 23rd | (whitespace) |
+
+Two readings fall out. First, the audit result is *not* a universal-captioner artifact: the confirmed deception features sit in the legible minority, with the strongest at the 94th percentile of the whole dictionary. Second — and this closes the loop on the label-audit finding — the two namespace-mismatched features are **utterly ordinary** (49th and 55th percentile), not anomalously suppressed. Nothing about them is hidden; they are typical members of the dictionary's non-verbal majority that happened to carry borrowed labels. One honest wrinkle: 30032 ("pretends to be something", a *confirmed* label) sits below the median at the 23rd percentile yet still showed weak-positive coupling in Part III's steering — so κ predicts bridge strength imperfectly; it is a triage statistic, not a verdict.
+
 ## What This Does and Doesn't Establish
 
 - It **does** establish that four of the six coordinates carry verbalizable deception-adjacent content in this checkpoint, by an instrument independent of every label pipeline involved.
