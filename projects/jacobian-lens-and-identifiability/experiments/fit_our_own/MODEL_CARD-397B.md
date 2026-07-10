@@ -63,9 +63,12 @@ transient.
    qwen3-4b and qwen3.5-0.8b.
 2. **Held-out fidelity evals** (12 prompts, seed 1, disjoint from the fit corpus):
    lens-vs-model top-1/top-10 agreement and KL by depth: [EVALS TABLE PENDING]
-3. **Function — the lens extracts workspace content**: Anthropic-style ignition test run
-   through this lens on the 397B itself (interpolated concept injection at a carrier
-   slot, read out via the lens at band layers): [IGNITION RESULTS PENDING]
+3. **Function — the lens extracts workspace content (near-perfectly)**: Anthropic-style
+   ignition test run through this lens on the 397B itself — interpolated concepts
+   injected at a carrier slot resolve in the lens readout with **median share_span
+   0.988** (full 0.006→0.995 sweep), 94.6% of 480 band-layer readouts resolving, 83.7%
+   with sharp (<0.25-α) all-or-none transitions. Raw results in
+   `ignition_qwen3.5-397b.json`.
 4. **Reproduce our number from this artifact** (CPU-only, no GPU needed):
 
 ```python

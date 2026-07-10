@@ -299,7 +299,11 @@ workspace result, the weaker the consciousness inference.
 - **Frontier scope — now measured, one lineage.** We fit our own lens on
   Qwen3.5-397B-A17B (n=24 prompts, converged per our calibration; held-out fidelity evals
   + an ignition run through the lens as sanity checks) and measured
-  **mid_sep = 0.343** — the band survives, indeed peaks, at 0.4T. Scope
+  **mid_sep = 0.343** — the band survives, indeed peaks, at 0.4T. And it's not just
+  geometry: running the ignition battery *through our own 397B lens*, injected concepts
+  resolve near-perfectly (share_span 0.988, 84% sharp) — the strongest workspace readout
+  in our whole behavioral dataset, landing out-of-sample exactly where the
+  geometry→function correlation predicts the biggest band should. Scope
   honesty: that's ONE lineage (Qwen); we did not fit other frontier families, and Nanda's
   n=4 fit reported no geometry number to compare against. The lens is published for
   independent checking ([PENDING HF LINK]).

@@ -206,11 +206,21 @@ n=16 interim read 0.3796, settling to 0.3434 at n=24 — the mid-block within-CK
 
 ### Release-verification battery (the "is it legit" protocol)
 
-1. **Fidelity** — held-out A.6-style evals (12 prompts, seed 1, disjoint from fit):
-   lens-vs-model top-1/top-10/KL agreement by depth: [PENDING-EVALS]
-2. **Function** — ignition run through this exact lens on the 397B (8 pairs × 3 carriers
-   × 9 α, 480 band-layer curves): share_span / ign_sharp = [PENDING-IGNITION]. Extends
-   the behavioral correlation to n=24 with the frontier point.
+1. **Fidelity — eval v1 MIS-SPECIFIED (kept in receipts), v2 from the A.6 spec.** Our
+   first eval compared U·J·h to the model's final logits ABSOLUTELY (top-1/KL) — a
+   category error for a differential transport map (no constant term / final-norm
+   handling), and it read ~0 at every depth including the near-identity last layers,
+   the signature of a wrong yardstick rather than a broken lens (the same lens passes
+   the contrastive battery below). v2 (rank/contrastive fidelity per the paper's
+   appendix A.6, extracted from primary sources) = [PENDING-EVAL-V2].
+2. **Function — PASSED, near-perfect.** Ignition run through this exact lens on the 397B
+   (8 pairs × 3 carriers × 9 α, 480 band-layer curves): **median share_span 0.988**
+   (readout sweeps 0.006 → 0.995), **94.6% of readouts resolve**, **83.7% sharp**
+   (<0.25-α transitions, ignition-like). The highest share_span in our 24-model
+   behavioral dataset — landing exactly where the geometry→function correlation predicts
+   the biggest band (0.343) should, as an OUT-OF-SAMPLE confirmation (own-fit lens, kept
+   out of the formal n=23 Neuronpedia-lens correlation for methods purity). A broken
+   lens cannot produce a full-range, sharp, 454-curve concept-resolution sweep.
 3. **Consumer path** — post-upload: fresh HF download on the CPU box → sha256 vs pod
    originals → recompute mid_sep from the public fp16 copy = [PENDING-CONSUMER].
 
