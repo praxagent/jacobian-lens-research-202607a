@@ -78,6 +78,14 @@ the research:
 10. **Long SSH commands to pods hang on detach** (nohup-launch then exit). Launch with a
    short `timeout`, expect exit 143, and **verify with a separate fresh SSH** — don't
    re-run the launch because the channel hung (double-launching a fit is an expensive bug).
+11. **⚠️ `pkill -f <pattern>` SELF-MATCHES the shell that runs it** when the pattern
+   appears in your own command line — the kill dies mid-command and the target SURVIVES.
+   Cost us twice on 2026-07-09/10: an orphaned TP fit, and a retry-loop that outlived its
+   "kill" and silently created a DUPLICATE 8×H200 pod (~$143 idle before caught). Rules:
+   kill by exact PID (`pgrep -f pat | head` first, inspect, then `kill <pid>`), use the
+   bracket trick (`pgrep -f "[h]200_retry"`), and after ANY create-capable loop runs,
+   **audit `launch.py pods` and count RUNNING rows against what you expect** — a pod you
+   don't recognize is money burning.
 
 ## Folder structure (built to add research easily)
 
