@@ -18,9 +18,21 @@ found a reportable, causally-load-bearing "workspace" in the middle layers of fr
 Claude, and framed it in the language of consciousness / Global Workspace Theory. We
 replicated the core tool (the Jacobian lens) on **38 open-weight models** (70M→70B, six
 families) using the publicly released lenses, and asked the question the framing invites:
-**is the "workspace band" universal, and where does it emerge?** Preliminary answer:
-[the band is strongly family-dependent and reduced by instruct-tuning; emergence onset
-~0.2–0.8B; frontier behavior untested — full numbers below].
+**is the "workspace band" universal, and where does it emerge?**
+
+> **⚠️ 2026-07-10: this file is the historical working notes; the finished draft with
+> all FINAL numbers is [`blog/jspace-audit/index.md`](../../blog/jspace-audit/index.md).
+> Two late results materially revised the story told below: (1) the shared-vocab
+> re-sweep showed the dramatic family gap was mostly tokenizer artifact (Gemma-3-27B
+> 0.025 own-vocab → 0.298 shared, the strongest band in the sweep; family means 6.2× →
+> 1.4×), and (2) the 397B own-fit landed (mid_sep 0.343 — the band grows to 0.4T).
+> Where this file and the blog disagree, the blog (and the results.md ledgers) win.**
+
+Answer as of the final sweep: [the band is much more universal than own-vocab probing
+suggested; what tracks training is Gemma-2's KD recipe (floor at every scale),
+instruct-tuning (shrinks the band in all 8 pairs), and — sharpest — the family-bound
+*function* gate (banded Gemmas still route zero concepts into the readout); emergence
+onset needs re-examination (gemma-3-270m posts 0.134 under shared probes)].
 
 ## Why this, and what we're *not* claiming
 

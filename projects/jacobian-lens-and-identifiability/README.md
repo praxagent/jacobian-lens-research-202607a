@@ -29,18 +29,18 @@ RunPod (real LLM or scale).
 | [`nonlinear_ica_sparsity`](experiments/nonlinear_ica_sparsity/) | #1 (linear corollary + nonlinear mechanism) | CPU | **run** — linear mode *directionally* reproduces (sparsity+L1 helps only when structure exists); not yet crisp. Nonlinear flow path executes. See its `results.md`. |
 | [`beyond_structural_sparsity`](experiments/beyond_structural_sparsity/) | #2 (undercomplete / dependent sources) | CPU | planned — config variations of the flagship (undercomplete `m>n`, dependent subspaces) |
 | [`diverse_dictionary_learning`](experiments/diverse_dictionary_learning/) | #3 (dependency vs latent sparsity) | CPU (small) → GPU (scale) | planned — decoder-Jacobian-L1 vs latent-L1 on a small VAE; the SAE-relevant one |
-| [`jacobian_lens`](experiments/jacobian_lens/) | #4/#5 (J-lens readout) + eliebak CKA explorer | **CPU** (CKA via pre-fitted lenses) / **GPU** (fitting + causal) | planned — builds on Anthropic's Apache-2.0 [`jacobian-lens`](https://github.com/anthropics/jacobian-lens). `common/cka.py` built + CPU-validated. Sub-exp A (cross-model CKA, partial replication of [eliebak](https://eliebak.com/viz/jspace-open)) is CPU-feasible via Neuronpedia pre-fitted lenses; Sub-exp B (readout + causal + Dehaene tests) needs GPU |
+| [`jacobian_lens`](experiments/jacobian_lens/) | #4/#5 (J-lens readout) + eliebak CKA explorer | **CPU** (CKA via pre-fitted lenses) / **GPU** (fitting + causal) | **run** — 35-of-38-lens uniform sweep + nulls + shared-vocab (tokenizer-confound) re-sweep + precision A/B (see its `results.md`); behavioral battery (swap + ignition, 23 models) in [`behavioral/`](experiments/behavioral/); own-fit validation + the **397B frontier fit** (mid_sep 0.343, lens published on HF) in [`fit_our_own/`](experiments/fit_our_own/). Write-up: `blog/jspace-audit/index.md` |
 
 ### Candidate replications from the Dehaene & Naccache commentary
 
-Cognitive-neuroscience tests they propose for the J-space — each needs a real
-open-weights LLM (GPU), tracked for when the `jacobian_lens` harness exists:
+Cognitive-neuroscience tests they propose for the J-space — the harness now exists
+(`experiments/behavioral/`) and the decisive **ignition** test is **DONE** (~24 open
+models + the 397B; `experiments/behavioral/results.md`). Still tracked:
 
 - **local-global** (global vs local sequence prediction), **trace conditioning** (bridge
   a temporal gap; ablate J-space, expect long-gap completion to break), **inclusion/
   exclusion** (Stroop-like conscious control), **error-monitoring** (failure tokens in
-  J-space). And a decisive **ignition** test: graded stimulus strength → look for a
-  threshold-like nonlinearity / bimodal switch in J-space activation.
+  J-space).
 
 ## Run it
 

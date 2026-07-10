@@ -1,0 +1,38 @@
+A/B fp32-path vs final-path, 34 models
+max |dmid_sep| = 0.00000 (gemma-2-27b)
+mean|d| = 0.000000
+
+gemma-2-27b              old=+0.0429 new=+0.0429 |d|=0.00000
+gemma-2-2b               old=+0.0065 new=+0.0065 |d|=0.00000
+gemma-2-2b-it            old=+0.0014 new=+0.0014 |d|=0.00000
+gemma-2-9b               old=+0.0019 new=+0.0019 |d|=0.00000
+gemma-2-9b-it            old=+0.0010 new=+0.0010 |d|=0.00000
+gemma-3-12b              old=+0.0007 new=+0.0007 |d|=0.00000
+gemma-3-12b-it           old=+0.0002 new=+0.0002 |d|=0.00000
+gemma-3-1b               old=+0.0155 new=+0.0155 |d|=0.00000
+gemma-3-1b-it            old=+0.0120 new=+0.0120 |d|=0.00000
+gemma-3-270m             old=+0.0100 new=+0.0100 |d|=0.00000
+gemma-3-270m-it          old=+0.0018 new=+0.0018 |d|=0.00000
+gemma-3-27b              old=+0.0248 new=+0.0248 |d|=0.00000
+gemma-3-27b-it           old=+0.0090 new=+0.0090 |d|=0.00000
+gemma-3-4b               old=+0.0455 new=+0.0455 |d|=0.00000
+gemma-3-4b-it            old=+0.0146 new=+0.0146 |d|=0.00000
+gemma-4-e2b              old=+0.0468 new=+0.0468 |d|=0.00000
+gemma-4-e4b              old=+0.0495 new=+0.0495 |d|=0.00000
+gpt-oss-20b              old=+0.0756 new=+0.0756 |d|=0.00000
+gpt2-small               old=+0.0150 new=+0.0150 |d|=0.00000
+llama3.1-8b              old=+0.0870 new=+0.0870 |d|=0.00000
+llama3.1-8b-it           old=+0.0786 new=+0.0786 |d|=0.00000
+olmo-3-1025-7b           old=+0.0761 new=+0.0761 |d|=0.00000
+olmo-3-1125-32b          old=+0.0939 new=+0.0939 |d|=0.00000
+pythia-70m-deduped       old=+0.0151 new=+0.0151 |d|=0.00000
+qwen2.5-7b-it            old=+0.0029 new=+0.0029 |d|=0.00000
+qwen3-1.7b               old=+0.0758 new=+0.0758 |d|=0.00000
+qwen3-14b                old=+0.2114 new=+0.2114 |d|=0.00000
+qwen3-4b                 old=+0.0559 new=+0.0559 |d|=0.00000
+qwen3-8b                 old=+0.1796 new=+0.1796 |d|=0.00000
+qwen3.5-0.8b             old=+0.1456 new=+0.1456 |d|=0.00000
+qwen3.5-27b              old=+0.1967 new=+0.1967 |d|=0.00000
+qwen3.5-2b-pt            old=+0.1473 new=+0.1473 |d|=0.00000
+qwen3.5-4b               old=+0.2028 new=+0.2028 |d|=0.00000
+qwen3.5-9b-pt            old=+0.1503 new=+0.1503 |d|=0.00000

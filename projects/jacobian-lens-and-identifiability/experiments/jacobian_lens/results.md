@@ -43,6 +43,68 @@ _Pipeline note: this ran on a 3 GB box because the loader pulls only the unembed
 tensor, not the full model — so the ladder is memory-bound (needs a bigger box), not
 GPU-bound._
 
+## Final uniform sweep + precision A/B + SHARED-VOCAB re-sweep (2026-07-10, Lightsail CPU)
+
+The one-code-version, one-precision-path re-run of everything (the methods decision of
+2026-07-08), plus the tokenizer-confound mitigation. Receipts: `emergence.csv` (35
+models, own-vocab), `emergence_shared.csv` (35 models, shared probes), `ab_report.txt`,
+`emergence_curve.png` (35 models, 12 families), full pipeline log archived locally
+(`artifacts/lightsail-receipts/uniform.log`, gitignored).
+
+**Coverage: 35 of Neuronpedia's 38 lenses.** Not measured: `qwen3.6-27b` (lens failed to
+load), `qwen3-32b` (its lens stores keys in a layout our loader doesn't parse yet — open
+item), `gemma-4-31b` (unembedding requires a ~50 GB model pull; exceeds the 30 GB CPU
+box). llama3.3-70b-it (own 0.1478 / shared 0.1372) is the new 70B anchor.
+
+**Precision A/B: a clean zero.** fp32-path ledger vs the final fp16-storage/fp32-compute
+path, 34 overlapping models: **max |Δ mid_sep| = 0.00000** (mean 0.000000). The mid-run
+precision change had no effect on any published number.
+
+### ⚠️ The tokenizer confound was REAL — own-vocab probing understated Gemma
+
+Re-running every model with probes restricted to the 4096 token strings shared by ALL
+tokenizers in the study (`shared_vocab.py` → `--shared-probe`) moves Gemma dramatically
+while barely moving anyone else:
+
+| model | own-vocab | shared-probe | Δ |
+|---|---|---|---|
+| gemma-3-27b | 0.025 | **0.298** | +0.273 — now the strongest band in the sweep |
+| gemma-3-270m | 0.010 | **0.134** | +0.124 — a solid band at 0.27B(!) |
+| gemma-3-12b | 0.0007 | **0.114** | +0.113 |
+| gemma-2-27b | 0.043 | **0.113** | +0.071 |
+| gemma-4-e4b | 0.050 | 0.098 | +0.048 |
+| qwen3-14b | 0.211 | 0.206 | −0.005 |
+| qwen3.5-27b | 0.197 | 0.196 | −0.000 |
+| pythia-70m / gpt2 | 0.015 / 0.015 | 0.016 / 0.015 | ~0 (floor unchanged) |
+
+Full table in `emergence_shared.csv`; mean Δ across 35 models +0.024, max +0.273
+(gemma-3-27b).
+
+**Family-gap verdict: the headline mostly does NOT survive.** Base-model family means,
+own-vocab: Qwen 0.152 vs Gemma 0.024 — a **6.2×** gap. Shared probes: Qwen 0.139 vs
+Gemma 0.099 — **1.4×**; excluding the two KD-pretrained Gemma-2 bases (2B/9B, which stay
+at the floor: 0.0074/0.0047), **1.14× — essentially nothing**. At matched size the
+ordering even flips: gemma-3-27b 0.298 > qwen3.5-27b 0.196. The "~300× at 12–14B" own-
+vocab contrast (qwen3-14b 0.21 vs gemma-3-12b 0.0007) becomes **1.8×** (0.206 vs 0.114).
+Gemma's own 262k-token vocabulary was diluting its probe set; probed on common strings,
+Gemma has bands too.
+
+**What SURVIVES shared probes (and strengthens):**
+1. **The within-Gemma-2 KD natural experiment.** KD-pretrained 2B/9B stay at the floor
+   (0.0074/0.0047) while from-scratch 27B rises to 0.113 — now **15–24×** with
+   architecture, norm scheme, tokenizer AND probe set all held constant. (But see the
+   Gemma-3 complication in `hypotheses.md`: Gemma-3 is also distillation-trained and now
+   shows strong bands, so KD-suppression is a Gemma-2-recipe fact, not a KD universal.)
+2. **Instruct-tuning shrinks the band — all 8 measurable pairs**, often harder than
+   own-vocab suggested: gemma-3-27b 0.298→0.104, gemma-3-12b 0.114→0.030, gemma-3-270m
+   0.134→0.025, gemma-3-1b 0.077→0.019, gemma-3-4b 0.061→0.013, gemma-2-2b 0.0074→0.0014,
+   gemma-2-9b 0.0047→0.0027, llama3.1-8b 0.106→0.081.
+3. **The sub-0.2B floor.** pythia-70m and gpt2 are unchanged (~0.015) — though
+   gemma-3-270m's shared-probe band (0.134) now puts the emergence onset lower than the
+   own-vocab story implied.
+
+Published cross-family comparisons must use the shared-probe numbers from here on.
+
 ## Next (all CPU, no GPU spend)
 
 - Size ladder across families (pythia→gpt2→gemma-3-270m/1b→qwen) → emergence curve.

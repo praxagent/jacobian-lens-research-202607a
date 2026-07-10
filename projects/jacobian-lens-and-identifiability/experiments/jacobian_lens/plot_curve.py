@@ -10,9 +10,12 @@ lift off is the emergence onset.
 
 Run (after the ladder):
     uv run python plot_curve.py    # writes emergence_curve.png
+    uv run python plot_curve.py --csv emergence_shared.csv --out emergence_curve_shared.png \
+        --title-suffix " (tokenizer-commensurable probes)"   # the shared-probe variant
 """
 from __future__ import annotations
 
+import argparse
 import csv
 import re
 from pathlib import Path
@@ -47,13 +50,21 @@ def main() -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    real = _load("emergence.csv")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--csv", default="emergence.csv")
+    ap.add_argument("--out", default="emergence_curve.png")
+    ap.add_argument("--title-suffix", default="")
+    args = ap.parse_args()
+
+    real = _load(args.csv)
     null = _load("emergence_null.csv")
     if not real:
-        print("no emergence.csv — run the ladder first.")
+        print(f"no {args.csv} — run the ladder first.")
         return
 
-    # group by family
+    # group by family; base and instruct (-it) variants are separate curves in the
+    # same color (solid vs dashed) — instruct-tuning shifts the band, so mixing them
+    # in one line draws misleading zig-zags
     fams: dict[str, list] = {}
     for x, y, slug in real:
         fams.setdefault(family(slug), []).append((x, y, slug))
@@ -62,14 +73,25 @@ def main() -> None:
 
     fig, ax = plt.subplots(figsize=(11, 6.5))
     cmap = plt.get_cmap("tab10")
-    # draw single-point families as markers, multi-point as connected lines
+    has_it = False
     for i, (fam, pts) in enumerate(sorted(fams.items(), key=lambda kv: kv[1][0][0])):
-        xs, ys, _ = zip(*pts)
         color = cmap(i % 10)
-        if len(pts) >= 2:
-            ax.plot(xs, ys, "o-", color=color, lw=2, ms=6, label=fam, zorder=3)
-        else:
-            ax.plot(xs, ys, "o", color=color, ms=8, label=fam, zorder=3)
+        base = [p for p in pts if not p[2].endswith("-it")]
+        inst = [p for p in pts if p[2].endswith("-it")]
+        if base:
+            xs, ys, _ = zip(*base)
+            style = "o-" if len(base) >= 2 else "o"
+            ax.plot(xs, ys, style, color=color, lw=2, ms=7 if len(base) < 2 else 6,
+                    label=fam, zorder=3)
+        if inst:
+            has_it = True
+            xs, ys, _ = zip(*inst)
+            style = "o--" if len(inst) >= 2 else "o"
+            ax.plot(xs, ys, style, color=color, lw=1.4, ms=6, mfc="white",
+                    label=fam if not base else None, zorder=3)
+    if has_it:
+        ax.plot([], [], "o--", color="#6b7280", lw=1.4, ms=6, mfc="white",
+                label="instruct (-it) variants")
 
     if null:
         nx, ny, _ = zip(*sorted(null))
@@ -84,7 +106,7 @@ def main() -> None:
     ax.set_ylabel("mid-band separation\n(distinctness of the mid-network 'workspace' band)",
                   fontsize=11)
     ax.set_title("A J-lens 'global workspace' band emerges with scale — and its onset "
-                 "is charted here",
+                 "is charted here" + args.title_suffix,
                  fontsize=12, pad=14)
     ax.legend(loc="upper left", fontsize=9, ncol=2, framealpha=0.9)
     ax.grid(True, which="both", ls=":", alpha=0.4)
@@ -95,7 +117,7 @@ def main() -> None:
              "Null = random scale-matched transports. praxagent.ai",
              ha="center", fontsize=7.5, color="#6b7280")
     fig.tight_layout(rect=(0, 0.03, 1, 1))
-    out = HERE / "emergence_curve.png"
+    out = HERE / args.out
     fig.savefig(out, dpi=160)
     print(f"wrote {out}  ({len(real)} models, {len(fams)} families)")
 

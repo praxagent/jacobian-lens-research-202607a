@@ -99,11 +99,12 @@ his results substantially corroborate ours.
   (answer-swap strictly dominated) because the Qwen dataset had linearly-related pairs like
   France/Paris — a methodological warning: **calibrate task difficulty per model** or you
   get artifacts. Multilingual and typo experiments *did* replicate.
-- ⚠️ **Frontier-scale data point (our untested gap):** J-Lens "seemed to do reasonably" on
-  **Qwen3.5-397B-A17B** (~400B MoE) at n=4 prompts, **~1 hr on 8×H200s.** And he argues
-  fitting is **cheap** — `O(n·d_model)` backward passes, n=1000 is overkill, **n=10–25
-  suffices**. **So extending our audit to frontier-scale open MoEs is feasible and
-  affordable** — this de-risks our v2.
+- ⚠️ **Frontier-scale data point (gap since CLOSED, 2026-07-10):** J-Lens "seemed to do
+  reasonably" on **Qwen3.5-397B-A17B** (~400B MoE) at n=4 prompts, **~1 hr on 8×H200s.**
+  And he argues fitting is **cheap** — `O(n·d_model)` backward passes, n=1000 is
+  overkill, **n=10–25 suffices**. *(Follow-through: we fit our own 397B lens at n=24 —
+  mid_sep 0.343, the strongest band we measured; published with receipts. His "~1 hr"
+  proved optimistic for the naive sharded path — see fit_our_own/results.md §5–6.)*
 - **Novel positive extension:** abstract Chinese "interpretative meta-tokens" (什么意思 /
   "what does it mean") that appear and *causally act* during disambiguation — rare
   *algorithm*-level (not just variable-level) interpretability. He counts fast outside
@@ -118,20 +119,20 @@ generalize. "Nothing canonical about J-Lens" — SAEs/probes are alternatives.
 
 ## What this changes for our audit (action items)
 
-1. ⚠️ **Address the tokenizer/vocabulary confound (Eleos) before publishing
-   family-dependence.** Our Qwen≫Gemma headline could be partly a cross-tokenizer J-space
-   artifact. Mitigations: restrict CKA to a **shared cross-tokenizer probe-token set**
-   (the eliebak explorer already used "4096 token strings shared by all 38 tokenizers" —
-   we should do the same), and/or report a sensitivity analysis. At minimum this becomes a
-   prominent limitation. *This is the single most important thing the deep read surfaced.*
-2. **Nanda corroborates the family-dependence** — "less clean bands" on Qwen 27B, and
-   experiments that fail/reverse on a non-Claude model. We can cite an independent DeepMind
-   replication alongside our own 38-model sweep. (Note: within-Qwen messiness is also a
-   caution for *our* Qwen numbers.)
-3. **Frontier fitting is feasible + cheap (Nanda).** Our "frontier untested" limitation now
-   has a concrete, affordable path (n≈10–25, penultimate-layer Jacobians; ~1 hr on 8×H200s
-   for ~400B) — strengthens the v2 plan and the "we could settle the transient question"
-   framing.
+1. ✅ **RESOLVED (2026-07-10) — and Eleos was right.** The shared-probe re-sweep
+   (restricting CKA to the 4096 token strings shared by all tokenizers, exactly as
+   suggested here) showed the Qwen≫Gemma headline was **mostly tokenizer artifact**:
+   base-family means went 6.2× → 1.4×, and gemma-3-27b became the strongest band in the
+   sweep (0.298). The surviving cross-family finding is the *function* gate
+   (concept-resolution: all 8 behavioral Gemmas at 0.000 regardless of band). *This
+   deep-read call was the single most consequential methods decision in the audit.*
+2. **Nanda's "less clean bands"** on Qwen 27B, and experiments that fail/reverse on a
+   non-Claude model, read post-correction as band strength varying by recipe and scale
+   (not the dramatic family split our own-vocab numbers implied). Within-Qwen messiness
+   remains a caution for *our* Qwen numbers.
+3. ✅ **Frontier fitting DONE** — 397B fit at n=24, mid_sep 0.343, lens published with
+   receipts; the transient question is settled (band grows to 0.4T). Nanda's "~1 hr"
+   was optimistic for the naive sharded path (fit_our_own/results.md §5–6).
 4. **Both moderate the GWT framing** → supports a **calibrated** audit conclusion: the
    mechanistic finding (a working-memory/cognitive space) is real and replicable; the
    *universal global-workspace* reading is not established (Eleos: only the weakest tier;

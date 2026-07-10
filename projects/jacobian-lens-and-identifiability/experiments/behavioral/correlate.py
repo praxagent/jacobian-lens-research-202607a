@@ -39,15 +39,25 @@ def load_midsep() -> dict[str, float]:
 
 
 def spearman(xs, ys) -> float:
-    """Rank correlation, dependency-free."""
+    """Rank correlation, dependency-free. Average ranks for ties (the standard
+    treatment) — an earlier version assigned distinct ranks to tied values in
+    input order, which systematically inflated rho here (8 Gemmas tied at
+    share_span 0.000 in a mid_sep-sorted table); see results.md estimator note."""
     n = len(xs)
     if n < 3:
         return float("nan")
     def ranks(v):
         order = sorted(range(n), key=lambda i: v[i])
         rk = [0.0] * n
-        for pos, i in enumerate(order):
-            rk[i] = pos
+        pos = 0
+        while pos < n:
+            end = pos
+            while end + 1 < n and v[order[end + 1]] == v[order[pos]]:
+                end += 1
+            avg = (pos + end) / 2.0
+            for k in range(pos, end + 1):
+                rk[order[k]] = avg
+            pos = end + 1
         return rk
     rx, ry = ranks(xs), ranks(ys)
     mx, my = sum(rx) / n, sum(ry) / n

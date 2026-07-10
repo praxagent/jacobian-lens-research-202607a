@@ -70,6 +70,7 @@ win:
 5. **Safety-harness integration** — wire the honesty/injection signal into Prax's
    open-model path (their code is a research lib, not a deployed guard).
 
-**Status:** planned; `common/cka.py` built + CPU-validated (the one runnable piece so
-far). Sub-experiment A is the next CPU build; B needs `jlens` + `transformers` + a GPU.
-No model runs yet — this README is the design.
+**Status: RUN (complete).** 35-of-38-lens uniform sweep (own-vocab + shared-vocab
+probes + null controls + precision A/B) — all numbers and the tokenizer-confound verdict
+in [`results.md`](results.md); figures `emergence_curve*.png`. The design text below is
+kept as written for the record.

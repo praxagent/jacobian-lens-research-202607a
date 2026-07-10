@@ -123,9 +123,13 @@ as the discourse our empirical audit sits within:
   system ("Should I call my .docx… a 'global workspace'?").
   **Our assessment:** (1) is serious philosophy worth citing. (2) is Eleos's
   "Modules-condition-unmet / privileged-set≠workspace" point stated polemically — but
-  the MS-Word reduction *proves too much*, and **our data answers it**: if the band were
-  a triviality of layered computation, every trained transformer would show it — Gemma
-  barely does, small models don't, the null doesn't. Contingent, recipe-dependent,
+  the MS-Word reduction *proves too much*, and **our data answers it**: if the workspace
+  signatures were a triviality of layered computation, they would be everywhere,
+  uniformly. They aren't: small models show no band, the null shows none, the
+  KD-pretrained Gemma-2s sit at the floor at every scale — and (the 2026-07-10
+  shared-vocab update) even where Gemma DOES have a band once probes are commensurable,
+  the *function* is absent: at identical band geometry, gemma-2-27b routes zero injected
+  concepts into its readout while qwen3.5-2b resolves them. Contingent, recipe-dependent,
   causally-load-bearing structure is precisely what .docx internals lack. (Also:
   "linguistic-only" is shaky for multimodal models, though the missing cross-*module*
   integration point stands per Eleos.)
@@ -139,10 +143,14 @@ as the discourse our empirical audit sits within:
   network has equally-computed Jacobians with no semantic structure, so structure is a
   property of the *learned function*, not of backprop per se. The residual-stream
   steelman is real for mere decodability (it's why logit lens works) — but **our data
-  refutes the "architecture-guarantees-it" form**: Gemma-3-12b (residual + backprop) has
-  essentially **no** band (0.0007) while qwen3-14b has a strong one (0.21); small models
-  show none; the random-transport null shows none; and Nanda finds J-lens *beats* logit
-  lens (information beyond passthrough). His peer-review point, however, lands — and is
+  refutes the "architecture-guarantees-it" form** (updated 2026-07-10 for the
+  shared-vocab correction, which retired the old gemma-3-12b 0.0007 datum as tokenizer
+  artifact): small models show no band; the random-transport null shows none; the
+  KD-pretrained Gemma-2s stay at the floor under commensurable probes (0.005–0.007 vs
+  from-scratch 27B 0.113); and at *matched* band geometry the workspace *function*
+  splits absolutely by family (gemma-2-27b 0.113 → share_span 0.000 vs qwen3.5-2b
+  0.114 → 0.970) — none of which "backprop + residual streams" predicts. And Nanda
+  finds J-lens *beats* logit lens (information beyond passthrough). His peer-review point, however, lands — and is
   corroborated by Dehaene & Naccache's note that the paper evolved during their
   commentary exchange (no pre-registration).
 
@@ -153,9 +161,14 @@ universal phenomenon the framing implies. But "it's all PR" is itself a narrativ
 mere marketing. And the Trask thread sharpens the symmetric point: **the hype and the
 anti-hype make the same mistake — treating the phenomenon as *necessary*** (either "a
 workspace like consciousness" or "a trivial consequence of backprop + residual streams")
-**when the data shows it is *contingent***: a learned, family-dependent structure that some
-training recipes produce strongly (Qwen) and others barely at all (Gemma), absent in small
-models and in the null. The useful response to both is **measurement**, which is what this
+**when the data shows it is *contingent*** — though the shared-vocab re-sweep
+(2026-07-10) relocated the contingency: the geometric band is broadly present across
+families once probes are commensurable (the dramatic Qwen≫Gemma gap was mostly tokenizer
+artifact), and what is genuinely recipe/family-bound is (a) the band's *magnitude*
+(Gemma-2's KD recipe floors it; instruct-tuning shrinks it everywhere) and (b) —
+absolutely — the workspace *function*: whether injected concepts can enter the readout
+at all. Absent in small models and in the null either way. The useful response to both
+is **measurement**, which is what this
 project brings: not picking a side in the discourse, but publishing the curve. Reaction
 handles are logged in
 [`shared/researchers/handles.yaml`](../../shared/researchers/handles.yaml).

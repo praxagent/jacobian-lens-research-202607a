@@ -11,6 +11,39 @@ from our fp32-path ledger; final numbers come from the uniform re-sweep. This is
 0.094 · gpt-oss-20b 0.076 · Gemma-2 ≤0.043 · Gemma-3 ≤0.025 (0.0007 at 12B)** — with
 small models (<0.2B) and the random-transport null at ~0.
 
+## ⚠️ 2026-07-10 UPDATE — the shared-vocab re-sweep SHRANK the explanandum
+
+The tokenizer-commensurable re-sweep (`emergence_shared.csv`; see
+`experiments/jacobian_lens/results.md`) showed own-vocab probing understated Gemma
+badly (Gemma-3-27B 0.025 → **0.298**, the strongest band in the sweep; Gemma-3-12B
+0.0007 → 0.114; Gemma-2-27B 0.043 → 0.113). The family gap above was ~4/5ths
+measurement artifact (base-family means 6.2× → 1.4×). Consequences for the ranking:
+
+- **H2′ NARROWED, not killed — now "Gemma-2's KD recipe," not "KD."** Gemma-3 is also
+  KD-pretrained (all sizes, prob.) and posts strong shared-probe bands — the
+  cross-family "distillation suppresses the band" generalization is DEAD. But the
+  within-Gemma-2 natural experiment *strengthened*: KD 2B/9B stay at the floor under
+  shared probes (0.007/0.005) vs from-scratch 27B 0.113 = **15–24×** with probes now
+  held constant too. P1 still stands. Open: which ingredient of Gemma-2's recipe
+  (teacher, KD loss, schedule, data) differs from Gemma-3's.
+- **H3 (sandwich norm) — EFFECTIVELY DEAD as a suppressor.** Gemma-3 has the same
+  sandwich scheme (+QK-norm) and now shows the strongest band in the sweep. Sandwich norm
+  cannot be what keeps a band from forming.
+- **H4 (giant vocab) — PARTIALLY VINDICATED, but as a *measurement* mechanism.** The
+  262k vocab suppressed the *statistic* (probe dilution), not (as far as we know) the
+  *model*. This was ranked "weak" for the wrong question; for "why did our numbers say
+  Gemma has no band," it was most of the answer.
+- **H5 (statistic self-critique) — VALIDATED in spirit.** The own-vocab statistic did
+  under-credit a family, via the tokenizer rather than homogeneity.
+- **NEW primary explanandum — the FUNCTION gate.** All eight behaviorally-measured
+  Gemmas sit at share_span **0.000** across shared-probe bands 0.005–0.114, while
+  Qwen/Llama/OLMo resolve at 0.95+ at matched bands (gemma-2-27b 0.113/0.000 vs
+  qwen3.5-2b 0.114/0.970). Geometry no longer explains the behavioral split at all —
+  *what mechanism gates concept-entry into the readout, family-wide, independent of
+  band geometry?* is now the question this file exists to answer.
+- Also new: gemma-3-270m posts 0.134 shared at 0.27B — the emergence-onset story
+  ("bands appear ~0.8B") needs re-examination under commensurable probes.
+
 ## Verified recipe facts (the discriminating ones)
 
 | Family | Attention layout | Norm scheme | Pretraining | Embeds/vocab |

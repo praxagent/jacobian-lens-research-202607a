@@ -3,8 +3,9 @@
 **Goal:** stop depending only on Neuronpedia's pre-fitted lenses — fit our own with
 Anthropic's `jlens.fit`, to (1) **prove our pipeline is faithful** and (2) **test whether
 J-space is stable** across fitting seeds/corpora. Closes the biggest limitation in the
-emergence audit (one lens per model → can't test stability). Frontier (>70B) fitting is a
-separate, expensive tier — not here.
+emergence audit (one lens per model → can't test stability). Frontier (>70B) fitting
+became part of this experiment too — the 397B fit lives in `results.md` §5–6 with
+`fit_at_scale.py` / `tp_fit.py` / `GAMEPLAN-397B.md` / `MODEL_CARD-397B.md`.
 
 **Compute:** GPU. Fitting is ~`ceil(d_model/8)` backward passes per prompt over ~100
 short prompts. Trivial for gpt2 (CPU-feasible), needs a GPU for ≥1B.
@@ -44,6 +45,8 @@ roughly halve it.)
 
 ## Status
 
-Code written; **untested on GPU** — the first run is the validation pass (and the first
-live exercise of the RunPod launcher's pod-create path). Results land in a `results.md`
-here and feed `../../writeup.md`.
+**RUN (complete)** — see [`results.md`](results.md): gpt2 validation gate PASSED (CKA
+0.9992 vs Neuronpedia), qwen3-4b 3-seed stability (0.997–0.998), Chinese-corpus lens,
+n-scaling convergence curve, and the **397B frontier fit** (mid_sep +0.343 at n=24; lens
+published at `praxagent/jacobian-lens-qwen3.5-397b-a17b` with eval receipts +
+`consumer_check_397b.py` independent-verification script).

@@ -16,6 +16,11 @@ every claim in the writeup/blog.
 | `experiments/*/results.md` | Per-experiment ledgers — only runs actually executed. |
 | `experiments/behavioral/verbal-report.json`, `ignition.json` | Anthropic's released prompt sets (Apache-2.0), vendored so the behavioral tests are self-contained + shareable. See `ANTHROPIC_EXPERIMENTS_README.md`. |
 | `experiments/behavioral/verbal_report_*.json` | Behavioral causal-swap results per model. |
+| `experiments/behavioral/ignition_*.json` | Behavioral ignition/interpolation results per model (share_span, sharpness). |
+| `experiments/behavioral/behavioral_correlation.csv` | Geometry→behavior merge + rank correlations, own-vocab `mid_sep` (`correlate.py`). |
+| `experiments/behavioral/behavioral_correlation_shared.csv` | Same, with shared-probe `mid_sep` — the tokenizer-robustness re-run (`correlate_shared.py`). |
+| `experiments/jacobian_lens/emergence_curve.png` + `emergence_curve_shared.png` | The emergence figures (own-vocab / shared probes; base solid, instruct dashed). |
+| `experiments/fit_our_own/MODEL_CARD-397B.md` | Model card for the published 397B lens (in-tree copy of the HF README). |
 
 CSV schema (`emergence*.csv`): `slug, hf_id, params, d_model, n_layers, mid_sep,
 within_mid, within_early, within_late`. Higher `mid_sep` = more distinct workspace band.
@@ -31,6 +36,10 @@ within_mid, within_early, within_late`. Higher `mid_sep` = more distinct workspa
   `experiments/fit_our_own/fit_lens.py` (recipe + exact commands in that dir's README).
   The Chinese lens (`qwen4b_zh.pt`) is the one genuinely novel artifact others might want
   — **TODO: offer via HF or Git LFS if requested** (currently preserved on the dev box).
+- **The 397B lens** (`artifacts/lenses-397b/qwen35_397b_dm.pt`, 1.98 GB): **published on
+  HF** at [praxagent/jacobian-lens-qwen3.5-397b-a17b](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b)
+  with all fit/eval receipts and pod-original SHA256s. `consumer_check_397b.py`
+  re-verifies the public copy end-to-end (hash + band recompute) on a small CPU box.
 - **HuggingFace model cache**: re-downloads free.
 
 ## Reproduce from scratch

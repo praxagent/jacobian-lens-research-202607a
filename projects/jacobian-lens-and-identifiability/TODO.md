@@ -64,18 +64,19 @@ the miss.
 Steps: [x] plan  [ ] runner (`experiments/behavioral/`)  [ ] CPU smoke on gpt2
 [ ] pod run on the triple  [ ] results.md + post section.
 
-## 2. Ignition test on open models — **QUEUED** (~$5–15, shares pod with #1)
-Dehaene & Naccache's decisive GWT signature: graded-strength stimuli → is J-space entry
-threshold-like/all-or-none (ignition) or monotonic? Anthropic shipped `ignition.json`
-but only partially addressed it (late §4.1.1). Nobody has run it independently, on any
-open model. Run on the triple (band-havers vs bandless — does ignition exist only where
-the band does?). A genuinely novel experimental contribution, not just audit.
+## 2. Ignition test on open models — ✅ **DONE** (2026-07-09/10)
+Ran across ~24 open models plus the 397B through our own lens (share_span 0.988, 83.7%
+sharp). Results + correlations: `experiments/behavioral/results.md`, `ignition_*.json`,
+`behavioral_correlation*.csv`. Headline: concept-resolution splits by family (all 8
+Gemmas 0.000) independent of band geometry at matched values. Remaining Dehaene
+paradigms (local-global, trace conditioning, inclusion/exclusion) still open.
 
-## 3. Frontier lens fit — **QUEUED** (~$30–60, one run)
-Fit a lens on **Qwen3.5-397B-A17B** (Nanda: ~1 h on 8×H200s, n=4–25 prompts) and compute
-our band statistic at 0.4T scale. Converts the "sub-70B transient" limitation into a
-measured point. Secondary candidate if weights/hosting awkward: biggest available
-DeepSeek/GLM open MoE.
+## 3. Frontier lens fit — ✅ **DONE** (2026-07-10; actual cost ≈ $330–350 across 2 attempts)
+**Qwen3.5-397B-A17B fit at n=24: mid_sep = +0.343** — strongest band measured in the
+project; the "sub-70B transient" limitation is refuted as a measured point. Lens + all
+receipts published: `praxagent/jacobian-lens-qwen3.5-397b-a17b` on HF (private until
+release). Full story incl. the device_map/TP saga: `experiments/fit_our_own/results.md`
+§5–6.
 
 ## 4. Free CPU tests (close mechanism holes) — **QUEUED**
 - T1/T2: global-attention-layer-only CKA (per-layer maps in `hypotheses.md`) — does
