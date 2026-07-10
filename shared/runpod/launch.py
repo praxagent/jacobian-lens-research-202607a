@@ -177,6 +177,11 @@ def cmd_create(args) -> None:
         "minVcpuCount": 2, "minMemoryInGb": 8, "ports": "22/tcp", "dockerArgs": "",
         "env": [{"key": "PUBLIC_KEY", "value": _pubkey()}],
     }
+    if getattr(args, "network_volume", None):
+        # network volume: durable, DC-pinned storage mounted at /workspace.
+        # SECURE cloud only; capacity search is confined to the volume's DC.
+        inp["networkVolumeId"] = args.network_volume
+        inp["volumeMountPath"] = "/workspace"
     if args.gpu_count > 1:
         print(f"requesting {args.gpu_count}× {args.gpu_id}")
     d = _gql(q, {"in": inp})
@@ -203,6 +208,44 @@ def cmd_sshinfo(args) -> None:
     sys.exit("no public SSH port after 15 min — check `launch.py pods`.")
 
 
+def cmd_volume_create(args) -> None:
+    """Create a network volume (durable, DC-pinned; SECURE cloud; ~$0.07/GB/mo)."""
+    q = """mutation($in: CreateNetworkVolumeInput!){
+        createNetworkVolume(input:$in){ id name size dataCenterId }
+    }"""
+    d = _gql(q, {"in": {"name": args.name, "size": args.size,
+                        "dataCenterId": args.dc}})
+    v = d.get("createNetworkVolume")
+    if not v:
+        sys.exit("volume create returned nothing — bad datacenter id? (try volume-dcs)")
+    print(f"created network volume {v['id']}  {v['size']}GB in {v['dataCenterId']}  "
+          f"(~${v['size']*0.07:.0f}/mo) >>> DELETE when done: "
+          f"launch.py volume-delete --id {v['id']}")
+
+
+def cmd_volume_list(_args) -> None:
+    q = """query { myself { networkVolumes { id name size dataCenterId } } }"""
+    vols = _gql(q)["myself"]["networkVolumes"]
+    if not vols:
+        print("No network volumes.")
+    for v in vols:
+        print(f"{v['id']:24s} {v['name']:20s} {v['size']:5d}GB  {v['dataCenterId']}"
+              f"  (~${v['size']*0.07:.0f}/mo)")
+
+
+def cmd_volume_delete(args) -> None:
+    q = "mutation($id:String!){ deleteNetworkVolume(input:{id:$id}) }"
+    _gql(q, {"id": args.id})
+    print(f"deleted network volume {args.id} (billing for it stops now)")
+
+
+def cmd_volume_dcs(_args) -> None:
+    """List datacenters (for volume placement — pick one with target-GPU depth)."""
+    q = """query { dataCenters { id name location } }"""
+    for dc in _gql(q)["dataCenters"]:
+        print(f"{dc['id']:12s} {dc.get('name','')}  {dc.get('location','')}")
+
+
 def cmd_terminate(args) -> None:
     q = "mutation($id:String!){ podTerminate(input:{podId:$id}) }"
     _gql(q, {"id": args.pod})
@@ -224,6 +267,8 @@ def main() -> None:
     r.set_defaults(func=cmd_run)
     c = sub.add_parser("create")
     c.add_argument("--gpu-id", required=True, help="gpuType id (see `gpus`)")
+    c.add_argument("--network-volume", default=None,
+                   help="network volume id to attach at /workspace (SECURE cloud, same DC)")
     c.add_argument("--gpu-count", type=int, default=1, help="GPUs per pod (multi-GPU sharding)")
     c.add_argument("--name", default="praxagent")
     c.add_argument("--image", default=DEFAULT_IMAGE_FIT)
@@ -232,6 +277,18 @@ def main() -> None:
     c.set_defaults(func=cmd_create)
     si = sub.add_parser("sshinfo"); si.add_argument("--pod", required=True)
     si.set_defaults(func=cmd_sshinfo)
+    vc = sub.add_parser("volume-create", help="create a durable network volume")
+    vc.add_argument("--name", required=True)
+    vc.add_argument("--size", type=int, required=True, help="GB")
+    vc.add_argument("--dc", required=True, help="datacenter id (see volume-dcs)")
+    vc.set_defaults(func=cmd_volume_create)
+    vl = sub.add_parser("volume-list")
+    vl.set_defaults(func=cmd_volume_list)
+    vd = sub.add_parser("volume-delete")
+    vd.add_argument("--id", required=True)
+    vd.set_defaults(func=cmd_volume_delete)
+    vdc = sub.add_parser("volume-dcs", help="list datacenters")
+    vdc.set_defaults(func=cmd_volume_dcs)
     t = sub.add_parser("terminate"); t.add_argument("--pod", required=True)
     t.set_defaults(func=cmd_terminate)
     args = p.parse_args()
