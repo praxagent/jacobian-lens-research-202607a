@@ -23,11 +23,11 @@ The layer×layer CKA of the lens's token geometry shows the strongest "workspace
 we have measured on any model:
 
 ```
-mid_sep = [FINAL n=24 PENDING]   (interim n=16: +0.3796)
-within early/MID/late CKA = 0.887 / 0.898 / 0.815 (n=16)
+mid_sep = +0.3434   (n=24; interim n=16 read +0.3796)
+within early/MID/late CKA = 0.890 / 0.937 / 0.814 (n=24)
 ```
 
-vs. the strongest model in the 36-model Neuronpedia sweep (Qwen3-14B: 0.211). The
+— 1.6× the strongest model in the 36-model Neuronpedia sweep (Qwen3-14B: 0.211). The
 workspace band **grows** to frontier scale in this lineage; it is not a small-model
 transient.
 
@@ -35,8 +35,8 @@ transient.
 
 | file | what |
 |---|---|
-| `qwen3.5-397b-a17b/jlens/wikitext/qwen35_397b.pt` | fp32 lens (canonical jlens format, `JacobianLens.load`-able) |
-| `qwen3.5-397b-a17b/jlens/wikitext/qwen35_397b_fp16.pt` | fp16 Jacobians (`{"J": {layer: tensor}, "source_layers": [...]}`), half the size |
+| `jlens/wikitext/qwen35_397b.pt` | fp32 lens (canonical jlens format, `JacobianLens.load`-able) |
+| `jlens/wikitext/qwen35_397b_fp16.pt` | fp16 Jacobians (`{"J": {layer: tensor}, "source_layers": [...]}`), half the size |
 | `band.json` | the band statistic + per-block CKA numbers |
 | `evals.json` | held-out lens-fidelity evals (below) |
 | `ignition_qwen3.5-397b.json` | workspace-extraction (ignition) results run through this lens |

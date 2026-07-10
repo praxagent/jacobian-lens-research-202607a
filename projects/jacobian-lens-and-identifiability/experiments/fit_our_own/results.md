@@ -194,13 +194,14 @@ fit: device_map even-spread 110GB, eager attn, dim_batch 16, wikitext-103 seed 0
      max_seq_len 128, n=24 prompts (per-prompt checkpointed)
 
 INTERIM n=16:  mid_sep = +0.3796   (within early/MID/late = 0.887/0.898/0.815)
-FINAL   n=24:  mid_sep = [PENDING-FINAL]
+FINAL   n=24:  mid_sep = +0.3434   (within early/MID/late = 0.890/0.937/0.814)
 ```
 
 **The workspace band is not a sub-70B transient — it is the strongest band we have
-measured anywhere,** nearly 2× the previous maximum in our 36-model sweep (qwen3-14b
-0.2114). Within-lineage scale trend: qwen3.5-27B 0.197 → llama3.3-70B-it 0.148 →
-**qwen3.5-397B ~0.38**. This is, to our knowledge, the first band statistic published at
+measured anywhere,** 1.6× the previous maximum in our 36-model sweep (qwen3-14b 0.2114;
+n=16 interim read 0.3796, settling to 0.3434 at n=24 — the mid-block within-CKA *rose*
+0.898→0.937 with more prompts). Within-lineage scale trend: qwen3.5-27B 0.197 → llama3.3-70B-it 0.148 →
+**qwen3.5-397B 0.343**. This is, to our knowledge, the first band statistic published at
 0.4T scale (Nanda ran evals only, "didn't sanity check very hard", n=4).
 
 ### Release-verification battery (the "is it legit" protocol)

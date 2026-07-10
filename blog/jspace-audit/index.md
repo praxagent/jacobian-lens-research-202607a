@@ -150,8 +150,7 @@ converge; it **fans out by family**:
 The top of the range holds the pattern — and then breaks it open. **Llama-3.3-70B-Instruct
 measures 0.148** (a solid band at 70B, instruct-tuned at that). And when we fit our own
 lens on **Qwen3.5-397B-A17B** — 8×H200, the largest open MoE we could hold — the band came
-in at **[PENDING-FINAL n=24; interim n=16: 0.38]**, nearly double the strongest model in
-the entire 38-lens Neuronpedia sweep. The workspace band is not a small-model transient:
+in at **0.343** (n=24), 1.6× the strongest model in the entire 38-lens Neuronpedia sweep. The workspace band is not a small-model transient:
 in the lineages that have it, **it grows all the way to 0.4T**.
 
 At 12–14B the difference between Qwen and Gemma is ~**300×**. Both are residual-stream
@@ -300,7 +299,7 @@ workspace result, the weaker the consciousness inference.
 - **Frontier scope — now measured, one lineage.** We fit our own lens on
   Qwen3.5-397B-A17B (n=24 prompts, converged per our calibration; held-out fidelity evals
   + an ignition run through the lens as sanity checks) and measured
-  [PENDING-FINAL: mid_sep ≈ 0.38] — the band survives, indeed peaks, at 0.4T. Scope
+  **mid_sep = 0.343** — the band survives, indeed peaks, at 0.4T. Scope
   honesty: that's ONE lineage (Qwen); we did not fit other frontier families, and Nanda's
   n=4 fit reported no geometry number to compare against. The lens is published for
   independent checking ([PENDING HF LINK]).
