@@ -360,6 +360,49 @@ Receipts: pre-registration `8102510` → gate `4f44976` → result `d9fc376`; pe
 
 Record model and lens revisions, CUDA stack, source commit, and output hashes. Public weights make replication possible; provenance still matters.
 
+### Renting the GPUs from the CLI (the exact flow we use)
+
+Everything above ran through a ~300-line, stdlib-only launcher committed in the repo
+(`shared/runpod/launch.py`) — no SDK, just RunPod's GraphQL API. The whole flow, start
+to finish:
+
+```bash
+git clone https://github.com/praxagent/research-and-replications && cd research-and-replications
+export RUNPOD_API_KEY=...            # runpod.io -> Settings -> API Keys
+# HF_TOKEN only needed while artifacts are gated/private; pass it inline, never write it to a pod
+
+python3 shared/runpod/launch.py gpus                 # price/VRAM menu
+python3 shared/runpod/launch.py volume-dcs           # datacenters for durable volumes
+
+# one-time: a durable network volume so the 807 GB model downloads exactly once
+python3 shared/runpod/launch.py volume-create --name lens --size 900 --dc US-NC-1
+
+# rent the node WITH the volume mounted at /workspace (secure cloud, same DC)
+python3 shared/runpod/launch.py create --gpu-id "NVIDIA H200" --gpu-count 8 \
+    --cloud SECURE --network-volume <volume-id> --disk 100
+python3 shared/runpod/launch.py sshinfo --pod <pod-id>     # ssh command, ready in ~1 min
+
+# on the pod: cache everything on the volume, run, write receipts to the volume
+export HF_HOME=/workspace/hf
+pip install -q transformers accelerate huggingface_hub git+https://github.com/anthropics/jacobian-lens
+python demo.py --big-model Qwen/Qwen3.5-397B-A17B:model.language_model \
+    --lens-hf praxagent/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
+    --expected-sha256 668c3bf1... --out /workspace/receipts/demo.json
+
+# the two commands that protect your wallet
+python3 shared/runpod/launch.py terminate --pod <pod-id>
+python3 shared/runpod/launch.py pods                 # ALWAYS verify nothing is still billing
+```
+
+Habits that cost us real money to learn, so you don't have to: **terminate the moment a
+run completes** (idle pods bill by the second); **audit `pods` after any script that can
+create them** (a retry loop once orphaned a duplicate 8×GPU node for ~$143);
+**never `tar`/`rsync` a `.env` onto a rented box** — pass tokens inline per command;
+and put anything you can't afford to lose on the network volume, not the container disk,
+which evaporates on termination. With the volume warm, the self-reference probe above
+was a ~35-minute, ~$20 session — most of it the one-time download; repeat runs are
+~10 minutes of pod time.
+
 ### Extending our lens (warm-start) — why n=24 is still a contribution
 
 Jacobian fitting is an **online average** of per-prompt Jacobians. Publishing an n=24 lens for a model Neuronpedia does not cover (~0.4T) is the contribution; anyone who wants a longer average can **continue from our checkpoint** instead of fitting from scratch.
