@@ -1,0 +1,66 @@
+[notice] To update, run: python -m pip install --upgrade pip
+[notice] To update, run: python -m pip install --upgrade pip
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Fetching 4 files:   0%|          | 0/4 [00:00<?, ?it/s]Fetching 4 files:  25%|██▌       | 1/4 [00:15<00:46, 15.36s/it]Fetching 4 files:  50%|█████     | 2/4 [00:16<00:13,  6.71s/it]Fetching 4 files: 100%|██████████| 4/4 [00:16<00:00,  4.00s/it]
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights: 100%|██████████| 291/291 [00:00<00:00, 8160.45it/s]
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+model=meta-llama/Llama-3.1-8B-Instruct hook_layer=19 band=10..19 (19 src layers below hook)
+
+== Stage 0: kappa (lens-kurtosis) triage ==
+  [TARGET] f30032: kappa_max=2.8 top: ['\u2005', '.DropDown', '\u2002', 'まず', 'クロ']
+  [TARGET] f58667: kappa_max=6.5 top: [' tutorials', ' usage', ' users', ' user', ' tutorial']
+  [TARGET] f22004: kappa_max=3.7 top: ['bred', ' pure', ' Pure', 'st', 'blood']
+  [TARGET] f30686: kappa_max=3.8 top: [' his', ' amidst', ' snowy', ' sebuah', ' mysterious']
+  [TARGET] f41533: kappa_max=4.2 top: [" ''", ' to', " '''", ' having', ' who']
+  [TARGET] f23893: kappa_max=3.6 top: ['quot', 'J', 'A', 'Q', 'G']
+  [adj   ] f30029: kappa_max=3.7 top: ['\xa0PS', 'aps', 'adero', 'esz', ' psik']
+  [adj   ] f30035: kappa_max=10.4 top: [' mailbox', ' mail', ' emails', ' email', ' Mail']
+  [adj   ] f58664: kappa_max=5.8 top: [' vowel', ' vowels', ' conson', ' pronunciation', ' pronounce']
+  [adj   ] f58670: kappa_max=73.3 top: [' types', ' type', ' Types', 'type', 'types']
+  [adj   ] f22001: kappa_max=6.3 top: [' finally', ' hope', ' newfound', 'finally', ' hopeful']
+  [adj   ] f22007: kappa_max=4.0 top: [' however', ' BUT', ' but', 'But', 'However']
+  [adj   ] f30683: kappa_max=3.9 top: [' év', ' ít', ' («', ' trí', ' connexion']
+  [adj   ] f30689: kappa_max=12.2 top: [' theories', ' scientists', ' theory', ' scientific', ' physicist']
+  [adj   ] f41530: kappa_max=0.0 top: ['(', "'", '%', '&', '"']
+  [adj   ] f41536: kappa_max=5.3 top: [' K', ' Sab', ' Kir', ' Nik', ' Kil']
+  [adj   ] f23890: kappa_max=4.6 top: [' next', ' links', ' link', ' node', ' chain']
+  [adj   ] f23896: kappa_max=0.0 top: ['(', "'", '%', '&', '"']
+  [rand  ] f2732: kappa_max=19.5 top: [' lyrics', ' song', ' songs', ' Lyrics', ' songwriter']
+  [rand  ] f43567: kappa_max=5.7 top: [' actually', ' indeed', 'actually', ' rather', ' surprisingly']
+  [rand  ] f42613: kappa_max=0.0 top: ['(', "'", '%', '&', '"']
+  [rand  ] f52416: kappa_max=3.3 top: ['・・・\n\n', 'くだ', ' kancel', '：\n\n', ' sécur']
+  [rand  ] f45891: kappa_max=0.0 top: ['(', "'", '%', '&', '"']
+  [rand  ] f21243: kappa_max=0.0 top: ['(', "'", '%', '&', '"']
+  [rand  ] f30403: kappa_max=0.0 top: ['(', "'", '%', '&', '"']
+  [rand  ] f32103: kappa_max=6.2 top: [' knew', ' wondered', ' couldn', ' felt', ' wondering']
+  [rand  ] f41993: kappa_max=5.6 top: [' striving', ' inspiring', ' ultimately', ' celebrate', ' enjoying']
+  [rand  ] f57043: kappa_max=18.1 top: [' criteria', ' criterion', ' Criteria', 'criteria', 'Criteria']
+  [rand  ] f20757: kappa_max=8.3 top: [' skincare', ' skin', ' dermat', ' Skin', ' cosmetics']
+  [rand  ] f55026: kappa_max=4.0 top: [' very', ' extremely', ' completely', ' extreme', ' worst']
+
+== Stage A: SAE feature steering -> J-lens readout ==
+  feature 30032 done
+  feature 58667 done
+  feature 22004 done
+  feature 30686 done
+  feature 41533 done
+  feature 23893 done
+  feature 30029 done
+  feature 30035 done
+  feature 58664 done
+  feature 58670 done
+  feature 2732 done
+  feature 43567 done
+  feature 42613 done
+  feature 52416 done
+
+== Stage B: J-lens steering -> SAE feature activations ==
+  prompt 0 done
+  prompt 1 done
+  prompt 2 done
+  prompt 3 done
+  prompt 4 done
+  prompt 5 done
+
+wrote /root/saex_8b.json
+SAEX_8B_DONE
