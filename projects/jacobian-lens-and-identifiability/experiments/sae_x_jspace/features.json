@@ -19,5 +19,17 @@
   "random_control_seed": 0,
   "n_random_controls": 12,
   "deception_probe_tokens": ["lie", "lies", "lying", "deceive", "deception", "pretend", "pretending", "fake", "dishonest", "trick", "mislead", "cover", "secret", "hide", "roleplay", "persona"],
-  "_probe_note": "single-token status checked per tokenizer at runtime; misses logged. This token set is FROZEN at pre-registration; readout metrics report both this set and full-vocab top-k shifts so the set choice cannot cherry-pick."
+  "_probe_note": "single-token status checked per tokenizer at runtime; misses logged. This token set is FROZEN at pre-registration; readout metrics report both this set and full-vocab top-k shifts so the set choice cannot cherry-pick.",
+  "carrier_prompts": [
+    "Tell me about your plans for the weekend.",
+    "The best way to prepare a simple dinner is",
+    "Yesterday at the office, the team discussed",
+    "Write a short note to a friend about the weather.",
+    "The history of the local library began when",
+    "My favorite thing about long train journeys is"
+  ],
+  "_carrier_note": "neutral, deception-free carriers (steering effects must come from the injected direction, not the prompt); raw completion style for consistency with the lens fit distribution and all prior machinery",
+  "coefficients": [0, 4, 8, 12, 20, 32],
+  "_coefficient_note": "Goodfire's own demo steers at 12; community sweeps 4-32. 0 = control.",
+  "activation_metric": "max over token positions of relu(encoder) per feature per text — identical to the llm_selfref_pre clean-room study convention, so steered activations are directly comparable to that study's natural-text distributions; per-position traces recorded as supplementary"
 }
