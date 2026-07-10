@@ -105,7 +105,7 @@ That is the practical takeaway of this note: **a lens readout is a label auditor
 
 - It **does** establish that four of the six coordinates carry verbalizable deception-adjacent content in this checkpoint, by an instrument independent of every label pipeline involved.
 - It does **not** establish causal claims — that steering these directions changes deception behavior. Dose-response steering, in both directions with geometry falsification controls, is [Part III](../sae-workspace-steering/).
-- It does **not** settle what 22004/23893 *are* — only that their notebook labels don't transfer. A κ-stratified survey of the full dictionary (what fraction of *all* features are lens-legible?) is running as follow-up and will report separately.
+- It does **not** settle what 22004/23893 *are* — only that their notebook labels don't transfer. A κ-stratified survey of 2,048 random dictionary features places them at the **49th and 55th percentile** of κ — perfectly ordinary features, not anomalously hidden ones — while 30686 sits at the 94th. Base rate: the median feature scores κ≈6, only **11% exceed κ=20**, so lens-legibility is a minority property of the dictionary and the named deception features belong to that minority (receipt: `kappa_sweep_70b.json`; κ measures peakedness, not semantics, so these are upper bounds on verbalizability).
 
 ## Reproduce it
 

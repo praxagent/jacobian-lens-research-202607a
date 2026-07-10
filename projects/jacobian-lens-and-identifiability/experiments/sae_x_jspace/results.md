@@ -120,5 +120,14 @@ publication.** The J-lens's refusal to name 22004/23893 was a correct label audi
 detected before the label mismatch was known. That (label-auditing) is the defensible
 finding, and it strengthens Part I's thesis.
 
-**Still open:** κ-stratified sweep of the full dictionary (base rate of lens-legibility
-vs κ) — runner queued.
+**κ-stratified sweep — DONE (2026-07-10, A6000 ~$0.20 after a 3090 OOM false start
+~$0.55; kappa_sweep_70b.json).** Base rate over 2,048 random features: κ quantiles
+p50=6.2 / p75=9.5 / p90=22.9 / p95=48 / p99=143; **23.7% exceed κ=10, 11.1% exceed
+κ=20** (κ flags peakedness, not semantics — an upper bound on legibility). Target
+placements: f30686 κ=37.4 = **94th percentile** (top1 token ' deception'); f58667 76th
+(' fake'); f41533 69th (' deception'); the label-mismatched f22004/f23893 sit at the
+**49th/55th percentile — perfectly ordinary features**, not anomalously hidden; f30032
+23rd (below median, yet bridged weakly-positively in stages A/B — κ is predictive, not
+a clean threshold). Final read: lens-legibility is a minority property of the
+dictionary; the named deception features are in that minority; the two mismatched IDs
+are typical of the bulk.

@@ -1,0 +1,40 @@
+[notice] To update, run: python -m pip install --upgrade pip
+[notice] To update, run: python -m pip install --upgrade pip
+[transformers] Ignoring clean_up_tokenization_spaces=True for BPE tokenizer TokenizersBackend. The clean_up_tokenization post-processing step is designed for WordPiece tokenizers and is destructive for BPE (it strips spaces before punctuation). Set clean_up_tokenization_spaces=False to suppress this warning, or set clean_up_tokenization_spaces_for_bpe_even_though_it_will_corrupt_output=True to force cleanup anyway.
+features: 2066 (sample 2048 + targets + controls); band 26..51 (26 layers); V=128256
+  layer 26 done
+  layer 27 done
+  layer 28 done
+  layer 29 done
+  layer 30 done
+  layer 31 done
+  layer 32 done
+  layer 33 done
+  layer 34 done
+  layer 35 done
+  layer 36 done
+  layer 37 done
+  layer 38 done
+  layer 39 done
+  layer 40 done
+  layer 41 done
+  layer 42 done
+  layer 43 done
+  layer 44 done
+  layer 45 done
+  layer 46 done
+  layer 47 done
+  layer 48 done
+  layer 49 done
+  layer 50 done
+  layer 51 done
+quantiles {'p50': 6.150978088378906, 'p75': 9.549112319946289, 'p90': 22.91533660888672, 'p95': 47.965999603271484, 'p99': 143.262451171875}
+frac kappa>10: 0.237  >20: 0.111
+  target f30032: kappa=5.0 pct=0.23 top1=' \n'
+  target f58667: kappa=10.0 pct=0.76 top1=' fake'
+  target f22004: kappa=6.1 pct=0.49 top1='\xa0'
+  target f30686: kappa=37.4 pct=0.94 top1=' deception'
+  target f41533: kappa=8.1 pct=0.69 top1=' deception'
+  target f23893: kappa=6.5 pct=0.55 top1='ใด'
+wrote /root/kappa_sweep_70b.json
+KSWEEP_DONE
