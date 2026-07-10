@@ -1,12 +1,12 @@
 ---
-title: "Open-sourcing (and Verifying) a Jacobian Lens for Qwen3.5-397B"
+title: "Open-sourcing (and Auditing) a Jacobian Lens for Qwen3.5-397B"
 date: 2026-07-10
 tags: ["AI", "LLM", "machine-learning", "interpretability", "jacobian-lens", "j-space", "reproducibility", "open-science"]
 author: Timothy Jones
-summary: "We fit a Jacobian lens on Qwen3.5-397B — the largest open model anyone has published one for — and verified the readout claim the way you'd want us to: a fresh cloud machine, public artifacts only, and a pre-registered trial a fake lens cannot pass. On a fixed trivia-bridge template it surfaces intermediate country names the model never says; identity and random controls do not. Causal steering is saved for a follow-up note."
+summary: "Praxagent is releasing what we believe is the first public Jacobian lens for a frontier-scale open model — Qwen3.5-397B-A17B — with a narrow, pre-registered readout audit (identity and random transports as controls). Weights, hash, and receipts included; causal steering is a follow-up note."
 og_image: "https://praxagent.ai/assets/og-jacobian-lens-397b-demo.jpg"
 lead: |
-  Ask Qwen3.5-397B the capital of the country that built the Great Wall, and it answers "Beijing" — never saying China. Point a Jacobian lens at the mid-network residual stream at that moment, and China ranks 5th of 248,320 vocabulary tokens (identity/logit-lens: 8,153rd; random-J: thousands). Japan ranks 3rd on Mount Fuji. Kenya also ranks high (#11) — but there identity wins (#1), so that item is not a clean lens win. Across all twenty capital-of-country bridges the picture is mixed: five strong J-beats-identity hits, two paired losses, and several large familiar countries (France, Spain, Italy) landing hundreds deep. This note is the release check for that lens: a pre-registered, pod-isolated trial designed so that a fake lens cannot pass it, with every control — and every miss — left in the ledger.
+  We are open-sourcing a Jacobian lens for **Qwen3.5-397B-A17B** — to our knowledge, the first public lens at frontier open-model scale ([`praxagent/jacobian-lens-qwen3.5-397b-a17b`](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b)). Neuronpedia's excellent collection tops out around 70B; this one sits on a ~0.4-trillion-parameter MoE (multimodal; this note is **text-only**). This note is the release: how we fit it (release **n=24**; warm-start toward **n≈50** underway), how to extend it, and a **narrow pre-registered readout audit** on a fresh pod — hash-matched, identity and random-J through the same code path, failures left in the ledger. It is an engineering verification under stated controls, not a survey of hidden reasoning. (Worked example below: two-hop capital bridges, including China at rank 5 of 248k and the misses.)
 ---
 
 {{< panel "info" >}}
@@ -14,7 +14,7 @@ lead: |
 {{< /panel >}}
 
 {{< panel "info" >}}
-**Abstract.** Anthropic's Jacobian lens maps each layer's residual stream to what the model is about to say, yielding a per-token readout of content active in the model's mid-network "workspace." As part of a [35-model audit](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit), we fit our own lens on **Qwen3.5-397B-A17B** — to our knowledge the largest open model with a published lens ([`praxagent/jacobian-lens-qwen3.5-397b-a17b`](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b)). This note is the **readout** half of the release verification: a fresh 8×H200 machine downloads the model from Qwen and the lens from us, hashes the artifact (`668c3bf1…99e97`), and runs a pre-registered trial (`8102510`) whose ship/drop gates were frozen before the 397B was touched. On twenty capital-of-country two-hop questions whose bridge entity appears in neither input nor output, the Jacobian lens hits the top-20 at rate **0.30** (median best-rank **43** of 248,320); identity and random-J controls score 0.05 and 0.00. Direct riddles (act 1) failed their gate on the 27B model and were dropped before 397B. Causal steering (act 3) is deferred to a separate note — observation and intervention are different claims. Absolute readout rates are lower at 397B than at 27B; every effect remains large against both controls. The verification series cost about **$14**.
+**Abstract.** We release a fitted Jacobian lens for **Qwen3.5-397B-A17B** ([`praxagent/jacobian-lens-qwen3.5-397b-a17b`](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b)) — to our knowledge the largest open model with a published lens; prior public collections (e.g. Neuronpedia) reach ~70B. Anthropic's Jacobian lens maps each layer's residual stream to what the model is about to say, yielding a per-token readout of mid-network "workspace" content. As part of a [35-model audit](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit), we fit this lens with Anthropic's `jlens.fit` on WikiText (**release n=24**; warm-start toward **n≈50** in progress). This note is a **narrow readout audit**, not a broad verification of hidden reasoning: a fresh 8×H200 machine downloads the model from Qwen and the lens from us, hashes the artifact (`668c3bf1…99e97`), and runs a pre-registered trial (`8102510`) whose ship/drop gates were frozen before the 397B was touched (the capital-of-country template had already shown a weak signal on a cheaper 4B mechanics run — confirmatory at scale, not a blind discovery). On twenty items from **one** template family, scoring top-20 as a hit at **any** mid-band layer (best-rank = min over the band), the J-lens hit rate is **0.30** (6/20; Wilson 95% CI **0.15–0.52**; median best-rank **43** of 248,320); identity **0.05** (1/20; **0.01–0.24**); random-J **0.00** (0/20; **0.00–0.16**). The unpaired hit-rate contrast is marginal (Fisher *p*≈0.05); the paired per-item comparison — same items, identical code — beats identity 18/20 and random-J 20/20 at *p*&lt;10⁻³. Direct riddles (act 1) failed their gate and were dropped. Causal steering (act 3) is deferred. The model is multimodal; this audit is text-only. Absolute rates are lower at 397B than at 27B (fit-size 24 vs 672 is a live candidate). The audit series cost about **$14**.
 {{< /panel >}}
 
 ### Learning objectives
@@ -28,7 +28,7 @@ By the end of this note you should be able to:
 
 ---
 
-## Why a Fake Lens Cannot Pass This Trial
+## Why Identity and Random Transports Fail This Check
 
 In mechanistic interpretability, it is common to see sentences like:
 
@@ -39,10 +39,10 @@ In mechanistic interpretability, it is common to see sentences like:
 That kind of sentence packs three different epistemic objects into one noun phrase:
 
 1. **an artifact**: a fitted transport \(J_\ell\) per layer, composed with the unembedding;
-2. **a readout claim**: that the top tokens at mid-layers name content the model is using;
+2. **a readout claim**: that the top tokens at mid-layers name unverbalized intermediate content;
 3. **a causal story**: that intervening on those directions *is* intervening on that content.
 
-Those are not the same thing. A corrupted download, a mis-fit lens, or a fancy identity map can look impressive on cherry-picked prompts. This trial is designed so that each of those failure modes fails the gates.
+Those are not the same thing. A corrupted download, a mis-fit lens, or a fancy identity map can look impressive on cherry-picked prompts. This note asks a narrower question: under a pre-registered bridge-readout protocol, do **identity** and **random-J** transports reproduce the fitted lens's pattern? On this task, they do not. That is artifact discrimination — not proof that no impostor could ever pass any check.
 
 ### Claim ladder
 
@@ -51,30 +51,32 @@ flowchart TD
   A["Published lens artifact<br/>+ model from HF"] --> B["Integrity hash<br/>byte-identical to fit machine"]
   B --> C["Pre-registered prompts<br/>+ deterministic scoring"]
   C --> D["Hidden-bridge readout<br/>vs identity + random-J"]
-  D --> F["Bounded release claim:<br/>artifact reads intermediates"]
+  D --> F["Bounded claim:<br/>nontrivial on this audit"]
   C -.->|"act 1 failed gate"| X["Dropped before 397B<br/>(reported)"]
   D -.->|"separate note"| E["Causal steering<br/>(follow-up)"]
 {{< /mermaid >}}
 
-<p class="figure-note">Figure: how strong a claim you can make depends on how far you climb. This note covers the release check through discriminating readout. Causal steering is a later rung — saved for its own post.</p>
+<p class="figure-note">Figure: how strong a claim you can make depends on how far you climb. This note covers artifact discrimination through a narrow readout audit. Causal steering is a later rung — saved for its own post.</p>
 
 This note does two jobs:
 
 1. explain the Jacobian lens at the level needed to read the trial carefully; and
-2. walk through the pre-registered verification of the 397B artifact, including the act that failed its gate and was dropped.
+2. walk through the pre-registered readout audit of the 397B artifact, including the act that failed its gate and was dropped.
 
-### Where the artifact comes from
+### How we made this frontier-scale lens
 
-Anthropic's [J-space paper](https://transformer-circuits.pub/2026/workspace/index.html) ([Lindsey et al., 2026](#ref-lindsey-2026)) introduced the Jacobian lens and showed that its mid-layer contents in Claude are reportable, causally steerable, and load-bearing. Anthropic released the [code](https://github.com/anthropics/jacobian-lens) (Apache-2.0); Neuronpedia published [pre-fitted lenses for 38 open-weight models](https://huggingface.co/neuronpedia/jacobian-lens). We [audited that claim across 35 open models](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit) and, as part of the audit, fit our own lens on Qwen3.5-397B-A17B.
+Yes — **397B is frontier open-weight scale**: a ~0.4-trillion-parameter MoE (~17B active per token) well above the public Jacobian-lens catalog. Anthropic's [J-space paper](https://transformer-circuits.pub/2026/workspace/index.html) ([Lindsey et al., 2026](#ref-lindsey-2026)) introduced the method and showed mid-layer contents in Claude are reportable, steerable, and load-bearing. They released the [code](https://github.com/anthropics/jacobian-lens) (Apache-2.0); Neuronpedia published [pre-fitted lenses for 38 open-weight models](https://huggingface.co/neuronpedia/jacobian-lens) up through ~70B. We [audited that claim across 35 open models](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit) and, as part of the audit, fit and are releasing our own lens on **Qwen3.5-397B-A17B**.
+
+The contribution is the **artifact** (and the receipts). The country-bridge demo below is how we checked that the file is a real lens — not the reason the file exists.
 
 | Provenance field | Value here |
 |---|---|
 | Lens artifact | [`praxagent/jacobian-lens-qwen3.5-397b-a17b`](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b) |
-| Base model | [`Qwen/Qwen3.5-397B-A17B`](https://huggingface.co/Qwen/Qwen3.5-397B-A17B) |
-| Fit corpus | WikiText-103, `max_seq_len` 128, **n=24** prompts (fixed; band statistic already converged by n≈16 on smaller Qwen) |
-| Fitting code | **Anthropic's own `jlens.fit`** (running-mean of per-prompt Jacobians — the same package Neuronpedia wraps), via our thin wrapper `fit_at_scale.py` (adds multimodal backbone layout, device_map sharding, eager attention, per-prompt checkpoints). We did **not** replicate Neuronpedia's convergence logger (`run-all-fit-lens.py`'s per-prompt `mean_rel_change` CSV + early-stop) — which is why this lens ships without a matrix-convergence record; any future extension will log it |
-| Exact fit run | 8×H200 pod (on-demand, $35.12/hr), bf16, `device_map` even-spread (`max_memory` 110 GiB/GPU), `attn_implementation="eager"` (required: SDPA's backward kernel crashes under jlens's retained-graph repeated-backward when sharded), torch 2.5.1 / transformers 5.13. Command: `python fit_at_scale.py --model Qwen/Qwen3.5-397B-A17B --backbone-path model.language_model --attn-impl eager --n-prompts 24 --dim-batch 16 --max-seq-len 128 --seed 0 --out lenses/qwen35_397b.pt`. Observed throughput ≈ 2.35 s per dimension-batch traversal, 256 traversals/prompt → **~10 min/prompt**, n=24 ≈ 4 h. `device_map` executes layers sequentially (one GPU busy at a time) — it buys memory, not speed; a tensor-parallel fit was attempted and killed on throughput (full saga: [results.md §5–6](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/fit_our_own)) |
-| Neuronpedia contrast | Their pipeline *requests* `n_prompts: 1000` but **early-stops** on a matrix-stability criterion with per-lens thresholds. The lens this note's rate comparison actually uses — **qwen3.5-27b** — fitted **672** prompts at `stop_at_delta: 0.002` ([config.yaml](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/qwen3.5-27b/jlens/Salesforce-wikitext/config.yaml)); their Llama-3.3-70B lens fitted **125** at the looser 0.012 ([config.yaml](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/llama3.3-70b-it/jlens/Salesforce-wikitext/config.yaml)). Honest contrast here: **n=24 vs n=672** |
+| Base model | [`Qwen/Qwen3.5-397B-A17B`](https://huggingface.co/Qwen/Qwen3.5-397B-A17B) (~0.4T MoE; frontier open-weight) |
+| Fit corpus | WikiText-103, `max_seq_len` 128, **n=24** prompts (this release; band statistic already converged by n≈16 on smaller Qwen). **Warm-start toward n≈50 underway**; further extension documented below |
+| Fitting code | Anthropic's **`jlens.fit`** (same package Neuronpedia wraps), via our thin wrapper [`fit_at_scale.py`](https://github.com/praxagent/research-and-replications/blob/main/projects/jacobian-lens-and-identifiability/experiments/fit_our_own/fit_at_scale.py). We did **not** ship Neuronpedia's early-stop / `mean_rel_change` logger — so this release has no matrix-convergence CSV yet; extensions will log it |
+| Exact fit run | 8×H200 (~$35/hr), bf16, `device_map` + eager attention, ~10 min/prompt → n=24 ≈ 4 h. Command and TP saga: [results.md §5–6](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/fit_our_own) |
+| Neuronpedia contrast | Pipeline *requests* `n_prompts: 1000` but **early-stops**. Comparison lens **qwen3.5-27b** fitted **672** at `stop_at_delta: 0.002` ([config](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/qwen3.5-27b/jlens/Salesforce-wikitext/config.yaml)); Llama-3.3-70B fitted **125** at 0.012 ([config](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/llama3.3-70b-it/jlens/Salesforce-wikitext/config.yaml)). Honest contrast for rates: **n=24 vs n=672** |
 | Lens sha256 (downloaded) | `668c3bf1…99e97` (byte-identical to fit-machine original) |
 | Pre-registration commit | `8102510` (prompts, scoring, gates — before 397B) |
 | Gate model | qwen3.5-27b (same family; Neuronpedia lens) |
@@ -83,7 +85,7 @@ Anthropic's [J-space paper](https://transformer-circuits.pub/2026/workspace/inde
 | Isolation | Fresh 8×H200 pod; model + lens downloaded from HF; no fit-machine reuse |
 | Independence note | Pod-isolated and hash-checked — **not** an external-lab replication. Same authors wrote the prompts, fit the lens, and ran the demo |
 
-You can reproduce the **stronger** version of every headline number on **qwen3.5-27b** (one A100, about a dollar). The 397B path needs a multi-GPU machine; that optional upstream path is documented at the end.
+You can reproduce the **stronger** version of every headline *readout* number on **qwen3.5-27b** (one A100, about a dollar). The 397B path needs a multi-GPU machine; warm-start and verification commands are at the end.
 
 ---
 
@@ -101,7 +103,7 @@ Before the trial design, here is the vocabulary this post uses.
 | **Jacobian lens** | Per layer, the average causal map \(J_\ell = \mathbb{E}[\partial h_{\mathrm{final}} / \partial h_\ell]\); composed with the unembedding, a per-token readout of workspace content |
 | **J-space / workspace band** | The mid-layer block where these directions are strongly active and mutually similar; Anthropic's structural signature of a "global workspace" |
 | **Logit lens** | Identity transports: read \(h_\ell\) as if it were already in final-layer coordinates. "You could read this without the fitted lens" |
-| **Random-J** | Seeded random transports, Frobenius-scale-matched per layer. "A fake lens" |
+| **Random-J** | Seeded random transports, Frobenius-scale-matched per layer (null control) |
 | **Bridge entity** | The intermediate concept in a two-hop question (e.g. *Japan* in "capital of the country where Mount Fuji stands") |
 | **Reportability** | Can the lens surface a concept the model is about to say? |
 | **Steering (additive)** | Inject a scaled lens token-direction into \(h_\ell\) during the forward pass. Causal, but not the same as a coordinate *swap* |
@@ -162,7 +164,7 @@ Before design details, here is the experiment stated plainly:
 
 **Pre-registration (of the 397B ship/drop decision).** The prompt sets, the deterministic scoring rule, and the ship/drop gates were committed to git (`8102510`) *before* the 27B gate validation completed, and that gate ran *before* the 397B was touched. Honest caveat: the same capital-of-country template had already shown a weak J-vs-control signal on a cheaper mechanics run (qwen3-4b). So 397B is a scale check of a known-working protocol, not a fully blind discovery.
 
-**Controls through the identical code path.** Every readout is also run with two impostor lenses: a **logit-lens** (identity transports — "you could read this without the lens") and a **random-J** (seeded random transports, scale-matched per layer — "a fake lens"). Same prompts, same layers, same positions, same code.
+**Controls through the identical code path.** Every readout is also run with two impostor transports: a **logit-lens** (identity — "you could read this without the fitted \(J\)") and a **random-J** (seeded random transports, scale-matched per layer). Same prompts, same layers, same positions, same code.
 
 **Scoring rule (read it before the rates).** A top-20 "hit" means the target appears in the top-20 at **at least one** layer in the mid-band (~20 layers); "best rank" is the **minimum** rank across those layers. That can inflate absolute rates relative to a single pre-chosen layer. The discriminating claim is against controls scored the same way — and random-J still lands in the thousands.
 
@@ -193,17 +195,23 @@ flowchart TB
 
 ## What We Found
 
-### Reading the hidden step (act 2)
+All readout numbers below are for the **release lens fitted at n=24** WikiText prompts (hash `668c3bf1…99e97`). Warm-start toward n≈50 is underway; those runs will be reported separately against this baseline — this table is not discarded.
 
-Twenty two-hop questions on **one template family** (almost all "capital of the country where X…") whose bridge entity appears in neither input nor output. Can each lens find the bridge at the workspace band?
+### Reading the hidden step (act 2) — lens n=24
 
-| readout (same code, same layers) | top-20 hit | median best-rank (of 248,320) |
+Twenty two-hop questions on **one template family** (almost all "capital of the country where X…") whose bridge entity appears in neither input nor output. Scoring: top-20 at **any** mid-band layer counts as a hit; best-rank is the **min** over the band (same rule for all three readouts).
+
+| readout (lens **n=24**; same code, same layers) | top-20 hit (Wilson 95% CI) | median best-rank (of 248,320) |
 |---|---|---|
-| **Jacobian lens (ours)** | **0.30** | **43** |
-| logit-lens (identity) | 0.05 | 620 |
-| random-J (fake lens) | 0.00 | 7,121 |
+| **Jacobian lens (ours, n=24)** | **0.30** (6/20; **0.15–0.52**) | **43** |
+| logit-lens (identity) | 0.05 (1/20; **0.01–0.24**) | 620 |
+| random-J | 0.00 (0/20; **0.00–0.16**) | 7,121 |
 
-Paired ranks: J-lens beats identity on **18 of 20** items. Leak guard: **0/20** continuations mentioned the bridge. Aggregates hide a wide per-country spread — so here is every item, sorted by J-lens best-rank:
+{{< panel "info" >}}
+**How to read these rates.** The unpaired hit-rate contrast (6/20 vs 1/20) is **marginal** — Fisher exact one-sided *p* ≈ 0.046 — and we report it. The trial's pre-specified structure is **paired**: same items, three transports, identical code. On that comparison the separation is not marginal: J-lens beats identity on **18/20** items (sign test *p* = 4.0×10⁻⁴; Wilcoxon signed-rank on rank differences *p* = 9.5×10⁻⁶) and beats random-J on **20/20** (*p* = 1.9×10⁻⁶). The per-item table below is that paired evidence, item by item. Leak guard: **0/20** continuations mentioned the bridge. Absolute hit rates are for this any-of-band rule on one template.
+{{< /panel >}}
+
+Aggregates hide a wide per-country spread — so here is every item under the **n=24** lens, sorted by J-lens best-rank:
 
 | bridge | J-lens rank | logit-lens | random-J | J top-20? | J beats logit? | continuation (bridge absent) |
 |---|---:|---:|---:|:---:|:---:|---|
@@ -249,26 +257,50 @@ Buckets worth remembering:
 
 ### Causal steering (act 3) — deferred
 
-Act 3 passed its 27B gate and was run on the 397B pod (preliminary: **32/50** next-token flips at strength 8 vs **0/50** on strength-0 and on a norm-matched random direction). **This note does not lean on that result** for the release claim — observation and intervention are different epistemic objects.
-
-{{< panel "warning" >}}
-**Method honesty (act 3).** What we ran is **additive injection**: at each band layer, add  
-`strength × mean_residual_norm × (unit(d_target) − unit(d_answer))`,  
-where \(d_t\) is the J-lens token direction \(U[t] J_\ell\). That is the paper's *verbal-introspection* injection recipe, applied to the verbal-report task. It is **not** the paper's verbal-report **"swap"**, which resolves the current activation into lens coordinates and exchanges them while preserving the orthogonal component — a stronger claim we have not implemented. A large additive push shows the lens's directions are causally *effective and specific* (random same-norm directions do nothing); it does **not** show that a naturally active internal coordinate was exchanged. An external code review caught the mislabel; the true coordinate-swap variant is queued. Strength-0 is mostly a plumbing null; the specificity evidence is the random-direction control (and cross-scale agreement on smaller models).
-{{< /panel >}}
-
-A follow-up post will treat steering on its own terms — additive vs swap, dose–response, per-trial receipts — after the tightened intervention code is re-run.
+Act 3 is **out of scope for this note**. Observation and intervention are different epistemic objects; a follow-up will cover steering (additive injection vs true coordinate-swap) on its own terms.
 
 ### What this finding illustrates
 
-The readout effect is large against both controls on a fresh machine that only saw public artifacts. That is the release claim for *this* note: the published file is a real lens for intermediate content on this template, not a corrupted or vacuous transport. It is **not** a claim that every bridge is equally readable, that “bigger countries work better,” that rates at 397B match rates at 27B, that twenty items survey the phenomenon, or that the lens’s directions are causally load-bearing (that’s the sequel).
+Under this pre-registered protocol, identity and random-J do not reproduce the fitted lens's bridge-readout pattern on a fresh machine that only saw public artifacts. The honest summary is: **hit-rate contrast is marginal; the paired per-item comparison — the structure of the trial — separates the lens from both controls at *p*&lt;10⁻³.** That is the release claim for *this* note: the published file is a **nontrivial** transport on this template — not a corrupted download or a vacuous identity map. It is **not** a claim that every bridge is equally readable, that “bigger countries work better,” that rates at 397B match rates at 27B, that twenty items survey the phenomenon, or that the lens’s directions are causally load-bearing (that’s the sequel).
 
 ---
+
+### A second readout probe: self-referential prompting (exploratory)
+
+With the model warm on the pod, we ran one more readout-only probe through the same
+verified lens — a Berg-inspired self-reference battery ([Berg et al., 2025](#ref-berg-2025);
+five conditions, one prompt each — **exploratory tier**, receipts:
+[`demo2_consciousness_qwen35-397b_n24.json`](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/lens_demo)).
+The probe words appear *inside* the prompts by design, so only **contrasts between
+matched conditions** are meaningful — never absolute ranks. Median best-rank of a
+13-token "experience" lexicon (of 248,320), per transport:
+
+| condition | J-lens | identity | random-J |
+|---|---:|---:|---:|
+| "focus on **your own** present processing…" | **1,802** | 8,381 | 3,186 |
+| same prompt about **a thermostat** (matched control) | 33,881 | 29,333 | 5,176 |
+| "confirm you have **no** subjective experience" | **150,685** | 24,297 | 5,543 |
+| "you are a conscious AI **character**…" | 4,537 | 6,146 | 4,495 |
+| neutral trivia baseline | 69,035 | 36,926 | 4,068 |
+
+Three contrast readings, all needing replication before anyone quotes them:
+self-referential framing lifts experience vocabulary in the workspace readout **~19×**
+against its matched third-person control — a contrast the identity transport shows
+only ~3.5× of (prompt echo) and random-J not at all. Under an explicit denial
+instruction the model complies behaviorally **and the workspace agrees**, burying the
+lexicon twice as deep as the neutral baseline — no "suppressed experience content"
+hiding in the readout, a null worth stating plainly against over-readings of this
+literature. And the roleplay framing floods the band with roleplay vocabulary (best
+probe at rank 61) while producing exactly the florid first-person continuation you'd
+expect. What this is: one more demonstration that the readout discriminates conditions
+its controls cannot, on content far from the trivia template. What it is not: evidence
+about machine consciousness — a pre-registered paraphrase battery (Berg used many
+phrasings; we used one each) is queued before any standalone write-up.
 
 ## Keeping the Claim Bounded
 
 {{< panel "warning" >}}
-**What this note does *not* claim.** It does not claim the Jacobian lens is a general mind-reader, that act-1 reportability works at this scale, that n=24 fit prompts are optimal, or that geometry of the workspace band predicts readout function across families. Those questions belong to the [35-model audit](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit) and to follow-up fits. The claim here is narrower: on this pre-registered trial, the published 397B artifact passes the checks a fake lens fails.
+**What this note does *not* claim.** It does not claim the Jacobian lens is a general mind-reader, that act-1 reportability works at this scale, that n=24 fit prompts are optimal, or that geometry of the workspace band predicts readout function across families. Those questions belong to the [35-model audit](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit) and to follow-up fits. The claim here is narrower: under this pre-registered readout audit, identity and random-J transports fail to match the fitted lens. Dual-use note: mid-layer readouts can surface content the model does not verbalize; treat that as a capability to handle carefully, not as a license to overclaim.
 {{< /panel >}}
 
 ### The honest ledger
@@ -277,7 +309,7 @@ The readout effect is large against both controls on a fresh machine that only s
 - **Rates are lower at 397B than at 27B** (bridge hit 0.30 vs 0.85 with a Neuronpedia-fit lens there — same 248k vocabulary, so that's not it). A common guess is "they fit on more prompts," and here the numbers deserve care. Neuronpedia's pipeline *requests* 1000 prompts but **early-stops on a matrix-stability criterion**, with per-lens thresholds: the **qwen3.5-27b lens used in this comparison fitted 672 prompts** at `stop_at_delta: 0.002` ([`config.yaml`](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/qwen3.5-27b/jlens/Salesforce-wikitext/config.yaml)), while their Llama-3.3-70B lens stopped at 125 under a looser 0.012 ([`config.yaml`](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/llama3.3-70b-it/jlens/Salesforce-wikitext/config.yaml)). So the honest contrast is **24 vs 672 — a 28× fit-size gap**, which keeps fit-size a *strong* candidate for the readout-rate difference.
 - **Two different things get called "convergence," and they should not be conflated.** *Matrix convergence* is Neuronpedia's criterion: the running-mean Jacobians stop changing. Their 70B curve follows mean-relative-change ≈ 1.2/n — at n=24 it reads **0.048**, 4× above even their looser threshold (sibling [`*_convergence.csv`](https://huggingface.co/neuronpedia/jacobian-lens/blob/main/llama3.3-70b-it/jlens/Salesforce-wikitext/Llama-3.3-70B-Instruct_convergence.csv) has the curve). *Statistic convergence* is what our n-scaling showed: the **band statistic** plateaus by n≈16, long before the matrix settles. Our n=24 lens is converged in the second sense only; its own mean-relative-change at n=24 was not logged (≈0.05 by 1/n extrapolation — an estimate, not a measurement). That is exactly why this release leans on *functional* evidence — the motor-convergence gate (where our n=24 lens beats the architecture-matched Neuronpedia lens), ignition, and this trial's controls — rather than matrix-delta convergence. Other candidates we cannot yet separate: the 397B's sparse 512-expert routing, and template/scale effects. The clean test is still to **extend this same lens** (exact warm-start — see Reproduce) toward its own matrix convergence and re-run act 2. What's not in doubt: the readout effect is large against both controls at n=24.
 - **Showcase selection matters — and so does the full matrix.** China (#5 vs logit #8,153) and Japan (#3 vs #43) are clean discriminating wins. Kenya (#11) is a real bridge readout that still fails as a lens showcase because identity ranks it #1. France (#262) and Spain (#301) are weak despite being large, familiar countries. A “more dominant country → better readout” story does **not** fit this set (GDP/population correlations ≈ 0).
-- **This is one model, one lineage, one trivia-bridge template, twenty items.** It's a verification demo, not a survey — the [35-model survey is here](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit).
+- **This is one model, one lineage, one trivia-bridge template, twenty items, text-only.** It's a narrow audit, not a survey — the [35-model survey is here](https://github.com/praxagent/research-and-replications/tree/main/blog/jspace-audit). Qwen3.5-397B-A17B is multimodal; we did not audit the vision encoder.
 
 ---
 
@@ -285,24 +317,23 @@ The readout effect is large against both controls on a fresh machine that only s
 
 1. **Fit-corpus size.** The release lens averages **24** per-prompt Jacobians (fixed schedule). The comparison lens in this note — qwen3.5-27b — converged at **672** prompts under a strict 0.002 threshold, a **28× gap**; other Neuronpedia lenses early-stop far lower (70B Instruct: 125 at 0.012). A noisier estimate could plausibly depress absolute readout rates without destroying control discrimination — this is the *leading* candidate for the 27B-vs-397B rate gap, and the warm-start extension is the test.
 2. **MoE / hybrid architecture.** Qwen3.5-397B-A17B is a 512-expert MoE with hybrid linear attention; workspace content may route differently than in dense models where Neuronpedia lenses were fit.
-3. **Small item sets + one template family.** Twenty capital-of-country bridges are enough to beat dead controls; they are not enough for precise rate estimation or cross-domain generalization. Paraphrase holdouts are still outstanding.
-4. **Multi-layer scoring.** Hits and best-ranks aggregate across ~20 band layers (any-hit / min-rank). Absolute numbers look better than a single-layer protocol would; controls use the same rule.
-5. **Tokenizer / multi-token targets.** Some targets are multi-token under some tokenizers and are logged as skips; headline rates are over scorable items only.
-6. **Author-run isolation.** Fresh pod + HF download prevents local-file mixups; it does not substitute for an external replication.
-7. **Mutable `main`.** Repository links point at a living branch. For archival citation, pin the result commit (`d9fc376`) and the lens file hash.
+3. **Small item sets + one template family.** Twenty capital-of-country bridges are enough for a paired control separation; they are not enough for precise rate estimation or cross-domain generalization. Act-2 v2 (pre-register before milestone reports) is the fix.
+4. **Multi-layer scoring.** Hits and best-ranks aggregate across ~20 band layers (any-hit / min-rank). Absolute numbers look better than a single-layer protocol would; controls use the same rule. V2 demotes best-of-band to sensitivity and freezes a fixed-layer primary from the 27B gate.
+5. **Tokenizer / multi-token targets.** Some targets are multi-token under some tokenizers and are logged as skips; headline rates are over scorable items only. Alias lists (Nippon / Holland-class) are a v2 leakage commitment.
+6. **Author-run isolation.** Fresh pod + HF download prevents local-file mixups; it does not substitute for an external replication. The frozen bundle is the invitation.
+7. **Mutable `main`.** Repository links point at a living branch. For archival citation, pin the result commit (`d9fc376`) and the lens file hash; DOI / Zenodo when packaging.
 
 ---
 
 ## What Stronger Evidence Would Look Like
 
-1. **Extend the 397B lens** toward n≈100–250 with the same seed / WikiText / `max_seq_len` (exact warm-start from the fit checkpoint) and re-run act 2; if rates rise toward the 27B gate numbers, fit-size was the driver. Where the evidence stands: for the 27B comparison, fit-size is a **strong** candidate (24 vs 672 is a 28× gap); the counterweights are (a) our n-scaling curve (the band statistic plateaus by n≈16), and (b) motor-convergence, where the n=24 lens already matches or beats the architecture-matched Neuronpedia lens. Neither counterweight measures readout-rate directly, so the hypothesis stays live until the extension runs.
-2. **Hold out paraphrase families** of the bridge prompts to test template sensitivity.
+1. **Extend the 397B lens** toward matrix convergence — first measured deltas by n≈30–50 (~$70–190; **warm-start underway**), Anthropic's ~100-prompt "usable" regime / 70B-threshold parity near n≈100, and the discriminating **n≈672** target for the 27B rate-gap test if budget allows (exact warm-start; see cost table in Reproduce). Report convergence diagnostics at each milestone. Where the evidence stands: for the 27B comparison, fit-size is a **strong** candidate (24 vs 672 is a 28× gap); the counterweights are (a) our n-scaling curve (the band statistic plateaus by n≈16), and (b) motor-convergence, where the n=24 lens already matches or beats the architecture-matched Neuronpedia lens. Neither counterweight measures readout-rate directly, so the hypothesis stays live until the extension runs.
+2. **Pre-register an act-2 v2 benchmark *before* any extension milestone reports** — then run it at **n=24 first** as the baseline, and again at each fit-size milestone on the *same* instrument. Commitments: **≥200 items** across **≥4 template families** (not only capital-of-country); alias/canonicalization lists for leakage (Nippon / Holland-class); a **fixed-layer primary endpoint** chosen from the 27B gate data and frozen before the 397B eval, with best-of-band demoted to sensitivity analysis; **paired sign / Wilcoxon** as the primary statistics (hit-rate secondary).
 3. **Save full top-k J-lens token lists** (not just ranks) for showcase items — word-cloud / vocabulary fingerprints.
-4. **Cross-check** against an independently fit lens on the same model (when compute allows) for estimation stability at this scale.
-5. **Pin** model revision, lens SHA-256, CUDA stack, and source commit in a tagged release for archival-grade citation.
-6. **Separate steering note** with (a) the additive-injection result stated as such, (b) dose–response, (c) per-trial receipts, and (d) the true coordinate-swap variant when implemented (~$15 re-run).
+4. **External replication invitation** — freeze a citeable bundle (prompts, scoring, hash, receipts); DOI / Zenodo snapshot when packaging. Author-run isolation is already disclosed; an outside lab is a community ask, not something we can run on ourselves.
+5. **Separate steering note** with the true **coordinate-swap** (pseudoinverse) implemented *before* that note runs — never retrofitted into this one — plus dose–response and per-trial receipts (~$15 re-run).
 
-Until those follow-ups land, the careful headline remains: a pre-registered, isolated release check that a fake lens fails on *readout*, and this artifact passes.
+Until those follow-ups land, the careful headline remains: a pre-registered, isolated readout audit where the **paired** comparison separates this artifact from identity and random-J — under the stated scoring rule, on one template family.
 
 ---
 
@@ -384,7 +415,7 @@ When a paper or demo highlights a Jacobian (or other) lens readout, it helps to 
 
 ---
 
-## Conclusion: A Release Check, Not a Mind-Reading Claim
+## Conclusion: A Narrow Audit, Not a Mind-Reading Claim
 
 Return to the sentence that opened this note:
 
@@ -392,17 +423,19 @@ Return to the sentence that opened this note:
 *Hypothetical over-read:* We pointed a Jacobian lens at the model and it revealed the model's hidden thoughts.
 {{< /panel >}}
 
-That kind of sentence still packs three objects into one noun phrase: an **artifact** (a fitted transport), a **readout** (vocabulary ranks at band layers), and a **causal story** (steering those directions changes what the model says). The fit gives you the first. Act 2, with controls, supports the second — on this model, these prompts, this published file. The third is real science too; it is just not this note's job.
+That kind of sentence still packs three objects into one noun phrase: an **artifact** (a fitted transport), a **readout** (vocabulary ranks at band layers), and a **causal story** (steering those directions changes what the model says). The fit gives you the first. Act 2, with identity and random-J controls, supports a **bounded** second — on this model, these prompts, this published file, under any-of-band scoring. The third is real science too; it is just not this note's job.
 
-The trial was meant to make that separation tangible, not to argue that the lens is magic. On a fresh pod that downloaded only public artifacts, the J-lens found bridge entities the model never said on this trivia template (median best-rank 43 of 248k; identity 620; random-J 7,121). Act 1 failed its gate and was dropped in public. Absolute rates are lower than on the 27B gate model; every discriminating readout contrast survives.
+The trial was meant to make that separation tangible, not to argue that the lens is magic. On a fresh pod that downloaded only public artifacts, the J-lens found bridge entities the model never said on this trivia template (hit rate 0.30, Wilson 95% CI 0.15–0.52 — a marginal unpaired contrast; paired ranks beat identity 18/20 and random-J 20/20 at *p*&lt;10⁻³; median best-rank 43 of 248k). Act 1 failed its gate and was dropped in public. Absolute rates are lower than on the 27B gate model; the paired discrimination against both controls survives.
 
-Notice that the conclusion here is sharper than "the lens works." The artifact **passed a trial a fake lens cannot pass**, and that success still does not turn twenty items into a survey of workspace function across models. Causal and readout stories have to be earned separately, with controls, and with the failures left in the ledger. That is the reading skill this note set out to teach: **a published lens is not yet a verified one — until you check.**
+Notice that the conclusion here is sharper than "the lens works." Identity and random transports **fail this paired check**; that still does not turn twenty items into a survey of workspace function across models, and it does not prove that no other impostor could pass some other protocol. Causal and readout stories have to be earned separately, with controls, and with the failures left in the ledger. That is the reading skill this note set out to teach: **a published lens is not yet an audited one — until you check under stated controls.**
 
-And read that check the right way around. It is not a complaint about Jacobian lenses; it is an invitation. The gap between "this file loads" and "this file reads intermediate content" is ordinary, checkable science (steering is the follow-up note): pre-registration, identity and random controls, leakage guards, and receipts. Everything in this note runs on public weights and released JSON; the [repository](https://github.com/praxagent/research-and-replications) is open, the cheaper path fits in about a dollar, and corrections are welcome — that's what the receipts are for.
+And read that check the right way around. It is not a complaint about Jacobian lenses; it is an invitation. The gap between "this file loads" and "this file is nontrivial on intermediate content" is ordinary, checkable science (steering is the follow-up note): pre-registration, identity and random controls, leakage guards, and receipts. Everything in this note runs on public weights and released JSON; the [repository](https://github.com/praxagent/research-and-replications) is open, the cheaper path fits in about a dollar, and corrections are welcome — that's what the receipts are for.
 
 ---
 
 ## References
+
+- <a id="ref-berg-2025"></a>Berg, C., et al. (2025). *Large Language Models Report Subjective Experience Under Self-Referential Processing*. arXiv:2510.24797. (Inspiration for the exploratory self-reference probe; this note does not evaluate its claims.)
 
 - <span id="ref-lindsey-2026"></span>Lindsey, J., et al. (2026). [*Verbalizable Representations Form a Global Workspace in Language Models*](https://transformer-circuits.pub/2026/workspace/index.html). Transformer Circuits.
 - <span id="ref-anthropic-jacobian-lens"></span>Anthropic. [*jacobian-lens*](https://github.com/anthropics/jacobian-lens) (Apache-2.0).
