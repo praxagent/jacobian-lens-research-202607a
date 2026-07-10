@@ -383,7 +383,13 @@ workspace result, the weaker the consciousness inference.
   honesty: that's ONE lineage (Qwen); we did not fit other frontier families, and Nanda's
   n=4 fit reported no geometry number to compare against. The lens is published for
   independent checking
-  ([praxagent/jacobian-lens-qwen3.5-397b-a17b](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b)).
+  ([praxagent/jacobian-lens-qwen3.5-397b-a17b](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b))
+  — and we ran that check ourselves before asking anyone else to: a fresh pod pulling
+  only the HF artifacts reproduced the lens hash exactly and passed a pre-registered
+  two-act behavioral trial (hidden two-hop entities read at median rank 43 of 248,320
+  where identity/random transports read noise; causal steering flips 64% of outputs
+  with 0/50 for both controls). Full protocol + receipts:
+  `experiments/lens_demo/`.
 - **The tokenizer confound was real, and correcting it rewrote our own headline** —
   own-vocab probing had inflated the family gap ~4×. We treat this as the audit's core
   methods lesson: *any* cross-family claim built on a vocabulary-indexed object (J-space

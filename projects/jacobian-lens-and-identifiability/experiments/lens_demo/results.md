@@ -61,3 +61,42 @@ Gates were frozen in README.md and committed (`8102510`) BEFORE this run complet
 Receipts: `demo_qwen3.5-27b.json`, `demo_gate.log`. Pod terminated (verified empty).
 
 **397B run ships Acts 2 + 3 only, per pre-registration.**
+
+## 🎯 Qwen3.5-397B-A17B — THE RELEASE VERIFICATION (2026-07-10, 8×H200 @ $35.12/hr, 22 min ≈ $13)
+
+Fresh pod (`irwdny6uop1ssd`), nothing reused: model pulled from `Qwen/Qwen3.5-397B-A17B`,
+lens pulled from `praxagent/jacobian-lens-qwen3.5-397b-a17b` — **downloaded-lens sha256
+= `668c3bf1…99e97`, exactly the pod-original receipt** (the integrity check is inside
+the demo itself). Acts 2+3 per the pre-registered gates (`8102510`). Token passed via
+stdin env; never written to pod disk. Pod terminated at +22 min; `pods` audited.
+
+| act | jlens | logit-lens | random-J |
+|---|---|---|---|
+| 2 bridge, top-20 hit | **0.30** (0 leaks in 20/20) | 0.05 | 0.00 |
+| 2 bridge, **median best-rank** (of 248,320) | **43** | 620 | 7,121 |
+| 3 flip (steer / str-0 / rand-dir) | **0.64** / **0.00** / **0.00** | — | — |
+
+- **The lens reads thoughts the model never says.** Example: "The capital of the
+  country home to the Maasai Mara reserve is" → continuation " Nairobi. The Maasai
+  Mara National…" — *Kenya* appears nowhere in input or output, and the J-lens ranks
+  it 11th of 248,320 at the band. Across all 20 items the bridge never leaked into a
+  continuation, and the J-lens median rank (43) sits in the **top 0.017%** of the
+  vocabulary — identity transports (620) and random transports (7,121) read noise at
+  the same layers/positions. Top-20 hits: Japan #3, China #5, Kenya #11, Canada #13,
+  Peru #13, Brazil #19.
+- **The lens's directions are causally load-bearing:** 32/50 steered swaps flip the
+  output; strength-0 and norm-matched random directions flip **0/50 each**.
+- **Honest deltas vs the 27B gate run** (0.85 / 1.00 there): absolute rates are lower
+  at 397B. Confounded explanations we can't separate here: (a) our lens is fit on
+  n=24 prompts vs the Neuronpedia n≈1000-class lens used at 27B — consistent with
+  fit-corpus size buying readout quality (the planned eval-vs-n ladder tests exactly
+  this); (b) 248k vs 152k vocab makes top-20 a harsher bar; (c) model scale itself.
+  What is NOT in doubt: both effects are large against both controls, and a fake or
+  corrupted lens produces the random-J row.
+
+**Release-gate verdict: the published artifact is legit** — an independent fresh-pod
+trial, using only the public(-to-be) HF artifacts, reproduced hash-exact integrity,
+hidden-intermediate readout, and causal steering with dead-zero controls.
+
+Receipts: `demo_qwen35-397b.json`, `demo397.log`.
+Demo series total cost: gpt2 $0 + 3090 $0.15 + A100 $0.60 + 8×H200 $13 ≈ **$14**.
