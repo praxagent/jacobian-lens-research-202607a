@@ -124,4 +124,18 @@ PY
 
 To recompute from raw open weights (SAE decoder + lens + unembedding; no model forward pass needed), `sae_x_jspace.py --stages 0` in the same folder does it in minutes on one GPU. Full experiment design, pre-registration, and the ledger: [`experiments/sae_x_jspace/`](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/sae_x_jspace).
 
+## References
+
+- Anthropic (2026). *Verbalizable Representations Form a Global Workspace in Language Models*. Transformer Circuits Thread. https://transformer-circuits.pub/2026/workspace/ — the Jacobian lens, the J-space, and the lens-kurtosis (κ) statistic used here (their Figs. 74–75 project SAE decoder directions through the lens; Fig. 90 is a steering example tied to lens readouts). Invited commentaries (Dehaene & Naccache; Butlin et al./Eleos; Nanda): [PDF](https://www-cdn.anthropic.com/files/4zrzovbb/website/cc4be2488d65e54a6ed06492f8968398ddc18ebe.pdf) — Nanda's frames SAEs and probes as alternative access routes to the same workspace.
+- Anthropic (2026). *jacobian-lens* (code, Apache-2.0). https://github.com/anthropics/jacobian-lens
+- Neuronpedia (2026). *Jacobian lens collection* (pre-fitted lenses, incl. `llama3.3-70b-it`). https://huggingface.co/neuronpedia/jacobian-lens — and the Goodfire-SAE feature dashboards for this checkpoint: https://www.neuronpedia.org/llama3.3-70b-it-gf (independent autointerp labels used in the audit table).
+- Goodfire (2025). *Llama-3.3-70B-Instruct-SAE-l50* (model card). https://huggingface.co/Goodfire/Llama-3.3-70B-Instruct-SAE-l50
+- AE Studio. *Deception Features & Subjective Consciousness Study* (public Steering API notebook — source of the six IDs and their original labels). https://github.com/agencyenterprise/steering-api-examples/tree/main/deception-features
+- Paulo, G., & Belrose, N. (2025). *Sparse Autoencoders Trained on the Same Data Learn Different Features*. arXiv:2501.16615 — why integer IDs need not transfer across dictionaries; the failure mode observed here for 2 of 6 IDs.
+- Leask, P., et al. (2025). *Sparse Autoencoders Do Not Find Canonical Units of Analysis*. arXiv:2502.04878.
+- Chanin, D., et al. (2024). *A Is for Absorption: Studying Feature Splitting and Absorption in Sparse Autoencoders*. arXiv:2409.14507 — a same-checkpoint reason a label can mislead even without namespace failure.
+- Bills, S., et al. (2023). *Language Models Can Explain Neurons in Language Models*. OpenAI. https://openaipublic.blob.core.windows.net/neuron-explainer/paper/index.html — the autointerp lineage behind labels like Neuronpedia's; such labels are themselves fallible, which is why triangulation across instruments matters.
+- Jones, T. (2026). *Feature IDs Are Not Explanations* (Part I). https://praxagent.ai/blog/posts/how-to-read-an-sae-feature-id/
+- This experiment's design, pre-registration, receipts: https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/sae_x_jspace
+
 *Built on Anthropic's Apache-2.0 [jlens](https://github.com/anthropics/jacobian-lens), Neuronpedia's open lens collection and feature dashboards, and Goodfire's open SAE weights. Part I: [Feature IDs Are Not Explanations](../how-to-read-an-sae-feature-id/).*

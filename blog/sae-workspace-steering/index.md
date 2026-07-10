@@ -133,4 +133,20 @@ python sae_x_jspace.py --tier 70b --stages 0,A,B
 
 Design, pre-registration commit, per-run receipts, and the honest ledger (including the one bug and the one retracted over-reading): [`experiments/sae_x_jspace/`](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/sae_x_jspace).
 
+## References
+
+- Anthropic (2026). *Verbalizable Representations Form a Global Workspace in Language Models*. Transformer Circuits Thread. https://transformer-circuits.pub/2026/workspace/ — the J-space claims audited here; their appendices bridge SAEs and J-space internally on Claude (κ strata, sparse decomposition of feature directions, and the Fig. 90 feature-suppression example), which is why this note claims *first independent, open-artifact* execution rather than novelty of the bridge idea.
+- Anthropic (2026). *jacobian-lens* (code, Apache-2.0). https://github.com/anthropics/jacobian-lens
+- Neuronpedia (2026). *Jacobian lens collection*. https://huggingface.co/neuronpedia/jacobian-lens — the `llama3.3-70b-it` lens used here; feature dashboards for the SAE: https://www.neuronpedia.org/llama3.3-70b-it-gf
+- Goodfire (2025). *Llama-3.3-70B-Instruct-SAE-l50* (model card; steering-direction convention and demo coefficients). https://huggingface.co/Goodfire/Llama-3.3-70B-Instruct-SAE-l50
+- Templeton, A., et al. (2024). *Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet*. Transformer Circuits Thread. https://transformer-circuits.pub/2024/scaling-monosemanticity/ — the canonical SAE-feature steering precedent ("Golden Gate Claude").
+- Turner, A., et al. (2023). *Activation Addition: Steering Language Models Without Optimization*. arXiv:2308.10248 — the add-a-direction steering lineage both directions of this experiment inherit.
+- Zou, A., et al. (2023). *Representation Engineering: A Top-Down Approach to AI Transparency*. arXiv:2310.01405.
+- O'Brien, K., et al. (2024). *Steering Language Model Refusal with Sparse Autoencoders*. arXiv:2411.11296 — steering features has side effects; causal efficacy ≠ semantic purity (why our endpoint is workspace readout + controls, not behavioral claims).
+- Wu, Z., et al. (2025). *AxBench: Steering LLMs? Even Simple Baselines Outperform Sparse Autoencoders*. arXiv:2501.17148 — a caution against reading SAE steering as the *best* steering; this note only claims coupling, not superiority.
+- Paulo, G., & Belrose, N. (2025). arXiv:2501.16615 and Leask, P., et al. (2025). arXiv:2502.04878 — the dictionary-non-canonicity results behind Part II's label audit, which predicts the near-null rows here.
+- Jones, T. (2026). Part I: https://praxagent.ai/blog/posts/how-to-read-an-sae-feature-id/ · Part II: [The J-Space Reports on SAE Features](../j-space-reports-sae-features/).
+- Lens artifact verification (the lens used here is itself release-verified; same protocol family as this note): [We Read a 0.4-Trillion-Parameter Model's Mind](../lens-demo/) and the [35-model J-space audit](../jspace-audit/).
+- Design, pre-registration commit, receipts: https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/sae_x_jspace
+
 *Built on Anthropic's Apache-2.0 [jlens](https://github.com/anthropics/jacobian-lens), Neuronpedia's open lens + dashboards, and Goodfire's open SAE weights. Series: [Part I](../how-to-read-an-sae-feature-id/) · [Part II](../j-space-reports-sae-features/).*
