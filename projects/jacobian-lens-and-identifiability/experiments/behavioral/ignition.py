@@ -68,6 +68,11 @@ def main() -> None:
     ap.add_argument("--max-pairs", type=int, default=12)
     ap.add_argument("--max-carriers", type=int, default=4)
     ap.add_argument("--device", default="cuda")
+    ap.add_argument("--lens-file", default=None,
+                    help="local lens .pt (skips Neuronpedia download; for self-fitted lenses)")
+    ap.add_argument("--big-model", default=None,
+                    help="HF id for device_map+backbone loading of huge models, e.g. "
+                         "'Qwen/Qwen3.5-397B-A17B:model.language_model'")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
@@ -76,13 +81,31 @@ def main() -> None:
     from huggingface_hub import hf_hub_download
 
     dev = args.device if (args.device != "cuda" or torch.cuda.is_available()) else "cpu"
-    hf_id, lens_file = resolve(args.slug)
-    print(f"slug={args.slug} hf={hf_id} device={dev}")
-    from _loader import load_hf_model  # handles mxfp4 dequant (gpt-oss) + torch shim
-    hf = load_hf_model(hf_id, dev)
-    tok = transformers.AutoTokenizer.from_pretrained(hf_id)
-    model = jlens.from_hf(hf, tok)
-    lens = jlens.JacobianLens.load(hf_hub_download(REPO, filename=lens_file))
+    if args.big_model:
+        # sharded path for frontier models: device_map + text-backbone layout
+        hf_id, backbone = args.big_model.split(":")
+        print(f"slug={args.slug} hf={hf_id} device_map=auto backbone={backbone}")
+        from jlens import Layout
+        cfg = transformers.AutoConfig.from_pretrained(hf_id)
+        cls = getattr(transformers, cfg.architectures[0])
+        n_gpu = torch.cuda.device_count()
+        hf = cls.from_pretrained(hf_id, torch_dtype=torch.bfloat16, device_map="auto",
+                                 attn_implementation="eager",
+                                 max_memory={i: "110GiB" for i in range(n_gpu)}).eval()
+        tok = transformers.AutoTokenizer.from_pretrained(hf_id)
+        model = jlens.from_hf(hf, tok, compile=False, layout=Layout(path=backbone))
+    else:
+        hf_id, lens_file = resolve(args.slug)
+        print(f"slug={args.slug} hf={hf_id} device={dev}")
+        from _loader import load_hf_model  # handles mxfp4 dequant (gpt-oss) + torch shim
+        hf = load_hf_model(hf_id, dev)
+        tok = transformers.AutoTokenizer.from_pretrained(hf_id)
+        model = jlens.from_hf(hf, tok)
+    if args.lens_file:
+        lens = jlens.JacobianLens.load(args.lens_file)
+    else:
+        _, lens_file = resolve(args.slug)
+        lens = jlens.JacobianLens.load(hf_hub_download(REPO, filename=lens_file))
     U = hf.get_output_embeddings().weight.detach().to(dev).float()
     emb = hf.get_input_embeddings().weight.detach()
     band = band_layers(lens.source_layers)
@@ -115,7 +138,7 @@ def main() -> None:
             return out
         out = out.clone()
         for p, v in inject.items():
-            out[0, p] = v.to(out.dtype)
+            out[0, p] = v.to(out.device, out.dtype)
         return out
     emb_inj_handle = hf.get_input_embeddings().register_forward_hook(embed_inject_hook)
     for a_word, b_word in pairs:
@@ -137,7 +160,7 @@ def main() -> None:
                 with torch.no_grad():
                     hf(input_ids=ids)
                 for l in band:
-                    h = captured[l][0, wpos].float()
+                    h = captured[l][0, wpos].float().to(dev)
                     ll = U @ (lens.jacobians[l].to(dev).float() @ h)  # lens logits
                     order = ll.argsort(descending=True)
                     rank = {int(t): i + 1 for i, t in enumerate(order[:2000])}
