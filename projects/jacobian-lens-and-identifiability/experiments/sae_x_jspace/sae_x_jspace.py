@@ -76,7 +76,7 @@ def load_sae(tier, dev):
 
 def sae_acts(resid, W_enc, b_enc, feat_ids):
     """max-over-positions relu activation per feature (llm_selfref_pre convention)."""
-    a = torch.relu(resid.float() @ W_enc.T + b_enc)  # [seq, F]
+    a = torch.relu(resid.to(W_enc.device).float() @ W_enc.T + b_enc)  # [seq, F]
     return {int(f): float(a[:, f].max().item()) for f in feat_ids}
 
 
