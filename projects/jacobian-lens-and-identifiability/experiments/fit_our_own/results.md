@@ -233,8 +233,17 @@ n=16 interim read 0.3796, settling to 0.3434 at n=24 — the mid-block within-CK
    artifact — the strongest readout in our 24-model behavioral dataset, landing
    out-of-sample exactly where the geometry→function correlation predicts the biggest
    band (0.343).
-3. **Consumer path** — post-upload: fresh HF download on the CPU box → sha256 vs pod
-   originals → recompute mid_sep from the public fp16 copy = [PENDING-CONSUMER].
+3. **Consumer path — PASS, exact (2026-07-10).** Fresh HF download → sha256 =
+   `668c3bf1…99e97`, byte-identical to the pod original; mid_sep recomputed from the
+   public copy on a 7 GB CPU box (only the lm_head shard downloaded, never the full
+   807 GB) = **+0.343363**, agreeing with the shipped `band.json` to 2×10⁻⁸ — float
+   noise. `consumer_check_397b.py` (committed) is the runnable protocol;
+   `consumer_check_397b.json` the receipt.
+4. **Independent behavioral trial — PASS (2026-07-10, the release demo).** A fresh
+   8×H200 pod pulling only the HF artifacts: hidden two-hop bridges read at median
+   rank 43/248,320 (identity transports: 620; random transports: 7,121; 0 output
+   leaks in 20/20) and 32/50 causally steered flips vs 0/50 for both controls.
+   Pre-registered protocol + per-item receipts: `../lens_demo/`.
 
 ### Cost ledger (honest)
 

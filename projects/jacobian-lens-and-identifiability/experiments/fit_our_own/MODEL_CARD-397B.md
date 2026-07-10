@@ -77,14 +77,27 @@ transient.
    0.988** (full 0.006→0.995 sweep), 94.6% of 480 band-layer readouts resolving, 83.7%
    with sharp (<0.25-α) all-or-none transitions. Raw results in
    `ignition_qwen3.5-397b.json`.
-4. **Reproduce our number from this artifact** (CPU-only, no GPU needed):
+4. **Consumer-path check — run, PASSED exactly (2026-07-10).** A 7 GB CPU box
+   downloaded this repo's lens (sha256 `668c3bf1…99e97`, byte-identical to the fit
+   pod's original) plus only the lm_head shard of the base model, and recomputed the
+   band statistic from the public copy: **mid_sep = +0.343363**, agreeing with the
+   shipped `band.json` to 2×10⁻⁸. Runnable protocol:
+   `experiments/fit_our_own/consumer_check_397b.py` in the repo below.
+5. **Independent behavioral trial — PASSED (2026-07-10).** A fresh 8×H200 pod pulling
+   only the HF artifacts (this lens + the base model), pre-registered protocol: hidden
+   two-hop bridge entities (in neither prompt nor output, 0 leaks in 20/20) read at
+   **median rank 43 of 248,320** — vs 620 for identity transports and 7,121 for
+   scale-matched random transports through the identical readout path; and **32/50
+   causally steered answer flips vs 0/50** at strength zero and 0/50 for norm-matched
+   random directions. Full receipts: `experiments/lens_demo/` in the repo below.
+6. **Reproduce our number from this artifact** (CPU-only, no GPU needed):
 
 ```python
 # pip install torch safetensors numpy huggingface_hub
 # 1) download the fp16 lens from this repo + lm_head shard from Qwen/Qwen3.5-397B-A17B
 # 2) J_l = lens["J"][l].float(); probe 4096 vocab rows (numpy default_rng(0))
 # 3) geometry_l = U_probe @ J_l ; layer-x-layer linear CKA; band statistic
-# full script: experiments/jacobian_lens/ in the repo below
+# full script: experiments/fit_our_own/consumer_check_397b.py in the repo below
 ```
 
 ## Caveats (read before using)
