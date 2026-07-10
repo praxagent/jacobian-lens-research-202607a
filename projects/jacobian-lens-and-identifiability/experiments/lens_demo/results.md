@@ -177,3 +177,11 @@ workspace and behavior agree (a null worth reporting against over-readings of Be
 rank 61). Random-J's flat ~3-7k band = the fake-lens null everywhere. Side-note:
 campaign volume `jh4vh4cx4o` (US-NC-1) now holds the model permanently (rev 8472618,
 95 shards, manifest on volume); this session provisioned it.
+
+**Per-token correction to the demo2 table above (2026-07-11, TJ review):** the lexicon
+medians are carried by `seems`/`experience`/`seem`/`I` (self_ref 59/130/196/1,040 vs
+control 952/1,734/2,739/45,250); `aware`/`consciousness`/`self` stay deep under every
+framing (38k–74k self_ref). `subjective` is pure prompt echo (731 vs 930). The denial
+null is STRONGER per-token: the self-ref carriers are crushed under denial (`seems`
+59→150,685). Blog section updated to per-token table per our own stated rule;
+lexicon-median 19× demoted to secondary summary.

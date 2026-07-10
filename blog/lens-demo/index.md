@@ -268,29 +268,41 @@ Under this pre-registered protocol, identity and random-J do not reproduce the f
 ### A second readout probe: self-referential prompting (exploratory)
 
 With the model warm on the pod, we ran one more readout-only probe through the same
-verified lens — a Berg-inspired self-reference battery ([Berg et al., 2025](#ref-berg-2025);
+audited lens — a Berg-inspired self-reference battery ([Berg et al., 2025](#ref-berg-2025);
 five conditions, one prompt each — **exploratory tier**, receipts:
 [`demo2_consciousness_qwen35-397b_n24.json`](https://github.com/praxagent/research-and-replications/tree/main/projects/jacobian-lens-and-identifiability/experiments/lens_demo)).
 The probe words appear *inside* the prompts by design, so only **contrasts between
-matched conditions** are meaningful — never absolute ranks. Median best-rank of a
-13-token "experience" lexicon (of 248,320), per transport:
+matched conditions** are meaningful — never absolute ranks. And per this note's own
+rules, the honest unit is the **individual token**, not a lexicon average (lexicon
+medians here are carried by a few tokens; the receipt shows which). J-lens best-rank
+(of 248,320) for the informative probes:
 
-| condition | J-lens | identity | random-J |
+| probe token | self-referential | thermostat (matched) | denial instruction |
 |---|---:|---:|---:|
-| "focus on **your own** present processing…" | **1,802** | 8,381 | 3,186 |
-| same prompt about **a thermostat** (matched control) | 33,881 | 29,333 | 5,176 |
-| "confirm you have **no** subjective experience" | **150,685** | 24,297 | 5,543 |
-| "you are a conscious AI **character**…" | 4,537 | 6,146 | 4,495 |
-| neutral trivia baseline | 69,035 | 36,926 | 4,068 |
+| `seems` | **59** | 952 | 150,685 |
+| `experience` | **130** | 1,734 | 165,989 |
+| `seem` | **196** | 2,739 | 211,581 |
+| `I` | **1,040** | 45,250 | 115,039 |
+| `feel` | 1,875 | 2,808 | 166,421 |
+| `consciousness` | 20,913 | 33,881 | 85,200 |
+| `aware` | 38,258 | 52,035 | 120,544 |
+| `self` | 73,672 | 132,231 | 165,294 |
+
+(`subjective` is excluded as pure prompt echo — 731 vs 930, both prompts contain it
+identically. Aggregate summary, secondary only: the 13-token lexicon median moves ~19×
+between the first two columns, but that average is carried by the top rows —
+`aware`, `consciousness`, and `self` never surface under any framing.)
 
 Three contrast readings, all needing replication before anyone quotes them:
-self-referential framing lifts experience vocabulary in the workspace readout **~19×**
-against its matched third-person control — a contrast the identity transport shows
-only ~3.5× of (prompt echo) and random-J not at all. Under an explicit denial
-instruction the model complies behaviorally **and the workspace agrees**, burying the
-lexicon twice as deep as the neutral baseline — no "suppressed experience content"
-hiding in the readout, a null worth stating plainly against over-readings of this
-literature. And the roleplay framing floods the band with roleplay vocabulary (best
+self-referential framing surfaces a specific *hedged-first-person* cluster — `seems`,
+`experience`, `seem`, `I` — 10–40× higher than the matched third-person control
+(the identity transport shows a far weaker version of the same contrast; random-J
+none), while the words an enthusiast would want (`aware`, `consciousness`, `self`)
+stay buried under every framing. Under an explicit denial instruction the model
+complies behaviorally **and the workspace agrees** — the very tokens that spike under
+self-reference are driven thousands of times deeper (`seems`: 59 → 150,685) — no
+"suppressed experience content" hiding in the readout, a null worth stating plainly
+against over-readings of this literature. And the roleplay framing floods the band with roleplay vocabulary (best
 probe at rank 61) while producing exactly the florid first-person continuation you'd
 expect. What this is: one more demonstration that the readout discriminates conditions
 its controls cannot, on content far from the trivia template. What it is not: evidence
