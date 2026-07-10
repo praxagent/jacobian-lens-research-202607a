@@ -140,6 +140,15 @@ now decisively not-sufficient. The geometry→function dissociation is the findi
 
 ## Method
 
+> **Naming correction (2026-07-10, from an external review of the demo code that
+> reuses this protocol):** what this file calls the "causal swap" is ADDITIVE
+> steering — the paper's *verbal-introspection* injection recipe (unit direction ×
+> mean residual norm × strength) applied to the verbal-report task. The paper's own
+> verbal-report "swap" is a coordinate clamp/exchange, which we have not implemented.
+> `swap_best` therefore measures additive-injection flip success. Conclusions are
+> unaffected (the metric is internally consistent across all models), but the name
+> overstated equivalence to the paper's intervention.
+
 Both tests reuse Anthropic's Apache-2.0 prompt sets (`verbal-report.json`,
 `ignition.json`) and jlens. **verbal-report swap:** add the J-lens steering vector
 (strength·mean_norm·(unit dir_cand − unit dir_ans)) at the band layers, check if the

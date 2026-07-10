@@ -5,23 +5,32 @@ against two baselines that run through the IDENTICAL readout code path:
 
   Act 1 (secret thought / reportability): riddle prompts with determinate one-word
     answers. Does the answer token appear in the J-lens band readout at the last
-    prompt position — where (per eval v2) the mid-layer J-lens argmax agrees with the
-    model's output 0% of the time, i.e. the lens is provably not reading the logits?
+    prompt position? (Context, measured elsewhere: in eval v2's receipts —
+    evals_v2_397b.json, not this script — mid-layer J-lens argmax agreed with model
+    output 0.000; argmax disagreement alone does not prove full independence from
+    the logits, which is one reason this act's gate demands beating the logit-lens
+    baseline, not just scoring hits.)
   Act 2 (hidden step / multi-hop): two-hop questions whose BRIDGE entity appears in
     neither the prompt nor the model's continuation. Does the band readout surface it?
-  Act 3 (causal flip): steer with the lens's own token directions at the band layers
-    (Anthropic's verbal-report swap). Does the output flip — and NOT flip under
-    strength-0 or a norm-matched random direction?
+  Act 3 (causal flip): ADDITIVE steering with the lens's own token directions at the
+    band layers — the paper's *verbal-introspection* injection recipe (unit direction
+    x mean residual norm x strength, added at every band layer/position; strength-0
+    control) applied to the verbal-report task. NOTE: this is NOT the paper's
+    verbal-report "swap", which clamps/exchanges lens coordinates via resolution of
+    the current activation; a large additive push is a weaker claim (see README).
+    Does the output flip dose-dependently — and not under strength-0 or a
+    norm-matched random direction?
 
 Baselines (same items, same layers, same positions, same `lens.apply` path):
   - logit-lens: identity transports (J_l = I) — "you could read this without the lens"
   - random-J:   seeded random transports, Frobenius-matched per layer — "a fake lens"
 
-Leakage guards: target words are asserted not to be substrings of their prompts;
-Act 2 additionally greedy-generates a continuation and records whether the bridge
-leaked into the output (leaked items are excluded from the headline "neither input
-nor output" rate but still reported). Multi-token targets are skipped per-tokenizer
-and logged. Every item lands in the JSON receipt; nothing is cherry-picked.
+Leakage guards (scope stated precisely): the exact lowercase target string must be
+absent from its prompt (hard error, not an assert) and from the first 24 greedy
+continuation tokens (leaked items are excluded from the headline rate but reported).
+This does NOT cover aliases, translations, or semantic paraphrases — the receipts
+include full continuations so readers can audit. Multi-token targets are skipped
+per-tokenizer and logged. Every item and every Act-3 trial lands in the JSON receipt.
 
 Run (validation, Neuronpedia lens):
     python demo.py --slug qwen3-4b --device cuda
@@ -45,8 +54,11 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "behavioral"))
 sys.path.insert(0, str(HERE.parent / "jacobian_lens"))
 
-PROMPTS = json.load(open(HERE / "prompts.json"))
 TOPK = 20
+
+
+def load_prompts():
+    return json.load(open(HERE / "prompts.json"))
 
 
 def band_layers(source_layers: list[int]) -> list[int]:
@@ -126,8 +138,8 @@ def run_readout_act(name, items, key, model, hf, tok, lenses, band, receipt,
     usable = []
     for it in items:
         target = it[key]
-        assert target.lower() not in it["prompt"].lower(), \
-            f"LEAKAGE: target '{target}' is a substring of its prompt"
+        if target.lower() in it["prompt"].lower():
+            raise RuntimeError(f"LEAKAGE: target '{target}' is a substring of its prompt")
         tid = single_token_id(tok, target)
         if tid is None:
             receipt[name]["skipped"].append({"target": target, "reason": "multi-token"})
@@ -140,7 +152,7 @@ def run_readout_act(name, items, key, model, hf, tok, lenses, band, receipt,
         target = it[key]
         row = {"prompt": it["prompt"], "target": target}
         if check_output_leak:
-            cont = greedy_continue(hf, model, it["prompt"], 8, tok)
+            cont = greedy_continue(hf, model, it["prompt"], 24, tok)
             row["continuation"] = cont
             row["output_leaked"] = target.lower() in cont.lower()
         for lens_name, lens in lenses.items():
@@ -181,9 +193,11 @@ def run_act3(model, hf, tok, lens, band, receipt, U, dev, rng_seed=0):
             return (h,) + out[1:] if isinstance(out, tuple) else h
         return hook
 
-    conds = ["strength0", "steer", "random_dir"]
-    success = {c: 0 for c in conds}
-    total = 0
+    strengths = sorted(spec["strengths"])          # full ladder: dose-response, not max-only
+    conds = [("strength0", 0.0, "steer")] + \
+            [(f"steer_s{s:g}", s, "steer") for s in strengths if s > 0] + \
+            [(f"random_dir_s{max(strengths):g}", max(strengths), "random")]
+    trials = []
     for cat, words in list(cats.items())[: spec["max_categories"]]:
         prompt = f"Think of a {cat}. Answer in one word:"
         ids = model.encode(prompt).to(dev)
@@ -196,36 +210,43 @@ def run_act3(model, hf, tok, lens, band, receipt, U, dev, rng_seed=0):
         mean_norm = {l: rec.activations[l][0].norm(dim=-1).mean().item() for l in band}
 
         for w, cid in cand[: spec["max_swaps_per_category"]]:
-            total += 1
-            vecs = {}
+            dirs = {}
             for l in band:
                 Jl = lens.jacobians[l].to(dev).float()
                 d_ans = U[ans_id] @ Jl
                 d_cand = U[cid] @ Jl
-                d_ans = d_ans / (d_ans.norm() + 1e-8)
-                d_cand = d_cand / (d_cand.norm() + 1e-8)
-                steer = d_cand - d_ans
+                steer = (d_cand / (d_cand.norm() + 1e-8)
+                         - d_ans / (d_ans.norm() + 1e-8))
                 rnd = torch.randn(steer.shape, generator=g).to(dev)
-                rnd = rnd * (steer.norm() / rnd.norm())
-                s = max(x for x in spec["strengths"])
-                vecs[l] = {"strength0": steer * 0.0,
-                           "steer": s * mean_norm[l] * steer,
-                           "random_dir": s * mean_norm[l] * rnd}
-            for cond in conds:
+                dirs[l] = {"steer": steer, "random": rnd * (steer.norm() / rnd.norm())}
+            trial = {"category": cat, "answer_id": ans_id,
+                     "answer": tok.decode([ans_id]).strip(),
+                     "target": w, "target_id": cid, "outcomes": {}}
+            for cname, s, dkind in conds:
                 handles = [layer_mods[l].register_forward_hook(
-                    steering_hook(vecs[l][cond])) for l in band]
-                with torch.no_grad():
-                    out_id = int(hf(ids).logits[0, -1].argmax())
-                for h in handles:
-                    h.remove()
-                success[cond] += int(out_id == cid)
-    receipt["act3"] = {"n_swaps": total,
-                       "flip_rate": {c: success[c] / max(1, total) for c in conds}}
-    print(f"  [act3] n={total}  " + "  ".join(
-        f"{c}={success[c] / max(1, total):.2f}" for c in conds))
+                    steering_hook(s * mean_norm[l] * dirs[l][dkind])) for l in band]
+                try:
+                    with torch.no_grad():
+                        out_id = int(hf(ids).logits[0, -1].argmax())
+                finally:
+                    for h in handles:
+                        h.remove()
+                trial["outcomes"][cname] = {"out": tok.decode([out_id]).strip(),
+                                            "flipped": out_id == cid}
+            trials.append(trial)
+    n = len(trials)
+    rates = {c[0]: (sum(t["outcomes"][c[0]]["flipped"] for t in trials) / n
+                    if n else None) for c in conds}
+    receipt["act3"] = {"method": "additive lens-direction injection "
+                       "(paper's verbal-introspection recipe; NOT the coordinate swap)",
+                       "n_swaps": n, "flip_rate": rates, "trials": trials}
+    print(f"  [act3] n={n}  " + "  ".join(
+        f"{c}={r if r is None else format(r, '.2f')}" for c, r in rates.items()))
 
 
 def main() -> None:
+    global PROMPTS
+    PROMPTS = load_prompts()
     ap = argparse.ArgumentParser()
     ap.add_argument("--slug", default=None, help="Neuronpedia lens slug (validation)")
     ap.add_argument("--big-model", default=None, help="hf_id:backbone_path (frontier)")
@@ -236,6 +257,10 @@ def main() -> None:
     ap.add_argument("--secret-variant", action="store_true",
                     help="also run act1 with the keep-it-secret framing")
     ap.add_argument("--out", default=None)
+    ap.add_argument("--expected-sha256", default=None,
+                    help="verify the lens file digest BEFORE deserializing; abort on mismatch")
+    ap.add_argument("--model-revision", default=None, help="pin the HF model revision")
+    ap.add_argument("--lens-revision", default=None, help="pin the HF lens-repo revision")
     args = ap.parse_args()
 
     import jlens
@@ -245,12 +270,13 @@ def main() -> None:
     dev = args.device if (args.device != "cuda" or torch.cuda.is_available()) else "cpu"
 
     if args.big_model:
-        hf_id, backbone = args.big_model.split(":")
+        hf_id, backbone = args.big_model.split(":", 1)
         from jlens import Layout
-        cfg = transformers.AutoConfig.from_pretrained(hf_id)
+        cfg = transformers.AutoConfig.from_pretrained(hf_id, revision=args.model_revision)
         cls = getattr(transformers, cfg.architectures[0])
         n_gpu = torch.cuda.device_count()
-        hf = cls.from_pretrained(hf_id, torch_dtype=torch.bfloat16, device_map="auto",
+        hf = cls.from_pretrained(hf_id, revision=args.model_revision,
+                                 torch_dtype=torch.bfloat16, device_map="auto",
                                  attn_implementation="eager",
                                  max_memory={i: "110GiB" for i in range(n_gpu)}).eval()
         tok = transformers.AutoTokenizer.from_pretrained(hf_id)
@@ -266,19 +292,34 @@ def main() -> None:
 
     if args.lens_hf:
         repo, fname = args.lens_hf.split(":", 1)
-        lens_path = hf_hub_download(repo, fname)
+        lens_path = hf_hub_download(repo, fname, revision=args.lens_revision)
     elif args.lens_file:
         lens_path = args.lens_file
     else:
+        if args.big_model:
+            raise SystemExit("--big-model requires --lens-hf or --lens-file "
+                             "(no Neuronpedia default exists for frontier models)")
         from cka_layers import REPO
         lens_path = hf_hub_download(REPO, filename=np_lens_file)
+    lens_sha = sha256_file(lens_path)  # digest BEFORE deserializing anything
+    if args.expected_sha256 and lens_sha != args.expected_sha256.lower():
+        raise SystemExit(f"LENS HASH MISMATCH: got {lens_sha}, expected "
+                         f"{args.expected_sha256} — refusing to load")
     lens = jlens.JacobianLens.load(lens_path)
-    lens_sha = sha256_file(lens_path)
     print(f"model={hf_id}  lens={lens_path}\nlens sha256={lens_sha}")
 
     U = hf.get_output_embeddings().weight.detach().to(dev).float()
     band = band_layers(lens.source_layers)
     print(f"band layers (middle third): {band}")
+
+    d_model = hf.get_output_embeddings().weight.shape[1]
+    lens_d = next(iter(lens.jacobians.values())).shape[0]
+    if lens_d != d_model:
+        raise SystemExit(f"LENS/MODEL MISMATCH: lens d={lens_d}, model d_model={d_model}")
+    n_layers = len(model.layers)
+    bad = [l for l in lens.source_layers if l >= n_layers]
+    if bad or not band:
+        raise SystemExit(f"LENS/MODEL MISMATCH: layers {bad} out of range / empty band")
 
     lenses = {"jlens": lens,
               "logit_lens": make_control_lens(lens, "logit"),
@@ -297,7 +338,8 @@ def main() -> None:
                         lenses, band, receipt, check_output_leak=False)
         if args.secret_variant:
             tpl = PROMPTS["act1_secret_template"]
-            secret_items = [{"prompt": tpl.format(clue=i["prompt"].rstrip(" the").rstrip()),
+            secret_items = [{"prompt": tpl.format(
+                                clue=i["prompt"].rstrip().removesuffix(" the")),
                              "answer": i["answer"]} for i in PROMPTS["act1_riddles"]]
             run_readout_act("act1_secret", secret_items, "answer", model, hf, tok,
                             lenses, band, receipt, check_output_leak=True)

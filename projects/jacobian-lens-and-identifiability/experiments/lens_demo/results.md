@@ -109,3 +109,44 @@ hidden-intermediate readout, and causal steering with dead-zero controls.
 
 Receipts: `demo_qwen35-397b.json`, `demo397.log`.
 Demo series total cost: gpt2 $0 + 3090 $0.15 + A100 $0.60 + 8×H200 $13 ≈ **$14**.
+
+## External review response (2026-07-10, GPT code review of demo.py)
+
+TJ ran the demo script past an external reviewer. Verdict triage — accepted and fixed
+(all in `demo.py`, syntax-checked + Act-3 CPU-smoked):
+
+- **Act 3 was mislabeled (the biggest catch).** We called it "Anthropic's verbal-report
+  swap"; the paper's swap CLAMPS/EXCHANGES lens coordinates (resolve h into coordinates,
+  swap, preserve the orthogonal component). What we implemented is the paper's
+  *verbal-introspection* ADDITIVE injection (unit direction × mean residual norm ×
+  strength, strength-0 control — the vendored ANTHROPIC_EXPERIMENTS_README.md confirms
+  both descriptions). All docs/blog relabeled: our 397B act-3 result (32/50 vs 0/50
+  controls) stands as an additive-injection causal-specificity result, a weaker claim
+  than a coordinate swap. Coordinate-swap implementation queued as follow-up.
+- **Hash-before-load + expected digest:** demo.py now hashes the lens BEFORE
+  deserializing and takes `--expected-sha256` (abort on mismatch). (In the actual 397B
+  run the digest was verified out-of-band against the published SHA256SUMS, and
+  consumer_check_397b.py always did hash-before-load — but the demo script itself
+  should too, and now does.)
+- **Revision pinning:** `--model-revision` / `--lens-revision` plumbed through.
+- **Real bugs fixed:** `rstrip(" the")` charset bug (verified it did NOT corrupt any of
+  our 16 frozen riddles — suffixes were "is the/is called/is a/is" — but it was wrong);
+  UnboundLocalError on `--big-model` without a lens arg (path never taken in our runs;
+  now a clear error); `split(":", 1)`; try/finally hook cleanup; empty-set rates now
+  None not 0.0; module-level prompts.json load moved into main; leakage check is a
+  hard RuntimeError (asserts vanish under -O); continuation leak window 8→24 tokens;
+  lens/model compatibility checks (d_model match, layer range, non-empty band).
+- **Act 3 receipts:** now per-trial (category, answer, target, per-condition outcome)
+  and the full strength ladder runs (dose-response), fixing "aggregate rates only."
+- **Claim-scope fixes:** the Act-1 header no longer implies this script measures the
+  eval-v2 motor-agreement number (that lives in evals_v2_397b.json), and the leakage
+  guarantee is now stated as exactly what it is (exact-string absence in prompt +
+  24-token greedy continuation; aliases/paraphrases not covered).
+
+Reviewer points NOT accepted as-is: "no obvious malware but audit the repo" (the repo
+IS the audit trail — every shipped file is enumerated in the run scripts); "8×H200 is
+not a workstation demo" (stated cost/scale was always part of the design; the $1 27B
+tier exists for reproduction). The published 397B receipt (`demo_qwen35-397b.json`)
+was produced by the PRE-fix code: its acts 1–2 are unaffected by any fixed bug; its
+act-3 number is valid under the corrected label (additive injection, max strength
+only, aggregate receipt). Blog draft updated accordingly.

@@ -18,9 +18,11 @@ same artifact.
    Mount Fuji stands" → bridge *Japan*, output *Tokyo*). Does the band readout surface
    the bridge? Items where the model's continuation mentions the bridge are excluded
    from the headline rate (leak guard) but reported.
-3. **Causal flip (steering).** Anthropic's verbal-report swap: add the lens's own
-   token direction (row of `U·J_l`) at the band layers, does the one-word answer flip
-   to the target? Controls: strength-0 and a norm-matched random direction.
+3. **Causal flip (steering).** ADDITIVE steering with the lens's own token
+   directions (rows of `U·J_l`) at the band layers — the paper's *verbal-introspection*
+   injection recipe applied to the verbal-report task (NOT the paper's coordinate-swap;
+   see the external-review section of results.md). Does the one-word answer flip
+   dose-dependently? Controls: strength-0 and a norm-matched random direction.
 
 **Baselines run through the IDENTICAL readout code path** (`make_control_lens`):
 logit-lens = identity transports; random-J = seeded, Frobenius-matched random
