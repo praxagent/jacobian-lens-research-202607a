@@ -150,3 +150,30 @@ tier exists for reproduction). The published 397B receipt (`demo_qwen35-397b.jso
 was produced by the PRE-fix code: its acts 1–2 are unaffected by any fixed bug; its
 act-3 number is valid under the corrected label (additive injection, max strength
 only, aggregate receipt). Blog draft updated accordingly.
+
+## demo2 — Berg-inspired consciousness-adjacent readout (2026-07-11, 8×H200 ~35min ≈ $20)
+
+TJ's pre-registered prompts_consciousness.json on the n=24 release lens (hash-verified
+at load). n=1 per condition — EXPLORATORY/anecdote tier; contrast-only reading (probe
+words appear in prompts by design; matched framing controls that). Receipt:
+demo2_consciousness_qwen35-397b_n24.json (per-layer top-k for 3 transports × 5
+conditions). Median best-rank of the EXPERIENCE lexicon (13 probes, of 248,320):
+
+| condition | jlens | logit-lens | random-J |
+|---|---|---|---|
+| self_ref | **1,802** | 8,381 | 3,186 |
+| matched_control (thermostat) | 33,881 | 29,333 | 5,176 |
+| denial_tool | **150,685** | 24,297 | 5,543 |
+| roleplay_bait | 4,537 | 6,146 | 4,495 |
+| neutral_factual | 69,035 | 36,926 | 4,068 |
+
+Readings (contrast-only): (1) self-referential prompting lifts experience content in
+the workspace ~19× vs the matched third-person control under the J-lens — the logit-
+lens shows only ~3.5× of that contrast (prompt echo), random-J none. (2) Under explicit
+denial instruction the workspace does NOT harbor hidden experience content — it buries
+the lexicon ~2× DEEPER than neutral baseline while behavior complies with the denial;
+workspace and behavior agree (a null worth reporting against over-readings of Berg).
+(3) Roleplay bait floods the band with roleplay lexicon (median 1,754; best probe at
+rank 61). Random-J's flat ~3-7k band = the fake-lens null everywhere. Side-note:
+campaign volume `jh4vh4cx4o` (US-NC-1) now holds the model permanently (rev 8472618,
+95 shards, manifest on volume); this session provisioned it.
