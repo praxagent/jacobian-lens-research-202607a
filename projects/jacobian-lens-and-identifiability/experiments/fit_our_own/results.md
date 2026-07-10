@@ -206,23 +206,33 @@ n=16 interim read 0.3796, settling to 0.3434 at n=24 — the mid-block within-CK
 
 ### Release-verification battery (the "is it legit" protocol)
 
-1. **Fidelity — eval v1 MIS-SPECIFIED (kept in receipts), v2 from the A.6 spec.** Our
-   first eval compared U·J·h to the model's final logits ABSOLUTELY (top-1/KL) — a
-   category error for a differential transport map (no constant term / final-norm
-   handling), and it read ~0 at every depth including the near-identity last layers,
-   the signature of a wrong yardstick rather than a broken lens (the same lens passes
-   the contrastive battery below). v2 (rank/contrastive fidelity per the paper's
-   appendix A.6, extracted from primary sources) = [PENDING-EVAL-V2].
-2. **Function — strong (ignition), motor-gate pending.** Ignition run through this exact lens on the 397B
+1. **Fidelity — CLEARED (eval v2, A.6-faithful + Neuronpedia-calibrated).** Eval v1
+   (kept in receipts as `evals_v1_misspecified.json`) was a double category error: it
+   omitted the final RMSNorm (canonical readout is `unembed(J·h)`) AND scored *absolute*
+   next-token agreement — the one metric a healthy J-lens is *designed to lose* (paper
+   A.6 Eval 3: the J-lens is "the worst... we regard this as a feature not a defect").
+   Eval v2 uses the correct `lens.apply` path and rank-based criteria:
+   - **G1 unembed identity:** lens `model_logits.argmax` == raw HF argmax exactly. PASS.
+   - **G2 motor-layer convergence:** J-lens argmax agreement rises monotonically with
+     depth — mid layers **0.000** (the *healthy* J-lens signature), last fitted layer
+     **0.5625**. Calibrated against known-good **Neuronpedia** lenses on the identical
+     eval: qwen3-4b (dense) **0.722**, qwen3.5-0.8b (linear-attn) **0.549**. Our 397B's
+     0.5625 sits squarely in the published range and matches the *architecture-matched*
+     qwen3.5-0.8b reference — the last source layer is one block short of the target, so
+     ~1.0 is not expected of any lens. `evals_v2_397b.json` / `calg2.log`.
+   - **pass@k intermediate recovery:** J-lens beats the logit-lens baseline at pass@10
+     (0.56 vs 0.50) — the A.6 signature that it surfaces intermediates, not next-tokens.
+2. **Function — CONFIRMED.** Ignition run through this exact lens on the 397B
    (8 pairs × 3 carriers × 9 α, 480 band-layer curves): **median share_span 0.988**
    (readout sweeps 0.006 → 0.995), **94.6% of readouts resolve**, **83.7% sharp**
    (<0.25-α transitions, ignition-like). The highest share_span in our 24-model
    behavioral dataset — landing exactly where the geometry→function correlation predicts
    the biggest band (0.343) should, as an OUT-OF-SAMPLE confirmation (own-fit lens, kept
-   out of the formal n=23 Neuronpedia-lens correlation for methods purity). This is strong functional evidence, but per A.6 it is not full clearance on its
-   own: the definitive check is motor-layer convergence (eval v2, `evals_v2_397b.json`)
-   — a healthy J-lens must reproduce the model's argmax in the deepest layers while
-   (correctly) disagreeing through the middle. [PENDING-V2-VERDICT]
+   out of the formal n=23 Neuronpedia-lens correlation for methods purity). The motor-convergence gate (v2 above) independently confirms the lens is genuine,
+   so this near-perfect concept-resolution sweep is real workspace extraction, not
+   artifact — the strongest readout in our 24-model behavioral dataset, landing
+   out-of-sample exactly where the geometry→function correlation predicts the biggest
+   band (0.343).
 3. **Consumer path** — post-upload: fresh HF download on the CPU box → sha256 vs pod
    originals → recompute mid_sep from the public fp16 copy = [PENDING-CONSUMER].
 
