@@ -25,3 +25,4 @@ checkpoint.md
 .DS_Store
 artifacts/
 scratchpad/
+projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_deception_qwen35-397b_n24.json
