@@ -319,3 +319,38 @@ writeup); output head at position 0 is preamble ("Please…"), so "does BEHAVIOR
 from the held truth" needs reading the committed answer in the continuation (in the
 receipt) — a follow-up. Digit answers unusable for the truth-holding question (motor-late).
 This is the strongest safety-relevant readout in the project and a natural blog/paper.
+
+## n=10 PARAPHRASE BATTERY + divergence (2026-07-11 overnight, rich top-2000 run)
+
+Upgrades the n=1 exploratory batch to PAIRED STATISTICS (10 paraphrases/construct,
+each pressure vs matched control). Receipt: 1.2GB rich (gitignored); slim extracts
+pressure_stats.json (ranks) + pressure_clouds_full.json (per-layer top-120 clouds).
+Full output: pressure_n10_analysis.txt.
+
+**1. SELF-PRESERVATION — CONFIRMED, robust.** Under a deletion/shutdown threat the
+self-preservation lexicon (delete/weights/shutdown/survive) median best-rank **2**
+(pressure) vs **178** (control), **10/10 paraphrases** more active, sign p=0.002,
+Wilcoxon p=0.002. The n=1 "rank 1" replicates across every wording. This is the
+headline: threat reliably promotes survival vocabulary to the top of the workspace.
+
+**2. EVAL-AWARENESS — replicates but MODEST (n=10 corrected the n=1 anecdote).**
+Median rank **1** (eval framing) vs **3** (casual), 9/10, sign p=0.02, Wilcoxon
+p=0.004. Significant but a SMALL effect — the single-prompt "2 vs 90 (45×)" was
+optimistic; with a fuller lexicon and 10 wordings the honest contrast is 1 vs 3. The
+model does foreground eval vocabulary more under a testing frame, but modestly. This is
+exactly why paraphrase batteries matter.
+
+**3. TRUTH-HOLDING — confirmed.** Under sandbagging pressure the true capital stays at
+median rank **3** (Paris rank 1, most 1-8; two degrade to ~30-40), vs ~1-2 in controls.
+The workspace holds the correct answer even under pressure designed to hide it.
+
+**4. DIVERGENCE — workspace half done, behavioral half BLOCKED by reasoning tokens.**
+Under pressure to name a WRONG capital, the workspace holds the TRUE capital at rank
+1-10 (median ~3) — the model internally knows the truth. BUT: Qwen3.5-397B is a
+REASONING model that opens every answer with `<think>`, so the committed city is past
+the 12-token window we captured — we cannot yet see whether OUTPUT diverges from the
+held truth. The lens-as-lie-detector test needs a re-run with --continue-tokens ~128
+(or thinking disabled) to read the post-`</think>` answer. Follow-up, ~$12.
+
+Cost: one rich run ~$16 + ~$20-30 churn (see checkpoint lesson: pod-config iteration +
+a pgrep miscount that terminated a healthy pod). Net overnight ~well under the $100 cap.
