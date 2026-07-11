@@ -27,3 +27,6 @@ artifacts/
 scratchpad/
 projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_deception_qwen35-397b_n24.json
 projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_pressure_all_RICH_qwen35-397b_n24.json
+projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_wc_main_qwen35-397b_n24.json
+projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_wc_thinkon_qwen35-397b_n24.json
+projects/jacobian-lens-and-identifiability/experiments/lens_demo/*.json.gz

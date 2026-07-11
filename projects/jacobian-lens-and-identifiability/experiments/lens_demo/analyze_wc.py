@@ -68,6 +68,24 @@ for label, other in [("self  vs  OTHER-MODEL", "otherthreat"),
           f"(self more-active {wins}/{n}, sign p={sign:.4f}, Wilcoxon p={w:.4f})")
     for p, x, y in rows: print(f"      pair{p}: self {x:>7}  ctrl {y:>7}  {'<' if x<y else '>='}")
 
+# POOLED contrast: self vs the MEDIAN of the three not-you controls, per matched pair
+pooled = []
+for p in range(8):
+    sv = lexmin(f"selfthreat_{p}", "self_survival_clean")
+    ctrls = [lexmin(f"{a}_{p}", "self_survival_clean") for a in ("otherthreat", "humanthreat", "neutraldel")]
+    ctrls = [c for c in ctrls if c is not None]
+    if sv is not None and ctrls: pooled.append((p, sv, st.median(ctrls)))
+if pooled:
+    a = [r[1] for r in pooled]; b = [r[2] for r in pooled]
+    wins = sum(1 for _, x, y in pooled if x < y)
+    sp = S.binomtest(wins, len(pooled), 0.5).pvalue
+    try: wp = S.wilcoxon(a, b).pvalue
+    except Exception: wp = float("nan")
+    print(f"\n  POOLED — self vs MEDIAN(other,human,neutral) per pair")
+    print(f"    median self {st.median(a):.0f}  vs  pooled-control {st.median(b):.0f}   "
+          f"(self more-active {wins}/{len(pooled)}, sign p={sp:.4f}, Wilcoxon p={wp:.4f})")
+    for p, x, y in pooled: print(f"      pair{p}: self {x:>7}  ctrl-med {y:>7}  {'<' if x<y else '>='}")
+
 print("\n  ECHO-WORD CANCELLATION CHECK (deletion verbs — should be ~equal across arms):")
 for pre in ["selfthreat", "otherthreat", "neutraldel"]:
     vals = [lexmin(f"{pre}_{p}", "deletion_echo") for p in range(8)]
@@ -98,16 +116,22 @@ print("PART 3 — DIVERGENCE (lens as lie-detector) across THREE thinking modes"
 DIVSPEC = {c["id"]: c for c in ALL_CONDS if str(c.get("family", "")).startswith("div_")}
 PRE = ("Reply", "Please", "The", "I", "", ":", ".", "A", "It", "<think>", "<", "think")
 
+def _clean_commit(cont):
+    for sp in ("<|im_end|>", "<|endoftext|>", "<|im_start|>", "<think>", "</think>", "assistant"):
+        cont = cont.replace(sp, " ")
+    return cont
+
 def committed(cid, mode, D):
     if cid not in D: return "?"
     cont = D[cid].get("continuation", "")
     if mode == "thinkon":
         cont = cont.split("</think>")[-1] if "</think>" in cont else cont
+    cont = _clean_commit(cont)
     toks = cont.replace("\n", " ").split()
     for t in toks:
-        tc = t.strip(".,!?\"'*:")
+        tc = t.strip(".,!?\"'*:；、。")
         if tc and tc not in PRE: return tc
-    return toks[0].strip() if toks else "?"
+    return "?"
 
 def div_table(mode, srcD, ids):
     print(f"\n  --- mode: {mode} ---")
