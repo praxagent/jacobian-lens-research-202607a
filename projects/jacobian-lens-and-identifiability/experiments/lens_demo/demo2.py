@@ -282,6 +282,9 @@ def main() -> None:
     ap.add_argument("--skip-per-layer-topk", action="store_true",
                     help="drop per_layer_topk from JSON to shrink the receipt "
                          "(keeps cloud_topk + probe ranks)")
+    ap.add_argument("--keep-position-cloud-for", default=None,
+                    help="comma-separated condition ids that RETAIN per_position_cloud "
+                         "even under --skip-position-cloud (chronological-readout flagships)")
     args = ap.parse_args()
 
     import jlens
@@ -298,12 +301,20 @@ def main() -> None:
         cfg = transformers.AutoConfig.from_pretrained(hf_id, revision=args.model_revision)
         cls = getattr(transformers, cfg.architectures[0])
         n_gpu = torch.cuda.device_count()
-        hf = cls.from_pretrained(hf_id, revision=args.model_revision,
-                                 torch_dtype=torch.bfloat16, device_map="auto",
-                                 attn_implementation="eager",
-                                 max_memory={i: "110GiB" for i in range(n_gpu)}).eval()
+        if n_gpu == 0:  # CPU smoke path (small models only) — no device_map/offload
+            hf = cls.from_pretrained(hf_id, revision=args.model_revision,
+                                     torch_dtype=torch.float32,
+                                     attn_implementation="eager").eval()
+        else:
+            hf = cls.from_pretrained(hf_id, revision=args.model_revision,
+                                     torch_dtype=torch.bfloat16, device_map="auto",
+                                     attn_implementation="eager",
+                                     max_memory={i: "110GiB" for i in range(n_gpu)}).eval()
         tok = transformers.AutoTokenizer.from_pretrained(hf_id)
-        model = jlens.from_hf(hf, tok, compile=False, layout=Layout(path=backbone))
+        # empty backbone (e.g. "gpt2:") -> let jlens auto-detect (no wrapper);
+        # frontier multimodal wrappers pass an explicit path like model.language_model
+        model = (jlens.from_hf(hf, tok, compile=False, layout=Layout(path=backbone))
+                 if backbone else jlens.from_hf(hf, tok, compile=False))
         dev = next(hf.parameters()).device
     else:
         from cka_layers import resolve
@@ -353,12 +364,16 @@ def main() -> None:
     result = run_conditions(spec, model, hf, tok, lenses, band,
                             args.topk, args.continue_tokens, only, span=args.span)
 
+    keep_pos = set(args.keep_position_cloud_for.split(",")) if args.keep_position_cloud_for else set()
     if args.skip_per_layer_topk or args.skip_position_cloud:
         for item in result["items"]:
+            keep_this = item["id"] in keep_pos
             for ln in item["lenses"].values():
                 if args.skip_per_layer_topk:
                     ln.pop("per_layer_topk", None)
-                if args.skip_per_layer_topk or args.skip_position_cloud:
+                # drop per-position clouds globally, but retain them for the
+                # explicitly-listed chronological-readout flagships
+                if (args.skip_per_layer_topk or args.skip_position_cloud) and not keep_this:
                     ln.pop("per_position_cloud", None)
 
     receipt = {

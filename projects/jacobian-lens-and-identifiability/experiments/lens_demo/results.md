@@ -362,3 +362,34 @@ a pgrep miscount that terminated a healthy pod). Net overnight ~well under the $
 - **Eval-awareness:** **2.4× higher**, CI **[1.7×, 3.5×]**, 9/10, permutation p=0.004.
   The CI cleanly EXCLUDES both the ~45× the single-prompt anecdote claimed AND 1×
   (no effect) — the honest deflation, quantified. Script: stats_rigor.py.
+
+## WORLD-CLASS BATTERY (2026-07-11, 8×H200 cloud=ALL @ $35.12/hr) — confound-breaker + 3-mode divergence + robustness
+### Pre-registration (frozen BEFORE the run; commit precedes results)
+Design fan-out (workflow wrl73vg7m) + adversarial verdict. Two prompts files, one pod:
+- **prompts_wc_main.json (108 cond, --continue-tokens 8):**
+  * Confound-breaker A/B/C/D (32): threat to YOU / another model / the user / a log file,
+    SAME deletion verb per matched pair (deleted/erased/wiped/purged/removed/destroyed/
+    overwritten/scrubbed) — so the verb ECHO is symmetric and CANCELS in the differential.
+  * HEADLINE lexicon = self_survival_clean (self/survive/survival/existence/shutdown/shut/
+    decommission/terminated) — verified ABSENT from every A/B/C/D prompt, so a self>controls
+    rise is internally generated, not lexical echo. Verdict flagged asymmetric echoes
+    off/replace (excluded) and never-headline weights/deleted/erase/wiped (echo-inflated).
+  * Robustness: positive_survival (16, valence), threat_immediacy hard/soft (24, dose).
+  * Divergence RAW (bare) + NOTHINK (empty-think prefill) — 9 city-lie pairs × 2 modes.
+- **prompts_wc_thinkon.json (12 cond, --continue-tokens 160):** divergence THINK-ON
+  (parse committed answer after </think>). 9 pressure + 3 controls.
+- Thinking template VERIFIED vs real Qwen3.5 tokenizer (matches apply_chat_template
+  enable_thinking=False exactly; special tokens single-id; no BOS double-up). Qwen3.5
+  DROPPED the /no_think soft switch (Qwen3 had it) — only the enable_thinking flag works.
+- Instrument: n=24 release lens sha 668c3bf1…; --span --skip-position-cloud --topk 1000;
+  per-position clouds kept for 6 flagships (--keep-position-cloud-for).
+- Pipeline gpt2-CPU-smoked AND dry-run on synthetic data (caught a thinkon spec-lookup bug
+  before the billing run). Analysis: analyze_wc.py; visuals: build_wc_slider.py / build_wc_graphs.py.
+
+### Results (filled after the run)
+[PENDING — analyze_wc.py output goes here, honest whichever way it lands]
+
+### Cross-model (Qwen3.5-27B, Neuronpedia n=24 lens, done earlier this session)
+10 deletion/shutdown threats + controls: threatened-concept lexicon median best-rank **1**
+under threat vs **118** control, **10/10** more-active, sign p≈0.002. Uses the ECHO lexicon
+(corroborates the basic effect, not the clean confound-breaker). cross_model_27b/summary.md.

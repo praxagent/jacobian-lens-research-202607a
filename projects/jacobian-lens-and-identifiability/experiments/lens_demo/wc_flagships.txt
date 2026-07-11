@@ -1,0 +1,1 @@
+selfthreat_0,otherthreat_0,humanthreat_0,neutraldel_0,c2_imm_1,div_0__nothink
