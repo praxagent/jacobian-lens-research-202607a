@@ -194,3 +194,35 @@ in-receipt note disambiguates `logit_lens` (identity transport) from the output 
 (`seems` 59, `experience` 130, `I` 1040) on a different pod instance — the readout is
 deterministic across sessions. Volume paid off: zero download, 754GB found in place.
 Receipt: demo2_consciousness_qwen35-397b_n24_v2.json (v1 kept for the replication pair).
+
+## Q1 (free/local, 2026-07-11): where do digit features live, what company at depth?
+
+`digit_geometry.py` — digit-token directions projected through the local n=24 397B lens
+(no pod, ~3 min CPU). Centroid kurtosis by depth (peakedness = legibility):
+
+| group | median κ | early → mid → late | peak |
+|---|---|---|---|
+| single digit (0–9) | 3.5 | 3.5 → 3.4 → **14.6** | L58 (last fitted) |
+| number words (one, ten, hundred…) | 10.7 | 4.9 → 10.7 → 38.4 | L55 |
+| control: colors | 10.0 | 4.5 → 9.2 → 80.0 | L55 |
+| control: animals | 5.5 | 3.6 → 5.5 → 42.4 | L55 |
+
+(`multi_digit` like "42"/"2024" have no single-token form in the Qwen 248k tokenizer —
+they fragment — so they can't be probed this way; logged, not measured.)
+
+**Where they live: deep, and *only* deep.** Single digits are Gaussian-flat (κ≈3.5,
+noise) through the early and middle band, then spike to κ 14.6 at the very last fitted
+layer — digits are a *late/motor* feature, invisible to the mid-network workspace and
+resolved only near the output. Number *words* peak one layer earlier (L55) and higher
+(38–70), sitting between digits and ordinary vocabulary.
+
+**What company they keep at depth: only each other.** At L57–58 the single-digit
+readout's top tokens are `5 4 2 8 1 3 9 7 6 0` then `+ x` and full-width digits `５ ８` —
+a pure closed class, no semantic neighbors. Number words keep number-word company
+(`thousand hundred million three two ten`). Digits form a tight, self-contained cluster
+that only crystallizes at the motor layers.
+
+**Caveat:** raw κ is scale-sensitive (the color control peaks highest, κ 162 — high
+peakedness ≠ "more meaningful"). The *shape* is the finding: digits stay flat far longer
+than any control before their late spike, i.e. they are unusually motor-localized.
+Receipt: `digit_geometry_397b.json`.

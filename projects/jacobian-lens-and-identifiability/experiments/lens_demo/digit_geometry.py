@@ -99,6 +99,8 @@ def main() -> None:
     for g in ("single_digit", "multi_digit", "number_word",
               "control_color", "control_animal"):
         ks = [k for _, k in per_layer[g]]
+        if not per_layer[g]:
+            print(f"{g:14s} (no single-token members in this tokenizer)"); continue
         peak_l, peak_k = max(per_layer[g], key=lambda x: x[1])
         print(f"{g:14s} median κ {np.median(ks):6.1f} | peak κ {peak_k:6.1f} @ L{peak_l} "
               f"(early {ks[0]:.0f} / mid {ks[len(ks)//2]:.0f} / late {ks[-1]:.0f})")
