@@ -251,3 +251,22 @@ Attempt #1 ≈ $110 · round-2 gates ≈ $2 · round-2 H200 ≈ [PENDING ≈$220
 experiment + fallback iterations] · **duplicate-pod incident ≈ $143** (retry loop
 survived a self-matching pkill and idled 4.1 h — caught by TJ; CLAUDE.md lesson 11).
 Session total across the whole J-space audit ≈ [PENDING ≈$500].
+
+## Warm-start extension — VALIDATED (2026-07-11, free gpt2 tests)
+
+Question: is extending the published fp16 lens (add prompts, resume) numerically equal
+to a continuous fit? Established across three controlled tests:
+1. **Extension math is exact.** Reconstruct checkpoint from an in-memory fp32 lens,
+   resume to n=6 → matches continuous n=6 fit to **2.4e-8** (fp32 machine epsilon).
+   jlens's own resume is bitwise-identical; our reconstruction adds nothing.
+2. **From the published fp16 lens, extension sits at the fp16 STORAGE FLOOR.** Fair
+   fp16-vs-fp16 comparison: extended-vs-continuous **2.79e-4**; the fp16 round-trip
+   floor alone is **2.30e-4**. So warm-starting from the fp16 lens adds ~nothing beyond
+   the format's own rounding (weighted 24/n, shrinking as n grows).
+3. The earlier `extend_lens_gate.py` 7.62e-3 was a GATE-SCRIPT comparison residue
+   (fp16-stored lens vs fp32 reference — a comparison no shipped lens can pass), NOT a
+   bug in extension. Eliminated hypotheses en route: fp16/bf16 rounding, run-to-run
+   nondeterminism, cross-call model pollution, checkpoint reconstruction — all clean.
+**Conclusion: warm-start extension is valid; the campaign proceeds by extension, not
+refit.** TODO before the campaign runs: reconcile extend_lens.py's own gate to the clean
+fp16-floor comparison (2.5e-4 basis) so the shipped tool passes its own test.
