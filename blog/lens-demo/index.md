@@ -756,6 +756,8 @@ Notice that the conclusion here is sharper than "the lens works." Identity and r
 
 And read that check the right way around. It is not a complaint about Jacobian lenses; it is an invitation. The gap between "this file loads" and "this file is nontrivial on intermediate content" is ordinary, checkable science: pre-registration, identity and random controls, leakage guards, and receipts. Everything in this note runs on public weights and released JSON; the [repository](https://github.com/praxagent/research-and-replications) is open, the cheaper path fits in about a dollar, and corrections are welcome — that's what the receipts are for.
 
+Praxagent is a small, self-funded independent lab, and that constraint shaped this release rather than limiting it: it is *why* the lens is public, why every run is receipted down to the dollar, why the discriminating experiments were designed to reproduce on one A100 for about a dollar, and why we shipped warm-start tooling that lets anyone continue our n=24 average toward convergence without refitting from scratch. We fit the largest open Jacobian lens we could afford and made it cheap for the field to carry further — the n=24 lens is a valid instrument for the contrast experiments here (see *Why n=24 is enough*), and a public starting point for whoever wants a longer average. If that's you, the checkpoint math is exact and the commands are above.
+
 ---
 
 ## References
