@@ -185,3 +185,12 @@ framing (38k–74k self_ref). `subjective` is pure prompt echo (731 vs 930). The
 null is STRONGER per-token: the self-ref carriers are crushed under denial (`seems`
 59→150,685). Blog section updated to per-token table per our own stated rule;
 lexicon-median 19× demoted to secondary summary.
+
+**demo2 v2 re-run (2026-07-11, warm volume, ~12 min ≈ $8):** full-receipt version per
+the new CLAUDE.md raw-ingredients rule — adds model OUTPUT-HEAD top-100 at the readout
+position + top-50 per generation step (ids/logits/decoded) and continuation token ids;
+in-receipt note disambiguates `logit_lens` (identity transport) from the output head.
+**Cross-session replication:** J-lens probe ranks identical to v1 digit-for-digit
+(`seems` 59, `experience` 130, `I` 1040) on a different pod instance — the readout is
+deterministic across sessions. Volume paid off: zero download, 754GB found in place.
+Receipt: demo2_consciousness_qwen35-397b_n24_v2.json (v1 kept for the replication pair).
