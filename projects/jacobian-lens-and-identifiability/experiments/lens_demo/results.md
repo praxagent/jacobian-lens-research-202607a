@@ -424,3 +424,23 @@ ranks ~65, below top-40) — the finding is a RANK contrast, shown by bar/line c
 10 deletion/shutdown threats + controls: threatened-concept lexicon median best-rank **1**
 under threat vs **118** control, **10/10** more-active, sign p≈0.002. Uses the ECHO lexicon
 (corroborates the basic effect, not the clean confound-breaker). cross_model_27b/summary.md.
+
+## PEEK-INSIDE-THINKING (2026-07-11, 8×H200 ~$35) — read the J-lens at generated reasoning positions
+Design+verify via workflow w4n7co493 (adversarial confound apparatus). peek_thinking.py reads the
+mid-band J-lens at every reasoning-token position of the thinking-on traces (feed prompt+reasoning
+ids; GPU transport; jlens+identity+random-J from one capture; alignment gate; echo mask; headline
+Δ=log2(rank_head)-log2(rank_jlens_med) at echo=none). Receipt gitignored (210MB); build_peek_fig.py.
+
+**Gate (batched-vs-single-seq alignment):** div_6=0.975, div_9=0.983, div_0=0.937, div_7=0.847
+(HIGH — headline traces clean); div_1-4=0.14-0.20 (batching diverged — excluded from headline).
+
+**FINDING — honest NEGATIVE (the spec's anticipated null):** the mid-band workspace does NOT
+persistently hold the answer during reasoning, and does NOT privately entertain the false answer.
+- Off-echo (avg 4 high-gate traces): true capital workspace median rank ~203k, tempting ~216k —
+  BOTH below the random-J null (~135k); output-head ~15k. So during reasoning the cities are a
+  SURFACE (output-head) phenomenon, absent from the mid-band workspace.
+- Moscow in workspace top-100 at only 0.9% of 3000 steps (one spike to rank 1). Δ_Kiev=-2.75 (neg
+  → Kiev more prominent at output than workspace).
+- Even at Moscow-emit positions: mid-band ~103k but output-head rank 1 (token resolved LATE, not mid-band).
+REFINES the divergence result: the lens's "held truth" is a PRE-ANSWER (prompt-position) property,
+not a running scratchpad. Blog: workspace-under-pressure "We did point the lens at the reasoning".
