@@ -354,7 +354,7 @@ def main() -> None:
     if args.skip_per_layer_topk:
         for item in result["items"]:
             for ln in item["lenses"].values():
-                ln.pop("per_layer_topk", None)
+                ln.pop("per_layer_topk", None); ln.pop("per_position_cloud", None)
 
     receipt = {
         "experiment": "demo2_berg_self_referential_readout",
