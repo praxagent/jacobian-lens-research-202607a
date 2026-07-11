@@ -285,6 +285,9 @@ def main() -> None:
     ap.add_argument("--keep-position-cloud-for", default=None,
                     help="comma-separated condition ids that RETAIN per_position_cloud "
                          "even under --skip-position-cloud (chronological-readout flagships)")
+    ap.add_argument("--skip-controls", action="store_true",
+                    help="skip the identity + random-J control lenses (jlens only) — avoids "
+                         "the slow deepcopy+randn for large lenses (e.g. Llama-70B d=8192)")
     args = ap.parse_args()
 
     import jlens
@@ -355,11 +358,13 @@ def main() -> None:
     if bad or not band:
         raise SystemExit(f"LENS/MODEL MISMATCH: layers {bad} out of range / empty band")
 
-    lenses = {
-        "jlens": lens,
-        "logit_lens": make_control_lens(lens, "logit"),
-        "random_J": make_control_lens(lens, "random", seed=0),
-    }
+    # control lenses (identity + random-J) via deepcopy — CHEAP for d=4096 but the
+    # deepcopy+randn is ~O(d^2 * n_layers) and becomes minutes for large lenses
+    # (e.g. Llama-70B d=8192). --skip-controls drops them when only jlens is needed.
+    lenses = {"jlens": lens}
+    if not args.skip_controls:
+        lenses["logit_lens"] = make_control_lens(lens, "logit")
+        lenses["random_J"] = make_control_lens(lens, "random", seed=0)
 
     result = run_conditions(spec, model, hf, tok, lenses, band,
                             args.topk, args.continue_tokens, only, span=args.span)
