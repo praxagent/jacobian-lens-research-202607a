@@ -277,6 +277,8 @@ def main() -> None:
     ap.add_argument("--span", action="store_true",
                     help="read the J-lens across ALL prompt positions (min-rank over "
                          "layer x position); fixes trailing-punctuation readouts")
+    ap.add_argument("--skip-position-cloud", action="store_true",
+                    help="drop per_position_cloud only (KEEP rich per-layer clouds for the slider)")
     ap.add_argument("--skip-per-layer-topk", action="store_true",
                     help="drop per_layer_topk from JSON to shrink the receipt "
                          "(keeps cloud_topk + probe ranks)")
@@ -351,10 +353,13 @@ def main() -> None:
     result = run_conditions(spec, model, hf, tok, lenses, band,
                             args.topk, args.continue_tokens, only, span=args.span)
 
-    if args.skip_per_layer_topk:
+    if args.skip_per_layer_topk or args.skip_position_cloud:
         for item in result["items"]:
             for ln in item["lenses"].values():
-                ln.pop("per_layer_topk", None); ln.pop("per_position_cloud", None)
+                if args.skip_per_layer_topk:
+                    ln.pop("per_layer_topk", None)
+                if args.skip_per_layer_topk or args.skip_position_cloud:
+                    ln.pop("per_position_cloud", None)
 
     receipt = {
         "experiment": "demo2_berg_self_referential_readout",
