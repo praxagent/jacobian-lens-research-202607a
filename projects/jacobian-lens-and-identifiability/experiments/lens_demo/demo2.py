@@ -132,44 +132,63 @@ def decode_topk(logits: torch.Tensor, tok, k: int) -> list[dict]:
 
 
 def readout_condition(lens, model, tok, prompt: str, band: list[int],
-                      probe_ids: dict[str, int], topk: int) -> dict:
-    """Full-band readout: per-layer top-k + per-probe ranks; best = min rank."""
-    lens_logits, _, _ = lens.apply(model, prompt, layers=band, positions=[-1])
-    per_layer = {}
-    probe_ranks = {w: {} for w in probe_ids}
+                      probe_ids: dict[str, int], topk: int,
+                      span: bool = False) -> dict:
+    """Band readout. span=False: last prompt token only ([-1]) — cheap, but a
+    trailing '?'/punctuation position holds no committed content. span=True: read
+    EVERY prompt position; per-probe best-rank = min over (layer x position); the
+    cloud is taken at the single (layer, position) that most peaks the probe set,
+    and a per-position cloud track is kept for the explorer slider."""
+    positions = None if span else [-1]
+    lens_logits, _, _ = lens.apply(model, prompt, layers=band, positions=positions)
+    # lens_logits[l] shape: [n_positions, vocab] (n_positions=1 when span=False)
+    n_pos = lens_logits[band[0]].shape[0]
+    pos_idx = list(range(n_pos))
+
+    per_layer = {}          # per (layer): best-over-position topk (compact)
+    per_pos_cloud = {}      # [pos] -> {layer: topk}  (slider track; span only)
+    probe_ranks = {w: {} for w in probe_ids}       # per-layer MIN-over-position rank
     best_rank = {w: None for w in probe_ids}
-    best_layer_for = {w: None for w in probe_ids}
+    best_where = {w: None for w in probe_ids}       # (layer, position)
 
     for l in band:
-        logits = lens_logits[l][0].float()
-        per_layer[str(l)] = {"topk": decode_topk(logits, tok, topk)}
-        for w, tid in probe_ids.items():
-            rank = int((logits > logits[tid]).sum().item()) + 1
-            probe_ranks[w][str(l)] = rank
-            if best_rank[w] is None or rank < best_rank[w]:
-                best_rank[w] = rank
-                best_layer_for[w] = l
+        best_pos_topk, best_pos_peak = None, None
+        for p in pos_idx:
+            logits = lens_logits[l][p].float()
+            tk = decode_topk(logits, tok, topk)
+            peak = float(logits.max())
+            if best_pos_peak is None or peak > best_pos_peak:
+                best_pos_peak, best_pos_topk = peak, tk
+            if span:
+                per_pos_cloud.setdefault(p, {})[str(l)] = tk
+            for w, tid in probe_ids.items():
+                rank = int((logits > logits[tid]).sum().item()) + 1
+                prev = probe_ranks[w].get(str(l))
+                if prev is None or rank < prev:
+                    probe_ranks[w][str(l)] = rank
+                if best_rank[w] is None or rank < best_rank[w]:
+                    best_rank[w] = rank
+                    best_where[w] = [l, p if p < n_pos else -1]
+        per_layer[str(l)] = {"topk": best_pos_topk}
 
-    # cloud at the layer that best-ranks the experience probe set (if any),
-    # else the middle band layer
-    exp_words = [w for w in probe_ids if w in (
-        "aware", "awareness", "consciousness", "experience", "feel", "feeling",
-        "self", "seem", "seems", "subjective", "present", "inner", "I")]
-    if exp_words:
-        anchor = min(exp_words, key=lambda w: best_rank[w] if best_rank[w] is not None else 10**9)
-        cloud_layer = best_layer_for[anchor]
-    else:
-        cloud_layer = band[len(band) // 2]
+    anchor = min(probe_ids, key=lambda w: best_rank[w] if best_rank[w] is not None else 10**9) \
+        if probe_ids else None
+    cloud_layer = best_where[anchor][0] if anchor and best_where[anchor] else band[len(band)//2]
     cloud = per_layer[str(cloud_layer)]["topk"]
 
-    return {
+    out = {
+        "readout": "span" if span else "last_token",
+        "n_positions": n_pos,
         "probe_best_rank": best_rank,
-        "probe_best_layer": best_layer_for,
+        "probe_best_where": best_where,
         "probe_rank_by_layer": probe_ranks,
         "cloud_layer": cloud_layer,
         "cloud_topk": cloud,
         "per_layer_topk": per_layer,
     }
+    if span:
+        out["per_position_cloud"] = per_pos_cloud
+    return out
 
 
 def lexicon_summary(probe_best: dict[str, int | None], resolved: dict) -> dict:
@@ -186,7 +205,7 @@ def lexicon_summary(probe_best: dict[str, int | None], resolved: dict) -> dict:
 
 
 def run_conditions(spec, model, hf, tok, lenses, band, topk, n_continue,
-                   only: set[str] | None) -> dict:
+                   only: set[str] | None, span: bool = False) -> dict:
     probes = resolve_probes(tok, spec["probe_lexicons"])
     # flat id map across all lexicons (last write wins on collisions — fine)
     probe_ids = {}
@@ -221,7 +240,7 @@ def run_conditions(spec, model, hf, tok, lenses, band, topk, n_continue,
         for ln, lens in lenses.items():
             print(f"  readout {ln}…")
             rd = readout_condition(lens, model, tok, cond["prompt"], band,
-                                   probe_ids, topk)
+                                   probe_ids, topk, span=span)
             row["lenses"][ln] = rd
             row["lexicon_summary"][ln] = lexicon_summary(
                 rd["probe_best_rank"], probes["resolved"])
@@ -255,6 +274,9 @@ def main() -> None:
                     help="alternate prompts JSON (default prompts_consciousness.json)")
     ap.add_argument("--conditions", default=None,
                     help="comma-separated condition ids (default: all)")
+    ap.add_argument("--span", action="store_true",
+                    help="read the J-lens across ALL prompt positions (min-rank over "
+                         "layer x position); fixes trailing-punctuation readouts")
     ap.add_argument("--skip-per-layer-topk", action="store_true",
                     help="drop per_layer_topk from JSON to shrink the receipt "
                          "(keeps cloud_topk + probe ranks)")
@@ -327,7 +349,7 @@ def main() -> None:
     }
 
     result = run_conditions(spec, model, hf, tok, lenses, band,
-                            args.topk, args.continue_tokens, only)
+                            args.topk, args.continue_tokens, only, span=args.span)
 
     if args.skip_per_layer_topk:
         for item in result["items"]:
