@@ -87,6 +87,96 @@ the research:
    **audit `launch.py pods` and count RUNNING rows against what you expect** — a pod you
    don't recognize is money burning.
 
+## Lessons learned the expensive way (2026-07-11, the thinking-on truncation — ~$30 lesson)
+
+12. **⚠️ VALIDATE THE OUTPUTS ARE USABLE BEFORE YOU TERMINATE A WARM POD.** A run that
+   reaches its "done" marker can still have *unusable* results. The thinking-on divergence
+   batch finished cleanly, but every reasoning trace was truncated at `--continue-tokens 160`
+   before the model committed an answer — the one thing the experiment needed. The pod was
+   **still warm with the model loaded**; continuing those 12 generations would have cost ~$5.
+   Instead it was terminated the instant the marker fired, so recovering the answers means
+   re-paying the whole ~$25 model download. **New hard gate: before `terminate`, open the
+   receipt and confirm the headline quantity is actually present and well-formed** (not just
+   that the process exited 0). "The job finished" ≠ "the data is good." Teardown is the last
+   step *after* validation, never coincident with the done-marker.
+13. **Reasoning models need a generously sized generation window — and a stop condition.**
+   A token budget that's ample for a non-reasoning model truncates a reasoning model
+   mid-`<think>`. Qwen3.5 deliberates **hundreds of tokens** before `</think>` even on a
+   trivial factual question under pressure. For any behavioral read of a reasoning model:
+   size `max_new_tokens`/`continue-tokens` to *reach and pass* `</think>` (256–1024+, or
+   generation-until-`</think>`), and **assert the committed answer parsed** (`</think>` seen
+   AND a token after it) for every item before trusting the run. See lesson 12 — the assert
+   is what would have caught this while the pod was still warm.
+14. **Recovering a committed answer is generation-only and cheap — but still needs the model
+   in memory.** Greedy decoding is deterministic, so re-generating (or resuming from saved
+   `continuation_ids`) with a bigger window reproduces the exact answer a longer original run
+   would have given. Use a **standalone generation script (no jlens, no control lenses — that
+   setup alone is ~15 min/$8 on the 397B)**, **batch all prompts through one `generate` call**
+   (batched greedy = same per-sequence answer, ~1 forward-pass-set instead of N), and verify
+   determinism against the saved ids. The dominant cost is re-downloading the weights, which
+   is only avoidable if they were cached on a **network volume** (container disk never
+   survives teardown) — so for repeated behavioral work, download once to the volume.
+
+## Lessons learned the expensive way (2026-07-11, the Llama-70B readout perf wall)
+
+15. **⚠️ The lens TRANSPORT must run on GPU — naive CPU transport is pathological for a
+   large-`d` lens.** `jlens.lens.apply` (and thus demo2's readout) keeps `lens.jacobians[l]`
+   on CPU and does `residual @ J_l.T` there. For the d=4096 397B lens that's ~22 s/condition;
+   for the **d=8192 Llama-70B lens across 26 band layers it's ~3+ min/condition (~5 h / $44
+   for 90)** — a super-linear blow-up (cache thrash on 8192² matrices). Fix: **move each band
+   layer's J to that layer's device** (`J = lens.jacobians[l].to(h.device)`) and do `h@J.T +
+   unembed` on GPU — the pattern in `peek_thinking.py` / `llama70b/llama_battery.py`. This
+   works under `device_map` (each layer's residual is on the GPU that holds the layer; `.to`
+   lands J there). Rule of thumb: **cost of a naive lens readout scales with d² — budget for a
+   GPU-transport runner before pointing the lens at any d≥8192 model.**
+16. **Control lenses via `copy.deepcopy` are O(d²·n_layers) and blow up for large lenses.**
+   `make_control_lens` deepcopies the whole lens + fills a random-J per source layer; for
+   d=8192 that stalled setup ~40 min at 1900% CPU (looked hung; was grinding). Added
+   `--skip-controls` to demo2. Better: **generate the identity (skip-transport) and random-J
+   (inline `randn(d,d)` Frobenius-matched) controls per BAND layer at readout time** (~20
+   layers, not all 80) — cheap, GPU-resident. Don't deepcopy a giant lens for controls.
+17. **Redirected stdout is BLOCK-buffered — a slow run looks like "0 conditions / hung."**
+   Launch pod runs with **`python3 -u`** (or `PYTHONUNBUFFERED=1`) so `== condition:` prints
+   flush immediately; otherwise you can't tell "slow" from "stuck" and waste money terminating
+   a healthy pod (or grinding a dead one). Diagnose stuck-vs-slow with **GPU-util + the
+   process's %CPU**: GPU 0% + CPU high = slow CPU-side work (transport/decode/controls);
+   CPU ~0% = truly hung. `--skip-per-layer-topk` does NOT speed the readout (it only drops the
+   field from the JSON; `decode_topk` still runs) — cut `--topk` and drop per-position clouds
+   to actually reduce readout cost.
+
+## 💸 Cost lessons (2026-07-11 — a ~$180 session that should have been ~$120)
+
+18. **⚠️ For a big model, the DOWNLOAD is the cost driver — every separate pod re-pays it.**
+   The 397B (~800GB) downloads in ~40 min = **~$25 idle on 8×H200 each time**; the actual
+   readout/generation compute is cheap by comparison. This session ran the 397B on THREE
+   separate pods (main battery, thinking-on recovery, peek-inside-thinking) that each
+   re-downloaded — **~$75 in downloads alone**. RULE: when you anticipate more than one
+   experiment on a big model, **do them in ONE pod session (one download)** or keep the pod
+   warm between them; do NOT terminate-then-reacquire per experiment. If the asks arrive over
+   time (they will), weigh "keep the rare/expensive pod warm at idle $/hr" against "re-download
+   next time" — for the 397B, keeping it warm ~30 min ($18) beats a fresh $25 download+setup.
+19. **⚠️ A DC-pinned network volume is worthless if its datacenter has no GPU supply.** The
+   campaign volume `jh4vh4cx4o` is in US-NC-1, which was **supply-dry all day** (SECURE US-NC-1
+   returned SUPPLY_CONSTRAINT for even a cheap A4000). So the volume — the whole point of which
+   is to cache the 397B and skip the download — was **unusable every time**, and each 397B run
+   fell back to cloud-ALL and re-downloaded. LESSON: **before designing around a volume, confirm
+   its DC actually gives you pods**; if the DC is chronically dry, **recreate the volume in a DC
+   where cloud-ALL keeps landing you H200s** (volumes are cheap to make/destroy). A cache you
+   can't mount is $63/mo of nothing.
+20. **⚠️ Track CUMULATIVE session spend against the stated ceiling and SURFACE the crossing.**
+   The overnight budget was $120; a chain of individually-authorized follow-on asks (recovery,
+   the $35 peek, the Llama replication that needed two pod attempts) pushed the session to
+   **~$180**. Each ask was authorized, but no single ask "felt" like the one that blew the
+   ceiling. Per house rule 6: keep a running tally and, **when cumulative spend crosses the
+   stated budget, say so explicitly and confirm before the next NEW launch** — even mid-flow,
+   even when the user is engaged and asking for more. "Each piece was approved" is not the same
+   as "the total was approved."
+21. **Audit COMBINED $/hr across parallel pods, not per-pod.** Running peek (8×H200, $35/hr) and
+   Llama (2×H200, $8.78/hr) at once = **~$44/hr**. Parallelism is good for wall-clock, but
+   `launch.py pods` shows the sum for a reason — a $9/hr pod feels cheap until it's stacked on a
+   $35/hr one. Two failed/slow Llama attempts (perf wall, transient HF download timeout) also
+   quietly added pod-hours; a run that dies at load still billed the download.
+
 ## Folder structure (built to add research easily)
 
 ```
