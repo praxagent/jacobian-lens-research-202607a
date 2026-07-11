@@ -196,48 +196,72 @@ def main() -> None:
                     "", "baseline (reconstructed from published lens)"])
         fcsv.flush()
 
-    while n_done < args.target_n:
-        t0 = time.time()
-        # their loop: one-longer prefix + resume -> processes exactly the new prompts
-        lens = jlens.fit(model, prompts[: next_idx + 1],
-                         dim_batch=args.dim_batch, max_seq_len=args.max_seq_len,
-                         checkpoint_path=str(ckpt_local), checkpoint_every=1,
-                         resume=True)
-        state = torch.load(ckpt_local, map_location="cpu", weights_only=True)
-        new_done, next_idx = state["n_done"], state["next_idx"]
-        cur_mean = {l: s.float() / new_done
-                    for l, s in state["jacobian_sum"].items()}
-        note = ""
-        if new_done == n_done:
-            note = f"prompt idx {next_idx - 1} skipped (too short)"
-            print(f"  {note}")
-        else:
-            mrc = mean_rel_change(prev_mean, cur_mean)
-            w.writerow([new_done, next_idx, round(time.time() - t0, 1),
-                        round(identity_distance(cur_mean), 6), round(mrc, 8), ""])
-            fcsv.flush()
-            print(f"  n={new_done} mean_rel_change={mrc:.6f} "
-                  f"({time.time() - t0:.0f}s)")
-        n_done, prev_mean = new_done, cur_mean
-        atomic_copy(ckpt_local, ckpt_sync)   # durable: kill-anywhere loses <=1 prompt
-        if args.hf_repo and not note:
-            cfg = sync / "config.yaml"
-            write_config_yaml(cfg, args, n_done,
-                              identity_distance(cur_mean), round(mrc, 8))
-            hf_push(args.hf_repo, csv_path,
-                    "jlens/wikitext/extension/convergence.csv",
-                    f"extension: n={n_done}")
-            hf_push(args.hf_repo, cfg, "jlens/wikitext/extension/config.yaml",
-                    f"extension: n={n_done}")
-        if n_done % args.snapshot_every == 0 or n_done >= args.target_n:
-            snap = sync / f"lens_n{n_done}.pt"
-            lens.save(str(work / "snap.pt"))
-            atomic_copy(work / "snap.pt", snap)
-            print(f"  snapshot -> {snap}")
-            if args.hf_repo:
-                hf_push(args.hf_repo, snap,
-                        f"jlens/wikitext/extension/lens_n{n_done}.pt",
-                        f"extension lens snapshot n={n_done}")
+    import threading
+    stop = threading.Event()
+    state_lock = {"prev": prev_mean, "n": n_done}
+
+    def sidecar():
+        """Watch THEIR checkpoint; on each new prompt: CSV row + volume sync + HF push.
+        Read-only wrt the fit — never touches fit state."""
+        last_mtime = 0.0
+        while not stop.is_set():
+            stop.wait(5.0)
+            try:
+                m = ckpt_local.stat().st_mtime
+                if m == last_mtime:
+                    continue
+                last_mtime = m
+                st = torch.load(ckpt_local, map_location="cpu", weights_only=True)
+                nd = st["n_done"]
+                if nd <= state_lock["n"]:
+                    continue
+                cur = {l: s.float() / nd for l, s in st["jacobian_sum"].items()}
+                mrc = mean_rel_change(state_lock["prev"], cur)
+                w.writerow([nd, st["next_idx"], "", round(identity_distance(cur), 6),
+                            round(mrc, 8), ""])
+                fcsv.flush()
+                print(f"  [sidecar] n={nd} mean_rel_change={mrc:.6f}")
+                state_lock["prev"], state_lock["n"] = cur, nd
+                atomic_copy(ckpt_local, ckpt_sync)
+                if args.hf_repo:
+                    cfg = sync / "config.yaml"
+                    write_config_yaml(cfg, args, nd, identity_distance(cur),
+                                      round(mrc, 8))
+                    hf_push(args.hf_repo, csv_path,
+                            "jlens/wikitext/extension/convergence.csv",
+                            f"extension: n={nd}")
+                    hf_push(args.hf_repo, cfg,
+                            "jlens/wikitext/extension/config.yaml",
+                            f"extension: n={nd}")
+                if nd % args.snapshot_every == 0:
+                    snap_state = {l: (s.float() / nd) for l, s in
+                                  st["jacobian_sum"].items()}
+                    tmp = work / f"snap_n{nd}.pt"
+                    torch.save({"J": {l: v.half() for l, v in snap_state.items()},
+                                "n_prompts": nd,
+                                "source_layers": st["source_layers"],
+                                "d_model": next(iter(snap_state.values())).shape[0]},
+                               tmp)
+                    atomic_copy(tmp, sync / f"lens_n{nd}.pt")
+                    if args.hf_repo:
+                        hf_push(args.hf_repo, sync / f"lens_n{nd}.pt",
+                                f"jlens/wikitext/extension/lens_n{nd}.pt",
+                                f"extension lens snapshot n={nd}")
+            except Exception as e:  # noqa: BLE001 — sidecar must never kill the fit
+                print(f"  [sidecar] skipped a tick: {type(e).__name__}: {str(e)[:70]}")
+
+    th = threading.Thread(target=sidecar, daemon=True)
+    th.start()
+    # ONE call into Anthropic's own loop — the resume path proven bitwise-exact
+    lens = jlens.fit(model, prompts, dim_batch=args.dim_batch,
+                     max_seq_len=args.max_seq_len,
+                     checkpoint_path=str(ckpt_local), checkpoint_every=1,
+                     resume=True)
+    stop.set(); th.join(timeout=30)
+    atomic_copy(ckpt_local, ckpt_sync)
+    lens.save(str(work / "final.pt"))
+    atomic_copy(work / "final.pt", sync / f"lens_n{lens.n_prompts}.pt")
+    n_done = lens.n_prompts
     fcsv.close()
     print(f"DONE at n={n_done}. Durable state: {ckpt_sync}, {csv_path}")
 
