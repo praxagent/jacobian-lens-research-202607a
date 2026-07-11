@@ -251,6 +251,8 @@ def main() -> None:
                     help="stamp fit-corpus size on the receipt (release=24)")
     ap.add_argument("--topk", type=int, default=DEFAULT_TOPK)
     ap.add_argument("--continue-tokens", type=int, default=DEFAULT_CONTINUE)
+    ap.add_argument("--prompts-file", default=None,
+                    help="alternate prompts JSON (default prompts_consciousness.json)")
     ap.add_argument("--conditions", default=None,
                     help="comma-separated condition ids (default: all)")
     ap.add_argument("--skip-per-layer-topk", action="store_true",
@@ -262,7 +264,7 @@ def main() -> None:
     import transformers
     from huggingface_hub import hf_hub_download
 
-    spec = load_spec()
+    spec = (json.load(open(args.prompts_file)) if args.prompts_file else load_spec())
     only = set(args.conditions.split(",")) if args.conditions else None
     dev = args.device if (args.device != "cuda" or torch.cuda.is_available()) else "cpu"
 
@@ -337,7 +339,7 @@ def main() -> None:
         "honesty": ("Not a consciousness test. Readout-only: does self-referential "
                     "prompting change J-lens-decodable workspace content vs controls?"),
         "reference": spec["_meta"].get("reference"),
-        "prompts_file": str(PROMPTS_FILE.name),
+        "prompts_file": (args.prompts_file or str(PROMPTS_FILE.name)),
         "model": hf_id,
         "lens_path": str(lens_path),
         "lens_sha256": lens_sha,
