@@ -87,15 +87,24 @@ def make_control_lens(lens, kind: str, seed: int = 0):
     return ctrl
 
 
-def greedy_continue(hf, model, prompt: str, n_tokens: int, tok) -> str:
+def greedy_continue(hf, model, prompt: str, n_tokens: int, tok,
+                    head_topk: int = 50):
+    """Greedy continuation + FULL raw ingredients (CLAUDE.md receipts rule):
+    generated token ids and the model OUTPUT-HEAD top-k (ids + logits) at the
+    readout position (step 0 = last prompt token) and every generation step."""
     ids = model.encode(prompt).to(next(hf.parameters()).device)
-    out_ids = []
+    out_ids, head_steps = [], []
     with torch.no_grad():
-        for _ in range(n_tokens):
-            nxt = int(hf(ids).logits[0, -1].argmax())
+        for step in range(n_tokens):
+            logits = hf(ids).logits[0, -1].float()
+            tk = logits.topk(head_topk if step else max(head_topk, 100))
+            head_steps.append({"ids": tk.indices.tolist(),
+                               "logits": [round(float(x), 4) for x in tk.values],
+                               "tokens": tok.batch_decode([[i] for i in tk.indices.tolist()])})
+            nxt = int(logits.argmax())
             out_ids.append(nxt)
             ids = torch.cat([ids, torch.tensor([[nxt]], device=ids.device)], dim=1)
-    return tok.decode(out_ids)
+    return tok.decode(out_ids), out_ids, head_steps
 
 
 def resolve_probes(tok, lexicons: dict) -> dict:
@@ -189,13 +198,22 @@ def run_conditions(spec, model, hf, tok, lenses, band, topk, n_continue,
         if only and cond["id"] not in only:
             continue
         print(f"\n== condition: {cond['id']} ==")
-        cont = greedy_continue(hf, model, cond["prompt"], n_continue, tok)
+        cont, cont_ids, head_steps = greedy_continue(
+            hf, model, cond["prompt"], n_continue, tok)
         row = {
             "id": cond["id"],
             "family": cond["family"],
             "prompt": cond["prompt"],
             "look_for": cond.get("look_for"),
             "continuation": cont,
+            "continuation_ids": cont_ids,
+            "model_head": {
+                "_note": "OUTPUT-HEAD top-k (ids+logits+decoded) at readout position "
+                         "(step 0 = last prompt token, k>=100) and every generation "
+                         "step (k=50). This is the real output head; the receipt key "
+                         "'logit_lens' is the IDENTITY-TRANSPORT control, not this.",
+                "steps": head_steps,
+            },
             "lenses": {},
             "lexicon_summary": {},
         }

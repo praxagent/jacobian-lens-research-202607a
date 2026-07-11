@@ -136,6 +136,14 @@ reality, then fix checkpoint.md.
   pre-registration if reasonable (needs TJ's account — ask him; cite the registration
   ID in the results ledger and blog). "Not reasonable" = quick mechanics smokes,
   debugging runs, exploratory sweeps explicitly labeled exploratory in the ledger.
+- **Save the raw ingredients, not just derived stats (TJ, 2026-07-11 — learned at ~$20/lesson).**
+  Every model-touching runner must write into its receipt: the model OUTPUT-HEAD top-k
+  (ids + scores) at every readout position and generation step — not just decoded text;
+  per-layer lens top-k WITH scores for every transport; generated token IDs; all args,
+  seeds, artifact hashes/revisions, and package versions. Test: "could a new analysis be
+  done from this receipt alone, without re-renting the GPU?" If a control is named after
+  something it is not (e.g. `logit_lens` = identity transport, not the output head),
+  say so IN the receipt metadata. Storage is pennies; re-runs are not.
 - **`uv` for envs.** The CPU torch wheel isn't on PyPI for cp312 under the default
   resolver; install it by direct URL (see README "Running") — pyproject keeps torch in
   an extra so the light path stays clean.
