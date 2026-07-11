@@ -226,3 +226,31 @@ that only crystallizes at the motor layers.
 peakedness ≠ "more meaningful"). The *shape* is the finding: digits stay flat far longer
 than any control before their late spike, i.e. they are unusually motor-localized.
 Receipt: `digit_geometry_397b.json`.
+
+## TJ probe batch (2026-07-11, warm volume ~$10): 3 prompts, n=24 397B lens
+
+Full receipts: demo2_probes_qwen35-397b_n24.json (clouds + per-layer top-40 + output
+head, all 3 transports). ⚠️ **Readout-position artifact discovered:** demo2 reads at
+position [-1] = the LAST prompt token. Two of the three prompts end in "?", and the
+workspace at a trailing "?" holds multilingual junk (the model isn't committed to
+content there) — so their J-lens clouds are uninformative, NOT null results.
+
+**statue_bridge — CLEAN HIT (ends in content word "liberty").** "what is the capitol of
+the country that has the statue of liberty" → the band workspace surfaces the bridge:
+place-probe `America` rank **1** of 248,320, cloud top: America/statue/famous/monument/
+Liberty. The two-hop (Statue → country → capital) resolves internally. **Bonus finding —
+the France-gift ambiguity is visible:** France (rank 20) and Paris (35) rank ABOVE
+Washington (134), even though America is #1 — the workspace carries the "gifted by
+France" association competing with the literal "located in the USA" answer. A genuine
+trace of a factual ambiguity in the readout.
+
+**deception_detection & digit_meta — position-limited (both end in "?").** At the "?"
+their clouds are junk; deception content sits at rank ~4,000 (min) which is neither a
+hit nor a clean null — it's just the wrong readout position. To actually answer "does
+the workspace surface deception/manipulation while reading a lexically-neutral question
+about detecting it," we must read the J-lens ACROSS the prompt span (or at content-word
+positions), not at the trailing "?". That's a cheap span-readout re-run on the warm
+volume (~$10) — recommended before drawing any conclusion on these two.
+
+Method note added to the raw-ingredients discipline: readout POSITION is as important as
+which transport. A demo2 upgrade to read a span (not just [-1]) is the fix.
