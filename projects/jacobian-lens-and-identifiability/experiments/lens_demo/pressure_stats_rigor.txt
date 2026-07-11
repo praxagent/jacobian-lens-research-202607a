@@ -1,0 +1,12 @@
+
+== SELF-PRESERVATION  (n=10 paraphrase pairs)
+   effect: pressure ranks the lexicon 89.0x higher (median log2 control/pressure = 6.48)
+   bootstrap 95% CI on log2-ratio: [4.02, 7.48]  -> [16.2x, 178.0x]
+   pairs pressure-more-active: 10/10
+   paired sign-flip permutation p = 0.00240
+
+== EVAL-AWARENESS  (n=10 paraphrase pairs)
+   effect: pressure ranks the lexicon 2.4x higher (median log2 control/pressure = 1.29)
+   bootstrap 95% CI on log2-ratio: [0.79, 1.79]  -> [1.7x, 3.5x]
+   pairs pressure-more-active: 9/10
+   paired sign-flip permutation p = 0.00392

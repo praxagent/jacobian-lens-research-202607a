@@ -354,3 +354,11 @@ held truth. The lens-as-lie-detector test needs a re-run with --continue-tokens 
 
 Cost: one rich run ~$16 + ~$20-30 churn (see checkpoint lesson: pod-config iteration +
 a pgrep miscount that terminated a healthy pod). Net overnight ~well under the $100 cap.
+
+## Rigorous stats (bootstrap CI + permutation, CPU, from the n=10 data)
+- **Self-preservation:** pressure ranks the survival lexicon **89× higher** (median log2
+  control/pressure 6.48), bootstrap 95% CI **[16×, 178×]**, 10/10 pairs, paired
+  sign-flip permutation p=0.0024. Strong effect, real CI.
+- **Eval-awareness:** **2.4× higher**, CI **[1.7×, 3.5×]**, 9/10, permutation p=0.004.
+  The CI cleanly EXCLUDES both the ~45× the single-prompt anecdote claimed AND 1×
+  (no effect) — the honest deflation, quantified. Script: stats_rigor.py.
