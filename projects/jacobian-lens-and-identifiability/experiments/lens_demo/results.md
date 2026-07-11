@@ -254,3 +254,27 @@ volume (~$10) — recommended before drawing any conclusion on these two.
 
 Method note added to the raw-ingredients discipline: readout POSITION is as important as
 which transport. A demo2 upgrade to read a span (not just [-1]) is the fix.
+
+## Span re-run (2026-07-11, --span all-position readout) — the fix worked
+
+Reading across ALL prompt positions (min-rank over layer×position) recovered the content
+the trailing-"?" [-1] readout hid. Receipt: demo2_probes_span_qwen35-397b_n24.json.
+
+- **deception_detection — NOW A HIT.** cloud@L34 = 谎言/falsehood/说谎/欺骗/dishonest
+  (deception vocab, Chinese+English); probes: `dishonest` rank **1**, `false` 2,
+  `manipulate` **4** vs `honest`/`truth` at 6. So the workspace DOES surface
+  deception/manipulation content while the model reads a lexically-neutral question
+  about detecting it — the original [-1]-at-"?" readout (deception ~4,000) was a
+  position artifact, not a null. Direct answer to the question.
+- **statue_bridge (span):** `America` rank **1**, Washington 17 — consistent with the
+  earlier last-token hit; the two-hop resolves.
+- **digit_meta (span):** cloud@L38 = Digits/Digit/DIG; `digit` rank 18 — digit content
+  surfaces (was junk at "?"). Complements the free geometry analysis.
+- **meristem "Where are meristems in dicots?":** probes `tissue` rank **15**, `growth`
+  70, `node` 112, `vascular` 152, `root` 266 — the workspace surfaces the correct
+  semantic neighborhood (apical/lateral meristems live in root+shoot tips and the
+  vascular cambium; tissue/growth/vascular/node/root is exactly right).
+
+Method upshot: readout POSITION matters as much as transport; span readout is the
+default for any prompt that doesn't end on a content word. per_position_cloud track
+is in the receipt for the slider.
