@@ -1,11 +1,19 @@
-# research-and-replications
+# Jacobian Lens Research
 
-Open research and paper replications by **[praxagent](https://praxagent.ai)** — an
-independent, safety-first AI research & consultation org. Our aim is world-class open
-work: reproduce the field's important results honestly, ground them in theory, extend
-them where we can lead, and turn what we learn into a better harness and better advice.
-**Open by default, honest about what reproduced and what didn't, reproducible on modest
-hardware.**
+The repo `jacobian-lens-research-202607a` — a focused, open research campaign by
+**[praxagent](https://praxagent.ai)**, an independent, safety-first AI research &
+consultation org — on **reading the internals of large language models with the Jacobian
+lens**: the LLM "global workspace" (Anthropic's J-lens / J-space), what it does and does
+*not* reveal under pressure once you run the controls, and the nonlinear-ICA
+**identifiability** lineage it is read as vindicating — is the Jacobian's support really
+what makes a model's latents recoverable? One line of work carried end to end: fit our own
+lens on a frontier open-weights model, stress-test it, run the controls, and report
+honestly what held. **Open by default, honest about what reproduced and what didn't,
+reproducible on modest hardware.**
+
+This is one campaign, not a catch-all. Other praxagent research lines live in their own
+repositories; the dated slug (`…202607a`) marks this one, and later campaigns get their
+own.
 
 This repository is deliberately **separate from the Prax product harness**. Prax's
 code stays a lean, safety-first agentic harness; exploratory research — reproducing
