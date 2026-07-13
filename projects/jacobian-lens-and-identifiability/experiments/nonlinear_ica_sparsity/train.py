@@ -217,6 +217,8 @@ def main() -> None:
     src_dist = "gaussian" if args.mode == "linear" else "laplace"
     print(f"mode={args.mode}  n={args.n}  samples={args.samples}  "
           f"sources={src_dist}  device={device}")
+    print(f"epochs={args.epochs}  l1={args.l1}  seed={args.seed}  "
+          f"argv={' '.join(sys.argv[1:])}")
     print("(identifiability predicts high MCC ONLY for sparse mixing + L1 on)\n")
 
     rows = []

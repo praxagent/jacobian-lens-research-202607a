@@ -31,3 +31,7 @@ projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_wc_main_q
 projects/jacobian-lens-and-identifiability/experiments/lens_demo/demo2_wc_thinkon_qwen35-397b_n24.json
 projects/jacobian-lens-and-identifiability/experiments/lens_demo/*.json.gz
 projects/jacobian-lens-and-identifiability/experiments/lens_demo/peek_thinking_receipt.json
+
+# Blog post working drafts — the published blog lives in the separate praxagent repo.
+# Keep drafts here next to the data, but never commit them to this public research repo.
+blog/
