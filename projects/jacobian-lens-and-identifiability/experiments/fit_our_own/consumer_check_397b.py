@@ -1,7 +1,7 @@
 """Consumer-path verification of the published 397B lens (release battery item 3).
 
 Simulates an independent user: download the lens from the public HF repo
-(praxagent/jacobian-lens-qwen3.5-397b-a17b), verify its sha256 against the pod-original
+(praxagent-org/jacobian-lens-qwen3.5-397b-a17b), verify its sha256 against the pod-original
 receipt, and recompute the band statistic from the public copy — same probe pipeline as
 fit_at_scale.py (seed 0, n_probe 4096, U from the base model's lm_head) — then compare
 to the shipped band.json (mid_sep +0.3434).
@@ -28,7 +28,7 @@ from cka_layers import band_stats  # noqa: E402
 sys.path.insert(0, str(HERE.parents[1]))
 from common.cka import linear_cka  # noqa: E402
 
-LENS_REPO = "praxagent/jacobian-lens-qwen3.5-397b-a17b"
+LENS_REPO = "praxagent-org/jacobian-lens-qwen3.5-397b-a17b"
 LENS_FILE = "jlens/wikitext/qwen35_397b.pt"
 BASE_MODEL = "Qwen/Qwen3.5-397B-A17B"
 POD_SHA256 = "668c3bf17305b0d52495cb7ba589a1c1173301b1d13c3c6ad84e58245dc99e97"

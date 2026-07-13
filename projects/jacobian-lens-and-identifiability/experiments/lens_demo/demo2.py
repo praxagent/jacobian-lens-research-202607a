@@ -21,7 +21,7 @@ Run (cheap smoke, Neuronpedia lens):
 Run (397B release lens on a hot pod — does not touch demo.py):
     python demo2.py \
       --big-model Qwen/Qwen3.5-397B-A17B:model.language_model \
-      --lens-hf praxagent/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
+      --lens-hf praxagent-org/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
       --expected-sha256 668c3bf17305b0d52495cb7ba589a1c1173301b1d13c3c6ad84e58245dc99e97 \
       --lens-fit-n 24 \
       --out demo2_consciousness_qwen35-397b_n24.json

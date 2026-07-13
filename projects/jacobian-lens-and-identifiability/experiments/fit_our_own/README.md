@@ -48,5 +48,5 @@ roughly halve it.)
 **RUN (complete)** — see [`results.md`](results.md): gpt2 validation gate PASSED (CKA
 0.9992 vs Neuronpedia), qwen3-4b 3-seed stability (0.997–0.998), Chinese-corpus lens,
 n-scaling convergence curve, and the **397B frontier fit** (mid_sep +0.343 at n=24; lens
-published at `praxagent/jacobian-lens-qwen3.5-397b-a17b` with eval receipts +
+published at `praxagent-org/jacobian-lens-qwen3.5-397b-a17b` with eval receipts +
 `consumer_check_397b.py` independent-verification script).

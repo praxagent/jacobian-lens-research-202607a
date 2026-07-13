@@ -147,7 +147,7 @@ def peek_one(model, hf, tok, lens, band, final, probes, prompt_ids, new_ids, foc
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--big-model", default="Qwen/Qwen3.5-397B-A17B:model.language_model")
-    ap.add_argument("--lens-hf", default="praxagent/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt")
+    ap.add_argument("--lens-hf", default="praxagent-org/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt")
     ap.add_argument("--lens-file", default=None, help="local lens .pt (CPU smoke; overrides --lens-hf)")
     ap.add_argument("--expected-sha256", default="668c3bf17305b0d52495cb7ba589a1c1173301b1d13c3c6ad84e58245dc99e97")
     ap.add_argument("--traces", default="recover_thinkon_answers_v2.json")

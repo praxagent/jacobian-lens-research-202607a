@@ -1,6 +1,6 @@
 # lens_demo — release verification + demo of the published 397B Jacobian lens
 
-**Goal:** before flipping `praxagent/jacobian-lens-qwen3.5-397b-a17b` public, run an
+**Goal:** before flipping `praxagent-org/jacobian-lens-qwen3.5-397b-a17b` public, run an
 independent trial on a fresh pod that pulls the model from Qwen's HF repo and the lens
 from ours, and does things that **could only work if the lens is legit** — modeled on
 the demos in Anthropic's J-space paper. The verification run and the blog demo are the
@@ -70,7 +70,7 @@ python demo.py --slug qwen3-4b --device cuda
 python demo.py --slug qwen3.5-27b --device cuda
 # the 397B verification (8×H200 fresh pod)
 python demo.py --big-model Qwen/Qwen3.5-397B-A17B:model.language_model \
-  --lens-hf praxagent/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
+  --lens-hf praxagent-org/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
   --out demo_qwen35-397b.json
 ```
 

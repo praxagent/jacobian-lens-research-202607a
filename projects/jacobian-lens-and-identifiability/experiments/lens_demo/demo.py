@@ -36,7 +36,7 @@ Run (validation, Neuronpedia lens):
     python demo.py --slug qwen3-4b --device cuda
 Run (the published 397B lens, fresh pod — the independent verification):
     python demo.py --big-model Qwen/Qwen3.5-397B-A17B:model.language_model \
-        --lens-hf praxagent/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
+        --lens-hf praxagent-org/jacobian-lens-qwen3.5-397b-a17b:jlens/wikitext/qwen35_397b.pt \
         --out demo_qwen35-397b.json
 """
 from __future__ import annotations

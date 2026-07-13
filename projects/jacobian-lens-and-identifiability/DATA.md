@@ -37,7 +37,7 @@ within_mid, within_early, within_late`. Higher `mid_sep` = more distinct workspa
   The Chinese lens (`qwen4b_zh.pt`) is the one genuinely novel artifact others might want
   — **TODO: offer via HF or Git LFS if requested** (currently preserved on the dev box).
 - **The 397B lens** (`artifacts/lenses-397b/qwen35_397b_dm.pt`, 1.98 GB): **published on
-  HF** at [praxagent/jacobian-lens-qwen3.5-397b-a17b](https://huggingface.co/praxagent/jacobian-lens-qwen3.5-397b-a17b)
+  HF** at [praxagent-org/jacobian-lens-qwen3.5-397b-a17b](https://huggingface.co/praxagent-org/jacobian-lens-qwen3.5-397b-a17b)
   with all fit/eval receipts and pod-original SHA256s. `consumer_check_397b.py`
   re-verifies the public copy end-to-end (hash + band recompute) on a small CPU box.
 - **HuggingFace model cache**: re-downloads free.

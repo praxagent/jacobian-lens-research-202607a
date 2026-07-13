@@ -53,7 +53,7 @@ def hf_push(repo: str, local: Path, path_in_repo: str, msg: str) -> None:
 def write_config_yaml(path: Path, args, n_done: int, ident: float, mrc) -> None:
     """Neuronpedia-format fit record (their config.yaml shape), updated per push."""
     path.write_text(f"""# Jacobian lens EXTENSION — praxagent extend_lens.py
-# Continues the published n=24 lens (praxagent/jacobian-lens-qwen3.5-397b-a17b,
+# Continues the published n=24 lens (praxagent-org/jacobian-lens-qwen3.5-397b-a17b,
 # sha256 668c3bf1...) on the same seed-0 wikitext stream, via Anthropic's jlens.fit
 # resume loop. Bootstrap note: the published J is fp16, so the reconstructed running
 # sum carries that rounding at weight 24/n. Formulas: mean_rel_change(n) =

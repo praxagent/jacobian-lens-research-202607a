@@ -74,7 +74,7 @@ paradigms (local-global, trace conditioning, inclusion/exclusion) still open.
 ## 3. Frontier lens fit — ✅ **DONE** (2026-07-10; actual cost ≈ $330–350 across 2 attempts)
 **Qwen3.5-397B-A17B fit at n=24: mid_sep = +0.343** — strongest band measured in the
 project; the "sub-70B transient" limitation is refuted as a measured point. Lens + all
-receipts published: `praxagent/jacobian-lens-qwen3.5-397b-a17b` on HF (private until
+receipts published: `praxagent-org/jacobian-lens-qwen3.5-397b-a17b` on HF (private until
 release). Full story incl. the device_map/TP saga: `experiments/fit_our_own/results.md`
 §5–6.
 

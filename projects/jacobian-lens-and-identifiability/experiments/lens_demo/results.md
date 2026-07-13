@@ -65,7 +65,7 @@ Receipts: `demo_qwen3.5-27b.json`, `demo_gate.log`. Pod terminated (verified emp
 ## 🎯 Qwen3.5-397B-A17B — THE RELEASE VERIFICATION (2026-07-10, 8×H200 @ $35.12/hr, 22 min ≈ $13)
 
 Fresh pod (`irwdny6uop1ssd`), nothing reused: model pulled from `Qwen/Qwen3.5-397B-A17B`,
-lens pulled from `praxagent/jacobian-lens-qwen3.5-397b-a17b` — **downloaded-lens sha256
+lens pulled from `praxagent-org/jacobian-lens-qwen3.5-397b-a17b` — **downloaded-lens sha256
 = `668c3bf1…99e97`, exactly the pod-original receipt** (the integrity check is inside
 the demo itself). Acts 2+3 per the pre-registered gates (`8102510`). Token passed via
 stdin env; never written to pod disk. Pod terminated at +22 min; `pods` audited.
