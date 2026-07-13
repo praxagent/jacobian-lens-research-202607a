@@ -44,7 +44,12 @@ transient.
 
 ## Fit configuration (exact)
 
-- jlens `fit()` — `J_l = E[∂h_final/∂h_l]`, all 60 source layers, target = final layer
+- jlens `fit()` — `J_l = E[∂h_final/∂h_l]` for each of the **59 source layers, indices
+  0–58** (every decoder layer except the last). Qwen3.5-397B-A17B has **60 layers total
+  (0–59)**; layer 59 is the **target** `h_final` that the lens transports *toward*, so it
+  is not itself a source. The artifact therefore holds 59 Jacobians
+  (`source_layers = [0, 1, …, 58]`). The workspace-readout demos use the middle-third
+  **band: layers 19–38** (20 layers).
 - **n = 24 prompts**, wikitext-103 (`Salesforce/wikitext`, seed 0), `max_seq_len 128`,
   `dim_batch 16`
 - Model loaded as `Qwen3_5MoeForConditionalGeneration` (⚠️ NOT `AutoModelForCausalLM`,
