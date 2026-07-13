@@ -63,8 +63,11 @@ def run_linear(x: np.ndarray, s: np.ndarray, l1: float, device: str,
     when it is dense, no sparse rotation exists and MCC stays near chance.
 
     Q is parametrized as matrix_exp(P - P^T) so it stays exactly orthogonal and
-    whitening is preserved by construction. l1=0 disables the identifying term
-    (ablation): the rotation is then unconstrained -> chance-level MCC.
+    whitening is preserved by construction. l1=0 does NOT ablate the estimator; it
+    returns a single random orthogonal rotation -- a *gauge baseline*, not the
+    minimal-support estimator with the penalty removed. (MCC's generous optimal
+    matching lifts even a random rotation well above the 1/sqrt(n) floor, so this
+    baseline scores ~0.65 at n=8, not the naive ~0.35.)
     """
     n = x.shape[1]
     X = torch.tensor(x, dtype=torch.float32, device=device)
@@ -79,7 +82,7 @@ def run_linear(x: np.ndarray, s: np.ndarray, l1: float, device: str,
         return A_hat, S_hat
 
     if l1 <= 0:
-        # Ablation: no identifying signal -> an arbitrary rotation (chance gauge).
+        # Gauge baseline: a single random orthogonal rotation (NOT a penalty ablation).
         with torch.no_grad():
             P = torch.randn(n, n, device=device)
             _, S_hat = recover(torch.matrix_exp(P - P.T))
