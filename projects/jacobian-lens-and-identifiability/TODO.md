@@ -87,4 +87,4 @@ release). Full story incl. the device_map/TP saga: `experiments/fit_our_own/resu
 
 ## Landing today from the box (not new work)
 70B anchor · shared-vocab confound verdict · precision A/B · final figure → fill the
-four `[PENDING-*]` slots in `blog/jspace-audit/index.md`.
+four `[PENDING-*]` slots in the jspace-audit write-up (moved to the praxagent blog).

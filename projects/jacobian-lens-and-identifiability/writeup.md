@@ -21,7 +21,7 @@ families) using the publicly released lenses, and asked the question the framing
 **is the "workspace band" universal, and where does it emerge?**
 
 > **⚠️ 2026-07-10: this file is the historical working notes; the finished draft with
-> all FINAL numbers is [`blog/jspace-audit/index.md`](../../blog/jspace-audit/index.md).
+> all FINAL numbers moved to the praxagent blog; the numbers also live in [`experiments/jacobian_lens/results.md`](experiments/jacobian_lens/results.md).
 > Two late results materially revised the story told below: (1) the shared-vocab
 > re-sweep showed the dramatic family gap was mostly tokenizer artifact (Gemma-3-27B
 > 0.025 own-vocab → 0.298 shared, the strongest band in the sweep; family means 6.2× →
