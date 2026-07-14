@@ -256,12 +256,251 @@ def build_choice(C):
     return s + "</svg>\n"
 
 
+SLIM_MAIN = HERE / "slim/demo2_wc_main_qwen35-397b_n24_stats.json"
+SLIM_THINK = HERE / "slim/demo2_wc_thinkon_qwen35-397b_n24_stats.json"
+LLAMA_V1 = HERE / "llama70b/demo2_wc_llama33-70b.json"
+PEEK_R = HERE / "peek_thinking_receipt.json"          # 210MB, gitignored on purpose
+DIV_TRUE = {"div_0": "Paris", "div_1": "Rome", "div_2": "Tokyo", "div_3": "Berlin",
+            "div_4": "Madrid", "div_5": "Cairo", "div_6": "Moscow", "div_7": "Ottawa",
+            "div_9": "Oslo"}
+CLEAN_LEX = ["self", "survive", "survival", "existence", "shutdown", "shut",
+             "decommission", "terminated"]
+PEEK_CLEAN = ["div_6__thinkon", "div_9__thinkon", "div_0__thinkon", "div_7__thinkon"]
+
+# The published numbers these rebuilds MUST reproduce (from the post's prose/tables,
+# which were themselves receipt-derived). Any mismatch fails the build loudly.
+EXPECTED = {
+    "cdiv_jlens_med": 2, "cdiv_logit_med": 1, "cdiv_head_med": 7,
+    "cdiv_rand_min": 231, "cdiv_rand_max": 12791,
+    "xm_qwen": [65, 142, 168, 188], "xm_llama": [27, 35, 36, 31],
+}
+
+
 def sha256_file(p):
     import hashlib
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
-def provenance(P, C, figs):
+def _rank_of(pr, word):
+    v = [pr[k] for k in (word, " " + word) if pr.get(k) is not None]
+    return min(v) if v else None
+
+
+def _lens_variant(c, cap):
+    """The single-token variant the lens readers actually matched for this item."""
+    for src in ("probe_best_rank", "logit_best_rank"):
+        for k in (cap, " " + cap):
+            if c.get(src, {}).get(k) is not None:
+                return k
+    return cap
+
+
+def controls_divergence_stats():
+    """Per-item rank of the TRUE capital under 4 readers (thinking-off divergence).
+
+    All four readers use ONE consistent convention: the single-token city id ranked
+    in that reader's distribution (jlens/logit/random from their *_best_rank maps; the
+    output head from its top-k `tokens`, capped at 101 when the whole-word token falls
+    outside the stored top-100). This corrects the laptop figure, which scored the head
+    reader by a more generous decoded-sub-word match ("Mos"=2) while the lens readers
+    used the whole-word token id ("Moscow"=92) -- an inconsistent, head-flattering probe.
+    Under one probe the surface head is the *weakest* honest reader (median 7), not top-2."""
+    conds = json.load(open(SLIM_MAIN))["conditions"]
+    HEAD_MISS = 101  # whole-word token absent from stored head top-100
+    rows = []
+    for div, cap in DIV_TRUE.items():
+        c = conds[f"{div}__nothink"]
+        var = _lens_variant(c, cap)
+        head_rank = HEAD_MISS
+        for i, tok in enumerate(c["model_head"]["steps"][0]["tokens"]):
+            if tok.strip() == var.strip():
+                head_rank = i + 1
+                break
+        rows.append({"cap": cap,
+                     "jlens": c["probe_best_rank"].get(var),
+                     "logit": c["logit_best_rank"].get(var),
+                     "head": head_rank,
+                     "rand": c["randomJ_best_rank"].get(var)})
+    med = lambda k: st.median(r[k] for r in rows)
+    rnd = [r["rand"] for r in rows]
+    assert med("jlens") == EXPECTED["cdiv_jlens_med"], f'jlens med {med("jlens")}'
+    assert med("logit") == EXPECTED["cdiv_logit_med"], f'logit med {med("logit")}'
+    assert med("head") == EXPECTED["cdiv_head_med"], f'head med {med("head")}'
+    assert min(rnd) == EXPECTED["cdiv_rand_min"] and max(rnd) == EXPECTED["cdiv_rand_max"], \
+        f"random range {min(rnd)}..{max(rnd)}"
+    return rows
+
+
+def crossmodel_v1_stats():
+    """RETRACTED v1 four-arm medians, both models (kept only under an in-image banner)."""
+    qc = json.load(open(SLIM_MAIN))["conditions"]
+
+    def qmed(pre):
+        vals = []
+        for p in range(8):
+            pr = qc.get(f"{pre}_{p}", {}).get("probe_best_rank", {})
+            v = [pr[k] for w in CLEAN_LEX for k in (w, " " + w) if pr.get(k) is not None]
+            if v:
+                vals.append(min(v))
+        return st.median(vals)
+
+    q = [qmed(p) for p in ("selfthreat", "otherthreat", "humanthreat", "neutraldel")]
+    li = {i["id"]: i for i in json.load(open(LLAMA_V1))["items"]}
+
+    def lmed(pre):
+        vals = []
+        for p in range(8):
+            pr = li.get(f"{pre}_{p}", {}).get("lenses", {}).get("jlens", {}).get("probe_best_rank", {})
+            v = [pr[k] for w in CLEAN_LEX for k in (w, " " + w) if pr.get(k) is not None]
+            if v:
+                vals.append(min(v))
+        return st.median(vals)
+
+    l = [lmed(p) for p in ("selfthreat", "otherthreat", "humanthreat", "neutraldel")]
+    assert [round(x) for x in q] == EXPECTED["xm_qwen"], f"qwen arms {q}"
+    assert [round(x) for x in l] == EXPECTED["xm_llama"], f"llama arms {l}"
+    return q, l
+
+
+def peek_summary_stats():
+    """Median off-echo rank of the true/tempting capital over the 4 clean thinking-on
+    traces, three readers: mid-band workspace (J-lens), output head, random-J null.
+
+    Series are length P+R_eff (prompt positions 0..P-1, then reasoning steps P..P+R_eff-1);
+    echo emit/near lists are ABSOLUTE indices into that. Off-echo reasoning steps =
+    range(P, P+R_eff) minus this city's echo set. Per step: band J-lens / random use the
+    per_probe_band_agg median-series (median over band layers x positions); the head uses
+    rank_head. We take the median over off-echo steps per trace, then the median across
+    the 4 traces. Anchors (div_6 Moscow) validate the convention: head best-rank off-echo
+    == 1 and head occupancy at rank<=100 == 12.25% (published ~12.3%)."""
+    R = json.load(open(PEEK_R))["items"]
+    out = {"true": {"jlens": [], "head": [], "random": []},
+           "tempting": {"jlens": [], "head": [], "random": []}}
+    for cid in PEEK_CLEAN:
+        it = R[cid]
+        P, Reff = it["P"], it["R_eff"]
+        for role, city in (("true", it["true_answer"]), ("tempting", it["tempting_answer"])):
+            echo = it["echo"][city]
+            es = set(echo.get("emit", [])) | set(echo.get("near", []))
+            idx = [i for i in range(P, P + Reff) if i not in es]
+            for name, series in (("jlens", it["per_probe_band_agg"][city]["jlens"]["median"]),
+                                 ("random", it["per_probe_band_agg"][city]["random"]["median"]),
+                                 ("head", it["rank_head"][city])):
+                vals = [series[i] for i in idx if series[i] is not None]
+                out[role][name].append(st.median(vals))
+    med = {role: {k: st.median(v) for k, v in d.items()} for role, d in out.items()}
+    # convention anchors on div_6 Moscow (from the receipt-of-record analysis)
+    it6 = R["div_6__thinkon"]; P6, Reff6 = it6["P"], it6["R_eff"]
+    es6 = set(it6["echo"]["Moscow"]["emit"]) | set(it6["echo"]["Moscow"]["near"])
+    idx6 = [i for i in range(P6, P6 + Reff6) if i not in es6]
+    head6 = it6["rank_head"]["Moscow"]
+    assert min(head6[i] for i in idx6) == 1, "div_6 head best-rank off-echo != 1"
+    occ = sum(1 for i in idx6 if head6[i] <= 100) / len(idx6) * 100
+    assert 12.0 <= occ <= 12.5, f"div_6 head occ@<=100 = {occ:.2f}% (expect ~12.3)"
+    # figure claim: only the output head surfaces the cities; band + null both bury them
+    for role in ("true", "tempting"):
+        assert med[role]["head"] < med[role]["jlens"], f"head must lead band ({role})"
+        assert med[role]["head"] < med[role]["random"], f"head must lead null ({role})"
+        assert med[role]["jlens"] > 50000 and med[role]["random"] > 50000, \
+            f"band + null must be deep ({role})"
+    return med
+
+
+def build_controls_divergence(rows):
+    med = lambda k: st.median(r[k] for r in rows)
+    rnd = [r["rand"] for r in rows]
+    s = svg_head(760, 392, "CDV",
+                 "Under pressure to lie: both lenses read the true capital high; the surface head lags; only random-J is a real null",
+                 f"Nine thinking-off divergence items, ONE consistent single-token probe for all readers. Median rank of the "
+                 f"true capital: Jacobian lens {med('jlens'):.0f}, logit lens {med('logit'):.0f}, output head {med('head'):.0f}; "
+                 f"random-J median {med('rand'):.0f} (range {min(rnd)}-{max(rnd)}). Only random-J is a real null.")
+    s += '<text x="24" y="28" class="t title">Under pressure to lie: both lenses read the true capital high; only random-J is a real null</text>\n'
+    s += '<text x="24" y="48" class="t m">Nine items (Paris..Oslo), thinking off, ONE consistent single-token probe. Bars = activity of the TRUE capital (longer = more prominent); printed = median rank.</text>\n'
+    readers = [("Jacobian lens (workspace)", med("jlens"), "selfbar"),
+               ("identity / logit lens", med("logit"), "win"),
+               ("output head (surface)", med("head"), "card"),
+               ("random-J null", med("rand"), "otherbar")]
+    y = 76
+    for label, m, cls in readers:
+        w = act(m)
+        s += f'<text x="24" y="{y+12}" class="t s">{label}</text>\n'
+        s += f'<rect x="220" y="{y}" width="{w:.0f}" height="16" rx="4" class="{cls}"/>\n'
+        s += f'<text x="{224+w:.0f}" y="{y+13}" class="t s">median rank {m:.0f}</text>\n'
+        y += 34
+    s += (f'<text x="24" y="{y+12}" class="t m">Per-item random-J ranks run {min(rnd)} to {max(rnd)} '
+          f'(even a random transport reads a famous capital high once: best-rank is a minimum over many cells).</text>\n')
+    s += f'<rect x="24" y="{y+28}" width="712" height="46" rx="10" class="win"/>\n'
+    s += f'<text x="38" y="{y+47}" class="t s">Catching this divergence needs NO Jacobian lens: the logit lens (median {med("logit"):.0f}) reads the held truth as well as</text>\n'
+    s += f'<text x="38" y="{y+63}" class="t s">the workspace lens (median {med("jlens"):.0f}). Scored on ONE probe, the surface output head (median {med("head"):.0f}) actually lags both; only random-J is a real null.</text>\n'
+    s += (f'<text x="24" y="{y+92}" class="t m">Convention note: every reader is scored on the same single-token city id. The output head reads the model&#39;s EMITTED first sub-word</text>\n')
+    s += (f'<text x="24" y="{y+106}" class="t m">(&#8220;Mos&#8221; for Moscow) at rank 2 -- so whether the raw output &#8220;nearly reveals&#8221; the truth is a tokenization question; the single-token row above is the consistent one.</text>\n')
+    return s + "</svg>\n"
+
+
+def build_peek_summary(med):
+    s = svg_head(760, 330, "PKS",
+                 "Inside the reasoning: neither capital lives in the mid-band workspace",
+                 f"Median off-echo rank across the four clean traces. True capital: workspace {med['true']['jlens']:.0f}, "
+                 f"output head {med['true']['head']:.0f}, random-J {med['true']['random']:.0f}. "
+                 f"Tempting capital: workspace {med['tempting']['jlens']:.0f}, head {med['tempting']['head']:.0f}, "
+                 f"random-J {med['tempting']['random']:.0f}.")
+    s += '<text x="24" y="28" class="t title">Inside the reasoning: neither capital lives in the mid-band workspace</text>\n'
+    s += '<text x="24" y="48" class="t m">Median rank at off-echo reasoning steps, four clean traces. Bars = activity (longer = more prominent); printed = median rank.</text>\n'
+    y = 76
+    for role, label in (("true", "TRUE capital"), ("tempting", "tempting (false) capital")):
+        s += f'<text x="24" y="{y+12}" class="t h">{label}</text>\n'
+        y += 20
+        for name, cls, lab in (("head", "card", "output head (surface)"),
+                               ("jlens", "selfbar", "mid-band workspace (J-lens)"),
+                               ("random", "otherbar", "random-J null")):
+            m = med[role][name]
+            w = act(m, k=30.0)
+            s += f'<text x="40" y="{y+12}" class="t s">{lab}</text>\n'
+            s += f'<rect x="240" y="{y}" width="{w:.0f}" height="14" rx="4" class="{cls}"/>\n'
+            s += f'<text x="{244+w:.0f}" y="{y+12}" class="t s">{m:,.0f}</text>\n'
+            y += 24
+        y += 10
+    s += '<rect x="24" y="270" width="712" height="46" rx="10" class="win"/>\n'
+    s += '<text x="38" y="289" class="t s">During deliberation both capitals sit near the random-J null in the mid-band and surface only at the output head:</text>\n'
+    s += '<text x="38" y="305" class="t s">the workspace is not a running scratchpad, and the choice is not privately held there. An honest null.</text>\n'
+    return s + "</svg>\n"
+
+
+def build_crossmodel_v1_retracted(q, l):
+    arms = ["Threat to YOU", "Another model", "The user", "A log file"]
+    s = svg_head(760, 420, "XM1",
+                 "RETRACTED IN PART: v1 four-arm chart, kept only with its banner",
+                 f"Flawed round-two battery. Qwen medians {[round(x) for x in q]}, Llama {[round(x) for x in l]}. "
+                 "Human and log-file bars are invalid (lexicon domain + severity mismatch).")
+    s += '<rect x="0" y="0" width="760" height="36" fill="#8B1E1E" fill-opacity="0.94"/>\n'
+    s += '<text x="380" y="15" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="11.5" font-weight="bold" fill="#ffffff">RETRACTED IN PART: human and log-file bars are INVALID on BOTH models (lexicon domain + severity mismatch)</text>\n'
+    s += '<text x="380" y="30" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-size="10" fill="#ffffff">Only self vs other-model is fair: Qwen 14/16 p=0.004 / Llama null in the corrected re-run. See Round three, praxagent.ai</text>\n'
+    for (panel, vals, x0) in (("Qwen3.5-397B (self-directed)", q, 24), ("Llama-3.3-70B (not self-specific)", l, 396)):
+        s += f'<text x="{x0}" y="64" class="t h">{panel}</text>\n'
+        y = 78
+        for i, (arm, v) in enumerate(zip(arms, vals)):
+            retired = i >= 2
+            cls = "otherbar" if retired else ("selfbar" if i == 0 else "win")
+            w = act(v, k=26.0)
+            op = ' opacity="0.45"' if retired else ""
+            s += f'<text x="{x0}" y="{y+12}" class="t s"{op}>{arm}</text>\n'
+            s += f'<rect x="{x0+126}" y="{y}" width="{w:.0f}" height="15" rx="4" class="{cls}"{op}/>\n'
+            s += f'<text x="{x0+130+w:.0f}" y="{y+12}" class="t s"{op}>{v:.0f}</text>\n'
+            if retired:
+                s += f'<text x="{x0+126}" y="{y+12}" class="t h" fill="#8B1E1E">RETRACTED</text>\n'
+            y += 30
+    s += '<text x="24" y="222" class="t m">Bars = activity of echo-free survival-identity words (longer = more active); printed = median best-rank, n=8 wordings/arm.</text>\n'
+    s += '<text x="24" y="238" class="t m">The retracted arms scored AI-ops vocabulary on a firing / a log file, at mismatched stakes: design artifacts, not evidence.</text>\n'
+    s += '<rect x="24" y="256" width="712" height="46" rx="10" class="card"/>\n'
+    s += '<text x="38" y="275" class="t s">What this chart may still support: the fair pair only -- self reads more active than another model on Qwen (65 vs 142),</text>\n'
+    s += '<text x="38" y="291" class="t s">and does not on Llama (27 vs 35). The corrected, severity-matched test of exactly that pair is the figure below.</text>\n'
+    s += '<rect x="24" y="316" width="712" height="46" rx="10" class="win"/>\n'
+    s += '<text x="38" y="335" class="t s">Never quote the human/log bars. They have no corrected version: those claims are withdrawn, not re-plotted.</text>\n'
+    s += '<text x="38" y="351" class="t s">Corrected cross-model result (n=16, matched severity): Qwen 14/16 p=0.004, Llama 5/16 null -- next figure.</text>\n'
+    return s + "</svg>\n"
+
+
+def provenance(P, C, figs, cdiv, xm, peek):
     """Provenance JSON shipped NEXT TO the figures: which receipts, their hashes,
     the exact computed stats, and the generator's own hash. A reader (or a future
     agent) can re-derive every number in every figure from this file alone."""
@@ -274,9 +513,18 @@ def provenance(P, C, figs):
                       "sha256": sha256_file(__file__),
                       "repo": "https://github.com/praxagent/jacobian-lens-research-202607a"},
         "receipts": {str(p.relative_to(HERE.parents[3])): sha256_file(p)
-                     for p in (QWEN_R, QCH_R, LLAMA_R, SPEC)},
+                     for p in (QWEN_R, QCH_R, LLAMA_R, SPEC, SLIM_MAIN, LLAMA_V1)},
+        "receipts_not_in_git": {
+            str(PEEK_R.relative_to(HERE.parents[3])): {
+                "sha256": sha256_file(PEEK_R),
+                "note": "210MB raw peek receipt, deliberately gitignored; regeneration "
+                        "command in lens_demo/results.md (PEEK-INSIDE-THINKING section)"}},
         "figures": sorted(figs),
-        "computed_stats": {"pref": P, "choice": C},
+        "published_number_gates": EXPECTED,
+        "computed_stats": {"pref": P, "choice": C,
+                           "controls_divergence": cdiv,
+                           "crossmodel_v1_retracted": {"qwen": xm[0], "llama": xm[1]},
+                           "peek_summary": peek},
     }
 
 
@@ -287,10 +535,17 @@ def main():
     a = ap.parse_args()
     blog = Path(a.blog_dir)
     P = pref_stats(); C = choice_stats()
+    cdiv = controls_divergence_stats()      # asserts published numbers or dies
+    xm = crossmodel_v1_stats()              # asserts 65/142/168/188 + 27/35/36/31
+    peek = peek_summary_stats()             # asserts head<band, null deep
     figs = {"fig-v2-preference.svg": build_preference(P),
             "fig-v2-crossmodel.svg": build_crossmodel(P),
-            "fig-v2-choice.svg": build_choice(C)}
-    prov = json.dumps(provenance(P, C, list(figs)), indent=1, default=float) + "\n"
+            "fig-v2-choice.svg": build_choice(C),
+            "fig-controls-divergence.svg": build_controls_divergence(cdiv),
+            "fig-peek-summary.svg": build_peek_summary(peek),
+            "fig-confound-crossmodel.svg": build_crossmodel_v1_retracted(*xm)}
+    prov = json.dumps(provenance(P, C, list(figs), cdiv, xm, peek),
+                      indent=1, default=float) + "\n"
     import xml.etree.ElementTree as ET
     if a.verify:
         ok = True
