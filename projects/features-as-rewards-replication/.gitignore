@@ -1,0 +1,5 @@
+# smoke/real receipts are regenerable or committed selectively, not the throwaway ones
+experiments/*/receipts/smoke.json
+# Pro-review bulky payloads (the review.md + adjudication ARE committed into the freeze)
+out/plan_review/*/request_payload.json
+out/plan_review/run*.log
