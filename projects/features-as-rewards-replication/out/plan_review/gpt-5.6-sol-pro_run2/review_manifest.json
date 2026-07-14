@@ -1,0 +1,71 @@
+{
+  "actual_input_characters": 21728,
+  "api_url": "https://api.openai.com/v1/responses",
+  "artifacts": [
+    {
+      "bytes": 10596,
+      "characters": 10521,
+      "path": "/home/ubuntu/PRAX/research-and-replications/projects/features-as-rewards-replication/PROTOCOL.md",
+      "role": "complete experiment plan",
+      "sha256": "b0dfa6f49835d67dd05fbfb2b69c1e16c047b7f90031d3f1600b313a3e41bb46"
+    },
+    {
+      "bytes": 4637,
+      "characters": 4612,
+      "path": "/home/ubuntu/PRAX/research-and-replications/projects/features-as-rewards-replication/background.md",
+      "role": "bounded context 1",
+      "sha256": "4190832a31360471528176ddcb2fc5f0663b4139d16a2154af3d4b4d83c0b84b"
+    },
+    {
+      "bytes": 3702,
+      "characters": 3680,
+      "path": "/home/ubuntu/PRAX/research-and-replications/projects/features-as-rewards-replication/FEASIBILITY.md",
+      "role": "bounded context 2",
+      "sha256": "5f51098f143db151a23fa18086dc60142b55c5f2b2addad341121bbd31aa2d69"
+    }
+  ],
+  "background": false,
+  "budget_authorization_usd": 1.75,
+  "budget_notice": "This is a preflight authorization guard, not a provider billing hard stop. Pro-mode aggregate model-work usage can exceed the request's max_output_tokens.",
+  "cache_write_rate_usd_per_million": 6.25,
+  "chars_per_token_assumption": 3.0,
+  "created_at_utc": "2026-07-14T23:49:15.790166Z",
+  "estimated_budget_reserve_usd": 1.04148375,
+  "estimated_input_tokens_conservative": 7243,
+  "exact_budget_reserve_usd_after_preflight": 1.02561,
+  "failed_at_utc": "2026-07-14T23:57:05.137260Z",
+  "failure": {
+    "error": "response ended with non-completed status 'incomplete'",
+    "error_type": "RuntimeError",
+    "failed_at_utc": "2026-07-14T23:57:05.137260Z"
+  },
+  "global_uniqueness_attested": false,
+  "input_rate_usd_per_million": 5.0,
+  "input_tokens_preflight": 5832,
+  "input_tokens_preflight_at_utc": "2026-07-14T23:49:16.007694Z",
+  "input_tokens_url": "https://api.openai.com/v1/responses/input_tokens",
+  "latest_model_document_sha256": "25ad3d417bed37a41b31b0577707134b50a97d22e8b58fb5e55047e8cbd55047",
+  "latest_model_source": "https://developers.openai.com/api/docs/guides/latest-model.md",
+  "max_input_characters": 180000,
+  "max_input_tokens": 40000,
+  "max_output_tokens": 16000,
+  "model": "gpt-5.6-sol",
+  "official_latest_model": "gpt-5.6-sol",
+  "output_rate_usd_per_million": 30.0,
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "pro_output_reserve_multiplier": 2.0,
+  "reasoning": {
+    "effort": "high",
+    "mode": "pro"
+  },
+  "request_payload_sha256": "fcdcf5f86c57d52eaecbfb7af326bc4877d27c06330ef6151e65500acb8fd80f",
+  "reserved_billable_output_tokens": 32000,
+  "review_input_sha256": "2351fecc0d1ba569b41cecccd1fb2e0a80b2d2f3b7bd119899895a4015820210",
+  "review_instructions_sha256": "3e51d5a292ca46fb6cbf685f74e37f2dbfe7e302addcc4bac8715a19aeefe1d7",
+  "review_request_sha256": "b566aa77e4309d80c3c53310e82d4c3fc0f033072a6d14ca4387a3b689d39506",
+  "schema_version": 1,
+  "service_tier": "default",
+  "single_call_policy": "trusted_procedural_rule",
+  "status": "failed",
+  "store": false
+}
