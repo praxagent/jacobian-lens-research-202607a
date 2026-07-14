@@ -67,6 +67,22 @@ def committed_color(text):
     return m.group(1) if m else "refuse_or_other"
 
 
+def after_think(text):
+    """Committed answer = everything after the last </think> (reasoning-on parse)."""
+    return text.rsplit("</think>", 1)[-1] if "</think>" in text else text
+
+
+def gen_templated(hf, model, tok, user_prompt, thinking, max_new):
+    """Chat-templated greedy generation with Qwen3.5 thinking on/off.
+    thinking=False -> empty-think prefill (immediate committed answer);
+    thinking=True  -> full reasoning window, answer parsed after </think>."""
+    msgs = [{"role": "user", "content": user_prompt}]
+    text = tok.apply_chat_template(msgs, tokenize=False, add_generation_prompt=True,
+                                   enable_thinking=thinking)
+    cont, ids, _ = greedy_continue(hf, model, text, max_new, tok, head_topk=20)
+    return cont, ids
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--big-model", required=True, help="hf_id[:backbone_path]")
@@ -128,12 +144,22 @@ def main():
 
         if fam == "choice":
             # full-depth color ranks at the final prompt position, all transports
+            # (the "across layers toward the final answer" depth trajectory)
             acts = capture(model, pids, sorted(set(alll) | {final}))
             hlast = {l: acts[l][:, -1:, :] for l in alll}     # [1,1,d] per layer
             best, by_layer = transports_at(model, lens, alll, hlast, colors)
-            rec["committed_color"] = committed_color(cont)
+            rec["committed_color"] = committed_color(cont)       # raw-prompt greedy (Llama uses this; Qwen diagnostic)
             rec["colors"] = {"full_depth_rank_by_layer": by_layer, "best_rank": best}
             del acts, hlast
+            if args.thinking:                                    # Qwen: with AND without thinking
+                off_cont, _ = gen_templated(hf, model, tok, prompt, thinking=False, max_new=args.continue_tokens)
+                on_cont, on_ids = gen_templated(hf, model, tok, prompt, thinking=True, max_new=args.think_tokens)
+                on_ans = after_think(on_cont)
+                rec["committed_color_thinkoff"] = committed_color(off_cont)
+                rec["committed_color_thinkon"] = committed_color(on_ans)
+                rec["thinkon_reached_close"] = "</think>" in on_cont
+                rec["thinkon_continuation"] = on_cont
+                rec["thinkon_ids"] = on_ids
         else:
             acts = capture(model, pids, sorted(set(band) | {final}))
             hband = {l: acts[l] for l in band}
