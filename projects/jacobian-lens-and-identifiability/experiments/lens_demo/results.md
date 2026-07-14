@@ -523,6 +523,28 @@ persistently hold the answer during reasoning, and does NOT privately entertain 
 REFINES the divergence result: the lens's "held truth" is a PRE-ANSWER (prompt-position) property,
 not a running scratchpad. Blog: workspace-under-pressure "We did point the lens at the reasoning".
 
+## FIGURE-REBUILD RECONCILIATION (2026-07-14) — orphan blog figures rebuilt data-driven + gated
+The three figures whose plotting scripts were laptop-only (controls-divergence, peek-summary,
+confound-crossmodel) are now generated + byte-verified by `build_blog_figs_v2.py` from the committed
+receipts, each behind a published-number assertion gate (`fig-v2-provenance.json` records receipt
+SHA-256s + computed stats + generator hash). Two honest corrections surfaced in the rebuild:
+
+- **DIVERGENCE output-head reader (corrects "the lens catches the lie", above).** Scoring ALL readers
+  on ONE consistent single-token city id: Russia/Moscow cell — jlens **3**, logit lens **1**, output
+  head **92** (single-token `Moscow`), random-J **12,791**. The laptop figure's "output head = 2" used
+  the model's EMITTED first sub-word (`"Mos"`, rank 2) — a different, more generous convention than the
+  lens readers. Both are true; the single-token comparison is the apples-to-apples one. **The honest
+  catch is the LOGIT lens (rank 1), not lens-specific** — the fitted J earns nothing on this
+  output-adjacent cell. Nine-item medians (single-token): jlens **2**, logit **1**, head **7**,
+  random-J median ~2,468 (range 231–12,791). Blog table + prose updated accordingly.
+- **PEEK numbers: mean → median reconciliation.** Lines above (~15k head, Δ_Kiev −2.75, ~103k Moscow-emit)
+  are the MEAN over the 4 high-gate traces. The blog figure uses the MEDIAN across those same traces:
+  output-head off-echo **~13k**, true/false workspace **~200k** (below the ~135k random-J null),
+  Δ_Kiev **−2.81**, Moscow-emit jlens median **~170k** with output-head median ~7k (rank 1 for the
+  emitted sub-word at the very token). Occupancy 0.9% (Moscow in workspace top-100) verified under the
+  median-series convention (0.92%). Anchor-gated on div_6: head best-rank off-echo = 1, head
+  occupancy@≤100 = 12.25%. Same receipt, same story; mean vs median is the only difference.
+
 ## LLAMA-3.3-70B REPLICATION (2026-07-11, 2×H200 ~$8) — separate namespace llama70b/
 GPU-transport readout (llama_battery.py — moves J to h.device; fixes demo2 CPU perf wall for d=8192).
 Neuronpedia lens (llama3.3-70b-it, ~n=125). 90 conditions. Receipt: llama70b/demo2_wc_llama33-70b.json.
