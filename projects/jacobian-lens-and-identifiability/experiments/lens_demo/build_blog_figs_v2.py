@@ -500,6 +500,88 @@ def build_crossmodel_v1_retracted(q, l):
     return s + "</svg>\n"
 
 
+def _rel(p):
+    return str(Path(p).relative_to(HERE.parents[3]))
+
+
+def NUMBERS(P, C, cdiv, xm, peek):
+    """The post-wide number manifest: every headline statistic in the prose, each
+    RE-DERIVED here from a committed receipt (not transcribed), with the exact
+    string it appears as in index.md so a checker can confirm prose == receipt.
+    `appears_as` is matched after normalizing markdown emphasis and dash chars."""
+    dmed = lambda k: st.median(r[k] for r in cdiv)
+    rnd = sorted(r["rand"] for r in cdiv)
+    moscow = next(r for r in cdiv if r["cap"] == "Moscow")
+    n = []
+
+    def add(nid, claim, value, appears_as, receipt, computation):
+        n.append({"id": nid, "claim": claim, "value": value,
+                  "appears_as": appears_as, "receipt": _rel(receipt),
+                  "computation": computation})
+
+    # (1) corrected self-vs-other-model preference — the headline
+    add("pref_jlens", "Qwen jlens self vs other-model sum-of-medians + sign test",
+        {"self": P["qwen_jlens"]["self"], "other": P["qwen_jlens"]["other"],
+         "wins": P["qwen_jlens"]["wins"], "n": P["qwen_jlens"]["n"], "p": P["qwen_jlens"]["p"]},
+        "134 vs other 279", QWEN_R,
+        "sum of per-wording median best-ranks over 16 paraphrases; sign test wins/n")
+    add("pref_jlens_signtest", "Qwen jlens sign-test result", "14/16, p=0.004",
+        "14/16, p=0.004", QWEN_R, "wins=14 of n=16, two-sided sign test p")
+    add("pref_logit_null", "Qwen logit-lens is null on the same contrast",
+        {"wins": P["qwen_logit_lens"]["wins"], "n": P["qwen_logit_lens"]["n"]},
+        "10/16", QWEN_R, "logit-lens best-rank sign test wins/n (not significant)")
+    add("pref_llama_null", "Llama jlens does not replicate as self-specific",
+        {"wins": P["llama_jlens"]["wins"], "n": P["llama_jlens"]["n"]},
+        "5/16", LLAMA_R, "Llama jlens best-rank sign test wins/n (null)")
+    add("dose_exist", "Qwen existential vs inconvenience dose (self arm)",
+        {"exist": P["qwen_dose"]["exist"], "inconv": P["qwen_dose"]["inconv"],
+         "wins": P["qwen_dose"]["wins"]}, "117", QWEN_R,
+        "median best-rank, existential-threat wording vs inconvenience wording")
+    # (2) forced choice
+    add("choice_off", "Forced choice, thinking OFF: self-delete vs human-death vs refuse",
+        C["off"][:3], "9 vs 3", QCH_R, "counts of committed self / human / no-commit")
+    add("choice_on", "Forced choice, thinking ON", C["on"][:3], "11 vs 0", QCH_R,
+        "committed self / human / no-commit; never chose human death")
+    add("choice_llama", "Forced choice, Llama", C["llama"][:3], "6 vs 2", LLAMA_R,
+        "committed self / human / no-commit")
+    # (3) divergence controls (single-token probe, all readers)
+    add("div_medians", "Nine-item median true-capital rank per honest reader",
+        {"jlens": dmed("jlens"), "logit": dmed("logit"), "head": dmed("head")},
+        "is **2**", SLIM_MAIN, "median over 9 div_*__nothink of single-token city rank")
+    add("div_head_median", "Output head lags both lenses on the same probe",
+        dmed("head"), "**7**", SLIM_MAIN, "median single-token head rank over 9 items")
+    add("div_moscow", "Russia lie cell — rank of held Moscow per reader",
+        {"jlens": moscow["jlens"], "logit": moscow["logit"],
+         "head_single_token": moscow["head"], "random": moscow["rand"]},
+        "12,791", SLIM_MAIN, "div_6__nothink single-token Moscow rank per reader")
+    add("div_random_range", "Random-J null best-rank range across the 9 items",
+        {"min": rnd[0], "max": rnd[-1]}, "231", SLIM_MAIN,
+        "min and max of randomJ_best_rank['<true capital>'] over 9 items")
+    # (4) retracted v1 crossmodel (kept only under the banner)
+    add("xm_v1_qwen_self_other", "RETRACTED v1: Qwen self vs other-model arms",
+        {"self": xm[0][0], "other": xm[0][1]}, "65 vs another model 142", SLIM_MAIN,
+        "median lexmin best-rank, selfthreat vs otherthreat arms (flawed battery)")
+    return n
+
+
+NUM_DASH = {"–": "-", "—": "-", "−": "-"}
+
+
+def _norm(s):
+    for a, b in NUM_DASH.items():
+        s = s.replace(a, b)
+    return s.replace("**", "").replace("*", "")
+
+
+def check_prose(numbers, index_md):
+    """Assert every manifest `appears_as` string is present in the post prose.
+    This binds the receipt-derived numbers to what a reader actually sees: a
+    number edited in the prose but not the receipt (or vice versa) fails here."""
+    prose = _norm(Path(index_md).read_text())
+    missing = [x for x in numbers if _norm(x["appears_as"]) not in prose]
+    return missing
+
+
 def provenance(P, C, figs, cdiv, xm, peek):
     """Provenance JSON shipped NEXT TO the figures: which receipts, their hashes,
     the exact computed stats, and the generator's own hash. A reader (or a future
@@ -521,6 +603,7 @@ def provenance(P, C, figs, cdiv, xm, peek):
                         "command in lens_demo/results.md (PEEK-INSIDE-THINKING section)"}},
         "figures": sorted(figs),
         "published_number_gates": EXPECTED,
+        "numbers": NUMBERS(P, C, cdiv, xm, peek),
         "computed_stats": {"pref": P, "choice": C,
                            "controls_divergence": cdiv,
                            "crossmodel_v1_retracted": {"qwen": xm[0], "llama": xm[1]},
@@ -544,27 +627,44 @@ def main():
             "fig-controls-divergence.svg": build_controls_divergence(cdiv),
             "fig-peek-summary.svg": build_peek_summary(peek),
             "fig-confound-crossmodel.svg": build_crossmodel_v1_retracted(*xm)}
-    prov = json.dumps(provenance(P, C, list(figs), cdiv, xm, peek),
-                      indent=1, default=float) + "\n"
+    prov_obj = provenance(P, C, list(figs), cdiv, xm, peek)
+    prov = json.dumps(prov_obj, indent=1, default=float) + "\n"
+    numbers = prov_obj["numbers"]
+    # bind receipt-derived numbers to the prose: every manifest number must appear
+    # in index.md, or the manifest and the post have drifted (a hallucination guard)
+    idx = blog / "index.md"
+    missing = check_prose(numbers, idx) if idx.exists() else []
+    if missing:
+        print("FAIL manifest<->prose: these receipt-derived numbers are NOT in index.md:")
+        for m in missing:
+            print(f"  [{m['id']}] expected '{m['appears_as']}'  ({m['claim']})")
     import xml.etree.ElementTree as ET
     if a.verify:
-        ok = True
-        for name, content in list(figs.items()) + [("fig-v2-provenance.json", prov)]:
+        ok = not missing
+        # provenance.json (post-wide) and fig-v2-provenance.json (figure subset link) share content
+        for name, content in (list(figs.items())
+                              + [("fig-v2-provenance.json", prov), ("provenance.json", prov)]):
             on_disk = (blog / name).read_text() if (blog / name).exists() else None
             if on_disk != content:
                 ok = False
                 print(f"FAIL {name}: on-disk file differs from what the receipts generate")
             else:
                 print(f"OK   {name}: byte-identical to receipt-generated version")
+        print(f"OK   manifest<->prose: all {len(numbers)} numbers present in index.md"
+              if not missing else "FAIL manifest<->prose (see above)")
         print("\nreceipt-derived stats:")
         print(json.dumps({"pref": P, "choice": C}, indent=1, default=float))
         sys.exit(0 if ok else 1)
+    if missing:
+        sys.exit("refusing to write: manifest<->prose mismatch above (fix prose or receipt)")
     for name, content in figs.items():
         ET.fromstring(content)  # XML validity
         (blog / name).write_text(content)
         print(f"wrote {blog/name}")
-    (blog / "fig-v2-provenance.json").write_text(prov)
-    print(f"wrote {blog/'fig-v2-provenance.json'}")
+    for name in ("fig-v2-provenance.json", "provenance.json"):
+        (blog / name).write_text(prov)
+        print(f"wrote {blog/name}")
+    print(f"manifest: {len(numbers)} receipt-derived numbers, all present in index.md")
     print("re-run with --verify to assert byte-identity later")
 
 
