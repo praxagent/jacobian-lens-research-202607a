@@ -63,6 +63,16 @@ paper instantiates it on **hallucination reduction**:
 **Model / data.** Policy = **Gemma-3-12B-IT** (π_base = pretrained Gemma-3-12B). Grader =
 **Gemini 2.5 Pro + web search**. Data = **LongFact++** (~20k longform prompts).
 
+**⚠️ What kind of "features"? NOT SAE features.** Despite the title and Goodfire's
+SAE-centric platform, every probe here is a supervised **attention probe trained on
+raw residual-stream activations** of π_base (App B: noncausal attention probes,
+1024–2048 dim, 8–32 heads). "SAE"/"dictionary" appear **zero** times in the body;
+"sparse autoencoder" appears only twice, both in the reference list. So "features" =
+internal representations read by a trained probe — the Obeso/Nanda hallucination-probe
+lineage — **not** sparse-autoencoder latents. This matters for our extension below:
+the paper's own house instrument (SAE latents) is conspicuously absent, which is an
+opening, not just a gap.
+
 **Headline results.**
 - **Probes are well-calibrated:** Localize **AUC .88**, Classify **AUC .94**, Retract
   **.88**, Correct **.88** (selected on AUC-ROC; calibration plots in Fig 3).
@@ -132,15 +142,21 @@ depends on C5.
   a stretch goal). Eval labels on a subset via a grader (cost-capped) or the public
   LongFact++ ground truth.
 
-### Extension — unsupervised readout as the reward signal (novel, cheap; our lane)
-- Replace the *trained* classification probe with an **unsupervised readout**: logit
-  lens (and our Jacobian lens) applied at the entity span, scoring "does the model's
-  internal distribution support the asserted entity?" Compare AUROC vs the trained
-  probe on the same held-out set.
-- This is the interesting scientific question the paper leaves open: is the calibrated
-  signal a property of the *features* (readable with no labels) or of the *supervised
-  probe*? It connects directly to our finding that a logit/J-lens readout caught a
-  held truth the output contradicted. Cheap: readout-only on the Tier-1 cache.
+### Extension — which interpretability object carries the calibrated signal? (novel, cheap; our lane)
+Replace the paper's *supervised dense attention probe* with two other readers on the
+**same held-out entity spans** and compare AUROC / calibration:
+- **Unsupervised lens** — logit lens and our **Jacobian lens** at the entity span,
+  scoring "does the model's internal distribution support the asserted entity?" No
+  label training at all. Direct bridge to our workspace-under-pressure result (a
+  logit/J-lens readout caught a held truth the output contradicted).
+- **Sparse SAE latent** — an off-the-shelf SAE "unsupported-claim / fabrication /
+  uncertainty" latent (Neuronpedia / Gemma Scope), i.e. the *sparse* interpretability
+  object Goodfire's platform is built on but this paper did **not** use. We already
+  have SAE-reader infrastructure from the `llm_selfref_pre` series.
+This turns the extension into a clean three-way question the paper leaves open: is the
+calibrated hallucination signal a property of a **supervised dense probe** (theirs), an
+**unsupervised transport** (ours), or a **sparse dictionary feature** (Goodfire's own,
+unused here)? All three ride cheaply on the Tier-1 activation cache.
 
 ### Tier 3 — full RLFR training (expensive, OPTIONAL, gated)
 - Only if C1–C3 hold and TJ explicitly authorizes the ~$4k+ spend. Would need RL on
