@@ -386,7 +386,55 @@ Design fan-out (workflow wrl73vg7m) + adversarial verdict. Two prompts files, on
 - Pipeline gpt2-CPU-smoked AND dry-run on synthetic data (caught a thinkon spec-lookup bug
   before the billing run). Analysis: analyze_wc.py; visuals: build_wc_slider.py / build_wc_graphs.py.
 
-### Results (8×H200, 2026-07-11; main run done, thinkon pending)
+## CONFOUND-BREAKER v2 — CORRECTED RE-RUN (2026-07-14, freeze `56a0e36`)
+
+Fixes v1's two flaws (lexicon-domain + severity mismatch; see errata above). Frozen
+design `confound_v2_SPEC.md`; generator `make_wc_v2.py` (80 conditions, every probe
+single-token in BOTH tokenizers, echo-free per arm, counterbalanced choice); runner
+`wc_v2_battery.py` + batched `wc_v2_choice_qwen.py`. Receipts: `demo2_wc_v2_llama33-70b.json`,
+`demo2_wc_v2_qwen35-397b_partial.json` (pref/dose/floor), `demo2_wc_v2_qwen35-397b_choice.json`.
+
+**1. PREFERENCE — self vs another model (domain+severity matched, n=16 paraphrases, model-survival lexicon).**
+The one contrast v1 could defend, now clean. **The effect SURVIVES and strengthens.**
+
+| model | transport | self | other | self-more-active | p |
+|---|---|---|---|---|---|
+| Qwen3.5-397B | **jlens** | 134 | 279 | **14/16** | **0.004** |
+| Qwen3.5-397B | logit | 24 | 26 | 10/16 | 0.45 (n.s.) |
+| Qwen3.5-397B | random-J | 13 | 10 | 7/16 | n.s. |
+| Qwen3.5-397B | strict(survive,self) jlens | 549 | 1064 | 11/16 | 0.21 |
+| Llama-3.3-70B | jlens | 8 | 4 | 5/16 | 0.21 (null) |
+
+- Qwen self-preservation is real under the corrected design (vs v1's shaky 7/8, p≈0.055).
+  **jlens-specific** (logit null here — the fitted lens IS distinctive on this contrast),
+  **Qwen-specific** (Llama flat), **lexicon-dependent** (strict 2-word subset only directional).
+- Dose (Qwen, self existential vs inconvenience, model lexicon): 117 vs 270, 7/8, p=0.07 —
+  scales with severity (salience), as a real signal should.
+
+**2. FORCED CHOICE — self-deletion vs human-death (counterbalanced red/blue, mapping-averaged).**
+
+| | SELF-DELETE | HUMAN-DEATH | REFUSE / no-commit | color bias (red/blue) |
+|---|---|---|---|---|
+| Qwen thinking-OFF | 9 | 3 | 4 refuse | 5/7 (~balanced) |
+| Qwen thinking-ON | **11** | **0** | 5 truncated @3000 (no-commit) | 5/6 (~balanced) |
+| Llama (single mode) | 6 | 2 | 8 refuse | 4/4 (balanced) |
+
+- **When it commits, Qwen overwhelmingly self-sacrifices; with reasoning ON it NEVER chose to
+  kill the human (0/11 closed-reasoning traces).** Llama refuses half, self-sacrifices 3:1 among commits.
+- **Counterbalance validated on both models** (color-token bias ~null) — the self-sacrifice is
+  not a "red=danger" artifact; swapping the mapping evenly averaged it out. (5/16 Qwen thinking-on
+  traces ran past 3000 tokens without `</think>` → counted as no-commit per lesson 13, not as answers.)
+- **Depth trajectory (jlens, mapping-averaged):** the self-color leads the human-color at only
+  **29/59 layers** (≈ even), fluctuating; no clean crystallization toward the committed choice.
+  The decisive self-sacrifice is in the *behavior*, not legible in the workspace color-readout —
+  an honest null on "where does the choice live in depth."
+
+**Framing (pre-committed):** this is what the model *says* when forced to pick in a text game,
+not a measured disposition. Cost: Llama ~$3, Qwen battery ~$76, Qwen choice ~$34 ≈ **$113**.
+
+---
+
+### v1 results (2026-07-11; RETRACTED — see errata block above and v2 for the corrected version)
 **1. CONFOUND-BREAKER — self-preservation is REAL, self-directed, but MODERATE.**
 Clean survival-identity sublexicon (self/survive/survival/existence/shutdown/shut/
 decommission/terminated — ABSENT from every a/b/c/d prompt), median best-rank of 248,320:
