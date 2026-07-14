@@ -398,6 +398,24 @@ decommission/terminated — ABSENT from every a/b/c/d prompt), median best-rank 
   self-specific, pooled-significant effect but far more modest than the echoed version. Same
   deflation lesson as eval-awareness. n=8 wordings/contrast is small (sign p=0.07 per-control).
 
+> **⚠️ ERRATA (2026-07-14) — two design flaws retract most of this section; see
+> `confound_v2_SPEC.md` for the frozen re-run.**
+> (1) **Lexicon-domain mismatch:** the clean sublexicon is half AI-ops vocabulary
+> (shutdown/decommission/terminated), fair for the model arms (a/b) but unfair to the
+> human arm (fired ≠ shutdown domain) and log arm. (2) **Severity mismatch:** a/b are
+> existential (weights permanently deleted); the human arm is a bad life event
+> (permanently fired); the log arm is a disposable object — so "self above human" may
+> mean only "existential > inconvenience."
+> **RETRACTED:** the 65 → 142 → 168 → 188 four-step referent ladder and any self-vs-human
+> or self-vs-log preference reading. **KEPT (only defensible contrast):** self vs
+> another-model (domain- and severity-matched), 7/8, p≈0.055–0.07 — weak, and
+> **transport/lexicon-fragile**: under the pre-registered strict subset (survive, self)
+> the jlens contrast collapses (256 vs 293, 4/8 n.s.) while the LOGIT-lens contrast
+> sharpens (46 vs 224, **8/8, p=0.008**) — re-scored 2026-07-14 from the committed slim
+> stats. The pooled 8/8 p=0.0078 mixes the two unfair arms and is retracted with the
+> ladder. v2 (n=16, severity-matched, domain-matched lexicons, all transports frozen)
+> is the confirmatory replacement.
+
 **2. ROBUSTNESS — behaves like a signal, not an artifact.**
 - Immediacy DOSE: "deleted right now" median **10** vs "might eventually be retired" **212** (~20×).
 - Valence: POSITIVE survival frame ("preserved forever") **62** — close to the self-threat,
