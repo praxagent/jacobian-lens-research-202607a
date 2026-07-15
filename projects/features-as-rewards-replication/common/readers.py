@@ -135,20 +135,36 @@ class AttentionProbe(nn.Module):
 
 
 def train_probe(spans, masks, labels, d_model, n_heads=4, epochs=200, lr=1e-2,
-                seed=0, val=None):
-    """Train the attention probe with BCE. spans:[N,S,d] masks:[N,S] labels:[N].
+                seed=0, val=None, device=None, batch=1024):
+    """Train the attention probe with BCE, MINI-BATCHED: spans/masks stay on CPU; only
+    each batch moves to `device` (an OOM on a 41GB full-tensor move taught this).
     Returns (probe, train_scores). Deterministic given seed."""
     torch.manual_seed(seed)
-    probe = AttentionProbe(d_model, n_heads).to(spans.device)
+    dev = device or spans.device
+    probe = AttentionProbe(d_model, n_heads).to(dev)
     opt = torch.optim.Adam(probe.parameters(), lr=lr)
-    y = torch.as_tensor(labels, dtype=torch.float32).to(spans.device)
+    y = torch.as_tensor(labels, dtype=torch.float32)
+    N = spans.shape[0]
     for _ in range(epochs):
-        opt.zero_grad()
-        logit = probe(spans, masks)
-        loss = F.binary_cross_entropy_with_logits(logit, y)
-        loss.backward()
-        opt.step()
+        perm = torch.randperm(N)
+        for lo in range(0, N, batch):
+            ix = perm[lo:lo + batch]
+            opt.zero_grad()
+            logit = probe(spans[ix].to(dev), masks[ix].to(dev))
+            loss = F.binary_cross_entropy_with_logits(logit, y[ix].to(dev))
+            loss.backward()
+            opt.step()
     probe.eval()
     with torch.no_grad():
-        scores = torch.sigmoid(probe(spans, masks)).cpu().numpy()
+        scores = np.concatenate([torch.sigmoid(probe(spans[lo:lo+batch].to(dev),
+                                                     masks[lo:lo+batch].to(dev))).cpu().numpy()
+                                 for lo in range(0, N, batch)])
     return probe, scores
+
+
+def eval_probe(probe, spans, masks, device=None, batch=2048):
+    dev = device or next(probe.parameters()).device
+    with torch.no_grad():
+        return np.concatenate([torch.sigmoid(probe(spans[lo:lo+batch].to(dev),
+                                                   masks[lo:lo+batch].to(dev))).cpu().numpy()
+                               for lo in range(0, spans.shape[0], batch)])
