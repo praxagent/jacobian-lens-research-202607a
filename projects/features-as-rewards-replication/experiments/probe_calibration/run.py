@@ -177,6 +177,11 @@ def run(args):
     Xtr, Mtr = pad_spans(tr, primary)
     ytr = np.array([r["label"] for r in tr])
     Xte, Mte = pad_spans(te, primary)
+    # GPU probe training (implementation amendment 2026-07-16, pre-outcome: CPU full-batch
+    # training ground >3h on the pod; gates unaffected, math identical on device)
+    Xtr, Mtr = Xtr.to(args.device), Mtr.to(args.device)
+    Xte, Mte = Xte.to(args.device), Mte.to(args.device)
+    print("  [stage] probe training", flush=True)
     seed_scores = []
     for s in args.probe_seeds:
         probe, _ = R.train_probe(Xtr, Mtr, ytr, d_model=Xtr.shape[-1], n_heads=args.heads,
@@ -189,6 +194,7 @@ def run(args):
     # --- non-neural heuristic baseline (I04): entity token-count + in-fold unigram
     # log-frequency, logistic, fit on TRAIN only. Frequency corpus = the train-split
     # tokens (self-contained; pin an external corpus at freeze). ---
+    print("  [stage] heuristic + lens readers", flush=True)
     from collections import Counter
     freq = Counter(int(t) for r in tr for t in r["tok_ids"].tolist())
     total = sum(freq.values()) or 1
@@ -268,6 +274,7 @@ def run(args):
         readers["jacobian_lens"] = ("unsupervised", lens_on(va, J.float()), lens_on(te, J.float()))
 
     # label-selected SAE reader (B05: selection on VALIDATION labels only)
+    print("  [stage] SAE selection", flush=True)
     sae_info = None
     if args.sae_path:
         import sae as S

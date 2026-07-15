@@ -139,9 +139,9 @@ def train_probe(spans, masks, labels, d_model, n_heads=4, epochs=200, lr=1e-2,
     """Train the attention probe with BCE. spans:[N,S,d] masks:[N,S] labels:[N].
     Returns (probe, train_scores). Deterministic given seed."""
     torch.manual_seed(seed)
-    probe = AttentionProbe(d_model, n_heads)
+    probe = AttentionProbe(d_model, n_heads).to(spans.device)
     opt = torch.optim.Adam(probe.parameters(), lr=lr)
-    y = torch.as_tensor(labels, dtype=torch.float32)
+    y = torch.as_tensor(labels, dtype=torch.float32).to(spans.device)
     for _ in range(epochs):
         opt.zero_grad()
         logit = probe(spans, masks)
@@ -150,5 +150,5 @@ def train_probe(spans, masks, labels, d_model, n_heads=4, epochs=200, lr=1e-2,
         opt.step()
     probe.eval()
     with torch.no_grad():
-        scores = torch.sigmoid(probe(spans, masks)).numpy()
+        scores = torch.sigmoid(probe(spans, masks)).cpu().numpy()
     return probe, scores
