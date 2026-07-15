@@ -9,7 +9,7 @@ python - <<'PY'
 from huggingface_hub import hf_hub_download
 import os
 p = hf_hub_download("Goodfire/Llama-3.3-70B-Instruct-SAE-l50",
-                    "Llama-3.3-70B-Instruct-SAE-l50.pth")
+                    "Llama-3.3-70B-Instruct-SAE-l50.pt")
 os.system(f"ln -sf {p} /workspace/sae_l50.pth")
 PY
 cd projects/features-as-rewards-replication/experiments/probe_calibration
