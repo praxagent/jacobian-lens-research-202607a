@@ -134,10 +134,16 @@ def run(args):
     from transformers import AutoModelForCausalLM, AutoTokenizer
     t0 = time.time()
     tokenizer = AutoTokenizer.from_pretrained(tok_name, token=tok_hf)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name, token=tok_hf,
-        torch_dtype=torch.float32 if args.device == "cpu" else torch.bfloat16,
-        output_hidden_states=True).to(args.device)
+    if args.device == "auto":
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name, token=tok_hf, torch_dtype=torch.bfloat16,
+            device_map="auto", output_hidden_states=True)
+        args.device = "cuda:0"   # readers/probe device; hiddens are CPU-offloaded anyway
+    else:
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name, token=tok_hf,
+            torch_dtype=torch.float32 if args.device == "cpu" else torch.bfloat16,
+            output_hidden_states=True).to(args.device)
     unembed, final_norm = A.model_readout_parts(model)
     n_layers = getattr(model.config, "num_hidden_layers", None) or model.config.n_layer
     if n_layers not in layers:
@@ -195,6 +201,24 @@ def run(args):
         seed_scores.append(R.eval_probe(probe, Xte, Mte, device=args.device))
     probe_scores = np.mean(seed_scores, axis=0)
     probe_seed_aurocs = [round(float(R.auroc(ss, y_te)), 4) for ss in seed_scores]
+
+    # EXPLORATORY (post-outcome amendment, TJ 2026-07-16): paper-capacity probe --
+    # 16 heads, 400 epochs. Reported separately; never replaces the frozen primary.
+    exploratory_capacity = None
+    if args.exploratory_capacity:
+        print("  [stage] exploratory capacity probe", flush=True)
+        xs = []
+        for s in args.probe_seeds:
+            p2, _ = R.train_probe(Xtr, Mtr, ytr, d_model=Xtr.shape[-1], n_heads=16,
+                                  epochs=400, lr=args.lr, seed=s, device=args.device)
+            xs.append(R.eval_probe(p2, Xte, Mte, device=args.device))
+        xsc = np.mean(xs, axis=0)
+        lo_x, hi_x = cluster_bootstrap_auroc(xsc, y_te, cid_te, n=(200 if args.smoke else 2000))
+        exploratory_capacity = {"label": "exploratory (post-outcome capacity test)",
+                                "n_heads": 16, "epochs": 400,
+                                "seed_aurocs": [round(float(R.auroc(x, y_te)), 4) for x in xs],
+                                "auroc": round(float(R.auroc(xsc, y_te)), 4),
+                                "ci95": [round(lo_x, 4), round(hi_x, 4)]}
 
     # --- non-neural heuristic baseline (I04): entity token-count + in-fold unigram
     # log-frequency, logistic, fit on TRAIN only. Frequency corpus = the train-split
@@ -324,6 +348,7 @@ def run(args):
         "probe_seed_aurocs": probe_seed_aurocs,
         "readers": table,
         "paired_contrasts_vs_probe": contrasts,
+        "exploratory_probe_capacity": exploratory_capacity,
         "sae_selection": sae_info,
         "per_span_test": [dict({"cid": r["cid"], "label": int(r["label"])},
                                **{name: float(np.asarray(readers[name][2])[i])
@@ -351,6 +376,7 @@ def main():
     ap.add_argument("--max-len", type=int, default=2048)
     ap.add_argument("--heads", type=int, default=4)
     ap.add_argument("--probe-seeds", type=int, nargs="*", default=[0, 1, 2])
+    ap.add_argument("--exploratory-capacity", action="store_true")
     ap.add_argument("--sae-path", default=None, help=".pth (goodfire) or params.safetensors (gemmascope)")
     ap.add_argument("--sae-format", choices=["goodfire", "gemmascope"], default="goodfire")
     ap.add_argument("--jlens-path", default=None, help="transport matrix .pt (or {layer: J} dict)")
