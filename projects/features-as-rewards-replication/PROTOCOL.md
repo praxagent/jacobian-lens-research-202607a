@@ -30,16 +30,27 @@ residual-stream states **discriminate** hallucinated from supported entity spans
 (**primary confirmatory model**), `meta-llama/Llama-3.3-70B-Instruct`, `google/gemma-2-9b-it`.
 **Own-graded four-reader arm** (paper's exact model): `google/gemma-3-12b-it`, labels from our
 grounded grader (§11), Gemma Scope 2 SAE.
-**Own-graded THREE-reader flagship arm (final, optional-but-registered):**
-`Qwen/Qwen3.5-397B-A17B` (our own fitted lens `praxagent-org/jacobian-lens-qwen3.5-397b-a17b`).
-**No SAE reader** (no public 397B SAE) → readers are supervised probe / logit lens / **our
-J-lens**. Own-graded labels (§11). Sequenced **last** (the 8×H200 session is the study's single
-largest cost) so the cheap arms validate the whole pipeline before we spend it. Once registered
-at freeze it is run unconditionally (B10: no outcome-contingent arm dropping); only a technical
-stop rule (hard spend / wall-time / no-progress / pod unavailability) may leave it unrun, and
-that is reported.
-Precision **bf16**, text path. Fallback hardware order in the execution manifest. The arm set is
-**fixed at freeze**; no arm is added or dropped based on outcomes.
+The **frozen confirmatory arm set** is these four (Llama-3.1-8B, Llama-3.3-70B, gemma-2-9b,
+Gemma-3-12B): all four are approved as a whole and **run unconditionally** — no arm among them is
+added or dropped based on outcomes (B10).
+
+**Qwen3.5-397B — pre-registered CONDITIONAL EXTENSION (TJ, 2026-07-15):**
+`Qwen/Qwen3.5-397B-A17B` (our fitted lens `praxagent-org/jacobian-lens-qwen3.5-397b-a17b`),
+**no SAE reader** (no public 397B SAE) → probe / logit lens / **our J-lens**; own-graded labels
+(§11). Because the 8×H200 session (~$50–150) is the study's single largest cost, the **go/no-go
+is a value-and-cost decision made AFTER the four confirmatory arms complete** — not part of the
+frozen confirmatory set. Integrity guard (this is the B10 trap, handled explicitly):
+- the possibility of the Qwen extension, its exact design, and readers are declared **here,
+  before any outcomes** — it is not invented after seeing results;
+- pre-declared go criterion: run it if the four arms show a **consistent, interpretable reader
+  ordering worth confirming at frontier scale** (e.g. the J-lens is at least noninferior to the
+  probe, or a clear reader ranking emerges) — a judgment about whether the scale-up is
+  *informative*, explicitly a funding decision, **not** a filter on which results we like;
+- **if the extension is run, its result is reported unconditionally** (win, null, or mixed) —
+  no post-hoc dropping. A decision NOT to fund it is reported as "extension not run (cost)",
+  with the criterion and the observed cheap-arm results shown so the reader can judge.
+
+Precision **bf16**, text path. Fallback hardware order in the execution manifest.
 
 ## 3. Data, splits, leakage bars (B09)
 
@@ -149,17 +160,17 @@ a report/no-report choice.
 ## 10. Cost, storage, budget (B10) — one upfront approval for the whole arm set
 
 A per-arm × per-stage table (completion/token counts, GPU type, measured-throughput assumption,
-expected+max hours, $/hr, J-fit cost, grader cost, receipt volume, total) is filled at freeze and
-approved as a whole (not outcome-contingent per model). Working estimate (grounded grader made
-labeling nearly free):
-- gold arms (Llama-8B/70B, gemma-2-9b): **~$50–120** (public labels)
-- Gemma-3-12B own-graded arm: **~$25–60** (grounded grader ~$1–5 + ~$20–55 GPU)
-- Qwen3.5-397B flagship arm (final): **~$50–150** (8×H200 session, ~800 GB download-dominated)
-- **total ≈ $125–330**, GPU-dominated.
+expected+max hours, $/hr, J-fit cost, grader cost, receipt volume, total) is filled at freeze.
+Two budgets:
+- **Frozen confirmatory budget — approved as a whole at freeze** (the four arms all run):
+  gold arms (Llama-8B/70B, gemma-2-9b) **~$50–120** + Gemma-3-12B own-graded **~$25–60**
+  = **~$75–180 total**, GPU-dominated (grounded grader made labeling ~$1–5).
+- **Conditional Qwen3.5-397B extension — separate approval AFTER the four arms** (§2):
+  **~$50–150** (one 8×H200 session, ~800 GB download-dominated). Not part of the frozen budget.
 
 Technical stop rules only (hard spend, wall-time, no-progress, pod unavailability); any unrun
-registered arm is reported. The campaign Llama-3.3-70B and Qwen-397B J-lenses are archived or
-shipped with a deterministic refit recipe (third-party reproducibility).
+confirmatory arm is reported. The campaign Llama-3.3-70B and (if run) Qwen-397B J-lenses are
+archived or shipped with a deterministic refit recipe (third-party reproducibility).
 
 ## 11. Own-graded arms + public label release (Gemma-3-12B, Qwen3.5-397B)
 
@@ -174,8 +185,9 @@ noise. Gemma-3-12B → four readers (+ Gemma Scope 2 SAE); Qwen3.5-397B → thre
 SAE), our fitted J-lens as the distinctive reader.
 
 **Public label release (a Praxagent contribution).** We publish the annotation sets we create —
-LongFact completions + token-level entity labels for **gemma-3-12b-it** and **Qwen3.5-397B-A17B**
-— as an open HF dataset under `praxagent-org`, in the same schema as
+LongFact completions + token-level entity labels for **gemma-3-12b-it** (unconditional) and
+**Qwen3.5-397B-A17B** (only if the §2 conditional extension is run) — as an open HF dataset under
+`praxagent-org`, in the same schema as
 `obalcells/longfact-annotations` (`subset, model, conversation, annotations, canary`) so it
 drops into the public LongFact++ family for two models nobody has annotated. The dataset card
 must state: automated grader (model+revision), the grounding snapshot (Wikipedia dump date +

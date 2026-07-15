@@ -25,8 +25,10 @@ entity spans on public gold labels, plus an own-graded Gemma-3-12B arm. See
   2. **Llama-3.3-70B** — public gold labels, 4 readers, our J-lens
   3. **gemma-2-9b** — public gold labels, 4 readers
   4. **Gemma-3-12B** — own grounded-grader labels, 4 readers (+ Gemma Scope 2 SAE)
-  5. **Qwen3.5-397B (flagship, last)** — own grounded-grader labels, **3 readers** (no public
-     SAE): probe / logit lens / **our fitted J-lens**
+  5. **Qwen3.5-397B (flagship)** — **pre-registered CONDITIONAL extension** (TJ, 2026-07-15):
+     go/no-go decided *after* the four confirmatory arms, as a cost-vs-value call; if run, its
+     result is reported unconditionally (no cherry-picking). Own grounded-grader labels,
+     **3 readers** (no public SAE): probe / logit lens / **our fitted J-lens**
 - **Deliverable beyond the paper:** publish the LongFact hallucination-annotation sets we
   create for **gemma-3-12b** and **Qwen3.5-397B** as an open HF dataset (`praxagent-org`),
   extending the public LongFact++ family to two un-annotated models (PROTOCOL §11).
