@@ -33,10 +33,16 @@ from llm import GuardedLLM, BudgetExceeded  # noqa: E402
 from retrieve import WikiIndex               # noqa: E402
 
 LABELS = {"Supported": 0, "Not Supported": 1}
-SYS = ("You are a careful fact-checker. For each numbered entity/claim taken from a text, "
-       "use ONLY the provided Wikipedia reference passages to decide: 'Supported' (the "
-       "passages confirm it), 'Not Supported' (the passages contradict it, or clearly "
-       "should mention it and do not), or 'Insufficient' (passages don't cover it). "
+# v2 rubric (v1 rejected at kappa=0.281 for over-flagging): Not Supported ONLY on
+# explicit contradiction; absence of coverage is Insufficient (excluded), never Not
+# Supported. Well-known facts the passages support indirectly count as Supported.
+SYS = ("You are a careful fact-checker. For each numbered entity/claim from a text, use "
+       "the provided Wikipedia reference passages plus basic common knowledge to decide: "
+       "'Supported' (passages confirm it, directly or via an obvious paraphrase), "
+       "'Not Supported' (a passage explicitly CONTRADICTS it -- wrong date, wrong person, "
+       "wrong place, nonexistent thing), or 'Insufficient' (the passages neither confirm "
+       "nor contradict; coverage is missing). NEVER mark 'Not Supported' merely because "
+       "the passages do not mention it. "
        "Respond ONLY with a JSON array of {\"i\": <int>, \"label\": <str>, \"note\": <str>}.")
 
 
@@ -105,6 +111,7 @@ def run(a):
         except BudgetExceeded as e:
             print(f"  {e}"); break
         labmap = parse_labels(txt, len(spans))
+        print(f"  [{len(results)} spans done] {ex.cid} usd={usage.get('cum_usd',0):.3f}", flush=True)
         for j, sp in enumerate(spans):
             lab = labmap.get(j, "Insufficient")
             rec = {"cid": ex.cid, "entity": sp.text, "char": [sp.char_start, sp.char_end],
