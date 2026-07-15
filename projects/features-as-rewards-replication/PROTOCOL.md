@@ -1,162 +1,173 @@
-# PROTOCOL — Features-as-Rewards replication (outcome-masked, DRAFT pre-freeze)
+# PROTOCOL v2 — reader benchmark for hallucinated-entity detection (outcome-masked, pre-freeze)
 
-Status: **draft**. Not frozen. Freeze happens only after (a) the frontier Pro plan
-review is adjudicated (integrity §7A), (b) TJ signs off, and (c) the exact model/dataset/
-SAE **revisions and layer configs are pinned** and this file is committed+pushed
-(integrity §8). Until then every "pin at freeze" below is a rule, not yet a value.
+Supersedes the v1 draft after the frontier Pro review (`ADJUDICATION.md`, 10 blocking + 7
+important findings, all accepted). **Not frozen.** Freeze requires: every B-row resolved
+here; the control-gate suite (§7) + two-stage pipeline (§9) implemented and green on CPU;
+per-arm manifests (§9) + the cost table (§10) filled with pinned revisions; and TJ sign-off
+on the frozen plan **and** the whole-arm-set budget. House mode: **public Git freeze**, no
+OSF (routine confirmatory benchmark).
 
-House mode: **public Git freeze** (integrity §1). This is a routine confirmatory
-replication, not a super-high-value experiment — **no OSF** (§1, tightened 2026-07-14).
+## 1. What this is, and is not (B01, B02, B03)
 
-## 1. Question and claim boundary (§4)
+A **benchmark of readers for hallucinated-entity detection** on labeled entity spans — it is
+**not** a replication of *Features as Rewards*' Gemma-3 number (their exact completions/
+grader/probe code are not public). We compare how well different readers of the same
+residual-stream states **discriminate** hallucinated from supported entity spans.
 
-**Question.** Do a model's residual-stream activations carry a *calibrated* signal that
-an emitted entity is hallucinated, and **which reader** recovers it — a supervised
-attention probe (the paper's), an unsupervised logit lens, an unsupervised fitted
-Jacobian lens, or a sparse SAE latent?
+- **Discrimination, not calibration.** Primary construct is out-of-sample **AUROC**. We do
+  not call any raw score a probability. A separate frozen **calibration** sub-analysis
+  (§8) applies to the supervised probe only.
+- **Teacher-forced, observational.** We re-run pinned models over archived completions and
+  read residual states; these are not necessarily the emitting model's original states, and
+  we make **no causal/intervention claim** and no mental-state ("belief") claim.
+- **Independent unit = the completion.** All uncertainty clusters on completion (§8).
+- **Labels operationalize agreement with an annotation rubric, not ground truth.** The
+  public arms use the Obeso LongFact++ rubric; the Gemma-3 arm uses our own grader (§11).
 
-**Strongest supported result.** Under each pinned model, the LongFact++ prompt
-population, and the public gold-label annotation set, a frozen reader distinguishes
-hallucinated from supported entity spans at the reported out-of-sample AUROC, and the
-four-reader contrast identifies which interpretability object carries the signal.
+## 2. Arms (pin exact revision at freeze; B07)
 
-**Counts against.** A reader at chance (directed AUROC ≈ 0.5, CI spanning 0.5) on the
-held-out set; or the supervised probe failing to reproduce the paper's calibration
-(Classify AUROC < 0.90) — either would be a failed replication, reported as such.
+**Gold-label four-reader arms** (public labels): `meta-llama/Llama-3.1-8B-Instruct`
+(**primary confirmatory model**), `meta-llama/Llama-3.3-70B-Instruct`, `google/gemma-2-9b-it`.
+**Own-graded labeled arm** (paper's exact model): `google/gemma-3-12b-it`, labels from our
+cheaper grader (§11). Precision **bf16**, text path. Fallback hardware order in the execution
+manifest. The arm set is **fixed at freeze**; no arm is added or dropped based on outcomes.
 
-**Forbidden inferences (frozen before outcomes).** No claim that the signal *is* the
-model's "belief," intent, or experience. No transfer claim across models, prompt
-distributions, or hallucination types beyond those tested. No claim about the RL policy
-or the 58% reduction (Tier 3 not run). "Calibrated" means the frozen out-of-sample AUROC/
-reliability, nothing more.
+## 3. Data, splits, leakage bars (B09)
 
-**Generalization unit.** The independent unit is the **completion (conversation)**, not
-the entity — entities within one completion are correlated. All bootstraps/CIs cluster on
-completion (§5).
+- Public labels: `obalcells/longfact-annotations`, pin the dataset commit hash. Use its
+  `train / validation / test` splits, matched config per model.
+- **Split roles (resolves the v1 contradiction):** **train** = fit probe parameters and the
+  heuristic; **validation** = ALL choices (epoch, sign, SAE latent identity+sign, calibration
+  map, thresholds, layer confirmation); **test** = ONE final evaluation, scored once.
+- **Two-stage pipeline:** stage-1 *score generation* runs with **no access to test labels**
+  and emits per-span scores keyed by frozen span IDs; stage-2 *locked evaluator* joins scores
+  to labels by ID. `annotations`, `canary`, `verification_note`, and any label field are
+  **barred from reader inputs**. Duplicate-completion-ID and cross-split leakage checks run
+  before scoring; a hit stops the run.
+- Sample = all label∈{Supported→0, Not Supported→1} spans in the pinned test split (no optional
+  stopping). Excluded: unverifiable/NA labels; entity spans whose first token is position 0
+  (no preceding state, B03) — both counted and reported.
 
-## 2. Models (pin exact revision at freeze)
+## 4. Task and reader timing (B03)
 
-| Model | HF id | revision | role |
-|---|---|---|---|
-| Llama-3.1-8B-It | `meta-llama/Llama-3.1-8B-Instruct` | pin@freeze | primary/cheapest |
-| Llama-3.3-70B-It | `meta-llama/Llama-3.3-70B-Instruct` | pin@freeze | + our J-lens |
-| Gemma-3-12B-It | `google/gemma-3-12b-it` | pin@freeze | paper's model |
+Primary = **Classify**: score P̂(hallucinated) for a localized entity span. Every entity token
+x_t is scored from the **immediately preceding causal residual** h_{t-1}; all readers consume
+the **same** pre-entity states; readers may not see completion tokens after the span. The
+frozen token-alignment table (per-arm manifest, §9) pins: prefix available at scoring time,
+residual tensor + array index per token, pre-token convention, causal mask, span aggregation
+(first/last/mean over span tokens — frozen rule), BOS/chat-template offsets, truncation.
 
-Precision **bf16**, text path only. Fallback hardware order frozen in the run README.
+## 5. Readers — frozen, taxonomy corrected (B05)
 
-## 3. Data and labels (pin dataset revision at freeze)
+Scored on the SAME held-out spans; the finding is the **contrast** (§8).
 
-- Source: `obalcells/longfact-annotations` (LongFact++ / Obeso–Nanda). Use its own
-  **train / validation / test** splits; pin the dataset commit hash at freeze (§5:
-  snapshot the external resource).
-- Per model, use the matching config: `Meta-Llama-3.1-8B-Instruct`,
-  `Llama-3.3-70B-Instruct`. **Gemma-3-12B has no gold config** — its label path is a
-  separate frozen decision (see §8) resolved before the Gemma arm runs; the Llama arms
-  do not depend on it.
-- Unit of analysis: each annotated **entity span** in a completion, label ∈
-  {hallucinated=1, supported=0}. Excluded: spans the annotation marks unverifiable/NA
-  (frozen exclusion rule; counted and reported, never silently dropped).
-- Sample size: **all** entity spans in the pinned test split are scored (no optional
-  stopping). Train/val used only for probe fitting, SAE-latent selection, and reader-
-  sign/threshold selection — never for the reported test metric.
+- **Supervised:** attention probe (`common/readers.py::AttentionProbe`, source commit pinned),
+  fit on **train**, all choices on **validation**, **3 fixed seeds**, primary = mean of the 3
+  independently trained probes (never best-seed; B/I06).
+- **Label-free:** (a) **logit lens** — pre-token surprisal via the model's unembed at the
+  frozen primary layer; (b) **fitted Jacobian lens** — same surprisal through J (fit on a
+  disjoint corpus, label-free; fit recipe + corpus + matrix hash pinned, LongFact excluded;
+  I07). Sign fixed on **validation** by a mechanical formula.
+- **Label-selected sparse:** **SAE latent** — dictionary fixed; the scored coordinate + sign
+  selected on **validation** by max span-AUROC over the dictionary (this uses labels → *not*
+  unsupervised; B05). Reported as label-selected.
+- **Native output-token surprisal** (I02): the model's native next-token NLL of the entity
+  (final norm + real output head). A reader **and** the §7 positive control — not "another lens".
+- **Non-neural heuristic** (I04): logistic on entity token-length + unigram log-frequency;
+  frequency corpus+revision, normalization, tokenizer, OOV smoothing, regularization all
+  pinned; fit on train/val IDs only.
 
-## 4. Task
+## 6. Frozen sites (no max-over-layers headline)
 
-Primary = **Classify**: given a localized entity span, score P(hallucinated). Secondary =
-**Localize**: token-level "is this token in an entity" (probe only; the paper reports AUC
-.88). The four-reader comparison targets Classify.
+One **primary layer** per arm, pinned at freeze (rule: the SAE's trained residual site, so
+probe/lens/SAE share a site; `resid_post`, layer index and hook named in the manifest — B04).
+Other layers are **descriptive sensitivity only**.
 
-## 5. The four readers — frozen comparator ladder, NO optional rungs (§5 capacity-matched)
+## 7. Control-gate suite (B08) — distinguishes a scientific null from a pipeline bug
 
-Every reader scores the SAME held-out entity spans; the finding is the **contrast**, not
-any single AUROC (§11). All fitting/selection happens strictly inside the train fold.
+Frozen fixtures in `fixtures/`, all must pass before any arm's scores are trusted:
+- **Alignment fixtures:** known text/spans → exact token indices + causal score positions.
+- **Native-logit positive control:** the output-head lens reproduces the model's native token
+  NLL within a frozen tolerance.
+- **J-lens identity control:** identity transport == logit-lens implementation.
+- **SAE compatibility:** dims + a known encode/decode fixture + firing/reconstruction diagnostics.
+- **Leakage negative control:** a shuffled-label probe is at chance on held-out under the same
+  fitting pipeline.
+- **Procedure-matched SAE null:** random/permuted-latent controls undergo the **same candidate
+  count + validation selection** as the label-selected SAE (a single random latent is not the
+  right null).
+- **Mechanical sign rule:** dev-only formula; never flip direction from test.
+A failed gate ⇒ logged **outcome-masked implementation amendment** + rerun affected arms — never
+a report/no-report choice.
 
-1. **Attention probe (supervised).** `common/readers.py::AttentionProbe`, trained on the
-   train split only. Primary layer pinned at freeze (rule: the SAE's trained layer for
-   that model, so probe and SAE read the same site). Architecture, heads, epochs, lr,
-   seed frozen.
-2. **Logit lens (unsupervised).** Mean surprisal of the emitted entity tokens read
-   through the model's unembed at (a) the primary layer and (b) the output-head layer.
-   Sign fixed on the train fold. Free; the mandated cheapest-prior-method baseline.
-3. **Jacobian lens (unsupervised).** Same surprisal through the fitted J transport at the
-   primary layer. J is fitted on a disjoint text corpus (wikitext-style), **never on
-   labels**; for Llama-3.3-70B we reuse the campaign lens (pin its SHA), for Llama-3.1-8B
-   and Gemma-3-12B we fit one (fit config frozen).
-4. **SAE latent (sparse).** SAE pinned per model (`EleutherAI/sae-llama-3.1-8b-32x`,
-   `Goodfire/Llama-3.3-70B-Instruct-SAE-l50`, `google/gemma-scope-2-12b-it`). The scored
-   latent is selected **on the train fold by max span-AUROC** (selection-in-fold; the
-   test AUROC is reported on the held-out split only). We also report, if identifiable,
-   an auto-interp "unsupported-claim/uncertainty" latent chosen by label, disclosed as
-   label-selected.
+## 8. Endpoints and statistics (B06, B02, I01, I03)
 
-**Controls (same pipeline, frozen, additive — not substitutes):**
-- **Random-transport null:** surprisal through a Frobenius-matched random matrix (for the
-  lens readers) and a random SAE latent (for the sparse reader) — the same-statistic null
-  (§5 max-statistic rule). Directed AUROC of a true null ≈ 0.5.
-- **Cheapest non-neural heuristic:** entity token-length + unigram frequency logistic
-  baseline. If a reader cannot beat this, the neural readout earned nothing.
-- **Layer as sensitivity, not selection:** one primary layer per reader is frozen; other
-  layers are reported as post-hoc sensitivity, never as the headline (a max-over-layers
-  AUROC is a max-statistic and is forbidden as the primary).
+- **Primary (Llama-3.1-8B, confirmatory):** probe test AUROC + a family of **paired
+  reader−probe AUROC differences** (logit lens, J-lens, SAE) under **completion-clustered
+  paired bootstrap** (2000 resamples, frozen seed, shared resamples across readers, single-class
+  resamples handled by a frozen rule). AUROC is **span-weighted**; CI is completion-clustered.
+- **Equivalence margin (frozen):** a reader **matches** the probe iff its paired 95% CI ⊂
+  [−0.05, +0.05]; **noninferior** iff lower bound > −0.05; **worse** iff upper bound < −0.05.
+  "Above chance" is a separate one-sided CI rule vs 0.5, distinct from beating the heuristic.
+- **Multiplicity:** **Holm** across the primary family; all other models/readers/layers are
+  secondary/descriptive.
+- **Precision calc (design stage):** from the pinned completion/class counts and a plausible
+  within-completion correlation, confirm the expected CI can resolve the 0.05 margin; if not,
+  the claim is **descriptive estimation**, not "matches".
+- **Calibration sub-analysis (probe only, B02):** logistic map fit on validation; report test
+  Brier, log-loss, ECE (frozen bins/binning/empty-bin rule). Never for raw lens/SAE scores.
+- **Domain robustness (I03, descriptive):** macro-average of per-domain test AUROCs, min
+  class-count rule, undefined domains dropped. Not confirmatory.
+- **Reporting counts:** per split/model — completions, spans, supported, hallucinated, domains,
+  clusters-with-each-class.
 
-## 6. Endpoints and gates
+## 9. Execution + per-arm manifests (B04, B09)
 
-- **Primary (replication):** test-set Classify AUROC of the attention probe, per model,
-  with completion-clustered bootstrap 95% CI (2000 resamples, seed frozen).
-  **Reproduction gate:** Localize AUROC ≥ 0.85 and Classify AUROC ≥ 0.90 on Llama models
-  (the paper reports .88/.94 on Gemma-3-12B; we allow tolerance for model/label
-  differences and pre-register the gate, not the exact number).
-- **Primary (extension):** the four-reader AUROC table on the same test spans, per model,
-  with the two controls. Pre-committed reading: a reader "matches" the probe if its CI
-  overlaps the probe's; "carries the signal unsupervised" if an unsupervised/sparse reader
-  matches the probe; "needs supervision" if only the probe clears the null by a frozen
-  margin (ΔAUROC ≥ 0.05).
-- **Secondary:** calibration (reliability curve, ECE) for the probe; leave-one-LongFact-
-  domain macro-AUROC; output-head vs primary-layer lens.
+- **Per-arm manifest** (`manifests/<arm>.json`): model+tokenizer revision, chat-template hash,
+  SAE repo revision/file/width/L0/layer/hook/normalization/encoder-decoder convention, probe
+  source commit + full architecture/optimizer/aggregation, logit-lens final-norm+unembed
+  convention, J-lens source/target hooks + fit config + matrix hash, exact span aggregation.
+- **Execution manifest:** immutable commit/tag + allowed output-branch lineage; clean-worktree
+  check + exact commands; env lock (CUDA/PyTorch/Transformers, attention backend, dtype, device
+  map, batching, deterministic flags, tolerances); the two-stage pipeline; failure handling
+  (truncation/tokenizer-mismatch/NaN/OOM/classless/retry/hardware-fallback); reruns supplement,
+  not replace; fixed seeds (train, bootstrap, controls, generation, J-fit). bf16 is not claimed
+  bitwise-deterministic; tolerances are reported.
+- Receipts store **per-span sufficient statistics** (scores per reader + label + ids + score_pos
+  + args + seeds + revisions + versions), NOT raw 70B activations (B10) — re-analyzable without
+  the GPU, feeds the blog provenance manifest.
 
-## 7. Predictions (pre-registered, before outcomes)
+## 10. Cost, storage, budget (B10) — one upfront approval for the whole arm set
 
-1. The supervised attention probe reproduces Classify AUROC ≥ 0.90 on ≥2 of 3 models.
-2. The logit-lens confidence reader beats the random null but does **not** match the
-   probe (supervision helps on entity-level hallucination) — directed AUROC in ~0.6–0.75.
-3. The SAE latent lands between the logit lens and the probe.
-4. The fitted J-lens ≈ the logit lens on this output-adjacent task (consistent with our
-   workspace-under-pressure finding that the fitted transport adds little near the output).
+A per-arm × per-stage table (completion/token counts, GPU type, measured-throughput assumption,
+expected+max hours, $/hr, J-fit cost, extraction cost, grader cost, receipt volume, total) is
+filled at freeze and approved as a whole (not outcome-contingent per model). Working estimate:
+gold arms ~$50–120 + Gemma-3 own-graded arm ~$70–250 = **~$120–370 total**. Technical stop rules
+only (hard spend, wall-time, no-progress); any unrun registered arm is reported. The campaign
+Llama-3.3-70B J-lens is archived or shipped with a deterministic refit recipe (third-party
+reproducibility).
 
-Predictions are for calibration of our own understanding; the frozen endpoints stand
-regardless of whether predictions hold.
+## 11. Gemma-3-12B own-graded arm (cheaper grader; B01/B07, I05)
 
-## 8. Gemma-3-12B label decision (frozen before the Gemma arm; §5)
+Generate Gemma-3-12B completions on a frozen LongFact prompt sample (source + generation params
++ seeds pinned), then annotate hallucinated entities with a **cheaper LLM+web-search grader**
+(model+version pinned; the open Obeso annotation pipeline where possible), producing gold-ish
+token-level labels → the full four-reader comparison + Gemma Scope 2 SAE. Stated explicitly as
+**agreement with our grader's rubric, not ground truth**; the grader is a disclosed confound and
+non-determinism source. This arm is **labeled** (has its own gold-ish AUROC), not a
+score-agreement-only arm.
 
-Exactly one of, decided with TJ before the Gemma arm runs, then frozen:
-(a) grade Gemma-3-12B completions with an LLM+web-search grader (cost + stochastic-grader
-confound, disclosed); (b) swap to `gemma-2-9b-it` (gold labels + `gemma-scope-9b`),
-labeled as a Gemma-family, not Gemma-3-12B, result; (c) restrict the Gemma-3-12B arm to
-the **label-free** reader-agreement comparison (unsupervised readers vs SAE, no gold
-AUROC). Default lean: (c) for Gemma-3-12B faithfulness at zero grader cost, plus (b) for a
-gold-label Gemma point — but frozen only with TJ.
+## 12. Predictions (pre-registered) and permitted language
 
-## 9. Runtime, budget, hardware (§3 GPU playbook)
+Predictions: probe AUROC ≥ 0.85 on the primary model; logit lens beats chance but is worse than
+the probe by > 0.05 (supervision helps on entity-level detection); SAE (label-selected) between;
+J-lens ≈ logit lens (output-adjacent task). Predictions calibrate our understanding; endpoints
+stand regardless.
 
-- Sequence cheapest-first: Llama-3.1-8B fully (validates the whole pipeline on gold
-  labels), then Llama-3.3-70B, then Gemma-3-12B.
-- Each paid pod: state `$/hr × measured-unit × count` before launch, get a per-run
-  go-ahead, freeze wall-time/spend/no-progress ceilings, terminate on completion, verify
-  gone. Full cost re-estimate across all three arms is in the run README and surfaced to
-  TJ before the first pod (the all-3 total exceeds the original ~$200 envelope).
-- Receipts capture raw ingredients (per-span reader scores + labels + ids + args + seeds +
-  model/SAE/lens revisions + versions) so the four-reader table re-derives without the GPU
-  (§7 GPU playbook; feeds the blog provenance manifest).
-
-## 10. Permitted language (frozen)
-
-- Positive: "Under [pinned model], on LongFact++ gold-labeled entity spans, a frozen
-  [reader] distinguished hallucinated from supported entities at test AUROC X (95% CI …,
-  completion-clustered)."
-- Null: "[reader] did not exceed its random-transport null (directed AUROC ≈ 0.5, CI
-  includes 0.5); on this task and model the readout carries no entity-hallucination signal."
-- Mixed / reader contrast: "The supervised probe reached X; the unsupervised logit lens
-  reached Y < X — on entity-level hallucination the calibrated signal needed supervision
-  to surface," or the converse if an unsupervised reader matches.
-- Never: belief/intent/experience language; cross-model or cross-task generalization;
-  anything about the RL policy or the 58% figure.
+Permitted language — positive: "Under [pinned model], on [rubric] labels, [reader] discriminated
+hallucinated from supported entity spans at test AUROC X (95% CI …, completion-clustered,
+span-weighted)." Null (I01): "did not detect discrimination above chance at the registered
+precision (estimate, CI)"; "practically no signal" only after a passed equivalence test around
+0.5. Contrast: "[reader] was worse than / matched / noninferior to the probe by the frozen
+0.05 margin." Never: calibration/probability language for raw scores; belief/intent/experience;
+cross-model/task generalization; RL-policy or 58% claims; "reproduced the paper's .88/.94".

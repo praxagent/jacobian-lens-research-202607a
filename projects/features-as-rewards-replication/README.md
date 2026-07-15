@@ -1,9 +1,13 @@
-# Features as Rewards (RLFR) — replication
+# Features as Rewards — reader benchmark for hallucinated-entity detection
 
-Replicating the load-bearing claims of **"Features as Rewards: Scalable Supervision for
-Open-Ended Tasks via Interpretability"** (Goodfire, arXiv 2602.10067) — using probes on
-model features (residual-stream activations) as calibrated hallucination-belief signals —
-and extending it to a three-way reader comparison the paper leaves open.
+Motivated by **"Features as Rewards: Scalable Supervision for Open-Ended Tasks via
+Interpretability"** (Goodfire, arXiv 2602.10067). A frontier Pro plan review
+([`ADJUDICATION.md`](ADJUDICATION.md)) established that what we can do cheaply and honestly
+is **not** a replication of the paper's Gemma-3 number (their data/grader/probe code aren't
+public) but a **benchmark of readers** — supervised probe vs. logit lens vs. fitted Jacobian
+lens vs. label-selected SAE latent — for **discriminating** hallucinated from supported
+entity spans on public gold labels, plus an own-graded Gemma-3-12B arm. See
+[`PROTOCOL.md`](PROTOCOL.md) (v2, hardened) for the frozen design.
 
 - **Paper assessment + tiered plan:** [`PROPOSAL.md`](PROPOSAL.md)
 - **Artifact access snapshot:** [`FEASIBILITY.md`](FEASIBILITY.md)
