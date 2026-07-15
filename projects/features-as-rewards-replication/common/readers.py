@@ -83,9 +83,13 @@ def _lens_surprisal(hidden, unembed, final_norm, span_ids, transport=None, pool=
 
 
 def logit_lens_score(hidden_layers, unembed, final_norm, span_slice, span_ids,
-                     layer, pool="mean"):
+                     layer, pool="mean", head_layer=None):
+    """NOTE (caught by gate G1): HF `hidden_states[-1]` is ALREADY post-final-norm, so
+    when reading the head layer pass head_layer=layer (or final_norm=None) — re-applying
+    a learned LayerNorm/RMSNorm distorts the native NLL."""
     h = hidden_layers[layer][span_slice]         # [S, d]
-    return _lens_surprisal(h, unembed, final_norm, span_ids, transport=None, pool=pool)
+    fn = None if (head_layer is not None and layer == head_layer) else final_norm
+    return _lens_surprisal(h, unembed, fn, span_ids, transport=None, pool=pool)
 
 
 def jlens_score(hidden_layers, unembed, final_norm, span_slice, span_ids,

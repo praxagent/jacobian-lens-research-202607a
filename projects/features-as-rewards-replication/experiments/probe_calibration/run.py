@@ -90,6 +90,9 @@ def run(args):
         torch_dtype=torch.float32 if args.device == "cpu" else torch.bfloat16,
         output_hidden_states=True).to(args.device)
     unembed, final_norm = A.model_readout_parts(model)
+    n_layers = getattr(model.config, "num_hidden_layers", None) or model.config.n_layer
+    if n_layers not in layers:
+        layers = sorted(layers + [n_layers])   # head state for the native reader (I02)
     unembed = unembed.to(args.device).float()
 
     # B09 split roles: train = parameter fitting; validation = ALL choices (sign, SAE
@@ -191,11 +194,22 @@ def run(args):
     randT = torch.randn(d, d, generator=rng)
     randT *= (torch.eye(d).norm() / randT.norm())          # Frobenius-matched null
 
+    # native output-token surprisal (I02): read at the model's ACTUAL last hidden state
+    # (post-final-norm in HF, so head_layer skips re-norm -- gate G1). The head index is
+    # the layer count, NOT max(layers); it is force-included in the cached layers below.
+    head_idx = getattr(model.config, "num_hidden_layers", None) or model.config.n_layer
+
+    def native_on(recs):
+        return np.array([R.logit_lens_score(
+            {head_idx: A.span_hidden(r, head_idx).to(dev)}, ue, _fn, slice(None),
+            r["tok_ids"].to(dev), head_idx, head_layer=head_idx) for r in recs])
+
     # readers scored on BOTH validation (for sign/selection) and test (final)
     readers = {"attention_probe": ("supervised", None, probe_scores)}
     for name, T in (("logit_lens", None), ("random_transport_null", randT)):
         readers[name] = ("unsupervised" if T is None else "null",
                          lens_on(va, T), lens_on(te, T))
+    readers["native_head_surprisal"] = ("unsupervised", native_on(va), native_on(te))
     readers["heuristic_len_freq"] = ("heuristic", None, heur_scores)  # fit in-fold already
 
     # J-lens reader (fitted transport) if provided
