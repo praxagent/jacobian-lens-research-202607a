@@ -150,12 +150,14 @@ reproducibility).
 ## 11. Gemma-3-12B own-graded arm (cheaper grader; B01/B07, I05)
 
 Generate Gemma-3-12B completions on a frozen LongFact prompt sample (source + generation params
-+ seeds pinned), then annotate hallucinated entities with a **cheaper LLM+web-search grader**
-(model+version pinned; the open Obeso annotation pipeline where possible), producing gold-ish
-token-level labels → the full four-reader comparison + Gemma Scope 2 SAE. Stated explicitly as
-**agreement with our grader's rubric, not ground truth**; the grader is a disclosed confound and
-non-determinism source. This arm is **labeled** (has its own gold-ish AUROC), not a
-score-agreement-only arm.
++ seeds pinned), then annotate hallucinated entities with a **cheap grader grounded on a pinned
+local Wikipedia snapshot** (no live web search; deterministic + reproducible), producing gold-ish
+token-level labels → the full four-reader comparison + Gemma Scope 2 SAE. Full design, spend
+guards, and validation-against-public-labels in [`GROUNDING.md`](GROUNDING.md). Grader runs on a
+**prepaid OpenRouter balance** (DeepSeek/GLM) with a hard in-code `--max-usd` guard. Stated
+explicitly as **agreement with our grader's rubric, not ground truth** (disclosed confound +
+non-determinism). Labeled arm (own gold-ish AUROC), validated against the public labels to
+quantify noise.
 
 ## 12. Predictions (pre-registered) and permitted language
 
