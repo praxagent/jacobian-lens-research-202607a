@@ -4,7 +4,7 @@ set -e
 cd /workspace
 [ -d repo ] || git clone --depth 50 https://github.com/praxagent/jacobian-lens-research-202607a repo
 cd repo && git fetch -q && git checkout -q ARMSHA
-pip -q install datasets transformers safetensors 2>&1 | tail -1
+pip -q install datasets "transformers>=4.49,<5" safetensors 2>&1 | tail -1
 python - <<'PY'
 from huggingface_hub import hf_hub_download
 import os
