@@ -43,7 +43,7 @@ grader cost or confound.
 
 | Model | SAE repo | Notes |
 |---|---|---|
-| Llama-3.1-8B | `EleutherAI/sae-llama-3.1-8b-32x` (also `-64x`), `Goodfire/Llama-3.1-8B-Instruct-SAE-l19` | residual-stream |
+| Llama-3.1-8B | **`Goodfire/Llama-3.1-8B-Instruct-SAE-l19`** (residual layer 19, L0~91, .pth) | ⚠️ corrected 2026-07-15: `EleutherAI/sae-llama-3.1-8b-*` REJECTED — those are MLP-out hooks (layers 23/29) on the BASE model, not residual-stream on Instruct (the namespace-transfer trap from the llm_selfref series) |
 | Llama-3.3-70B | `Goodfire/Llama-3.3-70B-Instruct-SAE-l50` | residual-stream, layer 50 |
 | Gemma-3-12B-IT | `google/gemma-scope-2-12b-it` | **Gemma Scope 2** — DeepMind SAE suite on the Gemma-3 family incl. 12B-IT; `resid_post/attn_out/mlp_out` at 25/50/65/85% depth, multiple widths/L0. Exact model match. |
 

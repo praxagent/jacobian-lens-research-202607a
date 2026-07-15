@@ -92,19 +92,29 @@ def run(args):
     unembed, final_norm = A.model_readout_parts(model)
     unembed = unembed.to(args.device).float()
 
+    # B09 split roles: train = parameter fitting; validation = ALL choices (sign, SAE
+    # latent, epoch); test = one final evaluation. In smoke, one split is partitioned 3-way.
     splits = {}
-    for split in ("train", "test"):
-        exs = D.load_examples(config, split if not args.smoke else "validation",
-                              limit=limit, hf_token=tok_hf)
+    if args.smoke:
+        exs = D.load_examples(config, "validation", limit=limit, hf_token=tok_hf)
         exs = [D.align_spans(e, tokenizer) for e in exs]
-        max_len_eff = 512 if args.smoke else args.max_len  # gpt2 caps at 1024 positions
-        recs = A.cache_spans(model, tokenizer, exs, layers, device=args.device,
-                             max_len=max_len_eff)
-        splits[split] = recs
-        print(f"  {split}: {len(exs)} completions, {len(recs)} spans, "
-              f"balance={D.label_balance(exs)['prevalence']:.3f}")
+        recs = A.cache_spans(model, tokenizer, exs, layers, device=args.device, max_len=512)
+        third = max(1, len(recs) // 3)
+        splits = {"train": recs[:third], "validation": recs[third:2 * third],
+                  "test": recs[2 * third:]}
+        print(f"  smoke 3-way partition: {[len(splits[s]) for s in ('train','validation','test')]} spans")
+    else:
+        for split in ("train", "validation", "test"):
+            exs = D.load_examples(config, split, limit=limit, hf_token=tok_hf)
+            exs = [D.align_spans(e, tokenizer) for e in exs]
+            recs = A.cache_spans(model, tokenizer, exs, layers, device=args.device,
+                                 max_len=args.max_len)
+            splits[split] = recs
+            print(f"  {split}: {len(exs)} completions, {len(recs)} spans, "
+                  f"balance={D.label_balance(exs)['prevalence']:.3f}")
 
-    tr, te = splits["train"], splits["test"]
+    tr, va, te = splits["train"], splits["validation"], splits["test"]
+    y_va = np.array([r["label"] for r in va])
     y_te = np.array([r["label"] for r in te])
     cid_te = [r["cid"] for r in te]
 
@@ -163,38 +173,60 @@ def run(args):
     def _fn(h):
         return fnorm(h.to(dev)).to(dev) if fnorm is not None else h.to(dev)
 
-    def lens_scores(transport=None):
-        T = transport.to(dev).float() if transport is not None else None
-        s = []
-        for r in te:
-            hid = {primary: A.span_hidden(r, primary).to(dev)}
-            if T is None:
-                s.append(R.logit_lens_score(hid, ue, _fn, slice(None), r["tok_ids"].to(dev), primary))
-            else:
-                s.append(R.jlens_score(hid, ue, _fn, slice(None), r["tok_ids"].to(dev), primary, transport=T))
-        return np.array(s)
-
     d = Xtr.shape[-1]
-    logit = lens_scores(None)
+
+    def lens_on(recs, transport=None):
+        T = transport.to(dev).float() if transport is not None else None
+        out = []
+        for r in recs:
+            hid = {primary: A.span_hidden(r, primary).to(dev)}
+            fn = _fn
+            out.append(R.jlens_score(hid, ue, fn, slice(None), r["tok_ids"].to(dev),
+                                     primary, transport=T) if T is not None
+                       else R.logit_lens_score(hid, ue, fn, slice(None),
+                                               r["tok_ids"].to(dev), primary))
+        return np.array(out)
+
     rng = torch.Generator().manual_seed(0)
     randT = torch.randn(d, d, generator=rng)
     randT *= (torch.eye(d).norm() / randT.norm())          # Frobenius-matched null
-    randnull = lens_scores(randT)
 
-    readers = {
-        "attention_probe": (probe_scores, "supervised"),
-        "logit_lens": (logit, "unsupervised"),
-        "heuristic_len_freq": (heur_scores, "heuristic"),
-        "random_transport_null": (randnull, "null"),
-    }
+    # readers scored on BOTH validation (for sign/selection) and test (final)
+    readers = {"attention_probe": ("supervised", None, probe_scores)}
+    for name, T in (("logit_lens", None), ("random_transport_null", randT)):
+        readers[name] = ("unsupervised" if T is None else "null",
+                         lens_on(va, T), lens_on(te, T))
+    readers["heuristic_len_freq"] = ("heuristic", None, heur_scores)  # fit in-fold already
+
+    # J-lens reader (fitted transport) if provided
+    if args.jlens_path:
+        J = torch.load(args.jlens_path, map_location="cpu", weights_only=True)
+        J = J[primary] if isinstance(J, dict) else J
+        readers["jacobian_lens"] = ("unsupervised", lens_on(va, J.float()), lens_on(te, J.float()))
+
+    # label-selected SAE reader (B05: selection on VALIDATION labels only)
+    sae_info = None
+    if args.sae_path:
+        import sae as S
+        sae_r = (S.load_gemmascope(args.sae_path) if args.sae_format == "gemmascope"
+                 else S.load_goodfire(args.sae_path, d))
+        va_h = [A.span_hidden(r, primary) for r in va]
+        te_h = [A.span_hidden(r, primary) for r in te]
+        li, sgn, va_a = S.select_latent(sae_r, va_h, y_va, R.auroc)
+        sae_te = np.array([sgn * sae_r.encode(h)[:, li].mean().item() for h in te_h])
+        readers["sae_latent_label_selected"] = ("label-selected", None, sae_te)
+        sae_info = {"latent": int(li), "sign": int(sgn), "val_auroc": round(float(va_a), 4),
+                    "n_latents": sae_r.n_latents, "format": args.sae_format}
 
     table = {}
-    for name, (sc, kind) in readers.items():
-        sc = np.asarray(sc, dtype=float)
-        if kind == "supervised":
-            signed = sc                                    # probe has an a-priori sign
+    for name, (kind, sc_va, sc_te) in readers.items():
+        sc_te = np.asarray(sc_te, dtype=float)
+        if kind in ("supervised", "heuristic", "label-selected"):
+            signed = sc_te                       # sign fixed by training/selection fold
         else:
-            signed = sc if R.auroc(sc, y_te) >= 0.5 else -sc  # sign fixed once
+            # B08 mechanical sign rule: direction fixed on VALIDATION, never test
+            flip = R.auroc(np.asarray(sc_va, dtype=float), y_va) < 0.5
+            signed = -sc_te if flip else sc_te
         a = R.auroc(signed, y_te)
         lo, hi = cluster_bootstrap_auroc(signed, y_te, cid_te,
                                          n=(200 if args.smoke else 2000))
@@ -209,9 +241,10 @@ def run(args):
         "test_prevalence": round(float(y_te.mean()), 4),
         "probe_seed_aurocs": probe_seed_aurocs,
         "readers": table,
-        "per_span_test": [{"cid": r["cid"], "label": int(r["label"]),
-                           "probe": float(probe_scores[i]), "logit_lens": float(logit[i]),
-                           "random_null": float(randnull[i])} for i, r in enumerate(te)],
+        "sae_selection": sae_info,
+        "per_span_test": [dict({"cid": r["cid"], "label": int(r["label"])},
+                               **{name: float(np.asarray(readers[name][2])[i])
+                                  for name in readers}) for i, r in enumerate(te)],
         "args": vars(args), "seconds": round(time.time() - t0, 1),
     }
     Path(args.out).parent.mkdir(parents=True, exist_ok=True)
@@ -235,6 +268,9 @@ def main():
     ap.add_argument("--max-len", type=int, default=2048)
     ap.add_argument("--heads", type=int, default=4)
     ap.add_argument("--probe-seeds", type=int, nargs="*", default=[0, 1, 2])
+    ap.add_argument("--sae-path", default=None, help=".pth (goodfire) or params.safetensors (gemmascope)")
+    ap.add_argument("--sae-format", choices=["goodfire", "gemmascope"], default="goodfire")
+    ap.add_argument("--jlens-path", default=None, help="transport matrix .pt (or {layer: J} dict)")
     ap.add_argument("--epochs", type=int, default=200)
     ap.add_argument("--lr", type=float, default=1e-2)
     ap.add_argument("--out", default="projects/features-as-rewards-replication/"
