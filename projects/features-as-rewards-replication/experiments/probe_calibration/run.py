@@ -108,14 +108,48 @@ def run(args):
     y_te = np.array([r["label"] for r in te])
     cid_te = [r["cid"] for r in te]
 
-    # --- supervised attention probe (train on train split only) ---
+    # --- supervised attention probe: mean of 3 independently-trained seeds (I06) ---
+    # A single seed can be atypically (un)favorable for a small attention probe; the
+    # primary score is the MEAN of independently trained probes (never best-seed), so the
+    # CI reflects optimization variability, not just the completion bootstrap.
     Xtr, Mtr = pad_spans(tr, primary)
     ytr = np.array([r["label"] for r in tr])
-    probe, _ = R.train_probe(Xtr, Mtr, ytr, d_model=Xtr.shape[-1], n_heads=args.heads,
-                             epochs=args.epochs, lr=args.lr, seed=0)
     Xte, Mte = pad_spans(te, primary)
-    with torch.no_grad():
-        probe_scores = torch.sigmoid(probe(Xte, Mte)).numpy()
+    seed_scores = []
+    for s in args.probe_seeds:
+        probe, _ = R.train_probe(Xtr, Mtr, ytr, d_model=Xtr.shape[-1], n_heads=args.heads,
+                                 epochs=args.epochs, lr=args.lr, seed=s)
+        with torch.no_grad():
+            seed_scores.append(torch.sigmoid(probe(Xte, Mte)).numpy())
+    probe_scores = np.mean(seed_scores, axis=0)
+    probe_seed_aurocs = [round(float(R.auroc(ss, y_te)), 4) for ss in seed_scores]
+
+    # --- non-neural heuristic baseline (I04): entity token-count + in-fold unigram
+    # log-frequency, logistic, fit on TRAIN only. Frequency corpus = the train-split
+    # tokens (self-contained; pin an external corpus at freeze). ---
+    from collections import Counter
+    freq = Counter(int(t) for r in tr for t in r["tok_ids"].tolist())
+    total = sum(freq.values()) or 1
+
+    def _heur_feats(recs):
+        import math
+        F = []
+        for r in recs:
+            ids = r["tok_ids"].tolist()
+            n = len(ids)
+            lf = np.mean([math.log((freq.get(i, 0) + 1) / total) for i in ids]) if ids else 0.0
+            F.append([n, lf])
+        return np.array(F, dtype=float)
+
+    Htr, Hte = _heur_feats(tr), _heur_feats(te)
+    mu, sd = Htr.mean(0), Htr.std(0) + 1e-9
+    w = np.zeros(2); b = 0.0
+    Xh = (Htr - mu) / sd
+    for _ in range(300):                                   # tiny logistic GD, in-fold
+        p = 1 / (1 + np.exp(-(Xh @ w + b)))
+        g = Xh.T @ (p - ytr) / len(ytr)
+        w -= 0.1 * g; b -= 0.1 * (p - ytr).mean()
+    heur_scores = 1 / (1 + np.exp(-(((Hte - mu) / sd) @ w + b)))
 
     # --- unsupervised / sparse readers on test ---
     # NOTE: lens readout runs on CPU here (fine for the smoke's small d). For a real run
@@ -150,6 +184,7 @@ def run(args):
     readers = {
         "attention_probe": (probe_scores, "supervised"),
         "logit_lens": (logit, "unsupervised"),
+        "heuristic_len_freq": (heur_scores, "heuristic"),
         "random_transport_null": (randnull, "null"),
     }
 
@@ -172,6 +207,7 @@ def run(args):
         "model": model_name, "dataset_config": config, "layers": layers,
         "primary_layer": primary, "n_train_spans": len(tr), "n_test_spans": len(te),
         "test_prevalence": round(float(y_te.mean()), 4),
+        "probe_seed_aurocs": probe_seed_aurocs,
         "readers": table,
         "per_span_test": [{"cid": r["cid"], "label": int(r["label"]),
                            "probe": float(probe_scores[i]), "logit_lens": float(logit[i]),
@@ -198,6 +234,7 @@ def main():
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--max-len", type=int, default=2048)
     ap.add_argument("--heads", type=int, default=4)
+    ap.add_argument("--probe-seeds", type=int, nargs="*", default=[0, 1, 2])
     ap.add_argument("--epochs", type=int, default=200)
     ap.add_argument("--lr", type=float, default=1e-2)
     ap.add_argument("--out", default="projects/features-as-rewards-replication/"
