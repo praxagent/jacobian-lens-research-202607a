@@ -72,10 +72,16 @@ def load_goodfire(pth_path, d_model):
                      meta={"format": "goodfire", "keys": list(sd.keys())[:8]})
 
 
-def load_gemmascope(safetensors_path):
-    """Gemma Scope params.safetensors: W_enc [d, L], b_enc [L], threshold [L] (JumpReLU)."""
-    from safetensors.torch import load_file
-    sd = load_file(safetensors_path)
+def load_gemmascope(path):
+    """Gemma Scope params (.npz or .safetensors): W_enc [d, L], b_enc [L], threshold [L]
+    (JumpReLU)."""
+    if str(path).endswith(".npz"):
+        import numpy as np
+        z = np.load(path)
+        sd = {k: torch.from_numpy(z[k]) for k in z.files}
+    else:
+        from safetensors.torch import load_file
+        sd = load_file(path)
     W_enc = sd["W_enc"].float()
     if W_enc.shape[0] < W_enc.shape[1]:      # [d, L] -> [L, d]
         W_enc = W_enc.T
