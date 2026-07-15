@@ -177,17 +177,22 @@ def run(args):
     Xtr, Mtr = pad_spans(tr, primary)
     ytr = np.array([r["label"] for r in tr])
     Xte, Mte = pad_spans(te, primary)
-    # GPU probe training (implementation amendment 2026-07-16, pre-outcome: CPU full-batch
-    # training ground >3h on the pod; gates unaffected, math identical on device)
-    Xtr, Mtr = Xtr.to(args.device), Mtr.to(args.device)
-    Xte, Mte = Xte.to(args.device), Mte.to(args.device)
+    # Amendment 4 (pre-outcome): mini-batched GPU probe train/eval; tensors stay on CPU,
+    # batches stream to the device (a 41.7GB full-tensor .to(cuda) OOMed 3x). Free the
+    # base model first -- only unembed + final_norm are needed after activation caching
+    # (nn.Module.to is in-place, so the final_norm reference stays valid).
+    import gc
+    model.cpu(); del model; gc.collect()
+    if args.device != "cpu":
+        torch.cuda.empty_cache()
+        if final_norm is not None:
+            final_norm.to(args.device)
     print("  [stage] probe training", flush=True)
     seed_scores = []
     for s in args.probe_seeds:
         probe, _ = R.train_probe(Xtr, Mtr, ytr, d_model=Xtr.shape[-1], n_heads=args.heads,
-                                 epochs=args.epochs, lr=args.lr, seed=s)
-        with torch.no_grad():
-            seed_scores.append(torch.sigmoid(probe(Xte, Mte)).numpy())
+                                 epochs=args.epochs, lr=args.lr, seed=s, device=args.device)
+        seed_scores.append(R.eval_probe(probe, Xte, Mte, device=args.device))
     probe_scores = np.mean(seed_scores, axis=0)
     probe_seed_aurocs = [round(float(R.auroc(ss, y_te)), 4) for ss in seed_scores]
 
@@ -252,7 +257,7 @@ def run(args):
     # native output-token surprisal (I02): read at the model's ACTUAL last hidden state
     # (post-final-norm in HF, so head_layer skips re-norm -- gate G1). The head index is
     # the layer count, NOT max(layers); it is force-included in the cached layers below.
-    head_idx = getattr(model.config, "num_hidden_layers", None) or model.config.n_layer
+    head_idx = n_layers
 
     def native_on(recs):
         return np.array([R.logit_lens_score(
