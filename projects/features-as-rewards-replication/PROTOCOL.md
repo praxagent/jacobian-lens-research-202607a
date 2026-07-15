@@ -28,9 +28,18 @@ residual-stream states **discriminate** hallucinated from supported entity spans
 
 **Gold-label four-reader arms** (public labels): `meta-llama/Llama-3.1-8B-Instruct`
 (**primary confirmatory model**), `meta-llama/Llama-3.3-70B-Instruct`, `google/gemma-2-9b-it`.
-**Own-graded labeled arm** (paper's exact model): `google/gemma-3-12b-it`, labels from our
-cheaper grader (§11). Precision **bf16**, text path. Fallback hardware order in the execution
-manifest. The arm set is **fixed at freeze**; no arm is added or dropped based on outcomes.
+**Own-graded four-reader arm** (paper's exact model): `google/gemma-3-12b-it`, labels from our
+grounded grader (§11), Gemma Scope 2 SAE.
+**Own-graded THREE-reader flagship arm (final, optional-but-registered):**
+`Qwen/Qwen3.5-397B-A17B` (our own fitted lens `praxagent-org/jacobian-lens-qwen3.5-397b-a17b`).
+**No SAE reader** (no public 397B SAE) → readers are supervised probe / logit lens / **our
+J-lens**. Own-graded labels (§11). Sequenced **last** (the 8×H200 session is the study's single
+largest cost) so the cheap arms validate the whole pipeline before we spend it. Once registered
+at freeze it is run unconditionally (B10: no outcome-contingent arm dropping); only a technical
+stop rule (hard spend / wall-time / no-progress / pod unavailability) may leave it unrun, and
+that is reported.
+Precision **bf16**, text path. Fallback hardware order in the execution manifest. The arm set is
+**fixed at freeze**; no arm is added or dropped based on outcomes.
 
 ## 3. Data, splits, leakage bars (B09)
 
@@ -140,24 +149,41 @@ a report/no-report choice.
 ## 10. Cost, storage, budget (B10) — one upfront approval for the whole arm set
 
 A per-arm × per-stage table (completion/token counts, GPU type, measured-throughput assumption,
-expected+max hours, $/hr, J-fit cost, extraction cost, grader cost, receipt volume, total) is
-filled at freeze and approved as a whole (not outcome-contingent per model). Working estimate:
-gold arms ~$50–120 + Gemma-3 own-graded arm ~$70–250 = **~$120–370 total**. Technical stop rules
-only (hard spend, wall-time, no-progress); any unrun registered arm is reported. The campaign
-Llama-3.3-70B J-lens is archived or shipped with a deterministic refit recipe (third-party
-reproducibility).
+expected+max hours, $/hr, J-fit cost, grader cost, receipt volume, total) is filled at freeze and
+approved as a whole (not outcome-contingent per model). Working estimate (grounded grader made
+labeling nearly free):
+- gold arms (Llama-8B/70B, gemma-2-9b): **~$50–120** (public labels)
+- Gemma-3-12B own-graded arm: **~$25–60** (grounded grader ~$1–5 + ~$20–55 GPU)
+- Qwen3.5-397B flagship arm (final): **~$50–150** (8×H200 session, ~800 GB download-dominated)
+- **total ≈ $125–330**, GPU-dominated.
 
-## 11. Gemma-3-12B own-graded arm (cheaper grader; B01/B07, I05)
+Technical stop rules only (hard spend, wall-time, no-progress, pod unavailability); any unrun
+registered arm is reported. The campaign Llama-3.3-70B and Qwen-397B J-lenses are archived or
+shipped with a deterministic refit recipe (third-party reproducibility).
 
-Generate Gemma-3-12B completions on a frozen LongFact prompt sample (source + generation params
-+ seeds pinned), then annotate hallucinated entities with a **cheap grader grounded on a pinned
-local Wikipedia snapshot** (no live web search; deterministic + reproducible), producing gold-ish
-token-level labels → the full four-reader comparison + Gemma Scope 2 SAE. Full design, spend
-guards, and validation-against-public-labels in [`GROUNDING.md`](GROUNDING.md). Grader runs on a
-**prepaid OpenRouter balance** (DeepSeek/GLM) with a hard in-code `--max-usd` guard. Stated
-explicitly as **agreement with our grader's rubric, not ground truth** (disclosed confound +
-non-determinism). Labeled arm (own gold-ish AUROC), validated against the public labels to
-quantify noise.
+## 11. Own-graded arms + public label release (Gemma-3-12B, Qwen3.5-397B)
+
+For each own-graded arm: generate completions on a frozen LongFact prompt sample (source +
+generation params + seeds pinned), then annotate hallucinated entities with our **grounded
+grader** (cheap OpenRouter model + local pinned Wikipedia snapshot; no live web search;
+deterministic + reproducible). Full design, spend guards, and validation-against-public-labels
+in [`GROUNDING.md`](GROUNDING.md). Grader on a **prepaid OpenRouter balance** with a hard
+in-code `--max-usd` backstop. Labels stated as **agreement with our grader's rubric, not ground
+truth** (disclosed confound + non-determinism), validated against the public labels to quantify
+noise. Gemma-3-12B → four readers (+ Gemma Scope 2 SAE); Qwen3.5-397B → three readers (no public
+SAE), our fitted J-lens as the distinctive reader.
+
+**Public label release (a Praxagent contribution).** We publish the annotation sets we create —
+LongFact completions + token-level entity labels for **gemma-3-12b-it** and **Qwen3.5-397B-A17B**
+— as an open HF dataset under `praxagent-org`, in the same schema as
+`obalcells/longfact-annotations` (`subset, model, conversation, annotations, canary`) so it
+drops into the public LongFact++ family for two models nobody has annotated. The dataset card
+must state: automated grader (model+revision), the grounding snapshot (Wikipedia dump date +
+SHA), the reproducible pipeline (commit-pinned `grade.py` + `build_wiki_index.py`), the
+measured agreement vs the public gold labels, an explicit **"grader-generated, not
+human-verified, agreement-with-rubric-not-truth"** caveat, a **canary string** (benchmark-
+contamination guard), and the license. Releasing does not change any frozen endpoint; it is a
+release artifact, gated on the same freeze + provenance discipline as the figures.
 
 ## 12. Predictions (pre-registered) and permitted language
 

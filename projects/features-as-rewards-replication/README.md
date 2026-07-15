@@ -14,36 +14,42 @@ entity spans on public gold labels, plus an own-graded Gemma-3-12B arm. See
 - **What the paper's "features" are:** attention **probes on raw residual-stream
   activations** — NOT SAE features (see PROPOSAL). SAEs are our *extension*, not theirs.
 
-## Scope (TJ, 2026-07-14)
+## Scope (TJ, 2026-07-14/15; framing per the Pro review, `ADJUDICATION.md`)
 
-- **Tiers 0–2 + extension** authorized; **Tier 3 (the ~$4k RL run) excluded.**
-- **Three models** compared: Llama-3.1-8B-It, Llama-3.3-70B-It, Gemma-3-12B-It.
-- **Four readers** of the same held-out entity spans: supervised **attention probe**
-  (theirs) · unsupervised **logit lens** · unsupervised **fitted Jacobian lens** (ours) ·
-  sparse **SAE latent** (Goodfire's own instrument, unused in the paper).
-- Cheapest-model-first sequencing; every paid pod gated on a fresh cost estimate.
+- A **reader benchmark** for hallucinated-entity **discrimination** (not a replication of the
+  paper's number; RL / the 58% is out of scope).
+- **Readers** on the same held-out entity spans: supervised **attention probe** · unsupervised
+  **logit lens** · unsupervised **fitted Jacobian lens (ours)** · label-selected **SAE latent**.
+- **Arms** (cheapest first; the arm set is fixed at freeze):
+  1. **Llama-3.1-8B** — primary confirmatory (public gold labels), 4 readers
+  2. **Llama-3.3-70B** — public gold labels, 4 readers, our J-lens
+  3. **gemma-2-9b** — public gold labels, 4 readers
+  4. **Gemma-3-12B** — own grounded-grader labels, 4 readers (+ Gemma Scope 2 SAE)
+  5. **Qwen3.5-397B (flagship, last)** — own grounded-grader labels, **3 readers** (no public
+     SAE): probe / logit lens / **our fitted J-lens**
+- **Deliverable beyond the paper:** publish the LongFact hallucination-annotation sets we
+  create for **gemma-3-12b** and **Qwen3.5-397B** as an open HF dataset (`praxagent-org`),
+  extending the public LongFact++ family to two un-annotated models (PROTOCOL §11).
 
-## Replication status
+## Status
 
-| # | Claim | Model(s) | Status |
-|---|---|---|---|
-| C1 | Detection probes read calibrated hallucination belief (Localize/Classify AUC) | 8B → 70B → Gemma | proposed |
-| C1x | Which reader carries the signal: probe vs logit-lens vs J-lens vs SAE | all 3 | proposed (our extension) |
-| C2 | Reward probes (retract/correct) grade interventions | 8B → 70B | proposed |
-| C3 | Probe-reward best-of-N > model-self-judge at test time (no RL) | 8B → 70B | proposed |
-| C4 | Activation-source invariance (probe ordering base vs policy) | 8B | proposed |
-| C5 | Full RLFR training → decomposed 58% reduction | — | **excluded (Tier 3)** |
+| Item | Status |
+|---|---|
+| Reader benchmark (probe vs logit vs J-lens vs SAE), 5 arms | protocol v2, pre-freeze |
+| Grounded grader + local Wikipedia labels (Gemma-3, Qwen-397B) | built, CPU-proven |
+| Public label release (gemma-3-12b, Qwen-397B) | planned deliverable |
+| Best-of-N reader-as-reward at test time (no RL) | registered, secondary |
+| RLFR training / the 58% | **out of scope** |
 
 Status vocabulary: proposed → frozen (outcome-masked) → running → confirmatory → reported.
 
 ## Method note
 
-The paper's probes are attention probes trained on residual-stream activations to imitate
-a grader's hallucinated-entity labels. We reuse the **public gold labels** from
-`obalcells/longfact-annotations` (the LongFact++ / Obeso–Nanda work) where they exist
-(Llama-3.1-8B, Llama-3.3-70B, gemma-2-9b), avoiding the paper's grader cost and
-non-determinism. The Gemma-3-12B arm's label path is decided when we sequence it (see
-FEASIBILITY §label gap).
+We reuse the **public gold labels** from `obalcells/longfact-annotations` (LongFact++ /
+Obeso–Nanda) for Llama-3.1-8B, Llama-3.3-70B, gemma-2-9b. Gemma-3-12B and Qwen3.5-397B have no
+public labels, so we generate our own with a **grounded grader** (cheap OpenRouter model + a
+pinned local Wikipedia snapshot; `GROUNDING.md`), disclosed as grader-agreement not truth and
+validated against the public labels — and we release those two label sets publicly.
 
 ## How to run
 
