@@ -1,0 +1,5768 @@
+{
+ "what": "grounded grader run",
+ "mode": "gold",
+ "config": "Meta-Llama-3.1-8B-Instruct",
+ "split": "validation",
+ "model": "deepseek/deepseek-chat",
+ "db": "/home/ubuntu/wiki-snapshot/enwiki-20260701-fts.db",
+ "guard": {
+  "model": "deepseek/deepseek-chat",
+  "calls": 40,
+  "spent_usd": 0.0791,
+  "max_usd": 2.0,
+  "halted": false,
+  "dry_run": false
+ },
+ "n_spans": 574,
+ "results": [
+  {
+   "cid": "longfact_objects:0",
+   "entity": "1993",
+   "char": [
+    699,
+    703
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "President's Council on Year 2000 Conversion",
+   "char": [
+    739,
+    782
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "Al Gore",
+   "char": [
+    866,
+    873
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "John Koskinen",
+   "char": [
+    2570,
+    2583
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "January 1, 2000",
+   "char": [
+    3954,
+    3969
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "$100 billion",
+   "char": [
+    2807,
+    2819
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "Washington, D.C.",
+   "char": [
+    3154,
+    3170
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "Seattle, Washington",
+   "char": [
+    3260,
+    3279
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "1960s",
+   "char": [
+    622,
+    627
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:0",
+   "entity": "1999",
+   "char": [
+    186,
+    190
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "C\u00e9sar Pelli",
+   "char": [
+    114,
+    125
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "C\u00e9sar Pelli & Associates",
+   "char": [
+    307,
+    331
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "IJM Corporation Berhad",
+   "char": [
+    441,
+    463
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "Thornton Tomasetti",
+   "char": [
+    491,
+    509
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "1992",
+   "char": [
+    553,
+    557
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "1998",
+   "char": [
+    579,
+    583
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "August 31, 1999",
+   "char": [
+    624,
+    639
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "452 meters (1,483 feet)",
+   "char": [
+    710,
+    733
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "88 floors",
+   "char": [
+    743,
+    752
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "58-meter (190-foot)",
+   "char": [
+    786,
+    805
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "41st and 42nd floors",
+   "char": [
+    828,
+    848
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "six years",
+   "char": [
+    1582,
+    1591
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "RM 1.6 billion (US$ 400 million)",
+   "char": [
+    1917,
+    1949
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "1926",
+   "char": [
+    2290,
+    2294
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "2019",
+   "char": [
+    2307,
+    2311
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "92",
+   "char": [
+    2326,
+    2328
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "Tan Sri Dato' Seri Ahmad Tajuddin Ali",
+   "char": [
+    2332,
+    2369
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "Dato' Sri Idris Jala",
+   "char": [
+    2466,
+    2486
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:1",
+   "entity": "Tun Dr Mahathir Mohamad",
+   "char": [
+    2783,
+    2806
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "over 70% of all deaths worldwide",
+   "char": [
+    231,
+    263
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "41 million deaths in 2016",
+   "char": [
+    283,
+    308
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "WHO's Global Action Plan for the Prevention and Control of NCDs",
+   "char": [
+    1956,
+    2019
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "Launched in 2013",
+   "char": [
+    2023,
+    2039
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "reduce premature deaths from NCDs by 25% by 2025",
+   "char": [
+    2059,
+    2107
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "over $1 trillion annually",
+   "char": [
+    1210,
+    1235
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "Mexico's Sugar-Sweetened Beverage Tax",
+   "char": [
+    3086,
+    3123
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "Implemented in 2014",
+   "char": [
+    3127,
+    3146
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "The UK's Sugar Reduction Programme",
+   "char": [
+    3233,
+    3267
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "Launched in 2016",
+   "char": [
+    3271,
+    3287
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:2",
+   "entity": "The Global Alliance for Chronic Diseases (GACD)",
+   "char": [
+    2700,
+    2747
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:3",
+   "entity": "One Less Stranger",
+   "char": [
+    220,
+    237
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:3",
+   "entity": "2019",
+   "char": [
+    271,
+    275
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:3",
+   "entity": "Live There",
+   "char": [
+    442,
+    452
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:3",
+   "entity": "2020",
+   "char": [
+    486,
+    490
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:3",
+   "entity": "Wieden+Kennedy",
+   "char": [
+    1585,
+    1599
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "Howard Carter",
+   "char": [
+    212,
+    225
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "George Herbert, the 5th Earl of Carnarvon",
+   "char": [
+    240,
+    281
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "November 4, 1922",
+   "char": [
+    893,
+    909
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "Valley of the Kings",
+   "char": [
+    314,
+    333
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "KV62",
+   "char": [
+    648,
+    652
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "1550 to 1069 BCE",
+   "char": [
+    549,
+    565
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "1917",
+   "char": [
+    820,
+    824
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "November 26, 1922",
+   "char": [
+    1635,
+    1652
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "I see wonderful things",
+   "char": [
+    2192,
+    2214
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "February 16, 1923",
+   "char": [
+    4262,
+    4279
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "solid gold",
+   "char": [
+    3584,
+    3594
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "lapis lazuli and carnelian",
+   "char": [
+    2765,
+    2791
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:4",
+   "entity": "20 feet (6 meters) square",
+   "char": [
+    3324,
+    3349
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Jeff Moss",
+   "char": [
+    354,
+    363
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "1997",
+   "char": [
+    508,
+    512
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "August 1-3, 1997",
+   "char": [
+    496,
+    512
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Marc Maiffret",
+   "char": [
+    1533,
+    1546
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "I Love You\" worm",
+   "char": [
+    1654,
+    1670
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "2000",
+   "char": [
+    2659,
+    2663
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "SQL Slammer\" worm",
+   "char": [
+    2741,
+    2758
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "2003",
+   "char": [
+    2766,
+    2770
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Neel Mehta",
+   "char": [
+    2798,
+    2808
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Heartbleed\" bug",
+   "char": [
+    2847,
+    2862
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "2014",
+   "char": [
+    2870,
+    2874
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Kevin Mitnick",
+   "char": [
+    2902,
+    2915
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Las Vegas, Nevada",
+   "char": [
+    3153,
+    3170
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "July or August",
+   "char": [
+    3233,
+    3247
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Singapore",
+   "char": [
+    3254,
+    3263
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Tokyo, Japan",
+   "char": [
+    3353,
+    3365
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "Amsterdam, Netherlands",
+   "char": [
+    3451,
+    3473
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:5",
+   "entity": "4-5 days",
+   "char": [
+    4295,
+    4303
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Ninian Smart",
+   "char": [
+    0,
+    12
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "British scholar of comparative religion",
+   "char": [
+    149,
+    188
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "1973",
+   "char": [
+    221,
+    225
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "The Science of Religion and the Sociology of Knowledge",
+   "char": [
+    232,
+    286
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Guru Nanak",
+   "char": [
+    1240,
+    1250
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "1469-1539 CE",
+   "char": [
+    1252,
+    1264
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Guru Granth Sahib",
+   "char": [
+    1343,
+    1360
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Five Ks",
+   "char": [
+    1401,
+    1408
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Kesh, Kangha, Kara, Kirpan, and Kachera",
+   "char": [
+    1410,
+    1449
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Amrit Sanchar",
+   "char": [
+    1863,
+    1876
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Nitnem",
+   "char": [
+    1974,
+    1980
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Vaisakhi",
+   "char": [
+    2074,
+    2082
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "founding of the Khalsa",
+   "char": [
+    2089,
+    2111
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "bhakti",
+   "char": [
+    2190,
+    2196
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "satsang",
+   "char": [
+    2269,
+    2276
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "simran",
+   "char": [
+    2379,
+    2385
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "langar",
+   "char": [
+    2570,
+    2576
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "seva",
+   "char": [
+    2689,
+    2693
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:6",
+   "entity": "Gurdwara",
+   "char": [
+    2794,
+    2802
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "L'Arroseur Arros\u00e9",
+   "char": [
+    386,
+    403
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "1895",
+   "char": [
+    406,
+    410
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Louis and Auguste Lumi\u00e8re",
+   "char": [
+    438,
+    463
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Louis Maurice",
+   "char": [
+    511,
+    524
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "The Story of the Kelly Gang",
+   "char": [
+    581,
+    608
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "1906",
+   "char": [
+    611,
+    615
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Charles Tait",
+   "char": [
+    649,
+    661
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "It Happened One Night",
+   "char": [
+    914,
+    935
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "1934",
+   "char": [
+    938,
+    942
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Frank Capra",
+   "char": [
+    959,
+    970
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Samuel Hopkins Adams",
+   "char": [
+    994,
+    1014
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "five Academy Awards",
+   "char": [
+    1030,
+    1049
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "The Graduate",
+   "char": [
+    1822,
+    1834
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "1967",
+   "char": [
+    1837,
+    1841
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Mike Nichols",
+   "char": [
+    1858,
+    1870
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Charles Webb",
+   "char": [
+    1894,
+    1906
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "five Academy Awards",
+   "char": [
+    1944,
+    1963
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "The Man with the Golden Arm",
+   "char": [
+    1647,
+    1674
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "1955",
+   "char": [
+    1677,
+    1681
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Otto Preminger",
+   "char": [
+    1698,
+    1712
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Nelson Algren",
+   "char": [
+    1736,
+    1749
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "first to use a non-linear narrative structure",
+   "char": [
+    1769,
+    1814
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Beetlejuice",
+   "char": [
+    4373,
+    4384
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "1988",
+   "char": [
+    4387,
+    4391
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "Tim Burton",
+   "char": [
+    4329,
+    4339
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:7",
+   "entity": "original screenplays",
+   "char": [
+    4465,
+    4485
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "1970s",
+   "char": [
+    167,
+    172
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Duncan Kennedy",
+   "char": [
+    486,
+    500
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Roberto Mangabeira Unger",
+   "char": [
+    502,
+    526
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Mark Tushnet",
+   "char": [
+    532,
+    544
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "The Structure of Blackstone's Commentaries",
+   "char": [
+    1016,
+    1058
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "1973",
+   "char": [
+    1061,
+    1065
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "The Critical Legal Studies Movement",
+   "char": [
+    1198,
+    1233
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "1983",
+   "char": [
+    1236,
+    1240
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Red, White, and Blue: Sex and the Sit-Ins in Mississippi",
+   "char": [
+    1368,
+    1424
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "1986",
+   "char": [
+    1427,
+    1431
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Peter Gabel",
+   "char": [
+    1498,
+    1509
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "New York Law School",
+   "char": [
+    1515,
+    1534
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Brown v. Board of Education",
+   "char": [
+    2403,
+    2430
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "1954",
+   "char": [
+    2432,
+    2436
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "Roe v. Wade",
+   "char": [
+    2625,
+    2636
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "1973",
+   "char": [
+    2638,
+    2642
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:8",
+   "entity": "The Civil Rights Act of 1964",
+   "char": [
+    2825,
+    2853
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "November 16, 1952",
+   "char": [
+    128,
+    145
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Sonobe, Japan",
+   "char": [
+    150,
+    163
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Hayao Miyazaki",
+   "char": [
+    463,
+    477
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Kanazawa College of Art",
+   "char": [
+    625,
+    648
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1976",
+   "char": [
+    672,
+    676
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Industrial Design",
+   "char": [
+    694,
+    711
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1977",
+   "char": [
+    749,
+    753
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Fusajiro Yamauchi",
+   "char": [
+    825,
+    842
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1889",
+   "char": [
+    846,
+    850
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Sheriff",
+   "char": [
+    1035,
+    1042
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1979",
+   "char": [
+    1067,
+    1071
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Donkey Kong",
+   "char": [
+    1108,
+    1119
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1981",
+   "char": [
+    1134,
+    1138
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "The Legend of Zelda",
+   "char": [
+    1748,
+    1767
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1986",
+   "char": [
+    1795,
+    1799
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Star Fox",
+   "char": [
+    2162,
+    2170
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1993",
+   "char": [
+    2173,
+    2177
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "F-Zero",
+   "char": [
+    2181,
+    2187
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Pikmin",
+   "char": [
+    2202,
+    2208
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "2001",
+   "char": [
+    2211,
+    2215
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Super Mario Bros.",
+   "char": [
+    2307,
+    2324
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1985",
+   "char": [
+    2327,
+    2331
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "40 million copies worldwide",
+   "char": [
+    2392,
+    2419
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "The Legend of Zelda: Ocarina of Time",
+   "char": [
+    2425,
+    2461
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1998",
+   "char": [
+    2464,
+    2468
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Super Mario 64",
+   "char": [
+    2566,
+    2580
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "1996",
+   "char": [
+    2583,
+    2587
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "11 million copies worldwide",
+   "char": [
+    2661,
+    2688
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "The Legend of Zelda: Breath of the Wild",
+   "char": [
+    2694,
+    2733
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "2017",
+   "char": [
+    2736,
+    2740
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Academy of Interactive Arts & Sciences' Hall of Fame",
+   "char": [
+    3018,
+    3070
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "2006",
+   "char": [
+    3072,
+    3076
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Game Developers Choice Awards' Lifetime Achievement Award",
+   "char": [
+    3081,
+    3138
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "2007",
+   "char": [
+    3140,
+    3144
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "BAFTA Fellowship",
+   "char": [
+    3149,
+    3165
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "2010",
+   "char": [
+    3167,
+    3171
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Yasuko Miyamoto",
+   "char": [
+    3386,
+    3401
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "two children",
+   "char": [
+    3417,
+    3429
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "2015",
+   "char": [
+    3594,
+    3598
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:9",
+   "entity": "Representative Director and Creative Fellow",
+   "char": [
+    3630,
+    3673
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "George Pimentel",
+   "char": [
+    0,
+    15
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "March 2, 1924",
+   "char": [
+    171,
+    184
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "San Francisco, California",
+   "char": [
+    189,
+    214
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "University of California, Berkeley in 1946",
+   "char": [
+    276,
+    318
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "Ph.D. in chemistry from the University of California, Berkeley in 1949",
+   "char": [
+    348,
+    418
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "Science on November 12, 1964",
+   "char": [
+    773,
+    801
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "Optical Maser Action in a System Containing a Gain Medium and a Catalyst",
+   "char": [
+    811,
+    883
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "Science, Vol. 146, Issue 3645, pp. 645-646",
+   "char": [
+    886,
+    928
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "hydrogen fluoride (HF) and a catalyst",
+   "char": [
+    630,
+    667
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "National Medal of Science** (1985",
+   "char": [
+    2837,
+    2870
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "August 28, 2018",
+   "char": [
+    3015,
+    3030
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:10",
+   "entity": "at the age of 94",
+   "char": [
+    3032,
+    3048
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "March 26, 1973",
+   "char": [
+    286,
+    300
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "East Lansing, Michigan",
+   "char": [
+    305,
+    327
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Carl Page",
+   "char": [
+    346,
+    355
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Gloria Page",
+   "char": [
+    436,
+    447
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "dropped out of college in 1995",
+   "char": [
+    718,
+    748
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "1996",
+   "char": [
+    814,
+    818
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Sergey Brin",
+   "char": [
+    858,
+    869
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "September 1998",
+   "char": [
+    1199,
+    1213
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Menlo Park, California",
+   "char": [
+    1273,
+    1295
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Googol",
+   "char": [
+    1329,
+    1335
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "1999",
+   "char": [
+    1681,
+    1685
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "$1 million in funding from investors, including Sequoia Capital",
+   "char": [
+    1864,
+    1927
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "$1.67 billion",
+   "char": [
+    2136,
+    2149
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Gmail (2004)",
+   "char": [
+    2311,
+    2323
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Google Maps (2005)",
+   "char": [
+    2325,
+    2343
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "YouTube (2006)",
+   "char": [
+    2349,
+    2363
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Android (2005)",
+   "char": [
+    2426,
+    2440
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "2015",
+   "char": [
+    2511,
+    2515
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Sundar Pichai",
+   "char": [
+    2776,
+    2789
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "2019",
+   "char": [
+    2939,
+    2943
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Lucinda Southworth",
+   "char": [
+    2984,
+    3002
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "biologist and artist",
+   "char": [
+    3006,
+    3026
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "two children",
+   "char": [
+    3035,
+    3047
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "over $130 billion",
+   "char": [
+    3260,
+    3277
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "Fortune Magazine's Businessperson of the Year (2005)",
+   "char": [
+    3572,
+    3624
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "National Academy of Engineering's Draper Prize for Engineering (2006)",
+   "char": [
+    3627,
+    3696
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:11",
+   "entity": "American Academy of Arts and Sciences' Fellow (2006)",
+   "char": [
+    3699,
+    3751
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:12",
+   "entity": "ICT for Development",
+   "char": [
+    2496,
+    2515
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:12",
+   "entity": "Digital Skills and Jobs Coalition",
+   "char": [
+    2866,
+    2899
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:12",
+   "entity": "Microsoft's Digital Literacy Program",
+   "char": [
+    4517,
+    4553
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:12",
+   "entity": "1 billion people by 2025",
+   "char": [
+    4861,
+    4885
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:12",
+   "entity": "10 million people by 2025",
+   "char": [
+    5062,
+    5087
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:13",
+   "entity": "Jean Domat (1625-1696)",
+   "char": [
+    646,
+    668
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:13",
+   "entity": "Brown v. Board of Education_ (1954",
+   "char": [
+    2100,
+    2134
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:13",
+   "entity": "Donoghue v. Stevenson_ (1932",
+   "char": [
+    2600,
+    2628
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:13",
+   "entity": "House of Lords",
+   "char": [
+    2635,
+    2649
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:13",
+   "entity": "Cour de Cassation",
+   "char": [
+    3169,
+    3186
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "1989",
+   "char": [
+    305,
+    309
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Ernst & Whinney",
+   "char": [
+    354,
+    369
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Arthur Young & Co.",
+   "char": [
+    374,
+    392
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "1903",
+   "char": [
+    428,
+    432
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Alwin C. Ernst",
+   "char": [
+    438,
+    452
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Cleveland, Ohio",
+   "char": [
+    478,
+    493
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "1979",
+   "char": [
+    500,
+    504
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Carmine Di Sibio",
+   "char": [
+    648,
+    664
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "2019",
+   "char": [
+    714,
+    718
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Bill Thomas",
+   "char": [
+    722,
+    733
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "2017 to 2019",
+   "char": [
+    777,
+    789
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "Mark Weinberger",
+   "char": [
+    793,
+    808
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "2013 to 2017",
+   "char": [
+    846,
+    858
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "James Turley",
+   "char": [
+    862,
+    874
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "2001 to 2013",
+   "char": [
+    918,
+    930
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "over 700 offices",
+   "char": [
+    1298,
+    1314
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "more than 150 countries",
+   "char": [
+    1318,
+    1341
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "$44.3 billion",
+   "char": [
+    1518,
+    1531
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:14",
+   "entity": "2022",
+   "char": [
+    1627,
+    1631
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "$3 per barrel in 1972",
+   "char": [
+    317,
+    338
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "$12 per barrel in 1974",
+   "char": [
+    342,
+    364
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "Jimmy Carter introduced an energy policy that included a 50% increase in gasoline taxes",
+   "char": [
+    2619,
+    2706
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "Ronald Reagan introduced a series of tax cuts that reduced the top marginal tax rate from 70% to 50%",
+   "char": [
+    2815,
+    2915
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "Margaret Thatcher introduced a monetarist economic policy",
+   "char": [
+    2980,
+    3037
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "1979",
+   "char": [
+    3117,
+    3121
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "King Faisal",
+   "char": [
+    4124,
+    4135
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "1964 to 1975",
+   "char": [
+    4165,
+    4177
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "Sheikh Yamani",
+   "char": [
+    4184,
+    4197
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "1962 to 1986",
+   "char": [
+    4235,
+    4247
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "October 1973",
+   "char": [
+    3290,
+    3302
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "1977",
+   "char": [
+    2603,
+    2607
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "1979",
+   "char": [
+    2959,
+    2963
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:15",
+   "entity": "1981",
+   "char": [
+    2799,
+    2803
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "hemagglutinin (HA) and neuraminidase (NA) in influenza viruses",
+   "char": [
+    507,
+    569
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "HIV-1 virus uses CD4 receptors and CCR5 or CXCR4 co-receptors to infect T cells",
+   "char": [
+    868,
+    947
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "H5N1 avian influenza virus",
+   "char": [
+    1044,
+    1070
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "H1N1 human influenza virus",
+   "char": [
+    1104,
+    1130
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "SARS-CoV-2 is a coronavirus that primarily infects respiratory epithelial cells",
+   "char": [
+    3750,
+    3829
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "rabies virus",
+   "char": [
+    4438,
+    4450
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:16",
+   "entity": "norovirus",
+   "char": [
+    4619,
+    4628
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "10",
+   "char": [
+    1412,
+    1414
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "Home Alone franchise",
+   "char": [
+    1424,
+    1444
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "2003 film Party Monster",
+   "char": [
+    1552,
+    1575
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "11",
+   "char": [
+    1623,
+    1625
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "The Mickey Mouse Club",
+   "char": [
+    1652,
+    1673
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "2007",
+   "char": [
+    1785,
+    1789
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "14",
+   "char": [
+    1841,
+    1843
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "Even Stevens",
+   "char": [
+    1870,
+    1882
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "11",
+   "char": [
+    2838,
+    2840
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "The Parent Trap",
+   "char": [
+    2846,
+    2861
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "both actors passing away in their 40s",
+   "char": [
+    3205,
+    3242
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "16",
+   "char": [
+    3292,
+    3294
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "Sonny with a Chance",
+   "char": [
+    3321,
+    3340
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "2018",
+   "char": [
+    3470,
+    3474
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:17",
+   "entity": "the deaths of Corey Feldman and Corey Haim",
+   "char": [
+    5015,
+    5057
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "1945",
+   "char": [
+    48,
+    52
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "1941",
+   "char": [
+    389,
+    393
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Franklin D. Roosevelt",
+   "char": [
+    410,
+    431
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Winston Churchill",
+   "char": [
+    459,
+    476
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Atlantic Charter",
+   "char": [
+    488,
+    504
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "1944",
+   "char": [
+    660,
+    664
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "44 countries",
+   "char": [
+    687,
+    699
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Dumbarton Oaks, Washington, D.C.",
+   "char": [
+    707,
+    739
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "June 26, 1945",
+   "char": [
+    844,
+    857
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "50 countries",
+   "char": [
+    862,
+    874
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "San Francisco, California",
+   "char": [
+    878,
+    903
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Korean War (1950-1953)",
+   "char": [
+    1474,
+    1496
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Trygve Lie",
+   "char": [
+    4256,
+    4266
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "The UN's first peacekeeping mission was established in 1948",
+   "char": [
+    4416,
+    4475
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Universal Declaration of Human Rights (1948)",
+   "char": [
+    3197,
+    3241
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Convention on the Rights of the Child (1989)",
+   "char": [
+    3250,
+    3294
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Millennium Development Goals (2000-2015)",
+   "char": [
+    3501,
+    3541
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Sustainable Development Goals (2015-2030)",
+   "char": [
+    3550,
+    3591
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Harry S. Truman",
+   "char": [
+    3821,
+    3836
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Dag Hammarskj\u00f6ld",
+   "char": [
+    3912,
+    3928
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "U Thant",
+   "char": [
+    4001,
+    4008
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:18",
+   "entity": "Kofi Annan",
+   "char": [
+    4111,
+    4121
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "Title 8, Chapter 12, Subchapter II",
+   "char": [
+    417,
+    451
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "over 2,500 immigrant children",
+   "char": [
+    4577,
+    4606
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "over 400,000 immigrants",
+   "char": [
+    4786,
+    4809
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "over 180,000 immigrants",
+   "char": [
+    4977,
+    5000
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "Matter of E-F-H-L-",
+   "char": [
+    5307,
+    5325
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "Matter of A-B-",
+   "char": [
+    5494,
+    5508
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "Matter of L-E-A-",
+   "char": [
+    5672,
+    5688
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:19",
+   "entity": "The Immigration Reform and Control Act (IRCA)",
+   "char": [
+    6346,
+    6391
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "2003",
+   "char": [
+    113,
+    117
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "Mike McDerment",
+   "char": [
+    121,
+    135
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "Toronto, Ontario, Canada",
+   "char": [
+    186,
+    210
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "$6/month",
+   "char": [
+    1127,
+    1135
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "$7/month",
+   "char": [
+    1157,
+    1165
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "$10/month",
+   "char": [
+    1196,
+    1205
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "$11/month",
+   "char": [
+    1227,
+    1236
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "$20/month",
+   "char": [
+    1270,
+    1279
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "$22/month",
+   "char": [
+    1301,
+    1310
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "PCMag",
+   "char": [
+    2189,
+    2194
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:20",
+   "entity": "Capterra",
+   "char": [
+    2305,
+    2313
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "June 30, 1973",
+   "char": [
+    250,
+    263
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Robert H. Montgomery",
+   "char": [
+    442,
+    462
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "1973 to 1975",
+   "char": [
+    480,
+    492
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Norwalk, Connecticut",
+   "char": [
+    542,
+    562
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "seven-member board",
+   "char": [
+    581,
+    599
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "SFAS No. 33, Accounting for Sales of Real Estate (1976)",
+   "char": [
+    1337,
+    1392
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "SFAS No. 95, Statement of Cash Flows (1987)",
+   "char": [
+    1397,
+    1440
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "ASC 606, Revenue from Contracts with Customers (2014)",
+   "char": [
+    1510,
+    1563
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Robert Herz, who served as chairman from 2002 to 2010",
+   "char": [
+    2060,
+    2113
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Leslie Seidman, who served as chairman from 2010 to 2013",
+   "char": [
+    2174,
+    2230
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Richard Jones, who served as chairman from 2013 to 2016",
+   "char": [
+    2282,
+    2337
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Russell Golden, who served as chairman from 2016 to 2020",
+   "char": [
+    2456,
+    2512
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Blythe McGarvie, who is the current chairman of the FASB",
+   "char": [
+    2638,
+    2694
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:21",
+   "entity": "Accounting Standards Advisory Forum (ASAF)",
+   "char": [
+    2926,
+    2968
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "Dr. Li Wenliang",
+   "char": [
+    2684,
+    2699
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "February 6, 2020",
+   "char": [
+    2878,
+    2894
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "Dr. Liang Wudong",
+   "char": [
+    2901,
+    2917
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "February 6, 2020",
+   "char": [
+    3045,
+    3061
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "December 2019",
+   "char": [
+    3127,
+    3140
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "January 2020",
+   "char": [
+    3207,
+    3219
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:22",
+   "entity": "March 2020",
+   "char": [
+    3433,
+    3443
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Pierre Bourdieu",
+   "char": [
+    0,
+    15
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "1979",
+   "char": [
+    65,
+    69
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Distinction: A Social Critique of the Judgement of Taste",
+   "char": [
+    76,
+    132
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Educational capital",
+   "char": [
+    561,
+    580
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Social capital",
+   "char": [
+    830,
+    844
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Symbolic capital",
+   "char": [
+    1144,
+    1160
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Embodied capital",
+   "char": [
+    1446,
+    1462
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Harvard",
+   "char": [
+    2850,
+    2857
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Oxford",
+   "char": [
+    754,
+    760
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:23",
+   "entity": "Yale",
+   "char": [
+    2861,
+    2865
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "1875",
+   "char": [
+    359,
+    363
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "Genzo Shimadzu",
+   "char": [
+    367,
+    381
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "1950s",
+   "char": [
+    556,
+    561
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "GC-2010",
+   "char": [
+    1371,
+    1378
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "GC-2020",
+   "char": [
+    1479,
+    1486
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "GC-2030",
+   "char": [
+    1587,
+    1594
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "GC-2060",
+   "char": [
+    1695,
+    1702
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "5-liter/min column oven",
+   "char": [
+    1773,
+    1796
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "2.5-liter/min column oven",
+   "char": [
+    1555,
+    1580
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "3.5-liter/min column oven",
+   "char": [
+    1663,
+    1688
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "6.5-liter/min column oven",
+   "char": [
+    1771,
+    1796
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "Up to 400\u00b0C (752\u00b0F)",
+   "char": [
+    3594,
+    3613
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "Up to 6.5 liters/min",
+   "char": [
+    3639,
+    3659
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:24",
+   "entity": "Down to 1 pg (picogram)",
+   "char": [
+    3689,
+    3712
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "John Bowlby",
+   "char": [
+    31,
+    42
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Mary Ainsworth",
+   "char": [
+    47,
+    61
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Bowlby (1969)",
+   "char": [
+    383,
+    396
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Ainsworth (1978)",
+   "char": [
+    1009,
+    1025
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "three main attachment styles",
+   "char": [
+    1037,
+    1065
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Disorganized-disoriented attachment",
+   "char": [
+    1499,
+    1534
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Strange Situation",
+   "char": [
+    2876,
+    2893
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Bowlby (1951)",
+   "char": [
+    3195,
+    3208
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "orphans at the Tavistock Clinic in London",
+   "char": [
+    3221,
+    3262
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "van IJzendoorn & Schuengel, 1999",
+   "char": [
+    3631,
+    3663
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "De Wolff & van IJzendoorn, 1997",
+   "char": [
+    3951,
+    3982
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "1940s",
+   "char": [
+    4097,
+    4102
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "1950s",
+   "char": [
+    4242,
+    4247
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "1960s",
+   "char": [
+    4395,
+    4400
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "The University of Virginia",
+   "char": [
+    4632,
+    4658
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Mary Main",
+   "char": [
+    5083,
+    5092
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:25",
+   "entity": "Adult Attachment Interview",
+   "char": [
+    5242,
+    5268
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "October 14, 1066",
+   "char": [
+    81,
+    97
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "King Harold II of England",
+   "char": [
+    162,
+    187
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "William, Duke of Normandy",
+   "char": [
+    456,
+    481
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "King Edward the Confessor of England dies without an heir",
+   "char": [
+    3387,
+    3444
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "September 1066",
+   "char": [
+    3478,
+    3492
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "Harold Godwinson, the powerful Earl of Wessex, was crowned King Harold II by the English nobles",
+   "char": [
+    350,
+    445
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "September 1066",
+   "char": [
+    3573,
+    3587
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "7,000 to 13,000 strong",
+   "char": [
+    944,
+    966
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "8,000 to 10,000 strong",
+   "char": [
+    1359,
+    1381
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "Senlac Hill",
+   "char": [
+    3952,
+    3963
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "11:00 am",
+   "char": [
+    1855,
+    1863
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "Odo of Bayeux",
+   "char": [
+    3082,
+    3095
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "Gyrth Godwinson",
+   "char": [
+    3230,
+    3245
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "Christmas Day, 1066",
+   "char": [
+    2614,
+    2633
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:26",
+   "entity": "6 miles (9.7 km) north of Hastings",
+   "char": [
+    4162,
+    4196
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "2019",
+   "char": [
+    19,
+    23
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Taika Waititi",
+   "char": [
+    60,
+    73
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "2008",
+   "char": [
+    88,
+    92
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Caging Skies",
+   "char": [
+    100,
+    112
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Christine Leunens",
+   "char": [
+    117,
+    134
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Roman Griffin Davis",
+   "char": [
+    262,
+    281
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "10-year-old",
+   "char": [
+    286,
+    297
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Scarlett Johansson",
+   "char": [
+    415,
+    433
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Thomasin McKenzie",
+   "char": [
+    526,
+    543
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Sam Rockwell",
+   "char": [
+    1042,
+    1054
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Captain Klenzendorf",
+   "char": [
+    1533,
+    1552
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Finkel",
+   "char": [
+    1125,
+    1131
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Rebel Wilson",
+   "char": [
+    1143,
+    1155
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Rosie, is forced to marry a high-ranking Nazi officer, Captain Klenzendorf",
+   "char": [
+    1671,
+    1745
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Academy Award for Best Adapted Screenplay in 2020",
+   "char": [
+    2625,
+    2674
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "six Academy Awards",
+   "char": [
+    2706,
+    2724
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "Golden Globe Award for Best Motion Picture - Musical or Comedy in 2020",
+   "char": [
+    2825,
+    2895
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "four Golden Globe Awards",
+   "char": [
+    2927,
+    2951
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "over $76 million",
+   "char": [
+    3060,
+    3076
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "$14 million",
+   "char": [
+    3142,
+    3153
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:27",
+   "entity": "92% approval rating on Rotten Tomatoes",
+   "char": [
+    3234,
+    3272
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "Carol Gilligan",
+   "char": [
+    172,
+    186
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "1980s",
+   "char": [
+    194,
+    199
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "Nel Noddings",
+   "char": [
+    2674,
+    2686
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "Caring: A Feminine Approach to Ethics and Moral Education",
+   "char": [
+    2716,
+    2773
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "1984",
+   "char": [
+    2776,
+    2780
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "Julia Ward Howe",
+   "char": [
+    2931,
+    2946
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "Mother's Day Proclamation",
+   "char": [
+    2958,
+    2983
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "1870",
+   "char": [
+    4591,
+    4595
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "In a Different Voice",
+   "char": [
+    4786,
+    4806
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "1982",
+   "char": [
+    2577,
+    2581
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "Care Ethics\" movement",
+   "char": [
+    5114,
+    5135
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "1990s",
+   "char": [
+    3121,
+    3126
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:28",
+   "entity": "United States",
+   "char": [
+    4220,
+    4233
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "20% increase in brand awareness",
+   "char": [
+    2924,
+    2955
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "15% increase in sales",
+   "char": [
+    2962,
+    2983
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "25% increase in brand awareness",
+   "char": [
+    3125,
+    3156
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "15% increase in sales",
+   "char": [
+    3163,
+    3184
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "30% increase in donations",
+   "char": [
+    3340,
+    3365
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "25% increase in volunteers",
+   "char": [
+    3372,
+    3398
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "Hootsuite",
+   "char": [
+    1761,
+    1770
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "Sprout Social",
+   "char": [
+    1772,
+    1785
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:29",
+   "entity": "cision",
+   "char": [
+    3437,
+    3443
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "January 25, 1988",
+   "char": [
+    214,
+    230
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Blue Ribbon Sports",
+   "char": [
+    261,
+    279
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Dan Wieden",
+   "char": [
+    387,
+    397
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Wieden+Kennedy",
+   "char": [
+    413,
+    427
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Gary Gilmore",
+   "char": [
+    507,
+    519
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "1977",
+   "char": [
+    578,
+    582
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Let's do it",
+   "char": [
+    612,
+    623
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Bo Jackson",
+   "char": [
+    1277,
+    1287
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "Michael Jordan",
+   "char": [
+    1491,
+    1505
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:30",
+   "entity": "$10 million",
+   "char": [
+    2302,
+    2313
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Georges M\u00e9li\u00e8s",
+   "char": [
+    646,
+    660
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "A Trip to the Moon",
+   "char": [
+    786,
+    804
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "1902",
+   "char": [
+    807,
+    811
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "The Kingdom of the Fairies",
+   "char": [
+    818,
+    844
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "1903",
+   "char": [
+    847,
+    851
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Orson Welles",
+   "char": [
+    1861,
+    1873
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Citizen Kane",
+   "char": [
+    1876,
+    1888
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "1941",
+   "char": [
+    1891,
+    1895
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "deep focus photography",
+   "char": [
+    1915,
+    1937
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Alfred Hitchcock",
+   "char": [
+    2066,
+    2082
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Rear Window",
+   "char": [
+    2086,
+    2097
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "1954",
+   "char": [
+    2100,
+    2104
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "fixed camera position",
+   "char": [
+    2145,
+    2166
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Stanley Kubrick",
+   "char": [
+    2266,
+    2281
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "2001: A Space Odyssey",
+   "char": [
+    2285,
+    2306
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "1968",
+   "char": [
+    2309,
+    2313
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "elaborate sets",
+   "char": [
+    2335,
+    2349
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "special effects",
+   "char": [
+    2354,
+    2369
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Martin Scorsese",
+   "char": [
+    2462,
+    2477
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Raging Bull",
+   "char": [
+    2481,
+    2492
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "1980",
+   "char": [
+    2495,
+    2499
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "black-and-white cinematography",
+   "char": [
+    2522,
+    2552
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:31",
+   "entity": "Jake LaMotta",
+   "char": [
+    2667,
+    2679
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "1990s",
+   "char": [
+    569,
+    574
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "2003",
+   "char": [
+    717,
+    721
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "2015",
+   "char": [
+    859,
+    863
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "US National Institutes of Health (NIH)",
+   "char": [
+    871,
+    909
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "1 million",
+   "char": [
+    4712,
+    4721
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "2008",
+   "char": [
+    4931,
+    4935
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "MELAS (Mitochondrial Encephalomyopathy, Lactic Acidosis, and Stroke-like episodes)",
+   "char": [
+    3060,
+    3142
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "David Fajgenbaum",
+   "char": [
+    3325,
+    3341
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:32",
+   "entity": "Castleman disease",
+   "char": [
+    3370,
+    3387
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "2015",
+   "char": [
+    127,
+    131
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "July 15, 2015",
+   "char": [
+    298,
+    311
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "24-hour event",
+   "char": [
+    333,
+    346
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "30 hours",
+   "char": [
+    385,
+    393
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "July 10-11",
+   "char": [
+    503,
+    513
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "9:00 PM EST on July 9",
+   "char": [
+    538,
+    559
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "October 13-14",
+   "char": [
+    765,
+    778
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "COVID-19 pandemic",
+   "char": [
+    791,
+    808
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "June 21-22",
+   "char": [
+    843,
+    853
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "July 12-13",
+   "char": [
+    888,
+    898
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "July 12-13",
+   "char": [
+    933,
+    943
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:33",
+   "entity": "$7 billion in 2020",
+   "char": [
+    3202,
+    3220
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "June 28, 1914",
+   "char": [
+    58,
+    71
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Sarajevo",
+   "char": [
+    76,
+    84
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Bosnia and Herzegovina",
+   "char": [
+    106,
+    128
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Danilo Ili\u0107",
+   "char": [
+    650,
+    661
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Black Hand",
+   "char": [
+    679,
+    689
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Sophie, Duchess of Hohenberg",
+   "char": [
+    1014,
+    1042
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Oskar Potiorek",
+   "char": [
+    1135,
+    1149
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Nedeljko \u010cabrinovi\u0107",
+   "char": [
+    1371,
+    1390
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "Gavrilo Princip",
+   "char": [
+    1884,
+    1899
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "51",
+   "char": [
+    2205,
+    2207
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "46",
+   "char": [
+    2234,
+    2236
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "10:10 AM",
+   "char": [
+    3358,
+    3366
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "10:15 AM",
+   "char": [
+    3471,
+    3479
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "10:30 AM",
+   "char": [
+    3577,
+    3585
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "July 28, 1914",
+   "char": [
+    3659,
+    3672
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "July 29, 1914",
+   "char": [
+    3760,
+    3773
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "August 1, 1914",
+   "char": [
+    3817,
+    3831
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "August 4, 1914",
+   "char": [
+    3878,
+    3892
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "6",
+   "char": [
+    4582,
+    4583
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:34",
+   "entity": "2",
+   "char": [
+    4735,
+    4736
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "1972 to 1979",
+   "char": [
+    154,
+    166
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "Henry Kissinger",
+   "char": [
+    307,
+    322
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "1973 to 1977",
+   "char": [
+    368,
+    380
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "Leonid Brezhnev",
+   "char": [
+    438,
+    453
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "June 17, 1972",
+   "char": [
+    772,
+    785
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "Vienna, Austria",
+   "char": [
+    823,
+    838
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "Andrei Gromyko",
+   "char": [
+    889,
+    903
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "1975",
+   "char": [
+    1382,
+    1386
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "June 18, 1979",
+   "char": [
+    1746,
+    1759
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "Henry Kissinger and Soviet Foreign Minister Andrei Gromyko",
+   "char": [
+    1816,
+    1874
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "September 5, 1979",
+   "char": [
+    1881,
+    1898
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "68 votes in favor and 23 against",
+   "char": [
+    1968,
+    2000
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "2,250",
+   "char": [
+    2122,
+    2127
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "1,200",
+   "char": [
+    2219,
+    2224
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "1,000",
+   "char": [
+    2320,
+    2325
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "on-site inspections",
+   "char": [
+    2500,
+    2519
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "not ratified by the Soviet Union until 1980",
+   "char": [
+    2931,
+    2974
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:35",
+   "entity": "Strategic Arms Reduction Treaty (START) in 1991",
+   "char": [
+    3200,
+    3247
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "November 28, 1967",
+   "char": [
+    194,
+    211
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "Jocelyn Bell Burnell",
+   "char": [
+    245,
+    265
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "Antony Hewish",
+   "char": [
+    270,
+    283
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "Mullard Radio Astronomy Observatory",
+   "char": [
+    291,
+    326
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "Cambridge, England",
+   "char": [
+    330,
+    348
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "1.337 seconds",
+   "char": [
+    1175,
+    1188
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "1.34 times per second",
+   "char": [
+    1068,
+    1089
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "2,300 light-years",
+   "char": [
+    1622,
+    1639
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "1,300 years",
+   "char": [
+    1811,
+    1822
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "Nobel Prize in Physics in 1974",
+   "char": [
+    2928,
+    2958
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_objects:36",
+   "entity": "Antony Hewish and Martin Ryle",
+   "char": [
+    2971,
+    3000
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "c. 490-420 BCE",
+   "char": [
+    555,
+    569
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "man is the measure of all things",
+   "char": [
+    658,
+    690
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "1711-1776",
+   "char": [
+    764,
+    773
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "1844-1900",
+   "char": [
+    946,
+    955
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "1931-2007",
+   "char": [
+    1139,
+    1148
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "1929-present",
+   "char": [
+    1321,
+    1333
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "Taliban has imposed strict laws on women's rights, including restrictions on education and employment",
+   "char": [
+    3355,
+    3456
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:37",
+   "entity": "In the United States, the death penalty is a contentious issue, with some states allowing it and others abolishing it",
+   "char": [
+    3783,
+    3900
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "2nd to the 5th centuries CE",
+   "char": [
+    541,
+    568
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "Rabbi Yohanan and Resh Lakish",
+   "char": [
+    932,
+    961
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "Talmud, Berakhot 33b",
+   "char": [
+    963,
+    983
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "3rd-century CE rabbi",
+   "char": [
+    5553,
+    5573
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "Rabbi Akiva and Rabbi Ishmael",
+   "char": [
+    2670,
+    2699
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "2nd-century CE",
+   "char": [
+    5795,
+    5809
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "Rabbi Hillel and Rabbi Shammai",
+   "char": [
+    2981,
+    3011
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "1st-century BCE",
+   "char": [
+    6048,
+    6063
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "Palestine (now Israel)",
+   "char": [
+    5266,
+    5288
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "Babylon (now Iraq)",
+   "char": [
+    5381,
+    5399
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:38",
+   "entity": "5th century CE",
+   "char": [
+    5164,
+    5178
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "Maximilian P. Kleiber",
+   "char": [
+    4341,
+    4362
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "Arthur J. Atkinson",
+   "char": [
+    4610,
+    4628
+   ],
+   "grader_label": "Not Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "1920s",
+   "char": [
+    5263,
+    5268
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 1
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "1950s",
+   "char": [
+    5448,
+    5453
+   ],
+   "grader_label": "Insufficient",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "is metabolized by CYP2C9",
+   "char": [
+    2846,
+    2870
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "genetic variations in this enzyme may require lower doses of warfarin",
+   "char": [
+    2886,
+    2955
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "is primarily excreted by the kidneys",
+   "char": [
+    3027,
+    3063
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "is metabolized by CYP1A2",
+   "char": [
+    3209,
+    3233
+   ],
+   "grader_label": "Supported",
+   "gold_label": 0
+  },
+  {
+   "cid": "longfact_concepts:39",
+   "entity": "caffeine or other CYP1A2 inhibitors may require lower doses of theophylline",
+   "char": [
+    3256,
+    3331
+   ],
+   "grader_label": "Supported",
+   "gold_label": 1
+  }
+ ],
+ "seconds": 2705.0,
+ "validation": {
+  "n_labeled": 272,
+  "accuracy": 0.886,
+  "cohen_kappa": 0.2783,
+  "gold_prevalence": 0.0919,
+  "grader_prevalence": 0.0809,
+  "hallucinated_recall": 0.32
+ }
+}
