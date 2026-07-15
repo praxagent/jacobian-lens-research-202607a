@@ -1,0 +1,39 @@
+{
+  "what": "remaining arm pins + B10 cost table (llama31_8b.json is the primary exemplar; these arms follow the identical reader/timing/stats/execution rules with these substitutions)",
+  "pinned_at": "2026-07-15",
+  "arms": {
+    "llama33_70b": {
+      "model": {"id": "meta-llama/Llama-3.3-70B-Instruct", "revision": "pin-at-run from HF api (record in receipt)"},
+      "labels": {"config": "Llama-3.3-70B-Instruct", "dataset_revision": "949fd2f71b3efd403350e38539340d9d9ceefc9d"},
+      "sae": {"repo": "Goodfire/Llama-3.3-70B-Instruct-SAE-l50", "site": "residual layer 50"},
+      "primary_layer": 50, "head_layer": 80,
+      "jlens": "campaign Neuronpedia llama3.3-70b lens (pin sha in receipt)",
+      "note": "GPU transport mandatory at d=8192 (campaign lesson 15)"
+    },
+    "gemma2_9b": {
+      "model": {"id": "google/gemma-2-9b-it", "revision": "pin-at-run"},
+      "labels": {"config": "gemma-2-9b-it", "dataset_revision": "949fd2f71b3efd403350e38539340d9d9ceefc9d"},
+      "sae": {"repo": "google/gemma-scope-9b-pt-res", "format": "gemmascope", "site": "pin width/L0 at run; PT-SAE-on-IT-model transfer DISCLOSED as a caveat"},
+      "primary_layer": "the chosen gemma-scope layer", "head_layer": 42
+    },
+    "gemma3_12b_owngraded": {
+      "model": {"id": "google/gemma-3-12b-it", "revision": "pin-at-run"},
+      "labels": "OWN grounded grader (GROUNDING.md): frozen LongFact prompt sample, wiki snapshot 2026-07-01, grader model chosen by validation-vs-public-labels (DeepSeek vs GLM A/B)",
+      "sae": {"repo": "google/gemma-scope-2-12b-it", "format": "gemmascope", "site": "resid_post 50% depth, pin exact folder at run"},
+      "release": "labels published to praxagent-org (obalcells schema + canary + grader-not-truth caveat)"
+    },
+    "qwen397b_conditional": {"status": "conditional extension (PROTOCOL §2); design frozen, funding decided after the 4 arms"}
+  },
+  "cost_table_b10": {
+    "llama31_8b":  {"gpu": "1x A100/H100", "est_hours": "1-2", "usd": "10-40", "stage": "cache+probe+readers"},
+    "llama33_70b": {"gpu": "2x H200 class", "est_hours": "1-2", "usd": "20-50", "note": "download-dominated"},
+    "gemma2_9b":   {"gpu": "1x A100/H100", "est_hours": "1-2", "usd": "10-30"},
+    "gemma3_12b":  {"gpu": "1x A100/H100", "est_hours": "1-3", "usd": "20-55", "grader_usd": "1-5 (hard-capped, prepaid)"},
+    "jlens_fits":  {"usd": "10-30", "note": "8B + 12B + 9b label-free fits, cheap GPUs"},
+    "frozen_total_usd": "75-180 (approved as a whole, TJ full go 2026-07-15)",
+    "conditional_qwen_usd": "50-150 (separate later approval)"
+  },
+  "stop_rules": {"per_pod_wall_hours": 6, "no_progress_minutes": 45,
+                 "session_hard_ceiling_usd": 200,
+                 "rule": "stop launching NEW pods near the ceiling; never kill a healthy in-flight run (house rule 6); terminate the moment a job completes + receipts are validated"}
+}
