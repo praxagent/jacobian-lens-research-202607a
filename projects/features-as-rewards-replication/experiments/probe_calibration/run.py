@@ -55,6 +55,55 @@ def pad_spans(records, layer):
     return X, M
 
 
+def paired_reader_contrasts(readers_signed, probe_name, labels, cids, margin=0.05,
+                            n=2000, seed=0):
+    """B06: paired completion-clustered bootstrap of (reader - probe) AUROC differences,
+    SHARED resamples across readers. Frozen decision rules on the paired 95% CI:
+      equivalent  : CI entirely within [-margin, +margin]
+      noninferior : CI lower bound > -margin
+      worse       : CI upper bound < -margin
+      better      : CI lower bound > +margin
+    """
+    rng = np.random.default_rng(seed)
+    by = {}
+    for i, c in enumerate(cids):
+        by.setdefault(c, []).append(i)
+    groups = list(by.values())
+    labels = np.asarray(labels)
+    names = [k for k in readers_signed if k != probe_name]
+    diffs = {k: [] for k in names}
+    for _ in range(n):
+        pick = rng.integers(0, len(groups), len(groups))
+        idx = [i for g in pick for i in groups[g]]
+        yb = labels[idx]
+        pa = _np_auroc(np.asarray(readers_signed[probe_name])[idx], yb)
+        if np.isnan(pa):
+            continue
+        for k in names:
+            a = _np_auroc(np.asarray(readers_signed[k])[idx], yb)
+            if not np.isnan(a):
+                diffs[k].append(a - pa)
+    out = {}
+    for k, v in diffs.items():
+        if not v:
+            out[k] = {"verdict": "undefined"}
+            continue
+        lo, hi = np.percentile(v, [2.5, 97.5])
+        verdict = ("equivalent" if (lo > -margin and hi < margin)
+                   else "better" if lo > margin
+                   else "worse" if hi < -margin
+                   else "noninferior" if lo > -margin
+                   else "inconclusive")
+        out[k] = {"mean_diff": round(float(np.mean(v)), 4),
+                  "ci95": [round(float(lo), 4), round(float(hi), 4)],
+                  "margin": margin, "verdict": verdict}
+    return out
+
+
+def _np_auroc(s, y):
+    return R.auroc(s, y)
+
+
 def cluster_bootstrap_auroc(scores, labels, cids, n=2000, seed=0):
     """95% CI resampling COMPLETIONS (the independent unit), not spans."""
     rng = np.random.default_rng(seed)
@@ -233,6 +282,7 @@ def run(args):
                     "n_latents": sae_r.n_latents, "format": args.sae_format}
 
     table = {}
+    signed_all = {}
     for name, (kind, sc_va, sc_te) in readers.items():
         sc_te = np.asarray(sc_te, dtype=float)
         if kind in ("supervised", "heuristic", "label-selected"):
@@ -241,11 +291,17 @@ def run(args):
             # B08 mechanical sign rule: direction fixed on VALIDATION, never test
             flip = R.auroc(np.asarray(sc_va, dtype=float), y_va) < 0.5
             signed = -sc_te if flip else sc_te
+        signed_all[name] = signed
         a = R.auroc(signed, y_te)
         lo, hi = cluster_bootstrap_auroc(signed, y_te, cid_te,
                                          n=(200 if args.smoke else 2000))
         table[name] = {"kind": kind, "auroc": round(float(a), 4),
                        "ci95": [round(lo, 4), round(hi, 4)]}
+
+    # B06 primary contrasts: paired reader-minus-probe diffs, shared cluster resamples,
+    # frozen +/-0.05 equivalence margin
+    contrasts = paired_reader_contrasts(signed_all, "attention_probe", y_te, cid_te,
+                                        margin=0.05, n=(200 if args.smoke else 2000))
 
     receipt = {
         "what": "Tier-1 probe-calibration + reader comparison (smoke)" if args.smoke
@@ -255,6 +311,7 @@ def run(args):
         "test_prevalence": round(float(y_te.mean()), 4),
         "probe_seed_aurocs": probe_seed_aurocs,
         "readers": table,
+        "paired_contrasts_vs_probe": contrasts,
         "sae_selection": sae_info,
         "per_span_test": [dict({"cid": r["cid"], "label": int(r["label"])},
                                **{name: float(np.asarray(readers[name][2])[i])
