@@ -23,9 +23,23 @@ def model_readout_parts(model):
 
 @torch.no_grad()
 def cache_spans(model, tokenizer, examples, layers, device="cpu", dtype=torch.float16,
-                max_len=4096):
-    """List of per-span dicts: {cid, label, tok_ids[S], hid: {layer: [S,d]}}.
-    hid tensors are detached, moved to CPU, cast to `dtype` (storage-cheap)."""
+                max_len=4096, scoring="pre_token"):
+    """List of per-span dicts: {cid, label, tok_ids[S], score_pos[S], hid: {layer:[S,d]}}.
+
+    Reader-timing is frozen here (Pro-review B03): to score entity token x_t WITHOUT
+    leaking its identity through the residual stream, the state used is the IMMEDIATELY
+    PRECEDING causal residual h_{t-1} (which is exactly what predicts x_t in a causal LM).
+    So `hid` holds the residual at positions [tok_start-1 .. tok_end-1) while `tok_ids`
+    are the entity tokens [tok_start .. tok_end) being predicted. Every reader consumes
+    the SAME `hid` states -> comparable, no leakage. `scoring="post_token"` (leaky) is
+    available only for an explicit leakage-control experiment; default is pre_token.
+
+    Note: these are TEACHER-FORCED activations of the pinned model over archived text, not
+    necessarily the emitting model's original states -- an observational readout, no causal
+    claim (B03). Entities whose first token is at position 0 are skipped (no preceding state).
+    """
+    assert scoring in ("pre_token", "post_token")
+    shift = 1 if scoring == "pre_token" else 0
     model.eval()
     records = []
     for ex in examples:
@@ -37,13 +51,15 @@ def cache_spans(model, tokenizer, examples, layers, device="cpu", dtype=torch.fl
         hs = out.hidden_states  # tuple[L+1] of [1, S, d]
         seqlen = ids.shape[1]
         for sp in ex.spans:
-            if sp.tok_start < 0 or sp.tok_end > seqlen or sp.tok_start >= sp.tok_end:
-                continue
-            sl = slice(sp.tok_start, sp.tok_end)
-            hid = {L: hs[L][0, sl].detach().to("cpu", dtype) for L in layers}
+            if sp.tok_start < shift or sp.tok_end > seqlen or sp.tok_start >= sp.tok_end:
+                continue  # need a preceding state for pre_token scoring
+            state = slice(sp.tok_start - shift, sp.tok_end - shift)   # h_{t-1..} states
+            tok = slice(sp.tok_start, sp.tok_end)                     # x_t entity tokens
+            hid = {L: hs[L][0, state].detach().to("cpu", dtype) for L in layers}
             records.append({
                 "cid": ex.cid, "label": int(sp.label),
-                "tok_ids": ids[0, sl].detach().to("cpu"),
+                "tok_ids": ids[0, tok].detach().to("cpu"),
+                "score_pos": list(range(sp.tok_start - shift, sp.tok_end - shift)),
                 "hid": hid,
             })
     return records

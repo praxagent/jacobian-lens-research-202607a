@@ -121,6 +121,48 @@ check("random reader is a null (directed AUROC < 0.65)",
       f"= {R.directed_auroc(randscore, labels[va]):.3f}")
 
 # --------------------------------------------------------------------------- #
+print("\nD. reader timing (B03): score each token from the PRECEDING causal residual")
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "common"))
+import data as Dmod   # noqa: E402
+import acts as Amod   # noqa: E402
+
+# one example: the entity 'Canberra' inside a sentence
+comp = "The capital of Australia is Canberra, a planned city in the ACT."
+cstart = comp.index("Canberra")
+ex = Dmod.Example("smoke:0", "q", comp,
+                  [Dmod.Span(cstart, cstart + len("Canberra"), "Canberra", 1)])
+ex = Dmod.align_spans(ex, tok)
+head = len(model.transformer.h)  # output-head hidden-state index for gpt2
+pre = Amod.cache_spans(model, tok, [ex], [head], scoring="pre_token")
+post = Amod.cache_spans(model, tok, [ex], [head], scoring="post_token")
+
+
+def mean_surprisal(recs):
+    r = recs[0]
+    return R.logit_lens_score({head: Amod.span_hidden(r, head)}, unembed, final_norm,
+                              slice(None), r["tok_ids"], head)
+
+
+# Structural: pre-token scores each entity token from the PRECEDING causal residual
+# (the state that predicts it) -- this is the B03 fix. Post-token uses the token's own
+# state (h_t predicts x_{t+1}, not x_t), which is the causally-wrong position.
+check("pre-token scoring states are the preceding positions",
+      pre[0]["score_pos"] == [p - 1 for p in post[0]["score_pos"]],
+      f"pre={pre[0]['score_pos']} post={post[0]['score_pos']}")
+# Correctness: the pre-token readout is a genuine next-token prediction -- the model
+# assigns more probability to the TRUE entity token than to a random wrong token id at
+# the same preceding state (surprisal_true < surprisal_random).
+r = pre[0]
+true_surp = R.logit_lens_score({head: Amod.span_hidden(r, head)}, unembed, final_norm,
+                               slice(None), r["tok_ids"], head)
+rng2 = torch.Generator().manual_seed(7)
+rand_ids = torch.randint(0, unembed.shape[0], r["tok_ids"].shape, generator=rng2)
+rand_surp = R.logit_lens_score({head: Amod.span_hidden(r, head)}, unembed, final_norm,
+                               slice(None), rand_ids, head)
+check("pre-token readout predicts the true entity better than a random token",
+      true_surp < rand_surp, f"true={true_surp:.2f} < random={rand_surp:.2f}")
+
+# --------------------------------------------------------------------------- #
 print()
 if FAIL:
     print(f"SMOKE FAILED: {FAIL}")
