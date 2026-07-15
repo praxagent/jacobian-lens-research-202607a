@@ -3,3 +3,7 @@ experiments/*/receipts/smoke.json
 # Pro-review bulky payloads (the review.md + adjudication ARE committed into the freeze)
 out/plan_review/*/request_payload.json
 out/plan_review/run*.log
+
+# grounding: receipts + local index paths (large/regenerable)
+experiments/gemma3_labeling/receipts/
+grounding/*.db

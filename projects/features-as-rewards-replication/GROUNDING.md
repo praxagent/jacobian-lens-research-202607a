@@ -54,10 +54,15 @@ hard cap. Retrieval is free local compute. No live web search, no postpaid API.
 2. **Per-key limit** — set a $ limit ON THE KEY in the OpenRouter dashboard (e.g. $25) so this
    key hard-stops regardless of the account balance. (Currently the key has *no* per-key
    limit — see "What we need".)
-3. **In-code guard** — the grader runner estimates $ before each batch from live OpenRouter
-   token rates, maintains a running spent-total from response usage, and **aborts before a
-   frozen `--max-usd` ceiling** and after `--max-calls`. Fails closed. This is the guard that
-   was missing on the Pro-review overrun; it is now mandatory for every paid-API runner here.
+3. **In-code guard** — the grader runner maintains a running spent-total from response
+   usage, warns at 80%, and stops launching NEW calls past `--max-usd` / `--max-calls`.
+   **`--max-usd` is a RUNAWAY BACKSTOP, not a tight budget (TJ, 2026-07-15):** set it with
+   generous headroom over the expected cost so a legitimately-completing run is never killed
+   a few dollars short of the finish line. It catches a *bug* (like the Pro-review
+   high-effort surprise), not a normal run. If a real run approaches it, raise it — the true
+   hard wall is the $50 prepaid/per-key ceiling, which cannot be exceeded. Per house rule 6,
+   we never kill a running experiment for budget; we stop launching *new* work near the wall
+   and surface it.
 4. **Dry-run first** — every grader run supports `--dry-run` (build prompts, estimate cost,
    zero calls) before `--execute`.
 
