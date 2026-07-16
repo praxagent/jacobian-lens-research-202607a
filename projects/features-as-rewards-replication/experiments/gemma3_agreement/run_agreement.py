@@ -124,6 +124,9 @@ def run(a):
         if i % 25 == 0:
             print(f"    gen {i}/{len(prompts)}", flush=True)
 
+    if a.gen_only:
+        print(f"  GEN_ONLY_DONE {len(comps)} completions -> {cache}", flush=True)
+        return
     # --- 2. extract ---
     print("  [stage] extract", flush=True)
     llm = None if a.smoke else GuardedLLM(_env("OPENROUTER_API_KEY"), "deepseek/deepseek-chat",
@@ -219,6 +222,7 @@ def run(a):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true")
+    ap.add_argument("--gen-only", action="store_true")
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--primary-layer", type=int, default=None)
