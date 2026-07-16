@@ -101,8 +101,14 @@ def run(a):
     n = 4 if a.smoke else a.n
     prompts = prompts_from_dataset(n, tok_hf)
     comps = []
+    cache = Path(a.out).parent / "completions_cache.jsonl"
+    if cache.exists():
+        comps = [json.loads(l)["c"] for l in cache.read_text().splitlines()]
+        print(f"  [stage] generate: resuming, {len(comps)} cached", flush=True)
     print(f"  [stage] generate {len(prompts)}", flush=True)
     for i, p in enumerate(prompts):
+        if i < len(comps):
+            continue
         if a.smoke:
             ids = tokenizer(p[:200], return_tensors="pt").input_ids.to(a.device)
         else:
@@ -113,6 +119,8 @@ def run(a):
             out = model.generate(ids, max_new_tokens=128 if a.smoke else 768,
                                  do_sample=False, pad_token_id=tokenizer.eos_token_id)
         comps.append(tokenizer.decode(out[0, ids.shape[1]:], skip_special_tokens=True))
+        with open(cache, "a") as fh:
+            fh.write(json.dumps({"i": i, "c": comps[-1]}) + "\n")
         if i % 25 == 0:
             print(f"    gen {i}/{len(prompts)}", flush=True)
 
