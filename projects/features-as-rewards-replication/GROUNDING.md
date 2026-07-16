@@ -83,3 +83,11 @@ noisy-labeled (or demoted to score-agreement only), never as clean gold.
 - **Gemma-3 arm total ≈ $25–60**, hard-capped. Whole study ≈ **$75–200** (GPU-dominated).
 
 All pinned in the per-arm manifest and the §10 cost table at freeze.
+
+## Snapshot retirement (2026-07-16)
+Wikipedia-grounding path closed (kappa ceiling .28/.28/.18; superseded by search-grounded
+jury labeling). Local artifacts (~81GB) deleted. For future rebuild/verification:
+- dump enwiki-20260701-pages-articles.xml.bz2 sha256 15a7933a1200598123a8d680abf7545d452d284724b0dda45d474c12d18da136 (re-obtainable from
+  dumps.wikimedia.org / archive.org by pinned date)
+- intro index 7,202,239 articles; full-text index 7,205,329 (fullbuild logs)
+- rebuild: grounding/build_wiki_index.py (v3, committed)
