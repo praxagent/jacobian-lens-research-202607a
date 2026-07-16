@@ -102,3 +102,15 @@ unanimous tier kappa .691 (n=87, coverage .15). Coverage caveat: jury labels cov
 ~40% of spans where >=2 judges agree on a definitive label; splits/insufficient are
 excluded and counted (disclosed in any release). CLEARED to label Gemma-3-12B and prep the
 HF release, pending TJ loading the $50 Serper pack (~6,500 entities > 1,930 remaining free).
+
+## Qwen-397B extension RE-OPENED, conditional on jury-label quality (TJ, 2026-07-16)
+Pre-stated BEFORE the jury-labeled Gemma-3 results exist (same §11A discipline as the first
+declination). New go criterion: run the jury-labeled Gemma-3-12B reader arm (post-freeze
+amendment, clearly labeled); the Qwen-397B extension (jury labels + probe/logit/OUR J-lens,
+~$50–150 + ~7k Serper credits) is funded if BOTH:
+(a) the supervised probe on jury-majority labels lands in the family range (AUROC ≥ ~0.65,
+    i.e. the labels are clean enough to support reader benchmarking at all), and
+(b) the reader ordering is interpretable (controls behave: null ≈ .5, heuristic below probe).
+If run: reported unconditionally, and the Qwen jury-label set joins the HF release.
+If (a)/(b) fail: labels still release with their kappa card, but the extension stays closed
+("not run — labels insufficient for scale-up"), disclosed as before.
