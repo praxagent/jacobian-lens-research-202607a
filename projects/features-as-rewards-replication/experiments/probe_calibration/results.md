@@ -83,3 +83,11 @@ the labeled arms (supervision or a model-matched sparse dictionary is what earns
 ## STUDY COMPLETE — all four frozen confirmatory arms run and reported
 Total: ~$47 GPU + $0.33 grader/extraction (envelope was $75–180). Conditional Qwen-397B
 extension: decision to TJ per the pre-declared criterion.
+
+## Conditional Qwen-397B extension — NOT RUN (cost decision, TJ 2026-07-16)
+Per the pre-registered §11A pattern: the go criterion was "a consistent, interpretable reader
+ordering worth confirming at scale." The observed data: the only scale trend is the SAE
+closing on the probe (.63→.73, 8B→70B), but Qwen-397B has no public SAE, so the extension
+would have tested the J-lens — and lens-class readers were null in all four arms. Expected
+value of ~$50–150: a well-measured null. TJ declined. Reported here as required: extension
+not run (cost), criterion + full cheap-arm results above so the reader can judge.
