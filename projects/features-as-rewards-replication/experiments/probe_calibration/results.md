@@ -91,3 +91,14 @@ closing on the probe (.63→.73, 8B→70B), but Qwen-397B has no public SAE, so 
 would have tested the J-lens — and lens-class readers were null in all four arms. Expected
 value of ~$50–150: a well-measured null. TJ declined. Reported here as required: extension
 not run (cost), criterion + full cheap-arm results above so the reader can judge.
+
+## Jury-labeling validation (2026-07-16) — GATE PASSED
+Cross-provider 3-judge jury (DeepSeek, GLM-4.6, Gemini-2.5-Flash) on shared archived Serper
+evidence, validated vs public gold (40 completions, 566 free-tier searches, ~$0.40 judges).
+Receipt `../gemma3_labeling/receipts/jury_validation.json` (committed):
+per-judge kappa .41/.47/.48 (search-grounding alone ~doubled the Wikipedia ceiling of .28);
+**majority tier kappa .598 (n=229, coverage .40) — PASSES the pre-registered >=0.5 gate**;
+unanimous tier kappa .691 (n=87, coverage .15). Coverage caveat: jury labels cover the
+~40% of spans where >=2 judges agree on a definitive label; splits/insufficient are
+excluded and counted (disclosed in any release). CLEARED to label Gemma-3-12B and prep the
+HF release, pending TJ loading the $50 Serper pack (~6,500 entities > 1,930 remaining free).
