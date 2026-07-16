@@ -82,6 +82,9 @@ def load_gemmascope(path):
     else:
         from safetensors.torch import load_file
         sd = load_file(path)
+    sd = {k.lower(): v for k, v in sd.items()}   # Gemma Scope 2 uses w_enc/b_enc lowercase
+    sd = {("W_enc" if k == "w_enc" else "b_enc" if k == "b_enc" else
+           "threshold" if k == "threshold" else k): v for k, v in sd.items()}
     W_enc = sd["W_enc"].float()
     if W_enc.shape[0] < W_enc.shape[1]:      # [d, L] -> [L, d]
         W_enc = W_enc.T
