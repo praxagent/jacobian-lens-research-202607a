@@ -255,10 +255,27 @@ def run(args):
     # path moves unembed/hid/transport to the accelerator before the matmul.
     dev = args.device
     ue = unembed.to(dev).float()
-    fnorm = final_norm  # module already on `dev`
+    # Functional final-norm (amendment 5): under device_map=auto + accelerate hooks the
+    # norm module resists .to() (weight pinned to its shard's GPU -> cross-device crash).
+    # Snapshot weight/bias/eps once and apply functionally on the span's device.
+    if final_norm is not None:
+        _w = final_norm.weight.detach().float().to(dev)
+        _b = getattr(final_norm, "bias", None)
+        _b = _b.detach().float().to(dev) if _b is not None else None
+        _eps = getattr(final_norm, "variance_epsilon", getattr(final_norm, "eps", 1e-6))
+        if _b is None and not isinstance(final_norm, torch.nn.LayerNorm):   # RMSNorm
+            def _fn(h):
+                h = h.to(dev)
+                return h * torch.rsqrt(h.pow(2).mean(-1, keepdim=True) + _eps) * _w
+        else:
+            import torch.nn.functional as _F
 
-    def _fn(h):
-        return fnorm(h.to(dev)).to(dev) if fnorm is not None else h.to(dev)
+            def _fn(h):
+                h = h.to(dev)
+                return _F.layer_norm(h, (h.shape[-1],), _w, _b, _eps)
+    else:
+        def _fn(h):
+            return h.to(dev)
 
     d = Xtr.shape[-1]
 
