@@ -67,3 +67,19 @@ Receipt row to be added on completion.
    4. SAE tracks model-match: PT-on-IT ≈ chance; model-matched l50 nearly ties supervision.
    5. Mid-layer lens ≤ null everywhere: entity signal is output-adjacent.
 Total spend: ~$40 GPU + $0.22 grader.
+
+## Arm 4 — Gemma-3-12B-IT label-free agreement (2026-07-16, COMPLETE)
+Pod v3talw87lael1q (L40S $0.99/hr, ~6.5h incl. 3 fix cycles: openai pkg, runbook SHA revert,
+Gemma Scope 2 lowercase keys; completion cache made reruns resume instantly ≈ $6.5 total).
+300 greedy completions → 6,503 extracted entity spans (DeepSeek extraction $0.11, capped).
+Receipt `../gemma3_agreement/receipts/receipt_gemma3_agreement.json` (sha-verified).
+SCORE AGREEMENT ONLY (I05): Spearman — logit_lens~random_null **.724** (mid-layer surprisal
+shares most variance with a random transport: generic norm/frequency, not content);
+logit~native .142; native~sae −.298; heuristic ~0 with everything. **The label-free readers
+do NOT converge** on which entities are suspect: without supervision there is no shared
+"hallucination signal" to read off Gemma-3-12B's residuals at mid-depth — consistent with
+the labeled arms (supervision or a model-matched sparse dictionary is what earns signal).
+
+## STUDY COMPLETE — all four frozen confirmatory arms run and reported
+Total: ~$47 GPU + $0.33 grader/extraction (envelope was $75–180). Conditional Qwen-397B
+extension: decision to TJ per the pre-declared criterion.
