@@ -1,0 +1,69 @@
+# Results ledger — reader benchmark (probe_calibration)
+
+Frozen design: PROTOCOL.md v2 @ freeze `6830d9c` (+5 logged pre-outcome amendments:
+`d6eb079` GPU probe, `04578e9`/`8ffb9ea` mini-batch OOM fix, `abac95e` functional final-norm,
+plus runbook dep pins). Gates: `gates.py` ALL PASS before any arm trusted. Only runs actually
+executed are recorded here; receipts are sha-verified before pod termination.
+
+## Arm 1 — Llama-3.1-8B-Instruct (2026-07-15/16)
+Pod a8lpvfptzc4k5l (L40S $0.99/hr, ~7h incl. 3 OOM debug cycles ≈ $7). Splits 510/64/989
+completions → 7,321/896/15,891 spans (test prevalence .255).
+Receipt `receipts/receipt_llama31_8b.json` (sha-verified, commit `6b5824a`).
+
+| reader | AUROC [95% CI, completion-clustered] | paired verdict vs probe (±.05) |
+|---|---|---|
+| attention_probe (3 seeds .753–.754) | **.754** [.743,.765] | — |
+| native_head_surprisal | .722 [.712,.733] | **equivalent** |
+| sae_latent_label_selected (Goodfire l19, latent 48223 of 65,536, val-selected) | .629 [.618,.641] | worse |
+| heuristic_len_freq | .604 [.589,.618] | worse |
+| logit_lens (L19) | .537 [.525,.551] | worse |
+| random_transport_null | .518 [.505,.531] | — |
+
+## Arm 2 — gemma-2-9b-it (2026-07-16)
+Pod 6rjs40i0nqw80x (L40S SECURE $0.99/hr ≈ $4; a prior community-cloud L40 never exposed
+ssh — terminated, ~$0.45 lesson). 11,120 test spans (prevalence .184).
+Receipt `receipts/receipt_gemma2_9b.json` (sha-verified, commit `f0350f7`).
+
+| reader | AUROC | verdict |
+|---|---|---|
+| attention_probe | **.726** [.712,.740] | — |
+| native_head_surprisal | .637 | worse |
+| heuristic_len_freq | .597 | worse |
+| logit_lens (L20) | .576 | worse |
+| random_transport_null | .546 | — |
+| sae_latent (gemma-scope-9b **PT** on IT model, l20/16k/l0_68) | .509 | ≈ chance — the pre-disclosed PT→IT transfer caveat |
+
+## Arm 3 — Llama-3.3-70B-Instruct (2026-07-16)
+Pod fbli1ym7v85478 (2×H100 $5.98/hr, ~4.7h ≈ $28 incl. 4 dep-fix cycles: SAE filename .pt,
+transformers<5 pin, pkill self-match, accelerate; then amendment-5 rerun). 19,890 test spans
+(prevalence .161). Receipt `receipts/receipt_llama33_70b.json` (sha-verified, commit `e96ac3f`).
+
+| reader | AUROC | verdict |
+|---|---|---|
+| attention_probe | **.774** [.761,.787] | — |
+| **exploratory_probe_capacity** (16 heads/400 ep; post-outcome label) | *.776* [.763,.789] | **capacity does NOT explain the paper gap (+.002)** |
+| sae_latent_label_selected (Goodfire l50) | .730 [.718,.742] | **inconclusive** (nearly ties) |
+| native_head_surprisal | .695 | worse |
+| heuristic_len_freq | .646 | worse |
+| logit_lens (L50) | .518 | worse — *below* the null |
+| random_transport_null | .548 | — |
+
+## Grader validation (Gemma-3 labeling gate) — FAILED, demotion fired
+`../gemma3_labeling/receipts/val_deepseek{,_v2,_v3}.json` (commits 8026619/eb0987a/00c4380).
+DeepSeek + pinned local Wikipedia (dump 2026-07-01): κ .281 (over-flags) → rubric fix κ .278
+(105/130 gold positives = Insufficient: intro-only retrieval ceiling) → full-text index κ .179
+(under-flags). Total $0.22. **Wikipedia-only deterministic grounding ≠ live-web gold** on
+LongFact entities. Per PROTOCOL §8: Gemma-3-12B → label-free reader-agreement arm
+(`../gemma3_agreement/`), label release cancelled (gate condition unmet).
+
+## Arm 4 — Gemma-3-12B-IT label-free agreement (2026-07-16, running)
+Pod v3talw87lael1q (L40S $0.99/hr). Runner `../gemma3_agreement/run_agreement.py` @ f560e0c.
+Receipt row to be added on completion.
+
+## Cross-arm findings (3 labeled arms)
+1. Probe stable .726–.774 across 8B/9B/70B; the paper's .94-class number absent at every
+   scale on public labels. 2. Capacity ruled out on 70B (+.002 exploratory). 3. Free native
+   confidence ties the probe ONLY on Llama-8B; supervision earns ~.08–.09 on gemma-9b/70B.
+   4. SAE tracks model-match: PT-on-IT ≈ chance; model-matched l50 nearly ties supervision.
+   5. Mid-layer lens ≤ null everywhere: entity signal is output-adjacent.
+Total spend: ~$40 GPU + $0.22 grader.
