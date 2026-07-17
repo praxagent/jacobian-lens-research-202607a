@@ -224,3 +224,27 @@ CC-BY-4.0). data.parquet (explicit schema, card-pinned config) + data.jsonl + bu
 the kappa-validation receipt. Hub-verified by fresh load: 6,471 rows, tiers
 4150/2175/146, 2,595 definitive (2,265/330) — matches the receipt exactly. Verbatim
 search snippets withheld (local receipts only), per-judge votes + evidence URLs public.
+
+## AMENDMENT 7 pre-registration — powered re-test of gate (b) (2026-07-17, committed
+## BEFORE any new data exists)
+Gate (b) failed on power (550 test spans), not on effect direction. Fix with NEW data,
+rule unchanged:
+- **New test set**: 300 fresh completions on LongFact `longfact_objects` test prompts
+  **300–599** (never used; original arm used 0–299), same pinned generation (greedy,
+  seed 0, max_new_tokens 768, bf16), cids `g3:<abs_idx>` in completions_cache_v2.jsonl.
+- **Same labeling pipeline verbatim**: DeepSeek extraction (same prompt), one Serper
+  query/entity (same format), same 3 judges + rubric + tiers; majority+ definitive
+  labels only. Expected ~2.5k definitive test spans (~5x amendment 6's 550).
+- **Reader arm**: frozen run.py protocol; train = original completions idx%5∈{0,1,2},
+  validation = idx%5==3 (sign/selection only); **test = ALL new definitive spans**.
+  Original test fold (idx%5==4) is RETIRED — its result is already published; it is not
+  mixed into the new test. Probe freshly trained on the same train fold, seeds 0/1/2,
+  4 heads/200 epochs — protocol identical to amendment 6.
+- **Decision rule, unchanged**: gate (b) = paired contrasts (±.05 margin, completion-
+  clustered, shared resamples) give verdict "worse" for BOTH random_transport_null AND
+  heuristic_len_freq vs the probe on the new test set. Gate (a) threshold also
+  re-checked on the new test (probe ≥ .65). BOTH gates pass → Qwen-397B extension is GO
+  (TJ, this date: "Go with your recommendation on qwen"); any fail → extension closed,
+  result reported unconditionally either way.
+- Est. cost: generation pod ~$3 (L40S) + extraction ~$0.15 + ~6.5k Serper + ~$4 judges
+  + reader pod ~$1.5 ≈ **~$10–15 total**.
