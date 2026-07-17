@@ -42,6 +42,48 @@ def _hf_token():
     return None
 
 
+def load_jury_examples(jury_path, cache_path, tokenizer, limit=None):
+    """Amendment 6 (pre-registered before the GPU run, 2026-07-17): jury-labeled
+    Gemma-3-12B arm. Examples = arm-4's cached greedy completions + the jury receipt's
+    definitive labels (majority+ tier; split-tier and Insufficient rows dropped).
+    Labels are jury agreement (kappa .598 majority vs public gold), NOT ground truth.
+    Split rule, fixed before results: completion index % 5 -> {0,1,2} train,
+    {3} validation, {4} test (B09 roles unchanged).
+    """
+    from collections import defaultdict
+    comps = {}
+    for line in Path(cache_path).read_text().splitlines():
+        o = json.loads(line)
+        comps[o["i"]] = o["c"]
+    by_comp = defaultdict(list)
+    for r in json.loads(Path(jury_path).read_text())["rows"]:
+        if r["jury_label"] is None or r["tier"] == "split":
+            continue
+        by_comp[int(r["cid"].split(":")[1])].append(r)
+    roles = {0: "train", 1: "train", 2: "train", 3: "validation", 4: "test"}
+    out = {"train": [], "validation": [], "test": []}
+    dropped = 0
+    for i in sorted(by_comp)[: limit if limit else None]:
+        c = comps.get(i)
+        if c is None:
+            continue
+        ex = D.Example(f"g3:{i}", "", c, [])
+        for r in by_comp[i]:
+            e = r["entity"].strip()
+            pos = c.find(e)
+            if pos <= 0:          # same locate rule as arm-4's extraction
+                dropped += 1
+                continue
+            ex.spans.append(D.Span(pos, pos + len(e), e,
+                                   1 if r["jury_label"] == "Not Supported" else 0))
+        if ex.spans:
+            out[roles[i % 5]].append(D.align_spans(ex, tokenizer))
+    print(f"  jury examples: "
+          + ", ".join(f"{k}={len(v)} comps" for k, v in out.items())
+          + f", dropped(unlocatable)={dropped}", flush=True)
+    return out
+
+
 def pad_spans(records, layer):
     """[N,Smax,d] float32 + [N,Smax] mask from cached per-span slices at `layer`."""
     hs = [A.span_hidden(r, layer) for r in records]
@@ -145,7 +187,9 @@ def run(args):
             torch_dtype=torch.float32 if args.device == "cpu" else torch.bfloat16,
             output_hidden_states=True).to(args.device)
     unembed, final_norm = A.model_readout_parts(model)
-    n_layers = getattr(model.config, "num_hidden_layers", None) or model.config.n_layer
+    n_layers = getattr(model.config, "num_hidden_layers", None) or \
+        getattr(model.config, "n_layer", None) or \
+        model.config.text_config.num_hidden_layers   # Gemma-3 nests under text_config
     if n_layers not in layers:
         layers = sorted(layers + [n_layers])   # head state for the native reader (I02)
     unembed = unembed.to(args.device).float()
@@ -161,6 +205,15 @@ def run(args):
         splits = {"train": recs[:third], "validation": recs[third:2 * third],
                   "test": recs[2 * third:]}
         print(f"  smoke 3-way partition: {[len(splits[s]) for s in ('train','validation','test')]} spans")
+    elif args.jury_labels:
+        exs_by_split = load_jury_examples(args.jury_labels, args.completions_cache,
+                                          tokenizer, limit=limit)
+        config = "jury:gemma3"
+        for split, exs in exs_by_split.items():
+            splits[split] = A.cache_spans(model, tokenizer, exs, layers,
+                                          device=args.device, max_len=args.max_len)
+            print(f"  {split}: {len(exs)} completions, {len(splits[split])} spans, "
+                  f"balance={D.label_balance(exs)['prevalence']:.3f}", flush=True)
     else:
         for split in ("train", "validation", "test"):
             exs = D.load_examples(config, split, limit=limit, hf_token=tok_hf)
@@ -397,6 +450,10 @@ def main():
     ap.add_argument("--sae-path", default=None, help=".pth (goodfire) or params.safetensors (gemmascope)")
     ap.add_argument("--sae-format", choices=["goodfire", "gemmascope"], default="goodfire")
     ap.add_argument("--jlens-path", default=None, help="transport matrix .pt (or {layer: J} dict)")
+    ap.add_argument("--jury-labels", default=None,
+                    help="jury receipt JSON (amendment 6: jury-labeled Gemma-3 arm)")
+    ap.add_argument("--completions-cache", default=None,
+                    help="completions_cache.jsonl matching --jury-labels")
     ap.add_argument("--epochs", type=int, default=200)
     ap.add_argument("--lr", type=float, default=1e-2)
     ap.add_argument("--out", default="projects/features-as-rewards-replication/"

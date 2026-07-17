@@ -1,0 +1,99 @@
+{
+ "what": "Jury-labeled AUROC of the LABEL-FREE readers on Gemma-3-12B. Scores come unchanged from the arm-4 receipt (computed before labels existed); labels = cross-provider jury (kappa .598 majority / .691 unanimous vs public gold \u2014 agreement with rubric, NOT ground truth). Positive class = Not Supported. Surprisal readers a-priori oriented; SAE sign val-fold-selected. Supervised probe requires the GPU arm.",
+ "inputs": {
+  "arm4_receipt": "receipt_gemma3_agreement.json",
+  "jury_receipt": "jury_gemma3_labels.json"
+ },
+ "n_joined": 2609,
+ "bootstrap": {
+  "n": 2000,
+  "seed": 0,
+  "cluster": "completion"
+ },
+ "results": {
+  "majority_plus": {
+   "n": 2609,
+   "n_pos": 331,
+   "logit_lens": {
+    "auroc": 0.37,
+    "ci95": [
+     0.331,
+     0.413
+    ]
+   },
+   "native_head": {
+    "auroc": 0.588,
+    "ci95": [
+     0.549,
+     0.626
+    ]
+   },
+   "random_null": {
+    "auroc": 0.406,
+    "ci95": [
+     0.361,
+     0.449
+    ]
+   },
+   "heuristic": {
+    "auroc": 0.579,
+    "ci95": [
+     0.535,
+     0.619
+    ]
+   },
+   "sae_max_act": {
+    "auroc": 0.585,
+    "ci95": [
+     0.542,
+     0.629
+    ],
+    "sign": 1.0,
+    "val_fold_auroc": 0.635,
+    "note": "sign val-fold-selected; AUROC on held-out completions only"
+   }
+  },
+  "unanimous_only": {
+   "n": 518,
+   "n_pos": 35,
+   "logit_lens": {
+    "auroc": 0.401,
+    "ci95": [
+     0.296,
+     0.523
+    ]
+   },
+   "native_head": {
+    "auroc": 0.581,
+    "ci95": [
+     0.491,
+     0.679
+    ]
+   },
+   "random_null": {
+    "auroc": 0.509,
+    "ci95": [
+     0.396,
+     0.617
+    ]
+   },
+   "heuristic": {
+    "auroc": 0.546,
+    "ci95": [
+     0.429,
+     0.667
+    ]
+   },
+   "sae_max_act": {
+    "auroc": 0.549,
+    "ci95": [
+     0.447,
+     0.668
+    ],
+    "sign": 1.0,
+    "val_fold_auroc": 0.935,
+    "note": "sign val-fold-selected; AUROC on held-out completions only"
+   }
+  }
+ }
+}

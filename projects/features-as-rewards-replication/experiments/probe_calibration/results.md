@@ -114,3 +114,44 @@ amendment, clearly labeled); the Qwen-397B extension (jury labels + probe/logit/
 If run: reported unconditionally, and the Qwen jury-label set joins the HF release.
 If (a)/(b) fail: labels still release with their kappa card, but the extension stays closed
 ("not run — labels insufficient for scale-up"), disclosed as before.
+
+## Gemma-3-12B jury labels COMPLETE (2026-07-16→17) — release dataset
+Receipt `../gemma3_labeling/receipts/jury_gemma3_labels.json` (committed f9797d8):
+6,471 unique entities across 300 completions; tiers unanimous 2,175 / majority 4,150 /
+split 146; **2,595 definitive labels** (2,265 Supported / 330 Not Supported = 12.7%).
+Cost: 6,471 Serper queries (evidence archived in the local cache, receipts-only) +
+$3.55 judges ($0.66 DeepSeek + $1.54 GLM-4.6 + $1.35 Gemini-Flash).
+
+## Jury-labeled evaluation of the LABEL-FREE readers (2026-07-17, CPU, $0)
+`../gemma3_labeling/analyze_jury_readers.py` joins the arm-4 per-span scores (computed
+before any labels existed) with the jury labels (100% join, 2,609 definitive spans incl.
+duplicated span positions). AUROC, positive = Not Supported, completion-clustered 95% CI:
+
+| reader (majority+ tier, n=2609, 331 pos) | AUROC | CI95 |
+|---|---|---|
+| native_head_surprisal | **.588** | [.549, .626] |
+| sae_max_act (val-fold sign, held-out) | .585 | [.542, .629] |
+| heuristic_len_freq | .579 | [.535, .619] |
+| random_transport_null (raw surprisal) | .406 | [.361, .449] |
+| logit_lens (mid-layer, raw) | .370 | [.331, .413] |
+
+Weak-but-real zero-training signal (native head CI excludes chance), consistent with the
+main arms' "signal is output-adjacent" finding. ⚠️ CAUTION, disclosed before the probe arm:
+the random-transport null sits BELOW .5 raw (i.e. jury labels correlate with generic token
+statistics — Supported entities carry higher random-transport surprisal), so the probe
+result must be read against sign-corrected controls, not assumed-at-.5 controls.
+
+## AMENDMENT 6 pre-registration — jury-labeled Gemma-3-12B reader arm (2026-07-17,
+## committed BEFORE the GPU run)
+Design frozen: `run.py --jury-labels` mode (this commit) + `../gemma3_labeling/pod_gemma3_jury.sh`.
+- Model google/gemma-3-12b-it, primary layer 24, head 48 — identical to arm-4; SAE
+  gemma-scope-2-12b-it resid_post/layer_24_width_16k_l0_medium @ 4c419f1 (arm-4's).
+- Data: arm-4 completion cache + jury majority+ definitive labels only. Split fixed by
+  completion index % 5 → {0,1,2} train / {3} validation / {4} test (B09 roles unchanged).
+- Readers: 3-seed attention probe (frozen 4 heads/200 epochs), native head, mid-layer
+  logit lens, random-transport null, heuristic, label-selected SAE. Paired contrasts
+  vs probe, ±0.05 margin, as in all main arms. CPU smoke (gpt2, 60 comps) green.
+- Qwen gate operationalization, fixed now: (a) probe test AUROC ≥ 0.65; (b) paired
+  contrasts verdict both random_transport_null AND heuristic_len_freq "worse" than the
+  probe (CI below −0.05). Both hold → Qwen-397B extension funded per TJ 2026-07-16.
+- Est. cost: 1× L40S ≈ $1–3, ≲1 h. Labels are jury agreement (κ .598), not ground truth.
