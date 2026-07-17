@@ -167,3 +167,19 @@ smoke could not catch this — model-specific magnitude bug.) Fix: `--cache-dtyp
 a hard finiteness assert after caching (fails fast). Zero-training reader scores in that
 receipt were finite but are superseded by the fp32 re-run. Probe spec untouched. CPU smoke
 green. Same pod (warm HF cache) re-runs at the fixed SHA.
+
+## CORRECTION (2026-07-17, amendment 6b fallout) — fp16 contamination reached arm-4
+The fp16 overflow was not probe-only: **605/6,503 arm-4 per-span rows (9.3%) have
+non-finite logit_lens / random_null / sae_max_act scores** (native_head reads the
+post-final-norm head state and heuristic uses no activations — both clean). Two
+downstream corrections, both qualitative-conclusion-preserving:
+1. **Arm-4 Spearman matrix** (finite rows only, n=5,898): logit~random .724 → **.631**;
+   logit~native .142 → **.205**; native~sae −.298 → **−.321**. "Label-free readers do
+   not converge" stands; the mid-layer~random overlap was overstated by the NaN rows
+   (NaNs sort as top scores in rank statistics).
+2. **Jury-labeled CPU eval → v2** (2,361 finite definitive spans, 300 pos; receipt
+   jury_readers_eval.json): logit_lens .343 [.299,.387], native_head **.593**
+   [.553,.632], random_null **.386** [.340,.434] (below-chance null CONFIRMED on clean
+   rows — token-stats correlation in jury labels is real, not a NaN artifact),
+   heuristic .584, sae_max_act .608 [.557,.659]. SAE strengthens after decontamination.
+Blog arm-4 table must use these corrected numbers.

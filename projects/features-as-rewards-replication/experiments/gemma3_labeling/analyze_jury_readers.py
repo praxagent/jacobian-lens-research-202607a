@@ -78,16 +78,25 @@ def main():
     arm4 = json.loads(ARM4.read_text())
     jury = json.loads(JURY.read_text())
     jmap = {(r["cid"], r["entity"].strip()): r for r in jury["rows"]}
-    rows = []
+    rows, n_nonfinite = [], 0
     for r in arm4["per_span"]:
         j = jmap.get((r["cid"], r["entity"].strip()))
         if j is None or j["jury_label"] is None or j["tier"] == "split":
             continue
+        # v2 (amendment 6b): drop spans with any non-finite reader score — the arm-4
+        # fp16 activation cache overflowed on Gemma-3 (|h|>3e5 > fp16 max), giving
+        # 605/6503 spans inf/NaN lens+SAE scores; NaNs sort as TOP scores in the
+        # rank-based AUROC, so keeping them silently biases every reader downward.
+        import math
+        if not all(math.isfinite(r[k]) for k in READERS):
+            n_nonfinite += 1
+            continue
         rows.append({**{k: r[k] for k in READERS}, "cid": r["cid"],
                      "entity": r["entity"].strip(), "tier": j["tier"],
                      "label": 1 if j["jury_label"] == "Not Supported" else 0})
-    print(f"  joined {len(rows)} definitive-labeled spans "
-          f"({sum(r['label'] for r in rows)} Not Supported)")
+    print(f"  joined {len(rows)} finite definitive-labeled spans "
+          f"({sum(r['label'] for r in rows)} Not Supported); "
+          f"dropped {n_nonfinite} fp16-contaminated")
 
     rng = np.random.default_rng(SEED)
     res = {"majority_plus": eval_tier(rows, lambda t: True, rng),
@@ -105,8 +114,9 @@ def main():
                 "Positive class = Not Supported. Surprisal readers a-priori oriented; "
                 "SAE sign val-fold-selected. Supervised probe requires the GPU arm.",
         "inputs": {"arm4_receipt": str(ARM4.name), "jury_receipt": str(JURY.name)},
-        "n_joined": len(rows), "bootstrap": {"n": N_BOOT, "seed": SEED,
-                                             "cluster": "completion"},
+        "version": "v2 — excludes fp16-contaminated spans (amendment 6b)",
+        "n_joined": len(rows), "n_dropped_nonfinite": n_nonfinite,
+        "bootstrap": {"n": N_BOOT, "seed": SEED, "cluster": "completion"},
         "results": res}
     OUT.write_text(json.dumps(receipt, indent=1))
     print(f"  JURY_READERS_EVAL_DONE -> {OUT}")

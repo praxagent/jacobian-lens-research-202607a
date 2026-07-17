@@ -4,7 +4,9 @@
   "arm4_receipt": "receipt_gemma3_agreement.json",
   "jury_receipt": "jury_gemma3_labels.json"
  },
- "n_joined": 2609,
+ "version": "v2 \u2014 excludes fp16-contaminated spans (amendment 6b)",
+ "n_joined": 2361,
+ "n_dropped_nonfinite": 248,
  "bootstrap": {
   "n": 2000,
   "seed": 0,
@@ -12,86 +14,86 @@
  },
  "results": {
   "majority_plus": {
-   "n": 2609,
-   "n_pos": 331,
+   "n": 2361,
+   "n_pos": 300,
    "logit_lens": {
-    "auroc": 0.37,
+    "auroc": 0.343,
     "ci95": [
-     0.331,
-     0.413
+     0.299,
+     0.387
     ]
    },
    "native_head": {
-    "auroc": 0.588,
+    "auroc": 0.593,
     "ci95": [
-     0.549,
-     0.626
+     0.553,
+     0.632
     ]
    },
    "random_null": {
-    "auroc": 0.406,
+    "auroc": 0.386,
     "ci95": [
-     0.361,
-     0.449
+     0.34,
+     0.434
     ]
    },
    "heuristic": {
-    "auroc": 0.579,
+    "auroc": 0.584,
     "ci95": [
-     0.535,
-     0.619
+     0.539,
+     0.625
     ]
    },
    "sae_max_act": {
-    "auroc": 0.585,
+    "auroc": 0.608,
     "ci95": [
-     0.542,
-     0.629
+     0.557,
+     0.659
     ],
     "sign": 1.0,
-    "val_fold_auroc": 0.635,
+    "val_fold_auroc": 0.647,
     "note": "sign val-fold-selected; AUROC on held-out completions only"
    }
   },
   "unanimous_only": {
-   "n": 518,
-   "n_pos": 35,
+   "n": 458,
+   "n_pos": 29,
    "logit_lens": {
-    "auroc": 0.401,
+    "auroc": 0.324,
     "ci95": [
-     0.296,
-     0.523
+     0.228,
+     0.417
     ]
    },
    "native_head": {
-    "auroc": 0.581,
+    "auroc": 0.565,
     "ci95": [
-     0.491,
-     0.679
+     0.468,
+     0.673
     ]
    },
    "random_null": {
-    "auroc": 0.509,
+    "auroc": 0.472,
     "ci95": [
-     0.396,
-     0.617
+     0.334,
+     0.582
     ]
    },
    "heuristic": {
-    "auroc": 0.546,
+    "auroc": 0.544,
     "ci95": [
-     0.429,
-     0.667
+     0.408,
+     0.685
     ]
    },
    "sae_max_act": {
-    "auroc": 0.549,
+    "auroc": 0.446,
     "ci95": [
-     0.447,
-     0.668
+     0.315,
+     0.559
     ],
-    "sign": 1.0,
-    "val_fold_auroc": 0.935,
+    "sign": -1.0,
+    "val_fold_auroc": NaN,
     "note": "sign val-fold-selected; AUROC on held-out completions only"
    }
   }
