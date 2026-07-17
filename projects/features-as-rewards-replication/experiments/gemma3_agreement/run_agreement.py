@@ -99,9 +99,12 @@ def run(a):
 
     # --- 1. generate ---
     n = 4 if a.smoke else a.n
-    prompts = prompts_from_dataset(n, tok_hf)
+    # amendment 7: --prompt-offset selects a NEVER-USED prompt range (e.g. 300-599);
+    # cache rows carry the ABSOLUTE prompt index so cids stay globally unique.
+    prompts = prompts_from_dataset(a.prompt_offset + n, tok_hf)[a.prompt_offset:]
     comps = []
-    cache = Path(a.out).parent / "completions_cache.jsonl"
+    cache = Path(a.cache_file) if a.cache_file else \
+        Path(a.out).parent / "completions_cache.jsonl"
     if cache.exists():
         comps = [json.loads(l)["c"] for l in cache.read_text().splitlines()]
         print(f"  [stage] generate: resuming, {len(comps)} cached", flush=True)
@@ -120,7 +123,7 @@ def run(a):
                                  do_sample=False, pad_token_id=tokenizer.eos_token_id)
         comps.append(tokenizer.decode(out[0, ids.shape[1]:], skip_special_tokens=True))
         with open(cache, "a") as fh:
-            fh.write(json.dumps({"i": i, "c": comps[-1]}) + "\n")
+            fh.write(json.dumps({"i": a.prompt_offset + i, "c": comps[-1]}) + "\n")
         if i % 25 == 0:
             print(f"    gen {i}/{len(prompts)}", flush=True)
 
@@ -223,6 +226,8 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--smoke", action="store_true")
     ap.add_argument("--gen-only", action="store_true")
+    ap.add_argument("--prompt-offset", type=int, default=0)
+    ap.add_argument("--cache-file", default=None)
     ap.add_argument("--n", type=int, default=300)
     ap.add_argument("--device", default="cpu")
     ap.add_argument("--primary-layer", type=int, default=None)

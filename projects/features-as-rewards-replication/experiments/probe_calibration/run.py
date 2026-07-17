@@ -42,7 +42,7 @@ def _hf_token():
     return None
 
 
-def load_jury_examples(jury_path, cache_path, tokenizer, limit=None):
+def load_jury_examples(jury_path, cache_path, tokenizer, limit=None, all_role=None):
     """Amendment 6 (pre-registered before the GPU run, 2026-07-17): jury-labeled
     Gemma-3-12B arm. Examples = arm-4's cached greedy completions + the jury receipt's
     definitive labels (majority+ tier; split-tier and Insufficient rows dropped).
@@ -77,7 +77,7 @@ def load_jury_examples(jury_path, cache_path, tokenizer, limit=None):
             ex.spans.append(D.Span(pos, pos + len(e), e,
                                    1 if r["jury_label"] == "Not Supported" else 0))
         if ex.spans:
-            out[roles[i % 5]].append(D.align_spans(ex, tokenizer))
+            out[all_role if all_role else roles[i % 5]].append(D.align_spans(ex, tokenizer))
     print(f"  jury examples: "
           + ", ".join(f"{k}={len(v)} comps" for k, v in out.items())
           + f", dropped(unlocatable)={dropped}", flush=True)
@@ -209,6 +209,13 @@ def run(args):
         exs_by_split = load_jury_examples(args.jury_labels, args.completions_cache,
                                           tokenizer, limit=limit)
         config = "jury:gemma3"
+        if args.jury_labels_test:
+            # Amendment 7: test = ALL definitive spans of the NEW completion set;
+            # the original idx%5==4 fold is retired (its result already published).
+            exs_by_split["test"] = load_jury_examples(
+                args.jury_labels_test, args.completions_cache_test, tokenizer,
+                limit=limit, all_role="test")["test"]
+            config = "jury:gemma3+v2test"
         # Amendment 6b (numeric bug fix, 2026-07-17): Gemma-3 residuals reach |h| >3e5
         # at layer 24 — over float16 max (65504) — so the default fp16 activation cache
         # clips to inf and the probe trains to NaN (first pod run: all seeds AUROC
@@ -464,6 +471,9 @@ def main():
                     help="jury receipt JSON (amendment 6: jury-labeled Gemma-3 arm)")
     ap.add_argument("--completions-cache", default=None,
                     help="completions_cache.jsonl matching --jury-labels")
+    ap.add_argument("--jury-labels-test", default=None,
+                    help="amendment 7: second jury receipt whose spans are ALL test")
+    ap.add_argument("--completions-cache-test", default=None)
     ap.add_argument("--cache-dtype", choices=["float16", "float32"], default="float16",
                     help="activation-cache dtype; float32 for models whose residuals "
                          "exceed fp16 range (Gemma-3: |h|>3e5 at layer 24)")

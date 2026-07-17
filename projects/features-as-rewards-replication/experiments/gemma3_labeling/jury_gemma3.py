@@ -29,19 +29,26 @@ LABELS = {"Supported": 0, "Not Supported": 1}
 
 
 def run(a):
-    comps = {json.loads(l)["i"]: json.loads(l)["c"] for l in CACHE.read_text().splitlines()}
-    arm4 = json.loads(ARM4.read_text())
+    cache = Path(a.completions) if a.completions else CACHE
+    comps = {json.loads(l)["i"]: json.loads(l)["c"] for l in cache.read_text().splitlines()}
     by_comp = defaultdict(list)
-    for row in arm4["per_span"]:
-        i = int(row["cid"].split(":")[1])
-        by_comp[i].append(row["entity"].strip())
+    if a.spans:   # amendment 7: {cid: [entity,...]} from extract_entities_v2.py
+        for cid, ents in json.loads(Path(a.spans).read_text())["spans"].items():
+            by_comp[int(cid.split(":")[1])] = [e.strip() for e in ents]
+    else:
+        arm4 = json.loads(ARM4.read_text())
+        for row in arm4["per_span"]:
+            i = int(row["cid"].split(":")[1])
+            by_comp[i].append(row["entity"].strip())
     # dedupe entities per completion, preserve order
     for i in by_comp:
         by_comp[i] = list(dict.fromkeys(by_comp[i]))
     n_ent = sum(len(v) for v in by_comp.values())
-    print(f"  {len(by_comp)} completions, {n_ent} unique entities (from {arm4['n_spans']} spans)")
+    print(f"  {len(by_comp)} completions, {n_ent} unique entities")
 
-    ser = Serper(_env("SERPER_DEV_API_KEY"), HERE.parent / "receipts/serper_cache_g3.jsonl",
+    ser_cache = Path(a.serper_cache) if a.serper_cache else \
+        HERE.parent / "receipts/serper_cache_g3.jsonl"
+    ser = Serper(_env("SERPER_DEV_API_KEY"), ser_cache,
                  max_queries=a.max_queries) if not a.dry_run else None
     juries = {mid: GuardedLLM(_env("OPENROUTER_API_KEY"), mid, ri, ro,
                               max_usd=a.max_usd_per_judge, max_calls=len(by_comp) + 20,
@@ -107,6 +114,10 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-queries", type=int, default=9000)
     ap.add_argument("--max-usd-per-judge", type=float, default=5.0)
+    ap.add_argument("--spans", default=None,
+                    help="entities json from extract_entities_v2.py (default: arm-4 receipt)")
+    ap.add_argument("--completions", default=None, help="completions cache jsonl override")
+    ap.add_argument("--serper-cache", default=None)
     ap.add_argument("--out", default=str(HERE.parent / "receipts/jury_gemma3_labels.json"))
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument("--dry-run", action="store_true")
