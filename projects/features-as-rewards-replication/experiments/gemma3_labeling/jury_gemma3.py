@@ -54,11 +54,20 @@ def run(a):
                               max_usd=a.max_usd_per_judge, max_calls=len(by_comp) + 20,
                               max_tokens=1400, dry_run=a.dry_run)
               for mid, ri, ro in JUDGES}
-    rows = []
+    # per-completion rows checkpoint: a crash (provider glitch, box death) never loses
+    # judged votes; rerunning the same command resumes from the last finished completion.
+    ckpt = Path(a.out).with_suffix(".rows.jsonl")
+    rows, done_comps = [], set()
+    if ckpt.exists():
+        for line in ckpt.read_text().splitlines():
+            r = json.loads(line)
+            rows.append(r)
+            done_comps.add(int(r["cid"].split(":")[1]))
+        print(f"  resuming: {len(rows)} rows / {len(done_comps)} completions from ckpt")
     t0 = time.time()
     for i in sorted(by_comp):
         comp = comps.get(i)
-        if comp is None:
+        if comp is None or i in done_comps:
             continue
         ents = by_comp[i]
         try:
@@ -80,13 +89,18 @@ def run(a):
                 votes[mid] = parse_labels(txt)
         except BudgetExceeded as e:
             print(f"  judge budget: {e}"); break
+        new_rows = []
         for j, e in enumerate(ents):
             v = {mid: votes.get(mid, {}).get(j, "Insufficient") for mid in juries}
             top, ntop = Counter(v.values()).most_common(1)[0]
-            rows.append({"cid": f"g3:{i}", "entity": e, "votes": v,
-                         "jury_label": top if top in LABELS else None,
-                         "tier": "unanimous" if ntop == 3 else "majority" if ntop == 2 else "split",
-                         "evidence_links": [x["link"] for x in evidence[j]]})
+            new_rows.append({"cid": f"g3:{i}", "entity": e, "votes": v,
+                             "jury_label": top if top in LABELS else None,
+                             "tier": "unanimous" if ntop == 3 else "majority" if ntop == 2 else "split",
+                             "evidence_links": [x["link"] for x in evidence[j]]})
+        rows.extend(new_rows)
+        with open(ckpt, "a") as fh:
+            for r in new_rows:
+                fh.write(json.dumps(r) + "\n")
         if i % 20 == 0:
             print(f"  [{len(rows)} rows] comp {i}/{len(by_comp)} "
                   f"searches={ser.spent if ser else 0}", flush=True)

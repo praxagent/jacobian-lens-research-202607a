@@ -75,6 +75,11 @@ class GuardedLLM:
                     model=self.model, messages=messages,
                     max_tokens=max_tokens or self.max_tokens,
                     temperature=self.temperature)
+                # some OpenRouter providers return an error payload with usage=None —
+                # treat as a transient provider failure, not a valid response
+                if resp.usage is None or not resp.choices:
+                    raise RuntimeError(
+                        f"provider returned no usage/choices: {getattr(resp, 'error', None)}")
                 break
             except Exception as e:
                 if attempt == 2:
