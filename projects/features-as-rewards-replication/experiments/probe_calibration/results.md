@@ -155,3 +155,15 @@ Design frozen: `run.py --jury-labels` mode (this commit) + `../gemma3_labeling/p
   contrasts verdict both random_transport_null AND heuristic_len_freq "worse" than the
   probe (CI below −0.05). Both hold → Qwen-397B extension funded per TJ 2026-07-16.
 - Est. cost: 1× L40S ≈ $1–3, ≲1 h. Labels are jury agreement (κ .598), not ground truth.
+
+## Amendment 6b — fp16 activation-cache overflow on Gemma-3 (2026-07-17, bug fix)
+First pod run of amendment 6 produced a DEGENERATE probe: all 3 seeds AUROC exactly .5000,
+all 550 test probe scores NaN (receipt kept honestly as
+`../gemma3_labeling/receipts/receipt_gemma3_jury_NAN_fp16.json`). Root cause, verified on
+the pod with one forward pass: Gemma-3-12B layer-24 residuals reach |h| = 325,632 — 5× over
+float16 max (65,504) — so `cache_spans`' default fp16 cache clips 66 elements/completion to
+inf, which NaNs probe training. (Llama/Gemma-2 arms stayed under the fp16 ceiling; the gpt2
+smoke could not catch this — model-specific magnitude bug.) Fix: `--cache-dtype float32` +
+a hard finiteness assert after caching (fails fast). Zero-training reader scores in that
+receipt were finite but are superseded by the fp32 re-run. Probe spec untouched. CPU smoke
+green. Same pod (warm HF cache) re-runs at the fixed SHA.

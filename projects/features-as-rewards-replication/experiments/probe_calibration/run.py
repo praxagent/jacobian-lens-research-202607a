@@ -209,9 +209,19 @@ def run(args):
         exs_by_split = load_jury_examples(args.jury_labels, args.completions_cache,
                                           tokenizer, limit=limit)
         config = "jury:gemma3"
+        # Amendment 6b (numeric bug fix, 2026-07-17): Gemma-3 residuals reach |h| >3e5
+        # at layer 24 — over float16 max (65504) — so the default fp16 activation cache
+        # clips to inf and the probe trains to NaN (first pod run: all seeds AUROC
+        # exactly .5, receipt receipt_gemma3_jury.json kept as the honest record).
+        cache_dt = getattr(torch, args.cache_dtype)
         for split, exs in exs_by_split.items():
             splits[split] = A.cache_spans(model, tokenizer, exs, layers,
-                                          device=args.device, max_len=args.max_len)
+                                          device=args.device, max_len=args.max_len,
+                                          dtype=cache_dt)
+            bad = sum((~torch.isfinite(r["hid"][L])).sum().item()
+                      for r in splits[split] for L in r["hid"])
+            assert bad == 0, f"{bad} non-finite cached activations in {split} " \
+                             f"(cache dtype {args.cache_dtype} too narrow for this model)"
             print(f"  {split}: {len(exs)} completions, {len(splits[split])} spans, "
                   f"balance={D.label_balance(exs)['prevalence']:.3f}", flush=True)
     else:
@@ -454,6 +464,9 @@ def main():
                     help="jury receipt JSON (amendment 6: jury-labeled Gemma-3 arm)")
     ap.add_argument("--completions-cache", default=None,
                     help="completions_cache.jsonl matching --jury-labels")
+    ap.add_argument("--cache-dtype", choices=["float16", "float32"], default="float16",
+                    help="activation-cache dtype; float32 for models whose residuals "
+                         "exceed fp16 range (Gemma-3: |h|>3e5 at layer 24)")
     ap.add_argument("--epochs", type=int, default=200)
     ap.add_argument("--lr", type=float, default=1e-2)
     ap.add_argument("--out", default="projects/features-as-rewards-replication/"

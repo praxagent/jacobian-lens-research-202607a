@@ -17,7 +17,7 @@ os.system(f"ln -sf {p} /workspace/sae_g3_l24.safetensors")
 PY
 cd projects/features-as-rewards-replication/experiments/probe_calibration
 python -u run.py --model google/gemma-3-12b-it --layers 24 --primary-layer 24 \
-  --device cuda \
+  --device cuda --cache-dtype float32 \
   --jury-labels ../gemma3_labeling/receipts/jury_gemma3_labels.json \
   --completions-cache ../gemma3_agreement/receipts/completions_cache.jsonl \
   --sae-path /workspace/sae_g3_l24.safetensors --sae-format gemmascope \
