@@ -87,6 +87,21 @@ def main():
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
 
+    # Parquet with explicit schema — the datasets JSON auto-loader fails on the
+    # nullable fields' type inference; the card's `configs` pins loaders to this file.
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    schema = pa.schema([
+        ("id", pa.string()), ("subset", pa.string()), ("model", pa.string()),
+        ("conversation", pa.list_(pa.struct([("role", pa.string()),
+                                             ("content", pa.string())]))),
+        ("entity", pa.string()), ("char_span", pa.list_(pa.int32())),
+        ("votes", pa.struct([(m, pa.string()) for m in rows[0]["votes"]])),
+        ("tier", pa.string()), ("jury_label", pa.string()),
+        ("evidence_links", pa.list_(pa.string())), ("canary", pa.string()),
+    ])
+    pq.write_table(pa.Table.from_pylist(rows, schema=schema), OUT / "data.parquet")
+
     # verification against the receipt's own summary
     tiers = Counter(r["tier"] for r in rows)
     labeled = sum(1 for r in rows if r["jury_label"] and r["tier"] != "split")

@@ -37,3 +37,4 @@ projects/jacobian-lens-and-identifiability/experiments/lens_demo/peek_thinking_r
 blog/
 FAR_POD.txt
 projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.jsonl
+projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.parquet

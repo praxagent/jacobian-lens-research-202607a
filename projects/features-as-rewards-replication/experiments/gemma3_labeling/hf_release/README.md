@@ -12,6 +12,11 @@ tags:
 pretty_name: Gemma-3-12B LongFact hallucination labels (LLM jury)
 size_categories:
 - 1K<n<10K
+configs:
+- config_name: default
+  data_files:
+  - split: train
+    path: data.parquet
 ---
 
 # Gemma-3-12B LongFact hallucination labels (cross-provider LLM jury)

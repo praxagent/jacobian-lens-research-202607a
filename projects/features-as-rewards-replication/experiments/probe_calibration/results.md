@@ -217,3 +217,10 @@ overrides knowing the nuance.** Interpretation for the release: jury labels DO s
 reader benchmarking (a supervised probe recovers .709, ordering interpretable, null at
 chance) — the labels are useful; the equivalence-margin test simply needs more test
 spans than 550 to resolve ±.05 verdicts.
+
+## 🚀 DATASET PUBLISHED (2026-07-17, TJ-approved)
+**https://huggingface.co/datasets/praxagent-org/gemma-3-12b-longfact-jury-labels** (public,
+CC-BY-4.0). data.parquet (explicit schema, card-pinned config) + data.jsonl + build_stats +
+the kappa-validation receipt. Hub-verified by fresh load: 6,471 rows, tiers
+4150/2175/146, 2,595 definitive (2,265/330) — matches the receipt exactly. Verbatim
+search snippets withheld (local receipts only), per-judge votes + evidence URLs public.
