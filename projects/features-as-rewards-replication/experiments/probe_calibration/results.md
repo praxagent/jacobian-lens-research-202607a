@@ -183,3 +183,37 @@ downstream corrections, both qualitative-conclusion-preserving:
    rows — token-stats correlation in jury labels is real, not a NaN artifact),
    heuristic .584, sae_max_act .608 [.557,.659]. SAE strengthens after decontamination.
 Blog arm-4 table must use these corrected numbers.
+
+## Amendment 6 RESULT — jury-labeled Gemma-3-12B reader arm (2026-07-17, COMPLETE)
+Pod vuoyp499ojsgqy (L40S $0.99/hr, ~1.5h total incl. the fp16 bug run + diagnosis +
+fp32 re-run ≈ **$1.5**; terminated + audited, nothing billing). Receipt
+`../gemma3_labeling/receipts/receipt_gemma3_jury.json` (sha-verified) @ eec31d3.
+Splits (completion %5): train 1,526 / val 519 / test 550 spans; test prevalence .111.
+
+| reader | AUROC (test) | CI95 |
+|---|---|---|
+| **attention_probe (3-seed mean)** | **.709** | [.634, .792] |
+| logit_lens (mid-layer) | .627 | [.549, .708] |
+| native_head_surprisal | .590 | [.501, .664] |
+| sae_latent_label_selected (l24, latent 7339, sign −1) | .589 | [.523, .662] |
+| heuristic_len_freq | .572 | [.487, .672] |
+| random_transport_null | .537 | [.441, .636] |
+
+Seed AUROCs .644/.669/.649 (mean-of-scores ensemble .709, the frozen primary).
+Paired contrasts vs probe (±.05 margin): every reader's diff CI excludes 0 except
+logit_lens ([−.217, +.049]); random_null [−.324, −.024] and heuristic [−.243, −.035]
+are "inconclusive" under the frozen rule (upper bound > −.05), NOT "worse".
+
+**Pre-registered Qwen gate (mechanical):**
+- (a) probe ≥ .65 on jury labels → **PASS** (.709 — attenuated from the gold-label
+  family range .726–.774 exactly as label noise κ≈.6 predicts, and above the bar).
+- (b) null AND heuristic "worse" than probe (diff CI < −.05) → **FAIL** — both are
+  point-worse by −.18/−.14 with CIs excluding zero, but 550 test spans (61 pos) leave
+  CIs too wide to clear the −.05 margin bound. A power shortfall, not a control
+  misbehaving; note the raw null lands at .537 ≈ chance here (the below-.5 artifact
+  in the CPU eval reflects sign-rule-free raw orientation on the full set).
+**Mechanical verdict: gate NOT met (a PASS, b FAIL) → Qwen-397B stays closed unless TJ
+overrides knowing the nuance.** Interpretation for the release: jury labels DO support
+reader benchmarking (a supervised probe recovers .709, ordering interpretable, null at
+chance) — the labels are useful; the equivalence-margin test simply needs more test
+spans than 550 to resolve ±.05 verdicts.
