@@ -36,3 +36,4 @@ projects/jacobian-lens-and-identifiability/experiments/lens_demo/peek_thinking_r
 # Keep drafts here next to the data, but never commit them to this public research repo.
 blog/
 FAR_POD.txt
+projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.jsonl
