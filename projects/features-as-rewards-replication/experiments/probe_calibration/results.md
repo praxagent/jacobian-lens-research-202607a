@@ -248,3 +248,31 @@ rule unchanged:
   result reported unconditionally either way.
 - Est. cost: generation pod ~$3 (L40S) + extraction ~$0.15 + ~6.5k Serper + ~$4 judges
   + reader pod ~$1.5 ≈ **~$10–15 total**.
+
+## AMENDMENT 7 RESULT — powered gate-(b) re-test (2026-07-18, COMPLETE)
+Receipt `../gemma3_labeling/receipts/receipt_gemma3_jury_a7.json` (sha-verified) @ 3a19faa.
+Test = 2,428 NEW definitive spans (prompts 300–599, prevalence .105) — 4.4× amendment 6.
+Pod oyqv9vbds8pkhr ~40min ≈ $0.9, terminated+audited.
+
+| reader | AUROC | CI95 | paired diff vs probe | verdict (±.05) |
+|---|---|---|---|---|
+| attention_probe (seeds .604/.637/.621) | **.672** | [.637, .707] | — | — |
+| heuristic_len_freq | .623 | [.576, .665] | −.050 [−.097, −.002] | **inconclusive** |
+| native_head_surprisal | .589 | [.554, .622] | −.084 [−.130, −.039] | inconclusive |
+| sae_latent_label_selected | .565 | [.528, .600] | −.107 [−.150, −.066] | worse |
+| logit_lens | .564 | [.522, .606] | −.108 [−.152, −.062] | worse |
+| random_transport_null | .506 | [.466, .548] | −.166 [−.211, −.120] | worse |
+
+**Pre-registered gate: (a) PASS (.672 ≥ .65); (b) FAIL — and this time it is NOT power.**
+The null resolved cleanly to "worse" (the power fix worked), but the heuristic's point
+diff itself sits AT the margin (−.0498): with 2,428 spans, a length+frequency logistic
+recovers all but ~.05 of the probe's discrimination on jury labels. Consistent with the
+below-.5 raw random-null in the CPU eval: **jury "Not Supported" labels correlate with
+surface token statistics**, and much of what the probe learns from them is capturable
+without reading the residual stream at all. Note the probe itself replicated lower on
+fresh data (.672 vs amendment 6's .709 — the .709 was the optimistic draw).
+
+**Qwen-397B: extension CLOSED per the pre-registered rule.** The gate did its job — a
+$75–120 run on these labels would risk benchmarking label artifacts. Recorded
+unconditionally as required. The v2 labels (6,704 rows) are release-quality regardless
+(same validated pipeline) and extend the HF dataset.
