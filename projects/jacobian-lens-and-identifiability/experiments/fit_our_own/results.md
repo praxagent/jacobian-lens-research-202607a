@@ -270,3 +270,14 @@ to a continuous fit? Established across three controlled tests:
 **Conclusion: warm-start extension is valid; the campaign proceeds by extension, not
 refit.** TODO before the campaign runs: reconcile extend_lens.py's own gate to the clean
 fp16-floor comparison (2.5e-4 basis) so the shipped tool passes its own test.
+
+## Layer x layer CKA heatmap for the released lens (2026-07-18, CPU, $0)
+`cka_heatmap_397b.py` — the full 59x59 CKA matrix behind the released mid_sep, recomputed
+via the exact hash-verified consumer path (public HF lens + lm_head shard, seed-0 n=4096
+probe). Correctness gate: recomputed mid_sep +0.343363 == shipped band.json (|delta|
+2.04e-8). Random-J null: flat ~.75 off-diagonal (shared-U floor), mid_sep -0.000113 —
+the block/band structure is the lens's, not the unembedding's. Artifacts:
+`artifacts/lenses-397b/cka_397b.npz` (+ real & null heatmap png/svg). Motivated by the
+PrimeIntellect inkling-jlens / Laguna-XS.2-jlens releases, which ship CKA npz+heatmap as
+standard artifacts (and reuse our seed-0/4096 probe convention). HF lens-repo card update
+pending TJ approval.
