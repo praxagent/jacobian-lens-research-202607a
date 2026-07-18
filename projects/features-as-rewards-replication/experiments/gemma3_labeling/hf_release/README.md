@@ -17,6 +17,8 @@ configs:
   data_files:
   - split: train
     path: data.parquet
+  - split: extension_v2
+    path: data_v2.parquet
 ---
 
 # Gemma-3-12B LongFact hallucination labels (cross-provider LLM jury)
@@ -49,21 +51,30 @@ where the jury was split or found the evidence insufficient ship with `jury_labe
 so you can apply your own filter. Per-row **votes and evidence URLs are included** — you
 can re-adjudicate every label.
 
-**The labels support detector benchmarking in practice**: a supervised attention probe
-on Gemma-3-12B layer-24 residuals reaches test AUROC **0.709** [0.634, 0.792] against
-these labels (3-seed mean, completion-clustered CI, held-out completions), with a
-random-transport control at chance (0.537) — consistent with the 0.73–0.77 the same
-probe architecture achieves on the human-derived public gold sets, attenuated by the
-label noise quantified below.
+**The labels support detector benchmarking — with one caveat you must design around.**
+A supervised attention probe on Gemma-3-12B layer-24 residuals reaches test AUROC
+**0.672** [0.637, 0.707] against these labels on 2,428 held-out spans (3-seed mean,
+completion-clustered CI; a random-transport control sits at chance, 0.506). The caveat:
+a **length+frequency logistic heuristic reaches 0.623** on the same spans — a
+substantial share of the jury-label signal is predictable from surface token statistics
+alone. Any detector benchmarked on these labels should report the shipped heuristic
+baseline alongside, not just a chance-level null.
 
 ## Contents
 
-- 300 completions: deterministic greedy decoding (`do_sample=False`, seed 0,
-  `max_new_tokens=768`) on the first 300 `longfact_objects` test prompts of
-  obalcells/longfact-annotations.
-- 6,471 rows, one per (completion, extracted entity):
-  2,175 unanimous / 4,150 majority / 146 split;
+Two splits, same pipeline end to end:
+
+- **`train`** — 300 completions on `longfact_objects` test prompts 0–299:
+  6,471 rows (2,175 unanimous / 4,150 majority / 146 split);
   **2,595 definitive labels: 2,265 Supported / 330 Not Supported (12.7%)**.
+- **`extension_v2`** — 300 further completions on never-before-used prompts 300–599
+  (generated for a pre-registered powered re-test): 6,704 rows
+  (2,013 unanimous / 4,525 majority / 166 split);
+  **2,430 definitive labels: 2,174 Supported / 256 Not Supported (10.5%)**.
+
+The split names describe provenance, not a recommended train/test protocol — both are
+label sets; pick your own folds. All completions are deterministic greedy decodes
+(`do_sample=False`, seed 0, `max_new_tokens=768`).
 
 ## Schema
 

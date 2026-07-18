@@ -38,3 +38,6 @@ blog/
 FAR_POD.txt
 projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.jsonl
 projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.parquet
+projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data_v2.jsonl
+projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data_v2.parquet
+projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.parquet

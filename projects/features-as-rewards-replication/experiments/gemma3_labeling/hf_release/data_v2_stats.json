@@ -1,0 +1,15 @@
+{
+ "n_rows": 6704,
+ "tiers": {
+  "majority": 4525,
+  "unanimous": 2013,
+  "split": 166
+ },
+ "n_definitive": 2430,
+ "label_dist": {
+  "Supported": 2174,
+  "Not Supported": 256
+ },
+ "unlocated_spans": 2,
+ "n_completions": 300
+}

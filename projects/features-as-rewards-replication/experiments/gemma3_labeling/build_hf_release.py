@@ -54,9 +54,16 @@ def load_prompts(n):
 
 
 def main():
-    jury = json.loads(JURY.read_text())
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--jury", default=str(JURY))
+    ap.add_argument("--cache", default=str(CACHE))
+    ap.add_argument("--stem", default="data",
+                    help="output file stem (data -> data.jsonl/.parquet)")
+    a = ap.parse_args()
+    jury = json.loads(Path(a.jury).read_text())
     comps = {json.loads(l)["i"]: json.loads(l)["c"]
-             for l in CACHE.read_text().splitlines()}
+             for l in Path(a.cache).read_text().splitlines()}
     prompts = load_prompts(max(comps) + 1)
     OUT.mkdir(exist_ok=True)
 
@@ -82,7 +89,7 @@ def main():
             "canary": CANARY,
         })
 
-    data_path = OUT / "data.jsonl"
+    data_path = OUT / f"{a.stem}.jsonl"
     with open(data_path, "w") as f:
         for row in rows:
             f.write(json.dumps(row, ensure_ascii=False) + "\n")
@@ -100,7 +107,7 @@ def main():
         ("tier", pa.string()), ("jury_label", pa.string()),
         ("evidence_links", pa.list_(pa.string())), ("canary", pa.string()),
     ])
-    pq.write_table(pa.Table.from_pylist(rows, schema=schema), OUT / "data.parquet")
+    pq.write_table(pa.Table.from_pylist(rows, schema=schema), OUT / f"{a.stem}.parquet")
 
     # verification against the receipt's own summary
     tiers = Counter(r["tier"] for r in rows)
@@ -111,7 +118,7 @@ def main():
     stats = {"n_rows": len(rows), "tiers": dict(tiers), "n_definitive": labeled,
              "label_dist": jury["label_dist"], "unlocated_spans": unlocated,
              "n_completions": len(comps)}
-    (OUT / "build_stats.json").write_text(json.dumps(stats, indent=1))
+    (OUT / f"{a.stem}_stats.json").write_text(json.dumps(stats, indent=1))
     print("  verified against receipt:", json.dumps(stats))
     print(f"  HF_BUILD_DONE -> {data_path}")
 
