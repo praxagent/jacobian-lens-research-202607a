@@ -67,6 +67,11 @@ def build_manifest():
 
 def fig_receipt(stem, title, alt):
     return {"figure_id": stem, "title": title, "alt_text": alt,
+            "description": alt,
+            "interval_semantics": "descriptive fixed-census values (full 59x59 "
+                                  "matrix, no sampling); no inferential intervals",
+            "guards": "generator gate: matrix must reproduce released mid_sep to "
+                      "1e-4 (measured 2.0e-8); --verify fails on byte drift",
             "data_source": [{"receipt": "projects/jacobian-lens-and-identifiability/"
                                         "artifacts/lenses-397b/cka_397b.npz",
                              "sha256": sha(NPZ),
@@ -113,6 +118,8 @@ def main():
         for stem, (title, alt) in figs.items():
             (POST / f"{stem}.receipt.json").write_text(
                 json.dumps(fig_receipt(stem, title, alt), indent=1))
+        idx = {f"{st}.receipt.json": sha(POST / f"{st}.receipt.json") for st in figs}
+        (POST / "receipts_index.json").write_text(json.dumps(idx, indent=1))
         man = build_manifest()
         (POST / "provenance.json").write_text(json.dumps(man, indent=1))
         missing = check_prose(man, POST / "index.md") if (POST / "index.md").exists() else []

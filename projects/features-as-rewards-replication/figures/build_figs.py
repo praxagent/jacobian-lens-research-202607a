@@ -260,6 +260,7 @@ def save(fig, out, stem, title, alt, sources, values):
     plt.close(fig)
     receipt = {
         "figure_id": stem, "title": title, "alt_text": alt,
+        "description": alt,
         "data_source": [{"receipt": R[s], "sha256": SHAS[s],
                          "pinned_url": f"{REPO_URL}/blob/{PIN}/{R[s]}"}
                         for s in sources],
@@ -268,8 +269,11 @@ def save(fig, out, stem, title, alt, sources, values):
                        "matplotlib": matplotlib.__version__,
                        "svg_sha256": hashlib.sha256(svg.read_bytes()).hexdigest()},
         "plotted_values": values,
-        "uncertainty": "completion-clustered bootstrap 95% CI (2000 resamples) unless "
-                       "stated; kappa figures carry n in their receipts",
+        "interval_semantics": "inferential uncertainty: completion-clustered "
+                              "bootstrap 95% CI (2000 resamples) unless stated; "
+                              "kappa figures carry n in their receipts",
+        "guards": "generator refuses on missing receipt fields; --verify fails on "
+                  "source-hash, manifest, or output-byte drift",
         "accessibility": {"color_only_channel": False,
                           "text_equivalent": "plotted_values above + alt_text"},
     }
@@ -311,6 +315,12 @@ def build_manifest(out, fig_values):
         "validation['unanimous']['kappa']")
     add("g3_a6.probe.auroc", RECEIPTS["g3_a6"]["readers"]["attention_probe"]["auroc"],
         ".709", "g3_a6", "readers['attention_probe']['auroc']")
+    import hashlib as _h
+    idx = {f"{s2}.receipt.json": _h.sha256((out / f"{s2}.receipt.json").read_bytes()).hexdigest()
+           for s2 in ("fig-readers-crossmodel", "fig-probe-vs-paper",
+                      "fig-gate-power", "fig-grader-ladder")
+           if (out / f"{s2}.receipt.json").exists()}
+    (out / "receipts_index.json").write_text(json.dumps(idx, indent=1))
     manifest = {"what": "post-wide provenance manifest — every evidentiary number "
                         "re-derives from a committed receipt (RESEARCH_NOTE §5)",
                 "post": "features-as-rewards-reader-benchmark", "repo": REPO_URL,
