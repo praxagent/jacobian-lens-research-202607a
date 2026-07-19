@@ -26,7 +26,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 
 HERE = Path(__file__).resolve()
 PROJ = HERE.parents[1]
-POST = HERE.parents[3] / "blog/features-as-rewards-reader-benchmark"
+POST = Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/features-as-rewards-reader-benchmark")
 PIN = "242ca53"  # repo commit containing every receipt below
 REPO_URL = "https://github.com/praxagent/jacobian-lens-research-202607a"
 

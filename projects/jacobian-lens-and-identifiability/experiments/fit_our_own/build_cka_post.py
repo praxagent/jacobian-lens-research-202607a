@@ -23,7 +23,7 @@ import numpy as np
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[3]
 ART = HERE.parents[1] / "artifacts/lenses-397b"
-POST = ROOT / "blog/jlens-cka-397b"
+POST = Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
 PIN = "c6c7bb1"
 REPO_URL = "https://github.com/praxagent/jacobian-lens-research-202607a"
 NPZ = ART / "cka_397b.npz"

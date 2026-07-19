@@ -218,6 +218,15 @@ reality, then fix checkpoint.md.
 
 ## House rules
 
+- **Draft blog posts live in `~/PRAX/pre-blog` (TJ, 2026-07-19), NOT in this repo.**
+  Location: `pre-blog/blog-source/content/posts/<year>/<month>/<slug>/` (bundle =
+  index.md + figures + receipts + provenance.json). Update drafts there FREQUENTLY —
+  TJ reviews from that repo. `git add` + `git push` in pre-blog is **100% authorized**
+  (plain commit messages, no Claude trailers, never touch templates/layouts — content
+  only, per pre-blog/AGENTS.md). Don't collide with existing post slugs/titles.
+  Figure/provenance GENERATORS stay in this repo and point their output at the
+  pre-blog bundle; run their `--verify` after every prose edit.
+
 - **Pre-register before running, formally when reasonable (TJ, 2026-07-10).** Before
   any experiment whose outcome we might publish: freeze the design (prompts, metrics,
   gates, controls, predictions) and commit it BEFORE results exist — git pre-registration
