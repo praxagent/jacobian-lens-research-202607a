@@ -204,6 +204,18 @@ research-and-replications/
 `results.md`. Add a row to the top-level `README.md` index. Keep every project
 self-contained so humans and agents can navigate by folder alone.
 
+## High-RAM Lightsail box (TJ, 2026-07-19)
+
+This work box has only **7.6GB RAM / 2 vCPU** — too small for big-lens CPU analysis
+(mmap of single-file 16GB checkpoints fails; 70B lens work needs ~16-25GB resident).
+**TJ will spin up a bigger Lightsail box on request** — ask, state the RAM/vCPU need
+and expected duration, and he'll create it and install this box's public key
+(`~/.ssh/id_rsa.pub`). Sizing guide: **32GB/8vCPU** (~$0.32/hr, the plan that ran the
+original 36-model sweep on a "30GB box") covers everything up to the 70B lens;
+16GB/4vCPU (~$0.16/hr) suffices for ≤16GB-checkpoint models only; 64GB only for
+parallel d≥8192 workloads. Same cost discipline as GPU pods: idle boxes get flagged
+for TJ to snapshot+delete (never delete his boxes yourself — he said don't).
+
 ## Checkpoint discipline (session survival)
 
 Maintain **`checkpoint.md`** at the repo root (gitignored — state, not history). It exists
