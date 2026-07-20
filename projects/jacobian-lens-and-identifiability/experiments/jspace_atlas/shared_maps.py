@@ -22,14 +22,13 @@ sys.path.insert(0, str(HERE.parents[1]))
 sys.path.insert(0, str(HERE.parent / "jacobian_lens"))
 from common.cka import linear_cka          # noqa: E402
 from cka_layers import band_stats          # noqa: E402
-from atlas_stage_b import family_of, fitted_seg  # noqa: E402  (fitted_seg lives in stage_a)
+from atlas_stage_b import family_of      # noqa: E402
 
 DS = HERE / "atlas_out/d_shared"
 OUT = HERE / "atlas_out/shared_maps"
 
 
 def fitted_sep_of(M):
-    # reuse Stage-A's fitted 3-segmentation
     sys.path.insert(0, str(HERE))
     from atlas_stage_a import fitted_seg as fs
     _, _, sep = fs(M)
