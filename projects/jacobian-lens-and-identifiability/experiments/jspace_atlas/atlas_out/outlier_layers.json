@@ -1,0 +1,373 @@
+{
+ "gpt2-small": {
+  "n_layers": 11,
+  "n_outliers": 1,
+  "outlier_layers": [
+   10
+  ],
+  "frac": 0.091,
+  "threshold": 0.9631
+ },
+ "pythia-70m-deduped": {
+  "n_layers": 5,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.9566
+ },
+ "gemma-3-270m": {
+  "n_layers": 17,
+  "n_outliers": 3,
+  "outlier_layers": [
+   0,
+   1,
+   2
+  ],
+  "frac": 0.176,
+  "threshold": 0.9895
+ },
+ "gemma-3-270m-it": {
+  "n_layers": 17,
+  "n_outliers": 3,
+  "outlier_layers": [
+   0,
+   1,
+   2
+  ],
+  "frac": 0.176,
+  "threshold": 0.9968
+ },
+ "qwen3.5-0.8b": {
+  "n_layers": 23,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.5732
+ },
+ "gemma-3-1b": {
+  "n_layers": 25,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.942
+ },
+ "gemma-3-1b-it": {
+  "n_layers": 25,
+  "n_outliers": 4,
+  "outlier_layers": [
+   0,
+   1,
+   2,
+   3
+  ],
+  "frac": 0.16,
+  "threshold": 0.9789
+ },
+ "qwen3-1.7b": {
+  "n_layers": 27,
+  "n_outliers": 1,
+  "outlier_layers": [
+   26
+  ],
+  "frac": 0.037,
+  "threshold": 0.7738
+ },
+ "gemma-2-2b": {
+  "n_layers": 25,
+  "n_outliers": 1,
+  "outlier_layers": [
+   0
+  ],
+  "frac": 0.04,
+  "threshold": 0.9786
+ },
+ "gemma-2-2b-it": {
+  "n_layers": 25,
+  "n_outliers": 4,
+  "outlier_layers": [
+   0,
+   1,
+   4,
+   24
+  ],
+  "frac": 0.16,
+  "threshold": 0.9968
+ },
+ "gemma-4-e2b": {
+  "n_layers": 34,
+  "n_outliers": 4,
+  "outlier_layers": [
+   8,
+   9,
+   10,
+   12
+  ],
+  "frac": 0.118,
+  "threshold": 0.7768
+ },
+ "qwen3.5-2b-pt": {
+  "n_layers": 23,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.5675
+ },
+ "gemma-3-4b": {
+  "n_layers": 33,
+  "n_outliers": 4,
+  "outlier_layers": [
+   0,
+   2,
+   3,
+   4
+  ],
+  "frac": 0.121,
+  "threshold": 0.8762
+ },
+ "gemma-3-4b-it": {
+  "n_layers": 33,
+  "n_outliers": 7,
+  "outlier_layers": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6
+  ],
+  "frac": 0.212,
+  "threshold": 0.9802
+ },
+ "qwen3-4b": {
+  "n_layers": 35,
+  "n_outliers": 3,
+  "outlier_layers": [
+   0,
+   1,
+   2
+  ],
+  "frac": 0.086,
+  "threshold": 0.8798
+ },
+ "gemma-4-e4b": {
+  "n_layers": 41,
+  "n_outliers": 5,
+  "outlier_layers": [
+   1,
+   2,
+   3,
+   4,
+   40
+  ],
+  "frac": 0.122,
+  "threshold": 0.8353
+ },
+ "qwen3.5-4b": {
+  "n_layers": 31,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.3594
+ },
+ "olmo-3-1025-7b": {
+  "n_layers": 31,
+  "n_outliers": 1,
+  "outlier_layers": [
+   30
+  ],
+  "frac": 0.032,
+  "threshold": 0.6779
+ },
+ "qwen2.5-7b-it": {
+  "n_layers": 27,
+  "n_outliers": 1,
+  "outlier_layers": [
+   26
+  ],
+  "frac": 0.037,
+  "threshold": 0.9939
+ },
+ "llama3.1-8b": {
+  "n_layers": 31,
+  "n_outliers": 2,
+  "outlier_layers": [
+   1,
+   2
+  ],
+  "frac": 0.065,
+  "threshold": 0.7789
+ },
+ "llama3.1-8b-it": {
+  "n_layers": 31,
+  "n_outliers": 2,
+  "outlier_layers": [
+   1,
+   2
+  ],
+  "frac": 0.065,
+  "threshold": 0.8064
+ },
+ "qwen3-8b": {
+  "n_layers": 35,
+  "n_outliers": 3,
+  "outlier_layers": [
+   32,
+   33,
+   34
+  ],
+  "frac": 0.086,
+  "threshold": 0.5108
+ },
+ "gemma-2-9b": {
+  "n_layers": 41,
+  "n_outliers": 6,
+  "outlier_layers": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5
+  ],
+  "frac": 0.146,
+  "threshold": 0.9973
+ },
+ "gemma-2-9b-it": {
+  "n_layers": 41,
+  "n_outliers": 7,
+  "outlier_layers": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   40
+  ],
+  "frac": 0.171,
+  "threshold": 0.9987
+ },
+ "qwen3.5-9b-pt": {
+  "n_layers": 31,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.5505
+ },
+ "gemma-3-12b": {
+  "n_layers": 47,
+  "n_outliers": 2,
+  "outlier_layers": [
+   8,
+   9
+  ],
+  "frac": 0.043,
+  "threshold": 0.9977
+ },
+ "gemma-3-12b-it": {
+  "n_layers": 47,
+  "n_outliers": 3,
+  "outlier_layers": [
+   44,
+   45,
+   46
+  ],
+  "frac": 0.064,
+  "threshold": 0.9995
+ },
+ "qwen3-14b": {
+  "n_layers": 39,
+  "n_outliers": 3,
+  "outlier_layers": [
+   36,
+   37,
+   38
+  ],
+  "frac": 0.077,
+  "threshold": 0.4804
+ },
+ "gpt-oss-20b": {
+  "n_layers": 23,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.6798
+ },
+ "gemma-2-27b": {
+  "n_layers": 45,
+  "n_outliers": 8,
+  "outlier_layers": [
+   2,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10
+  ],
+  "frac": 0.178,
+  "threshold": 0.9091
+ },
+ "gemma-3-27b": {
+  "n_layers": 61,
+  "n_outliers": 3,
+  "outlier_layers": [
+   57,
+   58,
+   59
+  ],
+  "frac": 0.049,
+  "threshold": 0.9283
+ },
+ "gemma-3-27b-it": {
+  "n_layers": 61,
+  "n_outliers": 9,
+  "outlier_layers": [
+   51,
+   52,
+   54,
+   55,
+   56,
+   57,
+   58,
+   59,
+   60
+  ],
+  "frac": 0.148,
+  "threshold": 0.9791
+ },
+ "qwen3.5-27b": {
+  "n_layers": 63,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.4148
+ },
+ "olmo-3-1125-32b": {
+  "n_layers": 63,
+  "n_outliers": 3,
+  "outlier_layers": [
+   60,
+   61,
+   62
+  ],
+  "frac": 0.048,
+  "threshold": 0.8287
+ },
+ "llama3.3-70b-it": {
+  "n_layers": 79,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.4458
+ },
+ "qwen35-397b-own": {
+  "n_layers": 59,
+  "n_outliers": 0,
+  "outlier_layers": [],
+  "frac": 0.0,
+  "threshold": 0.043
+ }
+}
