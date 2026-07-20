@@ -41,3 +41,5 @@ projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/
 projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data_v2.jsonl
 projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data_v2.parquet
 projects/features-as-rewards-replication/experiments/gemma3_labeling/hf_release/data.parquet
+projects/jacobian-lens-and-identifiability/experiments/jspace_atlas/atlas_out/*.npz
+projects/jacobian-lens-and-identifiability/experiments/jspace_atlas/atlas_out/*.json
