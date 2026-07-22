@@ -43,6 +43,22 @@ def load_corpus(n_prompts: int, seed: int, corpus: str = "wikitext",
         rng = random.Random(seed)
         rng.shuffle(texts)
         return texts[:n_prompts]
+    if corpus == "code":
+        # Tier-1 corpus arm: code passages for the code-vs-prose lens A/B. min_chars is
+        # raised so every passage fills the fit's 128-token window, matching the wikitext
+        # prompts' effective length AT THE FIT CAP (both truncate to max_seq_len), which
+        # is how we neutralize the prompt-length confound the community read left open.
+        ds = load_dataset("codeparrot/codeparrot-clean-valid", split="train",
+                          streaming=True)   # ungated Python code, `content` field
+        ds = ds.shuffle(seed=seed, buffer_size=10_000)
+        texts = []
+        for row in ds:
+            t = row.get("content") or ""
+            if len(t) >= max(min_chars, 600):   # ~>=128 code tokens at ~4-5 chars/token
+                texts.append(t)
+            if len(texts) >= n_prompts:
+                break
+        return texts
     if corpus.startswith("wikipedia-"):
         lang = corpus.split("-", 1)[1]
         # Streaming + shuffle-buffer: avoids downloading a multi-GB dump for 100 texts.
@@ -67,7 +83,12 @@ def main() -> None:
     ap.add_argument("--dim-batch", type=int, default=8)
     ap.add_argument("--max-seq-len", type=int, default=128)
     ap.add_argument("--seed", type=int, default=0)
-    ap.add_argument("--corpus", default="wikitext", help="wikitext | wikipedia-zh | wikipedia-fr")
+    ap.add_argument("--corpus", default="wikitext",
+                    help="wikitext | code | wikipedia-zh | wikipedia-fr")
+    ap.add_argument("--min-chars", type=int, default=200,
+                    help="min passage length; length-matching for the code-vs-prose A/B")
+    ap.add_argument("--match-length", action="store_true",
+                    help="keep only passages that fill max_seq_len tokens (code-vs-prose A/B)")
     ap.add_argument("--out", required=True, help="output lens .pt path")
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
@@ -86,8 +107,24 @@ def main() -> None:
     tok = transformers.AutoTokenizer.from_pretrained(args.model)
     model = jlens.from_hf(hf, tok)
 
-    prompts = load_corpus(args.n_prompts, args.seed, corpus=args.corpus)
-    print(f"corpus: {len(prompts)} passages")
+    # --match-length: keep only passages with >= max_seq_len tokens, so EVERY fitted
+    # prompt truncates to exactly the cap. This is what makes the code-vs-prose A/B a
+    # clean test: both corpora contribute identical-length windows, so a geometry
+    # difference cannot be prompt length (the confound the community read left open).
+    pool = args.n_prompts * (6 if args.match_length else 1)
+    cands = load_corpus(pool, args.seed, corpus=args.corpus, min_chars=args.min_chars)
+    if args.match_length:
+        prompts = [p for p in cands if len(tok(p).input_ids) >= args.max_seq_len][:args.n_prompts]
+        if len(prompts) < args.n_prompts:
+            raise SystemExit(f"only {len(prompts)}/{args.n_prompts} passages reach "
+                             f"{args.max_seq_len} tokens; raise pool or lower cap")
+    else:
+        prompts = cands[:args.n_prompts]
+    import statistics as _st
+    lens_tok = [min(len(tok(p).input_ids), args.max_seq_len) for p in prompts]
+    print(f"corpus: {len(prompts)} passages | fitted token lengths "
+          f"median={_st.median(lens_tok)} mean={_st.mean(lens_tok):.1f} "
+          f"min={min(lens_tok)} (cap={args.max_seq_len}, match_length={args.match_length})")
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

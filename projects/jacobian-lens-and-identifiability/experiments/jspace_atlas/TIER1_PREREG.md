@@ -54,9 +54,7 @@ being longer than wikitext prompts.
 
 **Procedure.** Fit two lenses on the SAME model (Qwen/Qwen3-4B): one on wikitext, one on
 a code corpus, with prompt **token-length distribution matched by construction** (both
-truncated to the same per-prompt token budget, same n_prompts, same seed). Implement a
-`corpus="code"` loader (candidate: `nvidia/Nemotron-*` agentic traces or
-`bigcode/the-stack-smol`; pinned at freeze) with length-matching to the wikitext prompts.
+truncated to the same per-prompt token budget, same n_prompts, same seed). The `corpus="code"` loader (implemented + CPU-smoked: `codeparrot/codeparrot-clean-valid`, ungated) with token-level length-matching via `--match-length` (keeps only passages that fill max_seq_len tokens, so BOTH corpora contribute identical 128-token windows).
 Compare CKA(code-lens, wikitext-lens) at matched depth.
 
 **Pre-stated prediction.** If code reorganizes the workspace, the mid-band cross-lens CKA
