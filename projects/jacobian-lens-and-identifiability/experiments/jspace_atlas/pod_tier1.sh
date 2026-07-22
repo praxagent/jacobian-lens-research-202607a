@@ -8,12 +8,18 @@ cd /workspace
 cd repo && git fetch -q && git checkout -q ARMSHA
 # jlens needs transformers 5.x, which needs torch>=2.5 for torch.distributed.tensor.DTensor.
 # The base image ships torch 2.4.1; upgrade torch first so transformers 5.x resolves.
-# upgrade torch AND torchvision together so they stay ABI-matched (a torch-only upgrade
-# leaves the old torchvision, whose C++ ops then fail to load and break transformers).
-pip -q install --upgrade "torch==2.6.0" "torchvision==0.21.0" --index-url https://download.pytorch.org/whl/cu124 2>&1 | tail -1
+# upgrade the WHOLE torch trio to matched versions (transformers 5.x imports torch,
+# torchvision AND torchaudio at model-load; any single one left at the old ABI breaks it).
+pip -q install --upgrade "torch==2.6.0" "torchvision==0.21.0" "torchaudio==2.6.0" \
+  --index-url https://download.pytorch.org/whl/cu124 2>&1 | tail -1
 pip -q install "git+https://github.com/anthropics/jacobian-lens@581d398613e5602a5af361e1c34d3a92ea82ba8e" \
   "transformers>=5,<6" datasets accelerate safetensors 2>&1 | tail -2
-python -c "import torch,torchvision,transformers,jlens; import transformers.image_utils; print('deps OK torch',torch.__version__,'tv',torchvision.__version__,'tf',transformers.__version__)" \
+# import the full model-load path (modeling_utils pulls torchvision+torchaudio via the
+# loss modules) so ANY ABI break shows up here at the gate, not mid-fit.
+python -c "import torch,torchvision,torchaudio,transformers,jlens
+import transformers.modeling_utils
+from transformers import AutoModelForCausalLM
+print('deps OK torch',torch.__version__,'tv',torchvision.__version__,'ta',torchaudio.__version__,'tf',transformers.__version__)" \
   || { echo DEPS_INSTALL_FAILED; exit 1; }
 cd projects/jacobian-lens-and-identifiability/experiments/fit_our_own
 mkdir -p /workspace/lenses
