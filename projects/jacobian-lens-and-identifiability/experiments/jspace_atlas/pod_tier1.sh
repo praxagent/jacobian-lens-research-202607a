@@ -6,7 +6,9 @@ set -u
 cd /workspace
 [ -d repo ] || git clone --depth 40 https://github.com/praxagent/jacobian-lens-research-202607a repo
 cd repo && git fetch -q && git checkout -q ARMSHA
-pip -q install jlens "transformers>=4.50" datasets accelerate safetensors 2>&1 | tail -1
+pip -q install "git+https://github.com/anthropics/jacobian-lens@581d398613e5602a5af361e1c34d3a92ea82ba8e" \
+  "transformers>=4.50" datasets accelerate safetensors 2>&1 | tail -2
+python -c "import jlens; print('jlens installed OK')" || { echo JLENS_INSTALL_FAILED; exit 1; }
 cd projects/jacobian-lens-and-identifiability/experiments/fit_our_own
 mkdir -p /workspace/lenses
 FIT="python -u fit_lens.py --n-prompts 100 --dim-batch 8 --max-seq-len 128 --seed 0 --device cuda"
