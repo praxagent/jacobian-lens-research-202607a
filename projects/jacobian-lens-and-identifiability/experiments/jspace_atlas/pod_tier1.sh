@@ -6,9 +6,13 @@ set -u
 cd /workspace
 [ -d repo ] || git clone --depth 40 https://github.com/praxagent/jacobian-lens-research-202607a repo
 cd repo && git fetch -q && git checkout -q ARMSHA
+# jlens needs transformers 5.x, which needs torch>=2.5 for torch.distributed.tensor.DTensor.
+# The base image ships torch 2.4.1; upgrade torch first so transformers 5.x resolves.
+pip -q install --upgrade "torch>=2.5,<2.7" --index-url https://download.pytorch.org/whl/cu124 2>&1 | tail -1
 pip -q install "git+https://github.com/anthropics/jacobian-lens@581d398613e5602a5af361e1c34d3a92ea82ba8e" \
-  "transformers>=4.50,<5" datasets accelerate safetensors 2>&1 | tail -2
-python -c "import jlens; print('jlens installed OK')" || { echo JLENS_INSTALL_FAILED; exit 1; }
+  "transformers>=5,<6" datasets accelerate safetensors 2>&1 | tail -2
+python -c "import torch,transformers,jlens; print('deps OK torch',torch.__version__,'tf',transformers.__version__)" \
+  || { echo DEPS_INSTALL_FAILED; exit 1; }
 cd projects/jacobian-lens-and-identifiability/experiments/fit_our_own
 mkdir -p /workspace/lenses
 FIT="python -u fit_lens.py --n-prompts 100 --dim-batch 8 --max-seq-len 128 --seed 0 --device cuda"
