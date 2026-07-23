@@ -1,0 +1,9 @@
+{
+ "model": "google/gemma-2-2b",
+ "tag": "gemma2_2b_flat",
+ "n_layers": 26,
+ "n_tokens": 4096,
+ "activation_cka_offdiag_median": 0.965163194046566,
+ "activation_cka_offdiag_min": 0.06842618041300574,
+ "activation_cka_mid_sep": 0.08070037862806922
+}

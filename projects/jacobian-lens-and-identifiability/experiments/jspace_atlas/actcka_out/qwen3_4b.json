@@ -1,0 +1,9 @@
+{
+ "model": "Qwen/Qwen3-4B",
+ "tag": "qwen3_4b_struct",
+ "n_layers": 36,
+ "n_tokens": 4096,
+ "activation_cka_offdiag_median": 0.9274057604059309,
+ "activation_cka_offdiag_min": 0.02790762868617579,
+ "activation_cka_mid_sep": 0.2639462518302287
+}
