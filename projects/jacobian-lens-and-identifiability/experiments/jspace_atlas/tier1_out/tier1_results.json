@@ -1,0 +1,27 @@
+{
+ "armA_gemma2_9b_ours": {
+  "mid_sep": 0.00585689389802535,
+  "offdiag_cka_median": 0.9933884661882684,
+  "offdiag_cka_min": 0.9749484266448152,
+  "n_layers": 41
+ },
+ "armB_code_vs_wiki": {
+  "early": 0.8870551231878312,
+  "mid": 0.9379211476215424,
+  "late": 0.9591527171985679,
+  "median": 0.9447310088224133
+ },
+ "armC_fp8_vs_wiki": {
+  "early": 0.9991592994812039,
+  "mid": 0.9999159639547099,
+  "late": 0.9998970093474762,
+  "median": 0.9998922380397393
+ },
+ "fp8_validity": {
+  "bf16_dtype": "torch.bfloat16",
+  "fp8_dtype": "torch.bfloat16",
+  "lm_head_max_abs_diff": 0.0,
+  "lm_head_mean_abs_diff": 0.0,
+  "identical": true
+ }
+}
