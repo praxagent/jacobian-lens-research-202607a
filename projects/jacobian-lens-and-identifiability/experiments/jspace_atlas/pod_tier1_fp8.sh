@@ -10,7 +10,7 @@ cd repo && git fetch -q && git checkout -q ARMSHA
 pip -q install --upgrade "torch==2.6.0" "torchvision==0.21.0" "torchaudio==2.6.0" \
   --index-url https://download.pytorch.org/whl/cu124 2>&1 | tail -1
 pip -q install "git+https://github.com/anthropics/jacobian-lens@581d398613e5602a5af361e1c34d3a92ea82ba8e" \
-  "transformers>=5,<6" datasets accelerate safetensors 2>&1 | tail -2
+  "transformers>=5,<6" "kernels==0.15.2" datasets accelerate safetensors 2>&1 | tail -2
 python -c "import torch,torchvision,torchaudio,transformers,jlens; import transformers.modeling_utils; from transformers import AutoModelForCausalLM; print('deps OK')" || { echo DEPS_FAILED; exit 1; }
 cd projects/jacobian-lens-and-identifiability/experiments/fit_our_own
 mkdir -p /workspace/lenses
