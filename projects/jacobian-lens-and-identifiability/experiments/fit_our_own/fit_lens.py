@@ -76,6 +76,36 @@ def load_corpus(n_prompts: int, seed: int, corpus: str = "wikitext",
     raise ValueError(f"unknown corpus {corpus!r}")
 
 
+def dequantize_finegrained_fp8_(model, block: int = 128):
+    """In-place: replace each stored float8_e4m3fn linear weight with its GENUINE
+    dequantized value W_fp8 * block_scale, using the checkpoint's own `weight_scale_inv`
+    buffers (the 128x128 block scales the shipped Qwen/DeepSeek FP8 format stores). This
+    is the real quantized weight the model runs, not a simulation, materialized in pure
+    torch so it needs no FP8 GEMM kernel. Returns (n_layers, sample_rel_error_vs_none).
+    """
+    import torch
+    n = 0
+    sd = dict(model.named_parameters())
+    fp8_names = [k for k, v in sd.items() if v.dtype == torch.float8_e4m3fn]
+    for wname in fp8_names:
+        sname = wname[:-len("weight")] + "weight_scale_inv"
+        if sname not in sd:
+            continue
+        W = sd[wname]; S = sd[sname].float()          # W: fp8 [out,in]; S: [ceil(out/b),ceil(in/b)]
+        out, inn = W.shape
+        Wf = W.float()
+        deq = torch.empty_like(Wf)
+        for bi in range(S.shape[0]):
+            for bj in range(S.shape[1]):
+                r0, r1 = bi*block, min((bi+1)*block, out)
+                c0, c1 = bj*block, min((bj+1)*block, inn)
+                deq[r0:r1, c0:c1] = Wf[r0:r1, c0:c1] * S[bi, bj]
+        mod = model.get_submodule(wname[:-len(".weight")])
+        mod.weight = torch.nn.Parameter(deq.to(torch.bfloat16), requires_grad=False)
+        n += 1
+    return n
+
+
 def blockwise_fp8_(model, block: int = 128) -> int:
     """In-place: round every Linear weight to block-wise E4M3 FP8 and back, replicating
     the finegrained-FP8 scheme the shipped Qwen FP8 checkpoints use (128x128 weight
@@ -122,6 +152,9 @@ def main() -> None:
     ap.add_argument("--fp8-blockwise", action="store_true",
                     help="round Linear weights to block-wise E4M3 FP8 (simulates the shipped "
                          "FP8 checkpoint; pure torch, no kernel) before fitting")
+    ap.add_argument("--fp8-dequant", action="store_true",
+                    help="GENUINE: dequantize the checkpoint's own stored fp8 weights + block "
+                         "scales to bf16 and fit on those (real shipped FP8 model, no kernel)")
     ap.add_argument("--out", required=True, help="output lens .pt path")
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
@@ -138,7 +171,15 @@ def main() -> None:
         args.model, torch_dtype=torch.bfloat16 if dev == "cuda" else torch.float32,
     ).to(dev).eval()
     tok = transformers.AutoTokenizer.from_pretrained(args.model)
-    if args.fp8_blockwise:
+    if args.fp8_dequant:
+        import torch as _t
+        with _t.no_grad():
+            nq = dequantize_finegrained_fp8_(hf)
+        print(f"fp8-dequant: materialized {nq} genuine fp8 linear weights (checkpoint's "
+              f"own scales) to bf16")
+        if nq == 0:
+            raise SystemExit("no float8_e4m3fn weights found; is this an FP8 checkpoint?")
+    elif args.fp8_blockwise:
         import torch as _t
         with _t.no_grad():
             nq = blockwise_fp8_(hf)
