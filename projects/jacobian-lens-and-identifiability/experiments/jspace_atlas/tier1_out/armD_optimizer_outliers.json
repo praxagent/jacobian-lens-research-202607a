@@ -1,0 +1,78 @@
+{
+ "source": "eliebak/open-jlens-data E11_optimizers results/permodel (their fits; our outlier statistic)",
+ "caveat": "our outlier-census applied to their published per-model CKA matrices; no random-J null (raw lenses not public); small counts",
+ "520m": {
+  "adamw": {
+   "outliers": 2,
+   "n_layers": 31,
+   "frac": 0.0645
+  },
+  "cautious": {
+   "outliers": 1,
+   "n_layers": 31,
+   "frac": 0.0323
+  },
+  "kron": {
+   "outliers": 1,
+   "n_layers": 31,
+   "frac": 0.0323
+  },
+  "lion": {
+   "outliers": 1,
+   "n_layers": 31,
+   "frac": 0.0323
+  },
+  "mars": {
+   "outliers": 1,
+   "n_layers": 31,
+   "frac": 0.0323
+  },
+  "mini": {
+   "outliers": 0,
+   "n_layers": 31,
+   "frac": 0.0
+  },
+  "muon": {
+   "outliers": 0,
+   "n_layers": 31,
+   "frac": 0.0
+  },
+  "nadamw": {
+   "outliers": 0,
+   "n_layers": 31,
+   "frac": 0.0
+  },
+  "scion": {
+   "outliers": 6,
+   "n_layers": 31,
+   "frac": 0.1935
+  },
+  "soape": {
+   "outliers": 0,
+   "n_layers": 31,
+   "frac": 0.0
+  }
+ },
+ "1.2b": {
+  "adamw": {
+   "outliers": 1,
+   "n_layers": 31,
+   "frac": 0.0323
+  },
+  "muon": {
+   "outliers": 0,
+   "n_layers": 31,
+   "frac": 0.0
+  },
+  "nadamw": {
+   "outliers": 0,
+   "n_layers": 31,
+   "frac": 0.0
+  },
+  "soape": {
+   "outliers": 2,
+   "n_layers": 31,
+   "frac": 0.0645
+  }
+ }
+}
