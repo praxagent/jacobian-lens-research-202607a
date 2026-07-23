@@ -76,6 +76,36 @@ def load_corpus(n_prompts: int, seed: int, corpus: str = "wikitext",
     raise ValueError(f"unknown corpus {corpus!r}")
 
 
+def blockwise_fp8_(model, block: int = 128) -> int:
+    """In-place: round every Linear weight to block-wise E4M3 FP8 and back, replicating
+    the finegrained-FP8 scheme the shipped Qwen FP8 checkpoints use (128x128 weight
+    blocks, per-block amax scale), in pure torch so it needs no FP8 kernel or GPU. Tests
+    the effect of FP8 weight rounding on the lens geometry directly. Embeddings, lm_head,
+    and norms stay full-precision (they are not quantized in the shipped checkpoint).
+    Returns the number of quantized layers.
+    """
+    import torch
+    E4M3_MAX = 448.0
+    n = 0
+    for name, mod in model.named_modules():
+        if not isinstance(mod, torch.nn.Linear):
+            continue
+        if any(k in name.lower() for k in ("lm_head", "embed", "norm")):
+            continue
+        W = mod.weight.data
+        out, inn = W.shape
+        Wq = W.clone().float()
+        for i in range(0, out, block):
+            for j in range(0, inn, block):
+                blk = Wq[i:i+block, j:j+block]
+                scale = blk.abs().amax().clamp(min=1e-12) / E4M3_MAX
+                q = (blk / scale).to(torch.float8_e4m3fn).to(torch.float32) * scale
+                Wq[i:i+block, j:j+block] = q
+        mod.weight.data = Wq.to(W.dtype)
+        n += 1
+    return n
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True, help="HF model id")
@@ -89,6 +119,9 @@ def main() -> None:
                     help="min passage length; length-matching for the code-vs-prose A/B")
     ap.add_argument("--match-length", action="store_true",
                     help="keep only passages that fill max_seq_len tokens (code-vs-prose A/B)")
+    ap.add_argument("--fp8-blockwise", action="store_true",
+                    help="round Linear weights to block-wise E4M3 FP8 (simulates the shipped "
+                         "FP8 checkpoint; pure torch, no kernel) before fitting")
     ap.add_argument("--out", required=True, help="output lens .pt path")
     ap.add_argument("--device", default="cuda")
     args = ap.parse_args()
@@ -105,6 +138,11 @@ def main() -> None:
         args.model, torch_dtype=torch.bfloat16 if dev == "cuda" else torch.float32,
     ).to(dev).eval()
     tok = transformers.AutoTokenizer.from_pretrained(args.model)
+    if args.fp8_blockwise:
+        import torch as _t
+        with _t.no_grad():
+            nq = blockwise_fp8_(hf)
+        print(f"fp8-blockwise: quantized {nq} Linear layers to E4M3 (128-block)")
     model = jlens.from_hf(hf, tok)
 
     # --match-length: keep only passages with >= max_seq_len tokens, so EVERY fitted
