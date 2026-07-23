@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 HERE = Path(__file__).resolve()
-sys.path.insert(0, str(HERE.parents[1]))
+sys.path.insert(0, str(HERE.parents[2]))
 from common.cka import linear_cka   # noqa: E402
 
 
