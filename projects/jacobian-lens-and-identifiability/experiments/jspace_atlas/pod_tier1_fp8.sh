@@ -13,7 +13,13 @@ pip -q install --upgrade "torch==2.7.1" "torchvision==0.22.1" "torchaudio==2.7.1
   --index-url https://download.pytorch.org/whl/cu126 2>&1 | tail -1
 pip -q install "git+https://github.com/anthropics/jacobian-lens@581d398613e5602a5af361e1c34d3a92ea82ba8e" \
   "transformers>=5,<6" "kernels==0.15.2" datasets accelerate safetensors 2>&1 | tail -2
-python -c "import torch,torchvision,torchaudio,transformers,jlens; import transformers.modeling_utils; from transformers import AutoModelForCausalLM; assert hasattr(torch,"float8_e8m0fnu"),"no e8m0"; print("deps OK torch",torch.__version__)" || { echo DEPS_FAILED; exit 1; }
+python - <<'PYCHK' || { echo DEPS_FAILED; exit 1; }
+import torch, torchvision, torchaudio, transformers, jlens
+import transformers.modeling_utils
+from transformers import AutoModelForCausalLM
+assert hasattr(torch, 'float8_e8m0fnu'), 'no e8m0 dtype'
+print('deps OK torch', torch.__version__, 'tf', transformers.__version__)
+PYCHK
 cd projects/jacobian-lens-and-identifiability/experiments/fit_our_own
 mkdir -p /workspace/lenses
 
