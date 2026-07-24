@@ -1,0 +1,427 @@
+{
+ "n": 36,
+ "base_to_instruct": {
+  "n_pairs": 8,
+  "n_flatter": 8,
+  "mean_delta": -0.0658,
+  "pairs": [
+   {
+    "model": "gemma-2-2b",
+    "base": 0.007419065697976013,
+    "it": 0.001406238163037865
+   },
+   {
+    "model": "gemma-2-9b",
+    "base": 0.004714196480611776,
+    "it": 0.0027373240707994073
+   },
+   {
+    "model": "gemma-3-12b",
+    "base": 0.11369146921206275,
+    "it": 0.029910628800280503
+   },
+   {
+    "model": "gemma-3-1b",
+    "base": 0.0774167386282768,
+    "it": 0.019399957627885822
+   },
+   {
+    "model": "gemma-3-270m",
+    "base": 0.1336433753371239,
+    "it": 0.024711357388231492
+   },
+   {
+    "model": "gemma-3-27b",
+    "base": 0.29772681343955065,
+    "it": 0.10385161593463033
+   },
+   {
+    "model": "gemma-3-4b",
+    "base": 0.06067846653875242,
+    "it": 0.012586440724774772
+   },
+   {
+    "model": "llama3.1-8b",
+    "base": 0.1059450504153665,
+    "it": 0.08060353863720937
+   }
+  ]
+ },
+ "spearman": {
+  "instruct": -0.159,
+  "soft_cap": 0.035,
+  "log_params": 0.438,
+  "depth": 0.421,
+  "distilled_knownonly": 0.424
+ },
+ "ols_std_betas": {
+  "intercept": 0.0966,
+  "instruct": -0.0342,
+  "soft_cap": -0.0273,
+  "log_params": 0.0371,
+  "depth": 0.0165
+ },
+ "ols_r2": 0.63,
+ "rows": [
+  {
+   "slug": "gemma-2-27b",
+   "family": "gemma-2",
+   "instruct": 0,
+   "soft_cap": 1,
+   "distilled": 0,
+   "params": 27,
+   "depth": 45,
+   "mid_sep": 0.11335477488381518
+  },
+  {
+   "slug": "gemma-2-2b-it",
+   "family": "gemma-2",
+   "instruct": 1,
+   "soft_cap": 1,
+   "distilled": 1,
+   "params": 2.6,
+   "depth": 25,
+   "mid_sep": 0.001406238163037865
+  },
+  {
+   "slug": "gemma-2-2b",
+   "family": "gemma-2",
+   "instruct": 0,
+   "soft_cap": 1,
+   "distilled": 1,
+   "params": 2.6,
+   "depth": 25,
+   "mid_sep": 0.007419065697976013
+  },
+  {
+   "slug": "gemma-2-9b-it",
+   "family": "gemma-2",
+   "instruct": 1,
+   "soft_cap": 1,
+   "distilled": 1,
+   "params": 9.2,
+   "depth": 41,
+   "mid_sep": 0.0027373240707994073
+  },
+  {
+   "slug": "gemma-2-9b",
+   "family": "gemma-2",
+   "instruct": 0,
+   "soft_cap": 1,
+   "distilled": 1,
+   "params": 9.2,
+   "depth": 41,
+   "mid_sep": 0.004714196480611776
+  },
+  {
+   "slug": "gemma-3-12b-it",
+   "family": "gemma-3",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 12,
+   "depth": 47,
+   "mid_sep": 0.029910628800280503
+  },
+  {
+   "slug": "gemma-3-12b",
+   "family": "gemma-3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 12,
+   "depth": 47,
+   "mid_sep": 0.11369146921206275
+  },
+  {
+   "slug": "gemma-3-1b-it",
+   "family": "gemma-3",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 1.0,
+   "depth": 25,
+   "mid_sep": 0.019399957627885822
+  },
+  {
+   "slug": "gemma-3-1b",
+   "family": "gemma-3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 1.0,
+   "depth": 25,
+   "mid_sep": 0.0774167386282768
+  },
+  {
+   "slug": "gemma-3-270m-it",
+   "family": "gemma-3",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 0.27,
+   "depth": 17,
+   "mid_sep": 0.024711357388231492
+  },
+  {
+   "slug": "gemma-3-270m",
+   "family": "gemma-3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 0.27,
+   "depth": 17,
+   "mid_sep": 0.1336433753371239
+  },
+  {
+   "slug": "gemma-3-27b-it",
+   "family": "gemma-3",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 27,
+   "depth": 61,
+   "mid_sep": 0.10385161593463033
+  },
+  {
+   "slug": "gemma-3-27b",
+   "family": "gemma-3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 27,
+   "depth": 61,
+   "mid_sep": 0.29772681343955065
+  },
+  {
+   "slug": "gemma-3-4b-it",
+   "family": "gemma-3",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 4.3,
+   "depth": 33,
+   "mid_sep": 0.012586440724774772
+  },
+  {
+   "slug": "gemma-3-4b",
+   "family": "gemma-3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 4.3,
+   "depth": 33,
+   "mid_sep": 0.06067846653875242
+  },
+  {
+   "slug": "gemma-4-e2b",
+   "family": "gemma-4",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 2.0,
+   "depth": 34,
+   "mid_sep": 0.08100067257634869
+  },
+  {
+   "slug": "gemma-4-e4b",
+   "family": "gemma-4",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": 1,
+   "params": 4.0,
+   "depth": 41,
+   "mid_sep": 0.09759056282169776
+  },
+  {
+   "slug": "gpt-oss-20b",
+   "family": "gpt-oss",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 21,
+   "depth": 23,
+   "mid_sep": 0.057391080872288835
+  },
+  {
+   "slug": "gpt2-small",
+   "family": "gpt2",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 0.124,
+   "depth": 11,
+   "mid_sep": 0.014904944847027424
+  },
+  {
+   "slug": "llama3.1-8b-it",
+   "family": "llama",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 8,
+   "depth": 31,
+   "mid_sep": 0.08060353863720937
+  },
+  {
+   "slug": "llama3.1-8b",
+   "family": "llama",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 8,
+   "depth": 31,
+   "mid_sep": 0.1059450504153665
+  },
+  {
+   "slug": "llama3.3-70b-it",
+   "family": "llama",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 70,
+   "depth": 79,
+   "mid_sep": 0.13722296688422386
+  },
+  {
+   "slug": "olmo-3-1025-7b",
+   "family": "olmo",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 7,
+   "depth": 31,
+   "mid_sep": 0.10195401992310182
+  },
+  {
+   "slug": "olmo-3-1125-32b",
+   "family": "olmo",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 32,
+   "depth": 63,
+   "mid_sep": 0.13083072808188922
+  },
+  {
+   "slug": "pythia-70m-deduped",
+   "family": "pythia",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 0.07,
+   "depth": 5,
+   "mid_sep": 0.015497103333473206
+  },
+  {
+   "slug": "qwen2.5-7b-it",
+   "family": "qwen2.5",
+   "instruct": 1,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 7.6,
+   "depth": 27,
+   "mid_sep": 0.01443090482994358
+  },
+  {
+   "slug": "qwen3-1.7b",
+   "family": "qwen3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 1.7,
+   "depth": 27,
+   "mid_sep": 0.08200549380278876
+  },
+  {
+   "slug": "qwen3-14b",
+   "family": "qwen3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 14.8,
+   "depth": 39,
+   "mid_sep": 0.2062982341946935
+  },
+  {
+   "slug": "qwen3-4b",
+   "family": "qwen3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 4.0,
+   "depth": 35,
+   "mid_sep": 0.03830656734756155
+  },
+  {
+   "slug": "qwen3-8b",
+   "family": "qwen3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 8.2,
+   "depth": 35,
+   "mid_sep": 0.18634731395903847
+  },
+  {
+   "slug": "qwen3.5-0.8b",
+   "family": "qwen3.5",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 0.8,
+   "depth": 23,
+   "mid_sep": 0.11486522933202126
+  },
+  {
+   "slug": "qwen3.5-27b",
+   "family": "qwen3.5",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 27,
+   "depth": 63,
+   "mid_sep": 0.1963211566818005
+  },
+  {
+   "slug": "qwen3.5-2b-pt",
+   "family": "qwen3.5",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 2.0,
+   "depth": 23,
+   "mid_sep": 0.11426444784072887
+  },
+  {
+   "slug": "qwen3.5-4b",
+   "family": "qwen3.5",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 4.0,
+   "depth": 31,
+   "mid_sep": 0.1539386487428589
+  },
+  {
+   "slug": "qwen3.5-9b-pt",
+   "family": "qwen3.5",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 9.0,
+   "depth": 31,
+   "mid_sep": 0.15855805468679673
+  },
+  {
+   "slug": "qwen35-397b-own",
+   "family": "qwen3",
+   "instruct": 0,
+   "soft_cap": 0,
+   "distilled": null,
+   "params": 397,
+   "depth": 59,
+   "mid_sep": 0.3863005017459784
+  }
+ ]
+}

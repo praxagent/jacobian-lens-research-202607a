@@ -1,0 +1,30 @@
+{
+ "gemma-2-9b": {
+  "slug": "gemma-2-9b",
+  "n_layers": 41,
+  "d_model": 3584,
+  "n_probe": 2048,
+  "readout_band_sep_Mweighted": 0.0047,
+  "random_probe_band_sep_isotropic": 0.2421,
+  "raw_J_band_sep_isotropic": 0.2096,
+  "random_probe_min_offdiag": 0.2174,
+  "random_probe_median_offdiag": 0.7126,
+  "mean_participation_ratio": 307.84,
+  "colnorm_top16_share": 0.0247,
+  "colnorm_across_layer_consistency": 0.8379
+ },
+ "qwen3-4b": {
+  "slug": "qwen3-4b",
+  "n_layers": 35,
+  "d_model": 2560,
+  "n_probe": 2048,
+  "readout_band_sep_Mweighted": 0.0383,
+  "random_probe_band_sep_isotropic": 0.0687,
+  "raw_J_band_sep_isotropic": 0.0497,
+  "random_probe_min_offdiag": 0.7224,
+  "random_probe_median_offdiag": 0.9386,
+  "mean_participation_ratio": 59.26,
+  "colnorm_top16_share": 0.0216,
+  "colnorm_across_layer_consistency": 0.5128
+ }
+}
