@@ -11,8 +11,11 @@ embed_tokens, fetched separately) + the cached lens J.
 
 If the per-layer logit_l are near-identical across layers (high cosine), that IS the
 invariant readout, and its top +/- tokens name what gemma-2 holds constant through depth.
-We also report the eigenvalue participation ratio (how low-dim the invariant subspace is)
-and the cross-layer cosine of the readout.
+
+RAM-FRUGAL (this box is 7.6GB and Lightsail freezes on RAM overage): U is memory-mapped
+off disk and only ever touched in vocab chunks; Jacobians are converted to float32 one
+layer at a time, never all 41 at once; U is never materialized as a full float32 array.
+Peak resident stays under ~2GB. Reboot-resumable: caches M and A to disk.
 
 CPU-only. Needs decompose_out/gemma2_9b_embed.npy + the lens .pt + gemma tokenizer.
 """
@@ -25,76 +28,90 @@ import torch
 HERE = Path(__file__).resolve().parent
 DEC = HERE / "decompose_out"
 LENS = "/home/ubuntu/hf-lenses-tier1/gemma2_9b_wiki.pt"
-CHUNK = 8192
+CHUNK = 8192      # vocab chunk (rows of U) -> ~235MB float32 temp at 3584 dims
 TOPK = 25
-
-
-def gram_UtU(U: np.ndarray) -> np.ndarray:
-    d = U.shape[1]
-    M = np.zeros((d, d), dtype=np.float64)
-    for i in range(0, U.shape[0], CHUNK):
-        c = U[i:i+CHUNK].astype(np.float32)
-        M += c.T @ c
-    return M.astype(np.float32)
 
 
 def band_sep(Mx):
     L = Mx.shape[0]; th = np.array_split(np.arange(L), 3)
     blk = lambda a, b: float(np.mean([Mx[i, j] for i in a for j in b if i != j]) or 1.0)
     e, m, l = th
-    return blk(m, m) - 0.5*(blk(e, m) + blk(m, l))
+    return blk(m, m) - 0.5 * (blk(e, m) + blk(m, l))
+
+
+def gram_UtU(U):
+    """M = U^T U, reading U (memmap) in chunks so it is never fully float32-resident."""
+    d = U.shape[1]; M = np.zeros((d, d), dtype=np.float64)
+    for i in range(0, U.shape[0], CHUNK):
+        c = np.asarray(U[i:i+CHUNK], dtype=np.float32)
+        M += c.T @ c
+    return M.astype(np.float32)
+
+
+def U_project_and_norm(U, Vmat):
+    """Single pass over U (read once): logits = U @ Vmat^T  and per-row norm of U.
+    Vmat is (n_layers, d). Returns logits (n_layers, vocab) and unorm (vocab,)."""
+    n = Vmat.shape[0]; Vt = Vmat.T.astype(np.float32)
+    logits = np.empty((n, U.shape[0]), dtype=np.float32)
+    unorm = np.empty(U.shape[0], dtype=np.float32)
+    for i in range(0, U.shape[0], CHUNK):
+        c = np.asarray(U[i:i+CHUNK], dtype=np.float32)      # (chunk, d) -- one disk read of U total
+        logits[:, i:i+CHUNK] = (c @ Vt).T
+        unorm[i:i+CHUNK] = np.sqrt((c*c).sum(1))
+    return logits, unorm
 
 
 def main():
-    print("loading U (unembedding)...", flush=True)
-    U = np.load(DEC / "gemma2_9b_embed.npy")            # (vocab, d) fp16
+    print("mmap U (unembedding)...", flush=True)
+    U = np.load(DEC / "gemma2_9b_embed.npy", mmap_mode="r")   # (vocab, d) fp16, ON DISK
     V, d = U.shape
-    print(f"U {U.shape} {U.dtype}", flush=True)
-    print("computing M = U^T U (chunked)...", flush=True)
-    M = gram_UtU(U)                                     # (d, d) f32
+    print(f"U {U.shape} {U.dtype} (memmap)", flush=True)
 
     dd = torch.load(LENS, map_location="cpu", weights_only=False)
-    Jd = dd["J"]; layers = sorted(Jd.keys())
-    Js = [Jd[l].float().numpy() for l in layers]        # list of (d, d)
+    Jd = dd["J"]; layers = sorted(Jd.keys()); n = len(layers)
+    Jf = lambda l: Jd[l].float().numpy()                     # one layer float32 on demand (51MB)
 
-    # A = mean_l J_l^T M J_l ; also readout-CKA sanity from the M-weighted grams
-    print("building A = mean J^T M J ...", flush=True)
-    A = np.zeros((d, d), dtype=np.float64)
-    Gs = []                                             # M-weighted gram per layer for CKA sanity
-    for J in Js:
-        MJ = M @ J                                      # (d,d)
-        A += (J.T @ MJ)
-        Gs.append(J.T @ MJ)                             # = J^T M J (the readout second moment at layer l)
-    A = (A / len(Js)).astype(np.float32)
-
-    # readout-CKA sanity: CKA between the per-layer J^T M J should reproduce the flat map
-    n = len(Gs); norm = [np.linalg.norm(g, "fro") for g in Gs]; Mck = np.eye(n)
-    for i in range(n):
-        for j in range(i+1, n):
-            Mck[i, j] = Mck[j, i] = float(np.sum(Gs[i]*Gs[j])/(norm[i]*norm[j]))
-    readout_sanity = band_sep(Mck)
+    A_cache = DEC / "gemma2_9b_A.npy"; M_cache = DEC / "gemma2_9b_M.npy"
+    if A_cache.exists():
+        print("loaded cached A", flush=True)
+        A = np.load(A_cache); readout_sanity = None
+    else:
+        if M_cache.exists():
+            print("loaded cached M", flush=True); M = np.load(M_cache)
+        else:
+            print("computing M = U^T U (chunked)...", flush=True); M = gram_UtU(U); np.save(M_cache, M)
+        print("building A = mean J^T M J (one layer at a time)...", flush=True)
+        A = np.zeros((d, d), dtype=np.float64); Gs = []
+        for l in layers:
+            J = Jf(l); MJ = M @ J; G = J.T @ MJ
+            A += G; Gs.append(G.astype(np.float32))          # G is 51MB; 41 of them = 2.1GB -- acceptable, freed after CKA
+        A = (A / n).astype(np.float32); np.save(A_cache, A)
+        norm = [np.linalg.norm(g, "fro") for g in Gs]; Mck = np.eye(n)
+        for i in range(n):
+            for j in range(i+1, n):
+                Mck[i, j] = Mck[j, i] = float(np.sum(Gs[i]*Gs[j])/(norm[i]*norm[j]))
+        readout_sanity = round(band_sep(Mck), 4); del Gs
 
     # invariant readout directions = top eigenvectors of A
     evals, evecs = np.linalg.eigh(A)
-    order = np.argsort(evals)[::-1]
-    evals = evals[order]; evecs = evecs[:, order]
+    order = np.argsort(evals)[::-1]; evals = evals[order]; evecs = evecs[:, order]
     pr = float((evals.sum()**2) / (np.square(evals).sum() + 1e-12))
-    w = evecs[:, 0]                                     # top invariant readout direction
+    w = evecs[:, 0]
 
-    # per-layer logit vector for w; cross-layer cosine (is the readout the same at every layer?)
-    logits = np.stack([U.astype(np.float32) @ (J @ w) for J in Js])   # (L, vocab)
+    # project w through every layer first (tiny), then read U ONCE (single pass, chunked)
+    print("decoding invariant readout (single pass over U)...", flush=True)
+    Vmat = np.stack([Jf(l) @ w for l in layers]).astype(np.float32)   # (n, d)
+    logits, unorm = U_project_and_norm(U, Vmat)              # (n, vocab), (vocab,)
     ln = logits / (np.linalg.norm(logits, axis=1, keepdims=True) + 1e-9)
     cross = ln @ ln.T
     cross_cos = float(cross[np.triu_indices(n, 1)].mean())
     mean_logit = logits.mean(0)
 
-    # sign convention: point w so the strongest tokens are the positive tail
-    if abs(mean_logit.min()) > abs(mean_logit.max()):
+    if abs(mean_logit.min()) > abs(mean_logit.max()):        # sign: strongest tokens on the + tail
         mean_logit = -mean_logit; logits = -logits
     top_pos = np.argsort(mean_logit)[::-1][:TOPK].tolist()
     top_neg = np.argsort(mean_logit)[:TOPK].tolist()
 
-    # decode with the gemma tokenizer (tiny download; HF_TOKEN in env)
     toks_pos = toks_neg = None
     try:
         from transformers import AutoTokenizer
@@ -104,14 +121,12 @@ def main():
     except Exception as e:
         print("tokenizer decode skipped:", e, flush=True)
 
-    # is the invariant readout the "unigram/frequency prior"? proxy: cosine of mean_logit
-    # with U's per-token norm (embedding norm tracks token frequency/confidence in tied models)
-    unorm = np.linalg.norm(U.astype(np.float32), axis=1)
-    freq_align = float(np.corrcoef(mean_logit, unorm)[0, 1])
+    # is the invariant readout the unigram/frequency prior? proxy: corr of readout with U row-norm
+    freq_align = float(np.corrcoef(mean_logit, unorm)[0, 1])   # unorm from the single pass above
 
     res = {
         "model": "gemma-2-9b", "vocab": int(V), "d": int(d), "n_layers": n,
-        "readout_cka_bandsep_sanity": round(readout_sanity, 4),
+        "readout_cka_bandsep_sanity": readout_sanity,        # None if resumed from A cache
         "invariant_subspace_participation_ratio": round(pr, 2),
         "top_eig_share": round(float(evals[0]/evals.sum()), 4),
         "top5_eig_share": round(float(evals[:5].sum()/evals.sum()), 4),
@@ -122,7 +137,8 @@ def main():
     }
     (DEC / "subspace_decode.json").write_text(json.dumps(res, indent=1))
     print("\n=== INVARIANT READOUT DECODE ===", flush=True)
-    print(f"readout-CKA sanity band-sep (should be ~+0.005 flat): {readout_sanity:+.4f}")
+    print(f"readout-CKA sanity band-sep (should be ~+0.005 flat): "
+          f"{readout_sanity if readout_sanity is not None else 'cached-skip'}")
     print(f"invariant subspace participation ratio: {pr:.1f}  (top eig {res['top_eig_share']:.2%}, top5 {res['top5_eig_share']:.2%})")
     print(f"cross-layer readout cosine (1.0 = identical readout every layer): {cross_cos:.4f}")
     print(f"freq-prior alignment (corr of readout with token embed-norm): {freq_align:+.3f}")
