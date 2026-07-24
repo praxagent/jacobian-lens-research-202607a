@@ -18,8 +18,9 @@ plt.rcParams.update({"font.family":"sans-serif","font.sans-serif":["Inter","Aria
  "axes.labelcolor":"#2C2924","svg.hashsalt":"prax-ablation"})
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
-ORDER = ["gemma-2-2b", "gemma-2-9b", "gemma-2-27b", "qwen3-4b"]
-COL = {"gemma-2-2b":"#C4A176", "gemma-2-9b":"#A67C52", "gemma-2-27b":"#6B4E2E", "qwen3-4b":"#4B6787"}
+ORDER = ["gemma-2-2b", "gemma-2-9b", "gemma-2-27b", "gemma-3-1b", "qwen3-4b"]
+COL = {"gemma-2-2b":"#C4A176", "gemma-2-9b":"#A67C52", "gemma-2-27b":"#6B4E2E",
+       "gemma-3-1b":"#8FA37A", "qwen3-4b":"#4B6787"}
 
 
 def build():
@@ -44,20 +45,22 @@ def build():
 
     # concentration vs how much the top directions MASK (the monotone relation);
     # concentration does NOT track measured flatness across families, only the masking does.
-    prs = [d[s]["readout_participation_ratio"] for s in ORDER]
+    prs = [d[s]["readout_participation_ratio"]/d[s]["d"] for s in ORDER]   # PR/d: PR is bounded by d
     gain = [{int(k):v for k,v in d[s]["band_sep_by_k"].items()}[16]
             - {int(k):v for k,v in d[s]["band_sep_by_k"].items()}[0] for s in ORDER]
     o = np.argsort(prs)
     ax2.plot([prs[i] for i in o], [gain[i] for i in o], "-", color="#B0A79A", lw=1.0, zorder=1)
-    OFF = {"gemma-2-2b": (8, -12), "gemma-2-9b": (8, 8), "gemma-2-27b": (9, 3), "qwen3-4b": (-14, 12)}
+    OFF = {"gemma-2-2b": (8, -12), "gemma-2-9b": (8, 8), "gemma-2-27b": (9, 3),
+           "gemma-3-1b": (-20, -16), "qwen3-4b": (-16, 12)}
     for s, p, y in zip(ORDER, prs, gain):
         ax2.scatter([p], [y], s=90, color=COL[s], zorder=3)
         ax2.annotate(s, (p, y), xytext=OFF[s], textcoords="offset points", fontsize=8, color=COL[s])
-    ax2.set_xlabel("readout participation ratio (higher = less concentrated)", fontsize=9)
+    ax2.set_xlabel("readout participation ratio / d  (higher = less concentrated)", fontsize=9)
     ax2.set_ylabel("band separation masked by top 16 directions", fontsize=9)
     ax2.set_title("More concentrated readout masks more",
                   fontsize=10.2, fontweight="bold", loc="left")
-    ax2.set_xlim(150, 1400); ax2.set_ylim(0, 0.185)
+    ax2.set_xlim(0.02, 0.55); ax2.set_ylim(-0.03, 0.185)
+    ax2.axhline(0, color="#A89B8C", lw=0.8, ls=":")
     for sp in ("top","right"): ax2.spines[sp].set_visible(False)
 
     fig.tight_layout()

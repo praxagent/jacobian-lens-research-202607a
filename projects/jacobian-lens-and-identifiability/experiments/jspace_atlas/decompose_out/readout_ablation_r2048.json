@@ -102,5 +102,31 @@
    "128": 0.2655
   },
   "atlas_mid_sep": 0.1134
+ },
+ "gemma-3-1b": {
+  "slug": "gemma-3-1b",
+  "flat_lens": false,
+  "n_layers": 25,
+  "d": 1152,
+  "n_probe": 4096,
+  "rank_used": 1152,
+  "rank_energy_share": 1.0,
+  "readout_participation_ratio": 537.3,
+  "top1_share": 0.0146,
+  "top4_share": 0.0444,
+  "top16_share": 0.0965,
+  "top64_share": 0.2131,
+  "band_sep_by_k": {
+   "0": 0.0768,
+   "1": 0.0763,
+   "2": 0.0712,
+   "4": 0.0711,
+   "8": 0.0697,
+   "16": 0.0675,
+   "32": 0.0704,
+   "64": 0.0731,
+   "128": 0.0745
+  },
+  "atlas_mid_sep": 0.0774
  }
 }

@@ -43,6 +43,9 @@ MODELS = {                       # slug -> (hf repo for tokenizer, flat?)
     "gemma-2-9b":  ("google/gemma-2-9b", True),
     "gemma-2-27b": ("google/gemma-2-27b", False),
     "qwen3-4b":    ("Qwen/Qwen3-4B", False),
+    # most vocab-crowded model in the zoo (vocab/d = 228) yet a STRUCTURED lens:
+    # the decisive test of whether crowding drives readout concentration
+    "gemma-3-1b":  ("google/gemma-3-1b-pt", False),
 }
 
 
@@ -156,8 +159,11 @@ def main():
         out.write_text(json.dumps(res, indent=1))                  # save after each model
     print("\n=== READOUT CONCENTRATION vs FLATNESS ===")
     for s, r in res.items():
-        print(f"  {s:12s} flat={str(r['flat_lens']):5s} PR={r['readout_participation_ratio']:8.2f} "
-              f"band_sep k=0 {r['band_sep_by_k'].get(0):+.4f} -> k=16 {r['band_sep_by_k'].get(16):+.4f}")
+        bk = {int(k): v for k, v in r["band_sep_by_k"].items()}   # JSON round-trip stringifies keys
+        pr, d = r["readout_participation_ratio"], r["d"]
+        # PR is bounded by d, so the cross-model comparison needs PR/d, not raw PR
+        print(f"  {s:12s} flat={str(r['flat_lens']):5s} PR={pr:8.2f} PR/d={pr/d:.3f} "
+              f"k=0 {bk[0]:+.4f} -> k=16 {bk[16]:+.4f} (masked {bk[16]-bk[0]:+.4f})")
     print("READOUT_ABLATION_DONE", flush=True)
 
 

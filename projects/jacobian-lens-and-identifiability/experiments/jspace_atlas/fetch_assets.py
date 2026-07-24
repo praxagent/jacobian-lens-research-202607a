@@ -22,6 +22,7 @@ MODELS = {
     "gemma-2-9b":  "google/gemma-2-9b",
     "gemma-2-27b": "google/gemma-2-27b",
     "qwen3-4b":    "Qwen/Qwen3-4B",
+    "gemma-3-1b":  "google/gemma-3-1b-pt",
 }
 
 
