@@ -1,0 +1,22 @@
+{
+ "slug": "qwen3.5-0.8b",
+ "b1": 2,
+ "b2": 15,
+ "block_sizes": [
+  2,
+  13,
+  8
+ ],
+ "fitted_sep": 0.20544164831820566,
+ "beta": 0.0029073402498207557,
+ "p_perm": 0.958,
+ "null_mean": -0.0006759406203669219,
+ "null_sd": 0.021508813099395594,
+ "n_pairs": 506,
+ "self_patch_median": 1.0,
+ "gate_pass": true,
+ "verdict": "P1 NOT SUPPORTED in this model (no boundary discontinuity beyond the null)",
+ "nperm": 1000,
+ "beta_signed_exploratory": 0.0029073402498325795,
+ "p_signed_exploratory": 0.962
+}

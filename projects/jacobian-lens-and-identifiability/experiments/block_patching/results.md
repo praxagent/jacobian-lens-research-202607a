@@ -10,6 +10,7 @@ statistic was computed.
 |---|---|---|---|---|---|
 | gpt2-small | this box, CPU | $0 | 12 | 16/17 | 1.000 PASS (mechanics smoke) |
 | gemma-3-270m | this box, CPU | $0 | 18 (lens 17) | 20/20 | 1.000 PASS |
+| qwen3.5-0.8b | this box, CPU | $0 | 24 (lens 23) | 18/18 | 1.000 PASS |
 | qwen3-8b | RTX 4090, RunPod | ~$0.10 | 36 (lens 35) | 18/18 | 1.000 PASS |
 
 A first 3090 pod (`12iu2cy9dx9hw9`) was terminated unused: CUDA reported `is_available()`
@@ -24,11 +25,12 @@ and verified gone.
 | model | fitted blocks | beta | null mean / sd | p | frozen verdict |
 |---|---|---|---|---|---|
 | gemma-3-270m | 3 / 12 / 2 | **-0.0023** | -0.0004 / 0.0353 | 0.978 | P1 NOT SUPPORTED |
+| qwen3.5-0.8b | 2 / 13 / 8 | **+0.0029** | -0.0007 / 0.0215 | 0.958 | P1 NOT SUPPORTED |
 | qwen3-8b | 19 / 3 / 13 | **+0.1476** | +0.0012 / 0.0659 | 0.015 | P1 NOT SUPPORTED |
 
 **P1 predicted `beta < 0`** (cross-boundary patches transfer worse). It is not supported in
-either model. In gemma-3-270m the effect is indistinguishable from zero; in qwen3-8b it is
-significant in the **opposite** direction.
+any of the three models. Two of three models (both small, run free on CPU) give a clean null;
+qwen3-8b alone is significant, and in the **opposite** direction.
 
 **Headline: the pre-registered hypothesis is refuted.** On this design, block boundaries do
 not behave like barriers to activation transfer.
