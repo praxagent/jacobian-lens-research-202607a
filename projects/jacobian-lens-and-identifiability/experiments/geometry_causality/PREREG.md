@@ -202,3 +202,40 @@ recorded in `results.md` as an error rather than deleted.
 the numerical noise floor. The re-run records random-arm KL magnitudes so this can be checked,
 and any model whose random arm falls below `1e-5` nats will have its `C` reported as
 unmeasurable rather than computed.
+
+---
+
+## Addendum: P4, is the lens advantage dose-dependent? (frozen before the sweep)
+
+**Origin, stated plainly.** Unregistered observation from the two completed runs: in
+qwen3.5-0.8b, `A` was +2.005 at the aligned-calibrated dose and +0.701 at the smaller
+local-calibrated dose. In a pure first-order regime `A` should be **dose-invariant**, because
+`KL ~ eps^2` for every direction and the ratio cancels. This addendum is written before the
+sweep that tests it.
+
+**P4.** `A(eps)` is constant in `eps` across the ladder.
+
+**The competing explanations, and the measurement that separates them.**
+
+1. *Real non-first-order component.* The lens direction's advantage grows with perturbation
+   size, so the lens captures something the linear approximation does not.
+2. *Random-arm floor artifact.* If `KL_random` bottoms out on numerical noise at small `eps`
+   while `KL_aligned` keeps shrinking, their ratio falls, producing exactly the observed
+   pattern with no real effect.
+
+These are separated by the **scaling exponent** of each arm. Fit `log KL = k * log eps + c`
+per arm per model. A floored arm has `k` well below 2 at small `eps`; an unfloored arm holds
+`k ~ 2` throughout. Frozen rule:
+
+| observation | conclusion |
+|---|---|
+| `k_random ~ 2` across the ladder **and** `A(eps)` rises with `eps` | **P4 rejected**: the advantage has a real non-first-order component |
+| `k_random` falls well below 2 at small `eps` | **artifact**: dose-dependence is a floor effect, report as such and make no claim |
+| `A(eps)` flat within noise | **P4 supported**: the advantage is first-order, as the lens's framing implies |
+
+**Design.** All three models, the full doubling ladder, aligned and random arms at every lens
+layer, 4 random draws per cell, same frozen prompts. Per-prompt KL stored. Gates: execution and
+equal-norm as before. The linear-regime gate does **not** apply, because sweeping *out of* the
+linear regime is the point.
+
+**Cost.** One 3090, well under $1.
