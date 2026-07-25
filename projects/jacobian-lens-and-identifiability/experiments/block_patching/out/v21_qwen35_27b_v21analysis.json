@@ -1,0 +1,14 @@
+{
+ "slug": "qwen3.5-27b",
+ "beta_b1": -0.8181307627923157,
+ "beta_b2": 0.7395779573311518,
+ "beta_both": 0.15312634408088266,
+ "p_one_sided": 0.87,
+ "p_two_sided": 0.365,
+ "null_sd": 0.8191718201959926,
+ "gates": {
+  "sanity": true,
+  "calibration": true
+ },
+ "n_pairs": 3906
+}

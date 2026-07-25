@@ -189,3 +189,59 @@ is exploratory.
 poor test of a boundary (blocks 3/12/2, so "boundary 1" sits at layer 3 with a 3-layer outer
 block), but it is a real reminder that the boundary-1 effect is **not** consistent across
 models yet, and it is why v2.1 is a confirmatory test rather than a victory lap.
+
+---
+
+# v2.1 results: the boundary-1 effect does not replicate
+
+Design frozen in [`PREREG_V2_1.md`](PREREG_V2_1.md) (commit `3e10ff9`) before any v2.1 run.
+
+| model | role | blocks | balance | beta_b1 (early<->mid) | p one-sided | beta_b2 (mid<->late) |
+|---|---|---|---|---|---|---|
+| olmo-3-1125-32b | generator (exploratory) | 25/14/24 | 0.56 | **+0.4368** | 0.018 | -0.0183 |
+| qwen3.5-27b | **confirmatory #1** | 14/37/12 | 0.32 | **-0.8181** | **0.870** | +0.7396 |
+
+Both gates passed (`D(i,i) = 0`; median `D` 0.174 nats, close to olmo's 0.164).
+
+**P1 is NOT CONFIRMED, and the frozen rule already settles it.** v2.1 requires the combined
+p < 0.05 **and** both per-model `beta_b1` positive. qwen3.5-27b's `beta_b1` is negative, so the
+sign-consistency requirement fails regardless of what any further model returns.
+
+**The two models do not merely disagree in magnitude, they invert.** olmo puts the effect at
+the early/middle boundary and nothing at middle/late (+0.44 / -0.02); qwen3.5-27b puts it at
+middle/late and negative at early/middle (-0.82 / +0.74). A real, general property of depth
+blocks does not behave that way. Combined with the discordant -1.91 on the CPU pilot (recorded
+in the pre-registration before this run), the natural reading is that **per-model boundary
+estimates are noise**, and olmo's p = 0.018 was the one-in-many-contrasts result that
+exploratory analysis is expected to throw up.
+
+The noise scale supports that directly: qwen3.5-27b's random-segmentation null has sd 0.819,
+four times olmo's 0.202, so a `|beta|` of this size is unremarkable in this model.
+
+## Stopping the confirmatory sample early, and why that is not selective stopping
+
+The pre-registration named two confirmatory models. We ran one and are **not** running
+llama3.3-70b-it, for a reason that we want on the record: the frozen decision rule is already
+determined. No result from a second model can produce CONFIRMED once a sign-consistency
+requirement has failed, so the ~$3-5 would buy no decision-relevant information.
+
+This is stopping toward the **null**, not away from it. The hazard the rule guards against is
+stopping once a *favourable* result appears; here the unfavourable result is locked in and the
+remaining spend is redundant. The conditional 397B extension, pre-committed to run only on
+CONFIRMED, therefore **does not run**. That decision was frozen before any v2.1 data existed,
+which is exactly why it was frozen.
+
+## Where the block question now stands
+
+Three designs, six models, no evidence that J-space depth bands partition computation:
+
+| round | models | outcome |
+|---|---|---|
+| v1 (cross-prompt transfer) | 3 | two nulls, one wrong-signed positive later shown to be a position artifact (C1) |
+| v2 (same-prompt swap damage) | 1 balanced | +0.220, p = 0.18, null |
+| v2.1 (localized, pre-registered) | 1 balanced | **-0.818, does not replicate; boundary pattern inverts** |
+
+The depth bands remain a well-replicated description of representational **geometry**. Three
+increasingly careful causal probes have failed to show them partitioning **computation**, and
+the one suggestive positive did not survive a pre-registered replication attempt. That is a
+negative result, and it is the most informative thing this strand produced.
