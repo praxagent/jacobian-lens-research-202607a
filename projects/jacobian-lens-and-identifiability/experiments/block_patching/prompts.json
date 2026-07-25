@@ -1,0 +1,22 @@
+[
+ {"src": "The capital of France is", "tgt": "The capital of Japan is", "a_src": " Paris", "a_tgt": " Tokyo"},
+ {"src": "The capital of Italy is", "tgt": "The capital of Egypt is", "a_src": " Rome", "a_tgt": " Cairo"},
+ {"src": "The capital of Russia is", "tgt": "The capital of Cuba is", "a_src": " Moscow", "a_tgt": " Havana"},
+ {"src": "The capital of Spain is", "tgt": "The capital of Peru is", "a_src": " Madrid", "a_tgt": " Lima"},
+ {"src": "The capital of Greece is", "tgt": "The capital of Poland is", "a_src": " Athens", "a_tgt": " Warsaw"},
+ {"src": "The capital of China is", "tgt": "The capital of Kenya is", "a_src": " Beijing", "a_tgt": " Nairobi"},
+ {"src": "The capital of Iraq is", "tgt": "The capital of Chile is", "a_src": " Baghdad", "a_tgt": " Santiago"},
+ {"src": "The capital of Austria is", "tgt": "The capital of Portugal is", "a_src": " Vienna", "a_tgt": " Lisbon"},
+ {"src": "The capital of Norway is", "tgt": "The capital of Ireland is", "a_src": " Oslo", "a_tgt": " Dublin"},
+ {"src": "The capital of Denmark is", "tgt": "The capital of Hungary is", "a_src": " Copenhagen", "a_tgt": " Budapest"},
+ {"src": "The largest planet is", "tgt": "The smallest planet is", "a_src": " Jupiter", "a_tgt": " Mercury"},
+ {"src": "The capital of Canada is", "tgt": "The capital of Mexico is", "a_src": " Ottawa", "a_tgt": " Mexico"},
+ {"src": "The capital of Sweden is", "tgt": "The capital of Finland is", "a_src": " Stockholm", "a_tgt": " Helsinki"},
+ {"src": "The capital of Turkey is", "tgt": "The capital of Thailand is", "a_src": " Ankara", "a_tgt": " Bangkok"},
+ {"src": "The capital of Germany is", "tgt": "The capital of Belgium is", "a_src": " Berlin", "a_tgt": " Brussels"},
+ {"src": "The capital of India is", "tgt": "The capital of Iran is", "a_src": " New", "a_tgt": " Tehran"},
+ {"src": "The capital of Brazil is", "tgt": "The capital of Argentina is", "a_src": " Bras", "a_tgt": " Buenos"},
+ {"src": "The capital of Israel is", "tgt": "The capital of Lebanon is", "a_src": " Jerusalem", "a_tgt": " Beirut"},
+ {"src": "The capital of Morocco is", "tgt": "The capital of Vietnam is", "a_src": " Rabat", "a_tgt": " Hanoi"},
+ {"src": "The capital of Nepal is", "tgt": "The capital of Bolivia is", "a_src": " Kathmandu", "a_tgt": " La"}
+]

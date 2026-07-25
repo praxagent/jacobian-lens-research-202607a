@@ -98,6 +98,33 @@ in the pilot model. Greedy decoding, no sampling. Patch at the final token posit
 
 The 397B is explicitly **not** part of this experiment.
 
+## Amendment 1 (2026-07-25), made before any outcome was examined
+
+The frozen sanity gate **failed on the first mechanical smoke run** (gpt2, self-patch median
+`E(i,i) = 0.030` against a required 0.9), which under the decision table means VOID: fix the
+pipeline, re-run, do not interpret. This amendment records the fix.
+
+**Cause.** The original intervention patched only the *final token position*. That is too weak
+here: later layers re-attend to the target prompt's own subject tokens and overwrite the
+inserted state, so even a self-patch barely moves the output. The measurement was not wrong so
+much as uninformative, and the gate is what surfaced it.
+
+**Change.** Patch the **full residual stream** (all positions) at the chosen layer, rather than
+the final position only. This makes `E(i,i) = 1` exactly by construction, which converts the
+sanity gate into a real check on hook placement and indexing, and it makes the `i != j` case a
+clean test of the actual question: can layers `j..L` consume a layer-`i` representation?
+
+**Consequence for materials.** Full-residual patching requires the source and target to have
+identical token lengths, so the attention mask is shared. Prompt pairs whose two sides
+tokenize to different lengths are excluded, per model, and the retained count is recorded in
+the receipt.
+
+**Integrity note.** At the time of this amendment no boundary statistic had been computed: the
+only quantity inspected was the self-patch sanity gate, which is outcome-independent by
+construction. `beta`, the random-boundary null, and every per-distance value remain unexamined.
+The predictions, decision table, primary analysis, and control in the sections above are
+unchanged.
+
 ## What this does not establish
 
 Whether boundaries are causal is not the same as what each block *does*. A confirmation here
