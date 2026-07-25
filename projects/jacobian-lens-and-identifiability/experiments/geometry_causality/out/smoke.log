@@ -1,0 +1,23 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/148 [00:00<?, ?it/s]Loading weights: 100%|██████████| 148/148 [00:00<00:00, 7511.49it/s]
+8 prompts, L=12, d=768
+lens covers 11 layers; probe 4096 tokens
+directions computed
+dose scan ratios {0.05: 2.390386877075883, 0.25: 6.399940368470736, 0.5: 1.1148874228757575}; chosen frac=0.05 linear_gate=False
+  layer 0: aligned 0.01744 random 0.002075 local 0.3763  (10s)
+  layer 1: aligned 0.0202 random 0.003191 local 0.5388  (20s)
+  layer 2: aligned 0.02864 random 0.004227 local 0.6702  (29s)
+  layer 3: aligned 0.02706 random 0.003992 local 0.7562  (38s)
+  layer 4: aligned 0.06205 random 0.004708 local 0.8472  (47s)
+  layer 5: aligned 0.07501 random 0.00655 local 0.9527  (57s)
+  layer 6: aligned 0.05587 random 0.006893 local 0.9667  (66s)
+  layer 7: aligned 0.04951 random 0.006479 local 0.9027  (75s)
+  layer 8: aligned 0.04657 random 0.005812 local 0.8357  (85s)
+  layer 9: aligned 0.04458 random 0.007708 local 0.7901  (94s)
+  layer 10: aligned 0.08947 random 0.009826 local 1.033  (104s)
+
+GATES {'execution': True, 'equal_norm': True, 'linear_regime': False, 'sensitivity_local_beats_random': True}
+median A_l = +2.0811  (>0 means lens beats equal-norm random)
+median C_l = 0.0557  (fraction of achievable first-order effect)
+GEOMCAUSAL_DONE

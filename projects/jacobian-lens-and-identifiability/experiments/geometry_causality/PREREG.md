@@ -144,3 +144,34 @@ receipt without re-running the models.
 Local causal purchase of lens directions is **not** evidence that CKA depth bands are
 computational stages. That question is parked, and the two failed campaigns stand as the
 reason.
+
+---
+
+## Amendment 1 (2026-07-25): dose grid extended downward
+
+**Trigger.** The frozen linear-regime gate (gate 3) **fired** on the CPU smoke run: dose
+ratios `KL(2e)/KL(e)` came out 2.39, 6.40 and 1.11 across the grid, none inside the required
+`[3.2, 4.8]` quadratic window. Under the frozen rule that is VOID, and the prescribed response
+is to retune on the pilot rather than to report.
+
+**Diagnosis.** The pattern (sub-quadratic at the smallest dose, super-quadratic in the middle,
+saturating at the top) says the first-order regime lies **below** the grid floor of 0.05, so
+the grid was searching the wrong range rather than the gate being wrong.
+
+**Change.** Dose grid `{0.05, 0.1, 0.25, 0.5, 1.0}` becomes `{0.0125, 0.025, 0.05, 0.1, 0.2}`,
+every adjacent pair an exact doubling, which also yields four ratio estimates instead of two.
+The window, the gate, the outcome, the arms, and every decision rule are unchanged.
+
+**Disclosure.** The smoke run was 8 prompts at 32 tokens, explicitly a mechanics test and not
+the confirmatory sample, but it did display the primary contrast: aligned KL exceeded
+equal-norm random KL by roughly 6 to 8 times in the first four layers, and local exceeded both.
+That is the direction P1 predicts a priori and one-sided. We record here that the dose
+amendment was made **after** seeing that smoke-level direction, because the gate that forced
+the amendment could not have fired without running the model. The amendment changes a
+calibration range, not the estimand or any threshold, and the confirmatory numbers will come
+from the frozen full-scale run.
+
+**Execution venue.** The frozen spec (200 prompts, 64 tokens, three models) is not tractable on
+this box's CPU: the smoke took about 10 s per layer at 8 prompts and 32 tokens, so the full
+grid extrapolates to hours per model. It will run on one cheap GPU instead, at an expected
+cost under $1. The design is unchanged; only the venue is.
