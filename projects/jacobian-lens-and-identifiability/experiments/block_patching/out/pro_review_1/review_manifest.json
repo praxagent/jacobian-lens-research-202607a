@@ -1,0 +1,83 @@
+{
+  "actual_input_characters": 9576,
+  "api_url": "https://api.openai.com/v1/responses",
+  "artifacts": [
+    {
+      "bytes": 5443,
+      "characters": 5443,
+      "path": "/home/ubuntu/PRAX/research-and-replications/projects/jacobian-lens-and-identifiability/experiments/block_patching/review_brief.md",
+      "role": "compact research-director plan brief",
+      "sha256": "d6af873aadf1bc83ea02486e73f9b875969ffaeeb2b4912471684d885a23309c"
+    }
+  ],
+  "background": false,
+  "budget_authorization_usd": 1.25,
+  "budget_notice": "This is a preflight authorization guard, not a provider billing hard stop. Pro-mode aggregate model-work usage can exceed the request's max_output_tokens. A costly estimate means the director packet should be compacted, not that its budget should be raised.",
+  "cache_write_rate_usd_per_million": 6.25,
+  "chars_per_token_assumption": 3.0,
+  "created_at_utc": "2026-07-25T05:43:55.814285Z",
+  "estimated_budget_reserve_usd": 0.53955,
+  "estimated_input_tokens_conservative": 3192,
+  "exact_budget_reserve_usd_after_preflight": 0.48065625,
+  "failed_at_utc": "2026-07-25T05:46:02.523027Z",
+  "failure": {
+    "error": "response ended with non-completed status 'incomplete'",
+    "error_type": "RuntimeError",
+    "failed_at_utc": "2026-07-25T05:46:02.523027Z"
+  },
+  "global_uniqueness_attested": false,
+  "input_rate_usd_per_million": 5.0,
+  "input_tokens_preflight": 2145,
+  "input_tokens_preflight_at_utc": "2026-07-25T05:43:56.840435Z",
+  "input_tokens_url": "https://api.openai.com/v1/responses/input_tokens",
+  "latest_model_document_sha256": "de11d0784c6fda841363ab0603b74fd6c74a062f1458e02ebecaf01d06aa0ef3",
+  "latest_model_source": "https://developers.openai.com/api/docs/guides/latest-model.md",
+  "max_input_characters": 36000,
+  "max_input_tokens": 12000,
+  "max_output_tokens": 6000,
+  "model": "gpt-5.6-sol",
+  "official_latest_model": "gpt-5.6-sol",
+  "output_rate_usd_per_million": 30.0,
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "pro_input_reserve_multiplier": 5.0,
+  "pro_output_reserve_multiplier": 2.0,
+  "provider_response_cost_exceeded_budget_authorization": false,
+  "provider_response_cost_usd_conservative": 0.684235,
+  "provider_response_recorded_at_utc": "2026-07-25T05:46:02.522639Z",
+  "provider_terminal_status": "incomplete",
+  "provider_usage": {
+    "input_tokens": 27995,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 18142,
+    "output_tokens_details": {
+      "reasoning_tokens": 16622
+    },
+    "total_tokens": 46137
+  },
+  "reasoning": {
+    "effort": "high",
+    "mode": "pro"
+  },
+  "request_payload_sha256": "2b7415090bf95a43a517b04a8e4d85c5569ad364ac90de4b575afd48150734dc",
+  "researcher_emphasis": {
+    "present": true,
+    "sha256": "5f63f78382a3a36a2fa582408a7a90fd59030740bca63462e46a0150a2c6e391",
+    "text": "Attack construct validity first: is cross-layer state substitution the right estimand for 'depth blocks partition computation', or is this a carefully-measured null of the wrong thing? Then judge whether the negative result is publishable or merely underpowered."
+  },
+  "reserved_billable_input_tokens": 15960,
+  "reserved_billable_output_tokens": 12000,
+  "review_input_sha256": "070700a6dc3b3d7ee7a5bcf017acdb8a545fda92f9acb0c3ddda35bc328749e2",
+  "review_instructions_sha256": "bfe68700d789a83062af44eecd4e1a9f6d45cad156132ed97c4716d77d5bfb4c",
+  "review_kind": "experiment-plan",
+  "review_request_sha256": "bfc676d8a8d07c3adfdf9f9cd005b92659698e8b4264469a6991b564fd0c876a",
+  "review_scope": "director_level_plan_review",
+  "reviewed_packet_git_head_commit": null,
+  "schema_version": 1,
+  "service_tier": "default",
+  "single_call_policy": "trusted_procedural_rule",
+  "status": "failed",
+  "store": false
+}

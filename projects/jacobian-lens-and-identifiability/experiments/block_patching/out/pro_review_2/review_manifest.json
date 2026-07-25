@@ -1,0 +1,108 @@
+{
+  "actual_input_characters": 9713,
+  "api_url": "https://api.openai.com/v1/responses",
+  "artifacts": [
+    {
+      "bytes": 5443,
+      "characters": 5443,
+      "path": "/home/ubuntu/PRAX/research-and-replications/projects/jacobian-lens-and-identifiability/experiments/block_patching/review_brief.md",
+      "role": "compact research-director plan brief",
+      "sha256": "d6af873aadf1bc83ea02486e73f9b875969ffaeeb2b4912471684d885a23309c"
+    }
+  ],
+  "background": false,
+  "budget_authorization_usd": 1.25,
+  "budget_notice": "This is a preflight authorization guard, not a provider billing hard stop. Pro-mode aggregate model-work usage can exceed the request's max_output_tokens. A costly estimate means the director packet should be compacted, not that its budget should be raised.",
+  "cache_write_rate_usd_per_million": 6.25,
+  "chars_per_token_assumption": 3.0,
+  "completed_at_utc": "2026-07-25T05:49:06.161330Z",
+  "completed_response_cost_exceeded_budget_authorization": false,
+  "completed_response_cost_usd_conservative": 0.547795,
+  "created_at_utc": "2026-07-25T05:47:18.406014Z",
+  "estimated_budget_reserve_usd": 0.7821375,
+  "estimated_input_tokens_conservative": 3238,
+  "exact_budget_reserve_usd_after_preflight": 0.72234375,
+  "global_uniqueness_attested": false,
+  "input_rate_usd_per_million": 5.0,
+  "input_tokens_preflight": 2175,
+  "input_tokens_preflight_at_utc": "2026-07-25T05:47:18.750486Z",
+  "input_tokens_url": "https://api.openai.com/v1/responses/input_tokens",
+  "latest_model_document_sha256": null,
+  "latest_model_source": "https://developers.openai.com/api/docs/guides/latest-model.md",
+  "max_input_characters": 36000,
+  "max_input_tokens": 12000,
+  "max_output_tokens": 10000,
+  "model": "gpt-5.6-sol",
+  "official_latest_model": null,
+  "output_rate_usd_per_million": 30.0,
+  "pricing_source": "https://developers.openai.com/api/docs/pricing",
+  "pro_input_reserve_multiplier": 5.0,
+  "pro_output_reserve_multiplier": 2.0,
+  "provider_response_cost_exceeded_budget_authorization": false,
+  "provider_response_cost_usd_conservative": 0.547795,
+  "provider_response_recorded_at_utc": "2026-07-25T05:49:06.160721Z",
+  "provider_terminal_status": "completed",
+  "provider_usage": {
+    "input_tokens": 23393,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 14361,
+    "output_tokens_details": {
+      "reasoning_tokens": 6294
+    },
+    "total_tokens": 37754
+  },
+  "reasoning": {
+    "effort": "medium",
+    "mode": "pro"
+  },
+  "reported_output_tokens_exceeded_requested_max_output_tokens": true,
+  "request_payload_sha256": "4b71ed8548a660fb12861342d6db1f404180cf58be7c9ff76ca924877db65748",
+  "researcher_emphasis": {
+    "present": true,
+    "sha256": "58a98e9fe9fe0f95d654eeac32bcebec97b6008b1d44a88834ca1414bdb804da",
+    "text": "Attack construct validity FIRST and be concise: is cross-layer state substitution the right estimand for 'depth blocks partition computation', or a careful null of the wrong thing? Then: is this publishable as a negative result, or merely underpowered? Give the single strongest reason our conclusion could be wrong, and the one cheaper better test if it exists. Prioritise verdicts over exposition."
+  },
+  "reserved_billable_input_tokens": 16190,
+  "reserved_billable_output_tokens": 20000,
+  "response_id": "resp_09c01cb2b73e1224016a644de6d32881a3849f57ee2a3cdd98",
+  "response_metadata": {
+    "plan_sha256": "d6af873aadf1bc83ea02486e73f9b875969ffaeeb2b4912471684d885a23309c",
+    "researcher_emphasis_present": "true",
+    "researcher_emphasis_sha256": "58a98e9fe9fe0f95d654eeac32bcebec97b6008b1d44a88834ca1414bdb804da",
+    "review_input_sha256": "c6eede7111c664e1d9c75a4031d394d9d1f0251731fec16adfe239c56788c6cf",
+    "review_instructions_sha256": "bfe68700d789a83062af44eecd4e1a9f6d45cad156132ed97c4716d77d5bfb4c",
+    "review_scope": "director_level_plan_review",
+    "single_call_policy": "trusted_procedural_rule",
+    "workflow": "experiment_plan_review"
+  },
+  "response_metadata_sha256": "66db84c32026cc09e1df12f72772a356929371d5adfdf8e6c37238d5e14d25af",
+  "response_model": "gpt-5.6-sol",
+  "response_sha256": "f26289a9e57e91a82815e28795a6f10db01eb118301ea25875d9e48f7dc3aff4",
+  "review_input_sha256": "c6eede7111c664e1d9c75a4031d394d9d1f0251731fec16adfe239c56788c6cf",
+  "review_instructions_sha256": "bfe68700d789a83062af44eecd4e1a9f6d45cad156132ed97c4716d77d5bfb4c",
+  "review_kind": "experiment-plan",
+  "review_request_sha256": "893ddbed84294edc1e2c98312c196aae19f07f3fbd7336f3c210681bb023e1fa",
+  "review_scope": "director_level_plan_review",
+  "review_sha256": "b406dd729f35a5f82a99c462be0a6e66912ed83fa04f2f79199d6620bf530823",
+  "reviewed_packet_git_head_commit": null,
+  "schema_version": 1,
+  "service_tier": "default",
+  "single_call_policy": "trusted_procedural_rule",
+  "status": "completed",
+  "store": false,
+  "usage": {
+    "input_tokens": 23393,
+    "input_tokens_details": {
+      "cache_write_tokens": 0,
+      "cached_tokens": 0
+    },
+    "output_tokens": 14361,
+    "output_tokens_details": {
+      "reasoning_tokens": 6294
+    },
+    "total_tokens": 37754
+  }
+}
