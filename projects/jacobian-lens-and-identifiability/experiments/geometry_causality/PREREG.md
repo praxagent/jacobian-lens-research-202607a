@@ -175,3 +175,30 @@ from the frozen full-scale run.
 this box's CPU: the smoke took about 10 s per layer at 8 prompts and 32 tokens, so the full
 grid extrapolates to hours per model. It will run on one cheap GPU instead, at an expected
 cost under $1. The design is unchanged; only the venue is.
+
+## Amendment 2 (2026-07-25): calibrate the dose on the LOCAL arm for the C measurement
+
+**Trigger.** In the first full run all four gates passed and P1 was confirmed, but the
+secondary `C` measurement was found uninterpretable: the LOCAL arm sat at 0.6-1.0 nats in every
+layer of every model, and in gemma-3-270m the aligned KL (1.49) exceeded the local KL (0.94),
+which is impossible in the linear regime because LOCAL is by construction the first-order
+maximum.
+
+**Diagnosis, a flaw in our own gate.** Gate 3 selects the dose by scanning the **aligned** arm
+and then applies that dose to all arms. LOCAL is the strongest arm by construction, so a dose
+that leaves ALIGNED roughly quadratic leaves LOCAL saturated.
+
+**Change.** A `--calib-arm` flag; for the `C` measurement the gate calibrates on **local**. The
+dose grid is extended downward as an exact-doubling ladder
+`{0.0015625 ... 0.2}` because calibrating on the strongest arm selects a much smaller dose.
+
+**Scope.** This re-measures **P2 only**, which the pre-registration defines as a measurement
+with no threshold and no decision attached. **P1 stands on the already-completed run** and is
+not re-tested here; its confirmed result is not revisited, and the saturation present there
+biases P1 toward the null rather than away from it. The withdrawn `C = 0.9996` reading is
+recorded in `results.md` as an error rather than deleted.
+
+**New risk to watch.** A smaller dose shrinks all arms quadratically, so RANDOM may approach
+the numerical noise floor. The re-run records random-arm KL magnitudes so this can be checked,
+and any model whose random arm falls below `1e-5` nats will have its `C` reported as
+unmeasurable rather than computed.

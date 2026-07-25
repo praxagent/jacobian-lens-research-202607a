@@ -26,7 +26,10 @@ if not SHARED_TOKENS.exists():
 
 # Amendment 1: exact-doubling grid, extended downward. The original {0.05..1.0} grid
 # sat above the first-order regime and the linear gate correctly rejected every dose.
-DOSE_FRACS = [0.0125, 0.025, 0.05, 0.1, 0.2]
+# Amendment 2: grid extended further down as an exact-doubling ladder, because calibrating on
+# the LOCAL arm (the strongest by construction) selects a much smaller dose than calibrating on
+# ALIGNED did.
+DOSE_FRACS = [0.0015625, 0.003125, 0.00625, 0.0125, 0.025, 0.05, 0.1, 0.2]
 N_RANDOM = 8
 LINEAR_WINDOW = (3.2, 4.8)      # KL(2e)/KL(e) must land here: approximately quadratic
 
@@ -108,6 +111,10 @@ def main():
     ap.add_argument("--n-prompts", type=int, default=200)
     ap.add_argument("--seq-len", type=int, default=64)
     ap.add_argument("--dose-layers", type=int, default=3, help="layers used for the dose scan")
+    ap.add_argument("--calib-arm", default="aligned", choices=["aligned", "local"],
+                    help="which arm the linear-regime gate calibrates on. LOCAL is the strongest "
+                         "arm by construction, so calibrating on ALIGNED leaves LOCAL saturated "
+                         "and makes C uninterpretable (see results.md).")
     ap.add_argument("--chunk", type=int, default=32,
                     help="prompt chunk per forward; full-batch logits are (B,T,vocab) and OOM "
                          "on large-vocab models (gemma 262k x 200 x 64 is ~13GB)")
@@ -231,7 +238,8 @@ def main():
         vals = []
         for l in scan_layers:
             eps = frac * resid_norm[l]
-            vals.append(float(np.mean(kl_for(l, aligned[l] * eps))))
+            probe_v = (local[l] * eps) if a.calib_arm == "local" else (aligned[l] * eps)
+            vals.append(float(np.mean(kl_for(l, probe_v))))
         dose_scan[frac] = vals
     ratios = {}
     for i, frac in enumerate(DOSE_FRACS[:-1]):
@@ -284,6 +292,7 @@ def main():
     res = {"slug": a.slug, "model": a.model, "n_layers": L, "d": d, "n_prompts": B,
            "seq_len": a.seq_len, "prompt_dataset_indices": idxs, "lens_layers": [int(x) for x in lens_layers],
            "n_probe_tokens": n_probe, "device": a.device, "dtype": str(dtype),
+           "calibration_arm": a.calib_arm,
            "dose_scan": {str(k): v for k, v in dose_scan.items()},
            "dose_ratios": {str(k): v for k, v in ratios.items()}, "chosen_dose_frac": chosen,
            "gates": {"execution": bool(gate_exec), "equal_norm": bool(gate_norm),
