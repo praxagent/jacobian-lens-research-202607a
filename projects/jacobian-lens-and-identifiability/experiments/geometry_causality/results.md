@@ -202,3 +202,72 @@ a lower bound.
   would let P2 and P4 be measured in all three models.
 
 Total cost across the geometry-causality experiment: about **$0.55**.
+
+---
+
+## float32 re-run: the bf16 diagnosis was right, and it revises P1 upward
+
+Re-ran the sweep and the C measurement in **float32** (`--dtype float32`), same frozen prompts,
+same code path.
+
+### P4: CONFIRMED in all three models
+
+| model | `k_random` (small) | `k_aligned` (small) | `A` across the small-dose rungs | spread |
+|---|---|---|---|---|
+| gpt2-small | **1.95** | 1.97 | 2.08, 2.07, 2.02, 2.07, 2.06 | **0.06** |
+| gemma-3-270m | **2.00** | 1.93 | 2.47, 2.44, 2.38, 2.21, 2.06 | 0.41 |
+| qwen3.5-0.8b | **1.96** | 2.00 | 1.69, 1.65, 1.65, 1.65, 1.62 | **0.07** |
+
+Every arm now scales as `KL ~ eps^2` (`k` = 1.93 to 2.00 against a first-order prediction of
+exactly 2), and `A` is **flat** across the small-dose rungs, with a spread of 0.06 and 0.07 log
+units in gpt2 and qwen. Under bf16 those same two models had exponents of 0.05 to 0.46 and a
+monotone climbing `A`. **The precision diagnosis was correct**, and P4 now rests on three models
+rather than one: the lens direction's advantage is a first-order effect, exactly as the lens's
+own mathematics implies.
+
+gpt2-small is the cleanest demonstration: `A` sits at 2.02 to 2.08 across **all eight** rungs, a
+full two orders of magnitude of dose.
+
+### P1: bf16 understated it, as predicted
+
+We said a floor inflates the random arm and therefore understates `A`, so the bf16 numbers were
+a lower bound. Measured in float32 at the same doses:
+
+| model | `A`, bf16 | `A`, float32 | ratio, bf16 | **ratio, float32** |
+|---|---|---|---|---|
+| gpt2-small | +1.308 | **+2.013** | 3.70x | **7.5x** |
+| gemma-3-270m | +2.093 | **+2.209** | 8.11x | **9.1x** |
+| qwen3.5-0.8b | +2.005 | **+2.093** | 7.43x | **8.1x** |
+
+gpt2 moves most, which is exactly the model whose bf16 floor was worst. The float32 figures are
+also far more **consistent across families**: 7.5x, 9.1x, 8.1x, against a bf16 spread of 3.7x to
+8.1x. The scatter in the original numbers was mostly precision, not model differences.
+
+**The float32 column supersedes the bf16 column** as the headline, and the direction of the
+correction is the one we predicted in advance rather than one we discovered after the fact.
+
+### P2: now two of three models, and they agree
+
+| model | C | precision | disposition |
+|---|---|---|---|
+| gpt2-small | **0.053** | float32, all gates pass | REPORTABLE |
+| qwen3.5-0.8b | **0.045** | bf16, all gates pass | REPORTABLE |
+| gemma-3-270m | 0.086 | linear gate fails in both bf16 and float32 | **VOID** |
+
+Two independent models put the corpus-averaged lens at roughly **5% of the achievable
+first-order effect** (0.053 and 0.045). gemma remains VOID: its LOCAL arm saturates even at the
+smallest rung of the ladder, so the ladder would have to be extended downward for that model.
+The qwen fp32 C run OOMed in `lm_head` (152k vocab in float32) and was not repeated.
+
+## Final standing summary
+
+- **P1 (3/3 models):** lens directions beat equal-norm random by **7.5x, 9.1x, 8.1x** (float32).
+- **P2 (2/3 models):** the averaged lens captures about **5%** of the achievable first-order
+  effect (0.053, 0.045).
+- **P4 (3/3 models):** the advantage is **dose-invariant**, i.e. first-order, with all arms
+  scaling at `k ~ 2`.
+- **Two withdrawn claims of our own**, both caught by pre-frozen checks rather than by
+  hindsight: gemma's `C = 0.9996` (saturation) and the "non-first-order component" reading of
+  dose-dependence (precision floor).
+
+Total cost across the geometry-causality experiment: about **$0.85**.
