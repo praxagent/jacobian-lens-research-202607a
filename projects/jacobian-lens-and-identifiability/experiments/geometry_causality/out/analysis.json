@@ -1,0 +1,50 @@
+{
+ "gemma-3-270m": {
+  "median_A": 2.0932442193245797,
+  "ci95": [
+   1.9956723689127076,
+   2.1779191338684094
+  ],
+  "ratio": 8.111186995066719,
+  "median_C": 0.9996191011502353,
+  "gates": {
+   "execution": true,
+   "equal_norm": true,
+   "linear_regime": true,
+   "sensitivity_local_beats_random": true
+  },
+  "p1_supported": true
+ },
+ "gpt2-small": {
+  "median_A": 1.308471702835262,
+  "ci95": [
+   1.2214197232894144,
+   1.3825143198766932
+  ],
+  "ratio": 3.700513903470257,
+  "median_C": 0.1761961442076302,
+  "gates": {
+   "execution": true,
+   "equal_norm": true,
+   "linear_regime": true,
+   "sensitivity_local_beats_random": true
+  },
+  "p1_supported": true
+ },
+ "qwen3.5-0.8b": {
+  "median_A": 2.0053993820904576,
+  "ci95": [
+   1.7595195030776485,
+   2.221323240924717
+  ],
+  "ratio": 7.429060337994567,
+  "median_C": 0.11437423949916069,
+  "gates": {
+   "execution": true,
+   "equal_norm": true,
+   "linear_regime": true,
+   "sensitivity_local_beats_random": true
+  },
+  "p1_supported": true
+ }
+}

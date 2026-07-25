@@ -18,9 +18,11 @@ import numpy as np
 import torch
 
 HERE = Path(__file__).resolve().parent
-ATLAS = HERE.parents[1] / "experiments/jspace_atlas"
-JL = HERE.parents[1] / "experiments/jacobian_lens"
-sys.path.insert(0, str(ATLAS)); sys.path.insert(0, str(JL))
+# Self-contained: the probe helpers are inlined below rather than imported from the atlas
+# package, so this runner ships to a pod as one file plus shared_tokens.json.
+SHARED_TOKENS = Path(__file__).resolve().parent / "shared_tokens.json"
+if not SHARED_TOKENS.exists():
+    SHARED_TOKENS = HERE.parents[1] / "experiments/jacobian_lens/shared_tokens.json"
 
 # Amendment 1: exact-doubling grid, extended downward. The original {0.05..1.0} grid
 # sat above the first-order regime and the linear gate correctly rejected every dose.
@@ -33,15 +35,58 @@ def get_layers(model):
     return model.model.layers if hasattr(model, "model") else model.transformer.h
 
 
+KEY_SUFFIXES = ("embed_tokens.weight", "wte.weight", "embed_in.weight", "tok_embeddings.weight")
+
+
+def resolve_ids_inline(hf_id, strings):
+    """Canonical rule, inlined: space-prefixed form preferred, bare form fallback, drop any
+    string needing more than one token (matches jacobian_lens/shared_vocab.py)."""
+    from transformers import AutoTokenizer
+    tk = AutoTokenizer.from_pretrained(hf_id, use_fast=True)
+    out = {}
+    for s in strings:
+        for form in (" " + s, s):
+            e = tk.encode(form, add_special_tokens=False)
+            if len(e) == 1:
+                out[s] = e[0]; break
+    return out
+
+
+def probe_rows_inline(hf_id, ids):
+    """Read only the probe rows of the embedding matrix, in row-chunks."""
+    from huggingface_hub import HfApi, hf_hub_download
+    from safetensors import safe_open
+    import torch as _t
+    files = HfApi().list_repo_files(hf_id)
+    idx = next((f for f in files if f.endswith(".safetensors.index.json")), None)
+    if idx:
+        wmap = json.load(open(hf_hub_download(hf_id, idx)))["weight_map"]
+        key = next(k for k in wmap if k.endswith(KEY_SUFFIXES)); fname = wmap[key]
+    else:
+        fname = sorted(f for f in files if f.endswith(".safetensors"))[0]; key = None
+    path = hf_hub_download(hf_id, fname)
+    with safe_open(path, framework="pt") as f:
+        if key is None or key not in f.keys():
+            key = next(k for k in f.keys() if k.endswith(KEY_SUFFIXES))
+        sl = f.get_slice(key); vocab, dd = sl.get_shape()
+        order = np.argsort(ids); sid = np.asarray(ids)[order]
+        out = np.empty((len(ids), dd), dtype=np.float32); pos = 0
+        for st in range(0, vocab, 8192):
+            sp = min(st + 8192, vocab)
+            want = sid[(sid >= st) & (sid < sp)]
+            if want.size == 0: continue
+            blk = sl[st:sp].to(_t.float32).numpy()
+            out[order[pos:pos + want.size]] = blk[want - st]; pos += want.size
+    return out, int(dd)
+
+
 def probe_M(slug, hf_id, d):
     """M = U_s^T U_s on the shared 4096-token probe. Aligned direction is the top
     eigenvector of J^T M J, which equals the top right-singular vector of U_s @ J."""
-    from zoo_concentration import stream_probe_rows
-    from shared_vocab import resolve_ids
-    strings = json.load(open(JL / "shared_tokens.json"))["strings"]
-    ids = resolve_ids(hf_id, strings)
+    strings = json.load(open(SHARED_TOKENS))["strings"]
+    ids = resolve_ids_inline(hf_id, strings)
     idlist = [ids[s] for s in strings if s in ids]
-    Us, dd, vocab, blob = stream_probe_rows(hf_id, idlist)
+    Us, dd = probe_rows_inline(hf_id, idlist)
     assert dd == d, f"probe d {dd} != model d {d}"
     Uc = Us - Us.mean(0, keepdims=True)
     return (Uc.T @ Uc).astype(np.float32), len(idlist)
@@ -63,6 +108,9 @@ def main():
     ap.add_argument("--n-prompts", type=int, default=200)
     ap.add_argument("--seq-len", type=int, default=64)
     ap.add_argument("--dose-layers", type=int, default=3, help="layers used for the dose scan")
+    ap.add_argument("--chunk", type=int, default=32,
+                    help="prompt chunk per forward; full-batch logits are (B,T,vocab) and OOM "
+                         "on large-vocab models (gemma 262k x 200 x 64 is ~13GB)")
     a = ap.parse_args()
     import transformers
     from datasets import load_dataset
@@ -91,8 +139,16 @@ def main():
     M, n_probe = probe_M(a.slug, a.model, d)
     print(f"lens covers {len(lens_layers)} layers; probe {n_probe} tokens", flush=True)
 
-    with torch.no_grad():
-        clean_logits = model(**enc).logits[:, -1, :].float()
+    def fwd_last(chunk):
+        """Final-position logits, chunked over prompts to bound the (B,T,vocab) tensor."""
+        outs = []
+        for i in range(0, B, chunk):
+            sub = {k: v[i:i+chunk] for k, v in enc.items()}
+            with torch.no_grad():
+                outs.append(model(**sub).logits[:, -1, :].float())
+        return torch.cat(outs, 0)
+
+    clean_logits = fwd_last(a.chunk)
     clean_lp = torch.log_softmax(clean_logits, -1)
     t_star = clean_lp.argmax(-1)
     resid_norm = {}
@@ -112,12 +168,16 @@ def main():
         return fn
 
     def kl_for(l, v):
-        """v: (d,) or (B,1,d). Returns per-prompt KL(perturbed||clean) in nats."""
-        vv = v if v.dim() == 3 else v.view(1, 1, -1)
-        h = layers[l].register_forward_hook(patch_hook(vv.to(dtype)))
-        with torch.no_grad():
-            lg = model(**enc).logits[:, -1, :].float()
-        h.remove()
+        """v: (d,) or (B,1,d). Returns per-prompt KL(perturbed||clean) in nats. Chunked."""
+        outs = []
+        for i in range(0, B, a.chunk):
+            sub = {k: vv2[i:i+a.chunk] for k, vv2 in enc.items()}
+            vv = v[i:i+a.chunk] if v.dim() == 3 else v.view(1, 1, -1)
+            h = layers[l].register_forward_hook(patch_hook(vv.to(dtype)))
+            with torch.no_grad():
+                outs.append(model(**sub).logits[:, -1, :].float())
+            h.remove()
+        lg = torch.cat(outs, 0)
         lp = torch.log_softmax(lg, -1)
         return (lp.exp() * (lp - clean_lp)).sum(-1).cpu().numpy()
 
@@ -129,7 +189,7 @@ def main():
         for h in hs: h.remove()
         hh = layers[l].register_forward_hook(cap_hook(store))
         with torch.no_grad():
-            model(**enc)
+            model(**{k: v[:a.chunk] for k, v in enc.items()})
         hh.remove()
         resid_norm[l] = float(store["h"].float().norm(dim=-1).median())
         J = Jd[l].float().numpy()
@@ -147,14 +207,17 @@ def main():
             h = out[0] if isinstance(out, tuple) else out
             h.retain_grad(); st["h"] = h
             return out
-        hh = layers[l].register_forward_hook(gcap)
-        lg = model(**enc).logits[:, -1, :]
-        sel = torch.log_softmax(lg.float(), -1)[torch.arange(B), t_star].sum()
-        g = torch.autograd.grad(sel, st["h"])[0].float()
-        hh.remove()
-        gs = g.sum(1)                                     # one direction per prompt
+        gparts = []
+        for i in range(0, B, a.chunk):
+            sub = {k: v[i:i+a.chunk] for k, v in enc.items()}
+            hh = layers[l].register_forward_hook(gcap)
+            lg = model(**sub).logits[:, -1, :]
+            n = lg.shape[0]
+            sel = torch.log_softmax(lg.float(), -1)[torch.arange(n), t_star[i:i+n]].sum()
+            gparts.append(torch.autograd.grad(sel, st["h"])[0].float().sum(1).detach())
+            hh.remove(); model.zero_grad(set_to_none=True)
+        gs = torch.cat(gparts, 0)                         # one direction per prompt
         local[l] = (gs / gs.norm(dim=-1, keepdim=True).clamp(min=1e-12)).unsqueeze(1).detach()
-        model.zero_grad(set_to_none=True)
     print("directions computed", flush=True)
 
     # GATE 1 execution: eps=0 identity
