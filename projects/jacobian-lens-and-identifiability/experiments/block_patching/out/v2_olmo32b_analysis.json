@@ -1,0 +1,22 @@
+{
+ "slug": "olmo-3-1125-32b",
+ "blocks": [
+  25,
+  14,
+  24
+ ],
+ "balance": 0.56,
+ "fitted_sep": 0.28286692712867567,
+ "beta": 0.22031065599112393,
+ "beta_no_position": 0.052416132676303934,
+ "p_perm": 0.181,
+ "null_mean": -0.0013894176056994598,
+ "null_sd": 0.14649693772104658,
+ "n_pairs": 3906,
+ "gates": {
+  "sanity": true,
+  "calibration": true
+ },
+ "verdict": "NULL: blocks are geometric, not computational",
+ "nperm": 1000
+}

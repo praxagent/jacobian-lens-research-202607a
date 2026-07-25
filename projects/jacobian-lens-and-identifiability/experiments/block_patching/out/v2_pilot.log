@@ -1,3 +1,25 @@
 [transformers] `torch_dtype` is deprecated! Use `dtype` instead!
 Loading weights:   0%|          | 0/236 [00:00<?, ?it/s]Loading weights:   0%|          | 1/236 [00:02<11:42,  2.99s/it]Loading weights: 100%|██████████| 236/236 [00:03<00:00, 77.64it/s]
 40 prompts, L=18
+  source layer 1/18 (133s)
+  source layer 2/18 (241s)
+  source layer 3/18 (381s)
+  source layer 4/18 (489s)
+  source layer 5/18 (566s)
+  source layer 6/18 (637s)
+  source layer 7/18 (734s)
+  source layer 8/18 (812s)
+  source layer 9/18 (893s)
+  source layer 10/18 (969s)
+  source layer 11/18 (1040s)
+  source layer 12/18 (1128s)
+  source layer 13/18 (1252s)
+  source layer 14/18 (1370s)
+  source layer 15/18 (1527s)
+  source layer 16/18 (1665s)
+  source layer 17/18 (1759s)
+  source layer 18/18 (1934s)
+
+SANITY  max|D(i,i)| = 0.00e+00  (gate: ~0)
+CALIBRATION  median D over |i-j|>=2 = 2.292 nats (gate: 0.05 to 5.0)
+SWAP_V2_DONE

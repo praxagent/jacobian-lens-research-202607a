@@ -1,0 +1,9 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+model olmo-3-1125-32b  L=63  blocks [25, 14, 24]  balance 0.56  fitted_sep=+0.283
+GATES  sanity max|D(i,i)|=0.0e+00 PASS  |  calibration median D=0.164 nats PASS
+n pairs = 3906
+beta (crosses; distance AND position absorbed) = +0.2203
+  [ref] without position dummies                = +0.0524
+random-boundary null: mean -0.0014 sd 0.1465  2-sided p = 0.1810
+VERDICT: NULL: blocks are geometric, not computational
+wrote analysis json

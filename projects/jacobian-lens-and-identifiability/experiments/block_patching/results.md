@@ -85,3 +85,58 @@ a weak setting for testing a boundary at all.
 
 Cost of everything above: **~$0.10**. A v2 is affordable; it is a design problem, not a budget
 problem.
+
+---
+
+# v2 results: same-prompt swap damage on a balanced-block model
+
+Design frozen in [`PREREG_V2.md`](PREREG_V2.md) (commit `86aa050`) before any v2 run.
+
+| model | where | cost | blocks | balance | gates |
+|---|---|---|---|---|---|
+| gemma-3-270m | this box, CPU | $0 | 3/12/2 | 0.17 | PASS (pilot: mechanics + calibration only) |
+| olmo-3-1125-32b | A100 80GB, RunPod | ~$1 | 25/14/24 | **0.56** | PASS |
+
+Calibration, the gate v1 lacked: median `D` over `|i-j| >= 2` is **0.164 nats** on olmo (2.29 on
+the pilot), inside the frozen [0.05, 5.0] band. The measure has real dynamic range, and
+`D(i,i) = 0` exactly. v1's saturation problem is fixed.
+
+## Confirmatory result
+
+`D(i,j) ~ dummies(|i-j|) + dummies(mean_position) + beta * crosses(i,j)`, 1,000-draw
+random-3-segmentation null.
+
+| quantity | value |
+|---|---|
+| beta (distance **and** position absorbed) | **+0.2203** |
+| beta without position dummies (reference) | +0.0524 |
+| random-boundary null | mean -0.0014, sd 0.1465 |
+| two-sided p | **0.181** |
+| pairs | 3,906 |
+
+**Frozen verdict: NULL.** P1 predicted `beta > 0` at p < 0.05. The point estimate *is* in the
+predicted direction, about 1.5 sd above the null, but it does not clear the threshold.
+
+## This is a different null from v1, and we say so carefully
+
+In v1's small models beta was indistinguishable from zero (-0.002, +0.003). Here it is
+**+0.22 in the predicted direction** and simply not significant. Two things follow.
+
+First, the position control now works in the opposite direction from v1. Adding mean-position
+dummies *raises* the estimate from +0.052 to +0.220, where in v1 position inflation was our
+explanation for a spurious positive. That is the control behaving as a control should: it
+removes a confound rather than manufacturing an effect.
+
+Second, the experiment is **underpowered at one model**. The null's spread (sd 0.147) is
+driven by segmentation-level variability, not by the 3,906 pairs, so pair count does not buy
+power; **models** do. A modest real boundary effect of this size would need several balanced
+models to detect.
+
+## Combined position after v1 and v2
+
+Four models, two independent designs, no significant evidence that J-space depth bands
+partition computation. We are **not** claiming they definitely do not: v2's point estimate is
+positive and the design that could detect a modest effect has been run exactly once. The
+honest statement is that the bands are a well-replicated description of representational
+**geometry**, and that two causal probes have failed to show them partitioning **computation**,
+with the better-designed probe leaving a suggestive but unresolved positive.
