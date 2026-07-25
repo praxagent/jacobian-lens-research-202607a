@@ -21,6 +21,25 @@ def boundaries(slug):
     return int(b1), int(b2), float(sep), M.shape[0]
 
 
+def lens_source_layers(slug, n_lens):
+    """Model-layer indices the lens covers. The lens has no Jacobian for the final layer, so
+    a model with L blocks yields an L-1 row CKA map; the block boundaries are in LENS index
+    space and must be mapped back before they can be applied to a patching matrix over MODEL
+    layers. Falls back to the contiguous prefix if the lens cannot be fetched."""
+    try:
+        from huggingface_hub import hf_hub_download, list_repo_files
+        import torch
+        fs = [f for f in list_repo_files("neuronpedia/jacobian-lens")
+              if f.startswith(slug + "/") and f.endswith(".pt")]
+        sl = torch.load(hf_hub_download("neuronpedia/jacobian-lens", sorted(fs)[0]),
+                        map_location="cpu", weights_only=False)["source_layers"]
+        assert len(sl) == n_lens, f"lens rows {len(sl)} != cka rows {n_lens}"
+        return [int(x) for x in sl]
+    except Exception as e:
+        print(f"  (lens source_layers unavailable: {type(e).__name__}; assuming prefix 0..{n_lens-1})")
+        return list(range(n_lens))
+
+
 def beta_for(E, blk):
     """OLS of E on per-distance dummies + crosses; returns beta (coef on crosses)."""
     L = E.shape[0]
@@ -44,9 +63,15 @@ def main():
     ap.add_argument("--nperm", type=int, default=1000)
     ap.add_argument("--seed", type=int, default=0)
     a = ap.parse_args()
-    r = json.load(open(a.result)); E = np.array(r["E"], float); slug = r["slug"]
+    r = json.load(open(a.result)); E_full = np.array(r["E"], float); slug = r["slug"]
     b1, b2, sep, L = boundaries(slug)
-    assert L == r["n_layers"], f"layer mismatch {L} vs {r['n_layers']}"
+    # map lens index space -> model layer space, then restrict the patching matrix to the
+    # layers the lens actually covers (the final model layer has no Jacobian)
+    src = lens_source_layers(slug, L)
+    assert max(src) < r["n_layers"], f"lens layer {max(src)} beyond model ({r['n_layers']})"
+    E = E_full[np.ix_(src, src)]
+    print(f"  lens covers model layers {src[0]}..{src[-1]} of {r['n_layers']}; "
+          f"patching matrix restricted to {E.shape[0]}x{E.shape[1]}")
     sizes = [b1, b2 - b1, L - b2]
 
     blk = np.array([0 if i < b1 else (1 if i < b2 else 2) for i in range(L)])

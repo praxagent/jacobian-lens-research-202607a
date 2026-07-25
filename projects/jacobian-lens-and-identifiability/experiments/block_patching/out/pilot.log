@@ -1,0 +1,25 @@
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/236 [00:00<?, ?it/s]Loading weights:   0%|          | 1/236 [00:00<02:44,  1.42it/s]Loading weights: 100%|██████████| 236/236 [00:00<00:00, 329.95it/s]
+20 usable pairs (0 dropped for multi-token answers), L=18
+clean: LD_src mean +9.20, LD_tgt mean -9.93; 20/20 pairs pass |denom|>=1.0
+  source layer 1/18 done (27s)
+  source layer 2/18 done (55s)
+  source layer 3/18 done (90s)
+  source layer 4/18 done (139s)
+  source layer 5/18 done (183s)
+  source layer 6/18 done (206s)
+  source layer 7/18 done (227s)
+  source layer 8/18 done (248s)
+  source layer 9/18 done (266s)
+  source layer 10/18 done (285s)
+  source layer 11/18 done (307s)
+  source layer 12/18 done (331s)
+  source layer 13/18 done (352s)
+  source layer 14/18 done (373s)
+  source layer 15/18 done (394s)
+  source layer 16/18 done (416s)
+  source layer 17/18 done (437s)
+  source layer 18/18 done (478s)
+
+SANITY self-patch median E(i,i) = 1.000 (pre-registered gate: >= 0.9)
+PATCH_DONE
