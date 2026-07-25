@@ -1,0 +1,38 @@
+{
+ "C1_position_control": {
+  "qwen3-8b": {
+   "beta_distance_only": 0.1476,
+   "beta_with_position": -0.0457
+  },
+  "gemma-3-270m": {
+   "beta_distance_only": -0.0023,
+   "beta_with_position": 0.0404
+  },
+  "qwen3.5-0.8b": {
+   "beta_distance_only": 0.0029,
+   "beta_with_position": -0.0109
+  }
+ },
+ "C2_per_boundary": {
+  "boundary 1 only (blk0<->blk1)": {
+   "beta": 0.4368,
+   "null_sd": 0.2022,
+   "p": 0.0175
+  },
+  "boundary 2 only (blk1<->blk2)": {
+   "beta": -0.0183,
+   "null_sd": 0.2003,
+   "p": 0.92
+  },
+  "spans both (blk0<->blk2)": {
+   "beta": 0.1607,
+   "null_sd": 0.194,
+   "p": 0.47
+  }
+ },
+ "C3_prompt_bootstrap": {
+  "status": "blocked",
+  "reason": "receipt stored mean only; runner fixed for v2.1"
+ },
+ "C4_pilot_v2_beta": -1.9139
+}

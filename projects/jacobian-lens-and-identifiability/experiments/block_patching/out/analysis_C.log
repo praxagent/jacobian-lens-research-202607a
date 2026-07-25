@@ -1,0 +1,27 @@
+========================================================================
+C1  position control vs v1's wrong-signed positive (tests a published claim)
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  qwen3-8b       +0.1476 -> -0.0457
+  gemma-3-270m   -0.0023 -> +0.0404
+  qwen3.5-0.8b   +0.0029 -> -0.0109
+  => v1's +0.148 in qwen3-8b is confirmed as a POSITION artifact, not a boundary effect.
+
+========================================================================
+C2  per-boundary decomposition of olmo's +0.22 (exploratory)
+  boundary 1 only (blk0<->blk1)    beta=+0.4368  null sd=0.2022  p=0.018
+  boundary 2 only (blk1<->blk2)    beta=-0.0183  null sd=0.2003  p=0.920
+  spans both (blk0<->blk2)         beta=+0.1607  null sd=0.1940  p=0.470
+
+========================================================================
+C3  prompt-level bootstrap  ->  BLOCKED BY A RECEIPT GAP
+  swap_v2.py stored only the mean KL across prompts, not per-prompt values, so a
+  bootstrap over prompts cannot be computed from the receipt. This is exactly the
+  'could a new analysis be done from this receipt alone?' test, and this receipt
+  fails it. swap_v2.py is fixed to store per-prompt D for v2.1; olmo would have to
+  be re-run (~$1) to backfill, which we do NOT do on exploratory grounds.
+
+========================================================================
+C4  exploratory v2 read on the free CPU pilot (balance 0.17, NOT a fair test)
+  gemma-3-270m v2 beta (position-controlled) = -1.9139   [exploratory, weak balance]
+
+wrote out/analysis_C.json

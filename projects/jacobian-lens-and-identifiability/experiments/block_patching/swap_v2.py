@@ -67,12 +67,16 @@ def main():
     for h in handles: h.remove()
 
     D = np.zeros((L, L))
+    # RECEIPT FIX (found by analysis C): store PER-PROMPT KL, not just the mean, so a
+    # prompt-level bootstrap can be computed from the receipt without re-renting the GPU.
+    Dp = np.zeros((L, L, len(texts)), dtype=np.float32)
     t0 = time.time()
     for i in range(L):
         for j in range(L):
             lp = run(patch=(j, acts[i]))
-            # KL(patched || clean), mean over prompts, in nats
+            # KL(patched || clean), per prompt, in nats
             kl = (lp.exp() * (lp - clean)).sum(-1)
+            Dp[i, j] = kl.cpu().numpy()
             D[i, j] = float(kl.mean())
         print(f"  source layer {i+1}/{L} ({time.time()-t0:.0f}s)", flush=True)
 
@@ -81,6 +85,7 @@ def main():
     far = np.array([D[i, j] for i in range(L) for j in range(L) if abs(i - j) >= 2])
     res = {"slug": a.slug, "model": a.model, "n_layers": L, "n_prompts": len(texts),
            "device": a.device, "dtype": str(dtype), "D": D.tolist(),
+           "D_per_prompt": Dp.tolist(), "prompts": texts,
            "diag_max_abs": float(np.max(np.abs(diag))),
            "median_D_far": float(np.median(far)),
            "mean_D_by_dist": {int(d): float(np.mean([D[i, j] for i in range(L) for j in range(L)

@@ -140,3 +140,52 @@ positive and the design that could detect a modest effect has been run exactly o
 honest statement is that the bands are a well-replicated description of representational
 **geometry**, and that two causal probes have failed to show them partitioning **computation**,
 with the better-designed probe leaving a suggestive but unresolved positive.
+
+---
+
+# Analysis C (exploratory): re-analysis to sharpen v2.1
+
+Strictly exploratory; no verdicts. Purpose is to choose a better-powered confirmatory
+hypothesis, with olmo held out as the *generator* so v2.1's confirmatory sample is new models
+(integrity playbook 11).
+
+**C1. v1's wrong-signed positive is confirmed as a position artifact.** Adding mean-position
+dummies to the v1 data:
+
+| model | beta (distance only) | beta (+ position) |
+|---|---|---|
+| qwen3-8b | +0.1476 | **-0.0457** |
+| gemma-3-270m | -0.0023 | +0.0404 |
+| qwen3.5-0.8b | +0.0029 | -0.0109 |
+
+The +0.148 vanishes entirely. What the note previously stated as the best available
+explanation is now tested. It also independently justifies v2's position control.
+
+**C2. olmo's +0.22 is not diffuse; it sits at the FIRST boundary.**
+
+| contrast | beta | null sd | p (uncorrected) |
+|---|---|---|---|
+| spans boundary 1 only (early <-> middle) | **+0.4368** | 0.2022 | **0.018** |
+| spans boundary 2 only (middle <-> late) | -0.0183 | 0.2003 | 0.920 |
+| spans both (early <-> late) | +0.1607 | 0.1940 | 0.470 |
+
+The diffuse "any boundary" test was diluting a localized effect with two contrasts that carry
+nothing. **This is exploratory and must not be read as a result:** it is post hoc, it is one of
+three contrasts (Bonferroni-adjusted p is about 0.054, i.e. borderline even before the
+exploratory penalty), and it comes from the single model whose data motivated looking.
+
+Its interest is that the implicated boundary is the early-to-middle one, the same transition
+our base-vs-instruct result flags as the most-rewritten region, and the sensory-to-workspace
+boundary in Anthropic's taxonomy.
+
+**C3. Blocked by a receipt gap in our own runner.** `swap_v2.py` stored only the mean KL over
+prompts, so a prompt-level bootstrap cannot be computed from the receipt. This fails the GPU
+playbook's own test ("could a new analysis be done from this receipt alone?"). The runner now
+stores per-prompt KL and the prompt list; olmo is **not** re-run to backfill, since the branch
+is exploratory.
+
+**C4. Discordant note, and a caution.** The same v2 statistic on the free CPU pilot
+(gemma-3-270m, block balance 0.17) gives beta = **-1.91**, the opposite sign. That model is a
+poor test of a boundary (blocks 3/12/2, so "boundary 1" sits at layer 3 with a 3-layer outer
+block), but it is a real reminder that the boundary-1 effect is **not** consistent across
+models yet, and it is why v2.1 is a confirmatory test rather than a victory lap.
