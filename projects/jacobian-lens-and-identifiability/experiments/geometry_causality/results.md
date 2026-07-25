@@ -271,3 +271,51 @@ The qwen fp32 C run OOMed in `lm_head` (152k vocab in float32) and was not repea
   dose-dependence (precision floor).
 
 Total cost across the geometry-causality experiment: about **$0.85**.
+
+---
+
+## Amendment 3 result: gemma-3-270m's C recovered, and it was calibration all along
+
+Extending the exact-doubling ladder four rungs down (to 0.0000977) in float32 brought
+gemma-3-270m's LOCAL arm into the first-order regime. The four new rungs give dose ratios
+**3.92, 3.85, 3.72, 3.55**, all inside the pre-registered [3.2, 4.8] quadratic window, against
+2.76 and below at every rung we had previously tried.
+
+| gate | result |
+|---|---|
+| execution, equal-norm, linear-regime, sensitivity | **all PASS** |
+| chosen dose | 0.000781 |
+| median KL random / local | 4.46e-4 / 5.83e-2 (random-arm floor rule satisfied) |
+| **median C** | **0.0769** |
+| median A | +2.4245 |
+
+**This closes open question 2, and closes it against our own speculation.** We had wondered
+whether gemma-3-270m's early saturation was a property of the model, possibly the same
+underlying fact as its unusually concentrated readout. It is not: the arm reaches ordinary
+first-order behaviour once the perturbation is small enough, and the earlier VOIDs were our
+ladder starting too high. A calibration failure, not a finding.
+
+### C is now measured in all three models
+
+| model | C | precision | dose |
+|---|---|---|---|
+| gpt2-small | 0.053 | float32 | 0.0015625 |
+| qwen3.5-0.8b | 0.045 | bf16 | 0.0125 |
+| **gemma-3-270m** | **0.077** | float32 | 0.000781 |
+
+Three models, three families, **0.045 to 0.077**, all with every gate passing. The
+corpus-averaged lens direction recovers roughly **5 to 8 percent** of the output change
+produced by the input-specific comparator direction at equal norm.
+
+We repeat the caveat from the estimand correction: that comparator is the gradient of the
+clean top-1 token's log-probability, which is a strong input-specific direction but **not** the
+KL-maximising one, so this is a fraction relative to that comparator rather than a fraction of
+everything achievable. What the three numbers do support is that the fraction is **small,
+similar across three unrelated families, and stable** rather than model-specific.
+
+### Operational note
+
+Two OOM failures preceded this run, and the cause was neither the model nor the chunk size: a
+process from an earlier attempt was still resident and holding 18 GB of the card. It was killed
+by exact PID after listing GPU processes, per the pattern-matching hazard in the GPU playbook.
+Total for this amendment: about **$0.20**.

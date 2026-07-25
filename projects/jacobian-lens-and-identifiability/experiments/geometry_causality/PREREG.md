@@ -239,3 +239,21 @@ equal-norm as before. The linear-regime gate does **not** apply, because sweepin
 linear regime is the point.
 
 **Cost.** One 3090, well under $1.
+
+## Amendment 3 (2026-07-25): four further rungs downward, for gemma-3-270m's C
+
+**Trigger.** gemma-3-270m's LOCAL arm saturates below the ladder's lowest rung (0.0015625) in
+both bf16 and float32, so its `C` was VOID in every run while the other two models yielded
+values. An outside review recommended this specific calibration extension as the one cheap
+follow-up worth doing.
+
+**Change.** Extend the exact-doubling ladder down four rungs to 0.0000977. Nothing else
+changes: same estimand, same gates, same decision rules, same frozen prompts. float32 is
+mandatory at these magnitudes.
+
+**Pre-set expectations.** Two outcomes are informative and one is not: if the linear gate now
+passes, gemma yields a third `C` value; if the gate still fails while the random arm's scaling
+exponent stays near 2, gemma is genuinely more perturbation-sensitive than the other models and
+that is a finding about the model rather than a calibration failure; if the random arm's
+exponent collapses, we have hit the float32 floor and the answer is "not measurable with this
+instrument", which we will report as such rather than pushing lower.

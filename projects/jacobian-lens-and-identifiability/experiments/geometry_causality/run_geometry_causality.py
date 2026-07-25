@@ -29,7 +29,12 @@ if not SHARED_TOKENS.exists():
 # Amendment 2: grid extended further down as an exact-doubling ladder, because calibrating on
 # the LOCAL arm (the strongest by construction) selects a much smaller dose than calibrating on
 # ALIGNED did.
-DOSE_FRACS = [0.0015625, 0.003125, 0.00625, 0.0125, 0.025, 0.05, 0.1, 0.2]
+# Amendment 3: four further rungs downward. gemma-3-270m's LOCAL arm saturates below the old
+# floor of 0.0015625 in both bf16 and float32, so C was VOID for it in every run. Extending the
+# exact-doubling ladder is the cheap way to reach its first-order regime. float32 is required
+# at these magnitudes; in bf16 the perturbation is below the rounding error of the residual.
+DOSE_FRACS = [0.0000977, 0.000195, 0.000391, 0.000781, 0.0015625, 0.003125, 0.00625, 0.0125,
+              0.025, 0.05, 0.1, 0.2]
 N_RANDOM = 8
 LINEAR_WINDOW = (3.2, 4.8)      # KL(2e)/KL(e) must land here: approximately quadratic
 
