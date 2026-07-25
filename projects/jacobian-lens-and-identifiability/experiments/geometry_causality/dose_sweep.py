@@ -27,13 +27,20 @@ def main():
     ap.add_argument("--out", required=True); ap.add_argument("--device", default="cuda")
     ap.add_argument("--chunk", type=int, default=25); ap.add_argument("--n-prompts", type=int, default=200)
     ap.add_argument("--seq-len", type=int, default=64)
+    ap.add_argument("--dtype", default="auto", choices=["auto", "float32", "bfloat16"],
+                    help="bf16 has ~8 mantissa bits, so a perturbation at ~0.3%% of the residual "
+                         "norm is comparable to the rounding error of storing the residual "
+                         "itself, which pins both arms on a precision floor at small doses "
+                         "(see results.md P4). float32 lowers that floor by orders of magnitude.")
     a = ap.parse_args()
     import transformers
     import run_geometry_causality as rg          # reuse probe + lens loading, no duplication
 
     tok = transformers.AutoTokenizer.from_pretrained(a.model)
     if tok.pad_token is None: tok.pad_token = tok.eos_token
-    dtype = torch.float32 if a.device == "cpu" else torch.bfloat16
+    dtype = ({"float32": torch.float32, "bfloat16": torch.bfloat16}[a.dtype] if a.dtype != "auto"
+             else (torch.float32 if a.device == "cpu" else torch.bfloat16))
+    print(f"dtype={dtype}", flush=True)
     model = transformers.AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=dtype).to(a.device).eval()
     layers = rg.get_layers(model); d = model.config.hidden_size
 

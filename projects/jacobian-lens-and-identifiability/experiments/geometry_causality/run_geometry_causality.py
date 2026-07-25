@@ -110,6 +110,11 @@ def main():
     ap.add_argument("--out", required=True); ap.add_argument("--device", default="cpu")
     ap.add_argument("--n-prompts", type=int, default=200)
     ap.add_argument("--seq-len", type=int, default=64)
+    ap.add_argument("--dtype", default="auto", choices=["auto", "float32", "bfloat16"],
+                    help="bf16 has ~8 mantissa bits, so a perturbation at ~0.3%% of the residual "
+                         "norm is comparable to the rounding error of storing the residual "
+                         "itself, which pins both arms on a precision floor at small doses "
+                         "(see results.md P4). float32 lowers that floor by orders of magnitude.")
     ap.add_argument("--dose-layers", type=int, default=3, help="layers used for the dose scan")
     ap.add_argument("--calib-arm", default="aligned", choices=["aligned", "local"],
                     help="which arm the linear-regime gate calibrates on. LOCAL is the strongest "
@@ -123,7 +128,9 @@ def main():
 
     tok = transformers.AutoTokenizer.from_pretrained(a.model)
     if tok.pad_token is None: tok.pad_token = tok.eos_token
-    dtype = torch.float32 if a.device == "cpu" else torch.bfloat16
+    dtype = ({"float32": torch.float32, "bfloat16": torch.bfloat16}[a.dtype] if a.dtype != "auto"
+             else (torch.float32 if a.device == "cpu" else torch.bfloat16))
+    print(f"dtype={dtype}", flush=True)
     model = transformers.AutoModelForCausalLM.from_pretrained(a.model, torch_dtype=dtype).to(a.device).eval()
     layers = get_layers(model); L = len(layers)
     d = model.config.hidden_size
@@ -300,7 +307,7 @@ def main():
            for l, r in rows.items()}
     res = {"slug": a.slug, "model": a.model, "n_layers": L, "d": d, "n_prompts": B,
            "seq_len": a.seq_len, "prompt_dataset_indices": idxs, "lens_layers": [int(x) for x in lens_layers],
-           "n_probe_tokens": n_probe, "device": a.device, "dtype": str(dtype),
+           "n_probe_tokens": n_probe, "device": a.device, "dtype": str(dtype), "dtype_flag": a.dtype,
            "calibration_arm": a.calib_arm,
            "dose_scan": {str(k): v for k, v in dose_scan.items()},
            "dose_ratios": {str(k): v for k, v in ratios.items()}, "chosen_dose_frac": chosen,
