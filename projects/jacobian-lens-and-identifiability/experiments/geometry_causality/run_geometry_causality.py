@@ -120,7 +120,6 @@ def main():
                          "on large-vocab models (gemma 262k x 200 x 64 is ~13GB)")
     a = ap.parse_args()
     import transformers
-    from datasets import load_dataset
 
     tok = transformers.AutoTokenizer.from_pretrained(a.model)
     if tok.pad_token is None: tok.pad_token = tok.eos_token
@@ -129,14 +128,24 @@ def main():
     layers = get_layers(model); L = len(layers)
     d = model.config.hidden_size
 
-    # prompts: held-out slice, disjoint from lens-fitting subset (recorded)
-    ds = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")
-    texts, idxs = [], []
-    for i in range(200_000, len(ds["text"])):        # far past the lens-fitting head slice
-        t = ds["text"][i]
-        if len(t) >= 300:
-            texts.append(t); idxs.append(i)
-        if len(texts) >= a.n_prompts: break
+    # Prompts come from a FROZEN artifact (prompts_frozen.json), carrying the exact dataset
+    # indices the P1 run recorded in its receipt, so every arm and every re-run sees identical
+    # inputs. This also removes `datasets` from the pod, whose pyarrow/numpy ABI mismatch
+    # segfaulted the interpreter on import.
+    frozen = HERE / "prompts_frozen.json"
+    if frozen.exists():
+        blob = json.load(open(frozen))
+        texts, idxs = blob["texts"][:a.n_prompts], blob["indices"][:a.n_prompts]
+        print(f"frozen prompts: {len(texts)} (indices {idxs[0]}..{idxs[-1]})", flush=True)
+    else:
+        from datasets import load_dataset
+        ds = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1", split="train")
+        texts, idxs = [], []
+        for i in range(200_000, len(ds["text"])):
+            t = ds["text"][i]
+            if len(t) >= 300:
+                texts.append(t); idxs.append(i)
+            if len(texts) >= a.n_prompts: break
     enc = tok(texts, return_tensors="pt", truncation=True, max_length=a.seq_len,
               padding="max_length", padding_side="left").to(a.device)
     B = enc.input_ids.shape[0]

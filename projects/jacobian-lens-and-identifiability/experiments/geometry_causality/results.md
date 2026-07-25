@@ -80,3 +80,58 @@ saturated.
 Re-run with the dose calibrated on the LOCAL arm to recover an interpretable `C`. Same models,
 same code, one flag, well under a dollar. P3 (does `A` change at CKA boundaries) remains
 exploratory and unreported here.
+
+---
+
+## P2 re-measurement (Amendment 2): one model of three yields an interpretable C
+
+Re-ran all three with the dose calibrated on the **LOCAL** arm, the fix for the gate flaw
+above. Prompts were loaded from a frozen artifact carrying the **exact dataset indices the P1
+receipt recorded** (200000..200513), verified identical across all three P1 receipts, so C and
+A are measured on the same inputs. That also removed `datasets` from the pod, whose
+pyarrow/numpy ABI mismatch was segfaulting the interpreter on import.
+
+| model | chosen dose | linear gate | median KL random / aligned / local | median C | disposition |
+|---|---|---|---|---|---|
+| gpt2-small | 0.0015625 | **FAIL** | 1.74e-2 / 1.88e-2 / 1.81e-2 | 1.021 | **VOID** |
+| gemma-3-270m | 0.0015625 | **FAIL** | 2.95e-3 / 2.53e-2 / 1.73e-1 | 0.098 | **VOID** |
+| qwen3.5-0.8b | 0.0125 | PASS | 7.91e-4 / 1.60e-3 / 3.14e-2 | **0.045** | **REPORTABLE** |
+
+The random-arm floor rule (pre-set in Amendment 2 before these numbers existed) was satisfied
+in all three, so nothing was lost to numerical noise; the failures are the linear-regime gate.
+
+**gpt2-small and gemma-3-270m are VOID for C.** No dose in the ladder put the local arm in the
+approximately-quadratic window: gpt2's best ratio was 2.83 and gemma's 2.74, both short of the
+required 3.2. gpt2's `C = 1.021` is itself the tell, since a value above 1 says the lens arm
+beat the first-order optimum, which cannot happen in the linear regime. We report these as
+gate failures rather than as measurements.
+
+**qwen3.5-0.8b gives the one clean number: `C = 0.045`.** With every gate passing, a
+corpus-averaged lens direction achieves about **4.5% of the output change** that the true
+input-specific gradient achieves at the same layer and norm. Directionally far better than
+chance, and a long way from optimal.
+
+### A finding hiding in the dose dependence
+
+`A` is **not** dose-invariant, which it should be in a pure first-order regime, where KL scales
+as `eps^2` for every direction and the ratio cancels. For qwen3.5-0.8b, `A` falls from +2.005
+at the aligned-calibrated dose to +0.701 at the smaller local-calibrated dose (7.4x down to
+2.0x). So a meaningful part of the lens direction's advantage appears at **larger** perturbations,
+i.e. it is not purely first-order.
+
+That is worth stating because it cuts against the lens's own framing: a Jacobian lens is a
+first-order object, but its directions look *more* advantaged where first-order approximation
+is *worse*. We flag it as an observation, not a claim: it was not pre-registered, it rests on
+two doses in one model, and dose-dependence could also arise from the random arm approaching
+its own floor. It is a clean, cheap follow-up: sweep `A` across the full dose ladder in all
+three models and see whether the pattern holds.
+
+## Standing summary
+
+- **P1 (confirmed, 3/3 models):** lens directions beat equal-norm random by 3.70x, 8.11x, 7.43x.
+- **P2 (1/3 models):** the averaged lens captures ~4.5% of achievable first-order effect in
+  qwen3.5-0.8b; VOID in the other two on the linear-regime gate.
+- **Unregistered observation:** the lens advantage grows with perturbation size, suggesting a
+  non-first-order component.
+
+Total cost of the geometry-causality experiment: about **$0.30**.
