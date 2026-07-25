@@ -135,3 +135,70 @@ three models and see whether the pattern holds.
   non-first-order component.
 
 Total cost of the geometry-causality experiment: about **$0.30**.
+
+---
+
+## P4 (dose-dependence): our own "non-first-order" observation is WITHDRAWN
+
+The addendum froze a decision table before this sweep, precisely so the two explanations could
+not be chosen between after the fact. The table decided against us.
+
+| model | `k_random` (small doses) | `k_aligned` (small doses) | verdict on that model |
+|---|---|---|---|
+| gemma-3-270m | **1.78** | **1.92** | **CLEAN** (`k ~ 2`, first-order regime reached) |
+| gpt2-small | 0.05 | 0.07 | **FLOORED** |
+| qwen3.5-0.8b | 0.13 | 0.46 | **FLOORED** |
+
+`A` across the full ladder:
+
+| model | 0.0016 | 0.0031 | 0.0063 | 0.0125 | 0.025 | 0.05 | 0.1 | 0.2 |
+|---|---|---|---|---|---|---|---|---|
+| gemma-3-270m | +1.85 | +2.21 | +2.29 | +2.18 | +2.05 | +1.61 | +0.89 | +0.24 |
+| gpt2-small | +0.06 | +0.09 | +0.13 | +0.12 | +0.36 | +0.79 | +1.29 | +1.77 |
+| qwen3.5-0.8b | +0.08 | +0.17 | +0.34 | +0.72 | +1.07 | +1.57 | +2.03 | +2.63 |
+
+**In the one model where the measurement is valid, `A` is flat.** gemma-3-270m is the only
+model whose arms reach the first-order regime (`k ~ 2` at small doses), and there `A` sits
+between +1.85 and +2.29 across a full order of magnitude of dose, i.e. **dose-invariant within
+noise**, exactly as a first-order quantity should be. Its decline at the top of the ladder
+(+0.89, +0.24) is the aligned arm saturating first, which is expected and is outside the
+regime the question is about.
+
+**The monotone rise we saw in the other two is a floor artifact.** Their small-dose exponents
+are 0.05 to 0.46, nowhere near 2: both arms are pinned on a floor that does not shrink with
+dose, so the ratio starts near zero and only climbs as the real signal emerges above it. That
+manufactures precisely the "advantage grows with dose" pattern we mistook for physics.
+
+**So the observation reported in the previous section is withdrawn.** `A` is not
+dose-dependent; it looked dose-dependent because two of three models were measured below their
+precision floor. **P4 is supported**: the lens direction's advantage is a first-order effect,
+consistent with the lens's own framing.
+
+**Mechanism of the floor, and a caveat we cannot fully close here.** These runs use bfloat16 on
+GPU. With roughly 8 mantissa bits, a perturbation at 0.3% of the residual norm is comparable to
+the rounding error of storing the residual itself, so both arms measure rounding rather than
+the intended direction. Note this is *not* caught by the execution gate: at `eps = 0` there is
+no perturbation and no rounding difference, so the gate passes while small non-zero doses are
+floor-dominated. A gate can be correct and still sit beside the failure. The clean follow-up is
+float32, which these model sizes easily allow, and which should drop the floor by orders of
+magnitude.
+
+**P1 is unaffected, and we checked rather than assumed.** The doses used for P1 sit above each
+model's floor: gpt2 at 0.1 gives `A = +1.29` in the sweep against +1.31 reported, qwen at 0.1
+gives +2.03 against +2.01, gemma at 0.0125 gives +2.18 against +2.09. All three are far from
+the floor-dominated region where `A` collapses toward zero. Where a floor does intrude it
+inflates the random arm and therefore **understates** `A`, so the headline 3.7x to 8.1x remains
+a lower bound.
+
+## Revised standing summary
+
+- **P1 (confirmed, 3/3):** lens directions beat equal-norm random by 3.70x, 8.11x, 7.43x. Doses
+  verified above the precision floor; effect is a lower bound.
+- **P2 (1/3):** averaged lens captures ~4.5% of achievable first-order effect (qwen3.5-0.8b);
+  VOID elsewhere on the linear-regime gate.
+- **P4 (supported):** the advantage is dose-invariant, i.e. first-order, in the one model that
+  reaches the regime. Our earlier contrary observation is withdrawn as a floor artifact.
+- **Open:** repeat in float32 to lower the floor and bring gpt2 and qwen into the regime, which
+  would let P2 and P4 be measured in all three models.
+
+Total cost across the geometry-causality experiment: about **$0.55**.
