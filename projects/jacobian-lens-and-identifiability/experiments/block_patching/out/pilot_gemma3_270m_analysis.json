@@ -16,5 +16,7 @@
  "self_patch_median": 1.0,
  "gate_pass": true,
  "verdict": "P1 NOT SUPPORTED in this model (no boundary discontinuity beyond the null)",
- "nperm": 1000
+ "nperm": 1000,
+ "beta_signed_exploratory": -0.0022809586090278833,
+ "p_signed_exploratory": 0.98
 }

@@ -40,15 +40,21 @@ def lens_source_layers(slug, n_lens):
         return list(range(n_lens))
 
 
-def beta_for(E, blk):
-    """OLS of E on per-distance dummies + crosses; returns beta (coef on crosses)."""
+def beta_for(E, blk, signed=False):
+    """OLS of E on per-distance dummies + crosses; returns beta (coef on crosses).
+
+    signed=False is the FROZEN confirmatory model (dummies on |i-j|). signed=True is an
+    exploratory robustness check using the signed offset i-j, because under full-residual
+    patching i>j (state re-processed by later layers) and i<j (layers skipped) are not
+    equivalent, and |i-j| conflates them."""
     L = E.shape[0]
     rows, y = [], []
     for i in range(L):
         for j in range(L):
             if i == j or not np.isfinite(E[i, j]):
                 continue
-            rows.append((abs(i - j), 1.0 if blk[i] != blk[j] else 0.0)); y.append(E[i, j])
+            dist = (i - j) if signed else abs(i - j)
+            rows.append((dist, 1.0 if blk[i] != blk[j] else 0.0)); y.append(E[i, j])
     y = np.array(y); dists = sorted({r[0] for r in rows})
     X = np.zeros((len(rows), len(dists) + 1))
     for k, (d, c) in enumerate(rows):
@@ -76,6 +82,7 @@ def main():
 
     blk = np.array([0 if i < b1 else (1 if i < b2 else 2) for i in range(L)])
     beta, n = beta_for(E, blk)
+    beta_signed, _ = beta_for(E, blk, signed=True)
 
     # random-3-segmentation null with the SAME block-size multiset
     rng = np.random.default_rng(a.seed)
@@ -89,6 +96,15 @@ def main():
         null.append(beta_for(E, rb)[0])
     null = np.array(null)
     p = float((np.abs(null) >= abs(beta)).mean())
+    null_s = []
+    rng2 = np.random.default_rng(a.seed + 1)
+    for _ in range(a.nperm):
+        perm = list(rng2.permutation(sizes)); cuts = np.cumsum(perm)[:2]
+        rb = np.array([0 if i < cuts[0] else (1 if i < cuts[1] else 2) for i in range(L)])
+        rb = np.roll(rb, rng2.integers(0, L))
+        null_s.append(beta_for(E, rb, signed=True)[0])
+    null_s = np.array(null_s)
+    p_signed = float((np.abs(null_s) >= abs(beta_signed)).mean())
 
     sp = r["self_patch_median"]
     gate = sp >= 0.9
@@ -98,6 +114,8 @@ def main():
     print(f"beta (cross-boundary effect, distance absorbed) = {beta:+.4f}")
     print(f"random-boundary null: mean {null.mean():+.4f}  sd {null.std():.4f}  "
           f"2-sided p = {p:.4f}  (nperm={a.nperm})")
+    print(f"[EXPLORATORY] signed-offset model: beta = {beta_signed:+.4f}  "
+          f"null sd {null_s.std():.4f}  p = {p_signed:.4f}")
     if not gate:
         verdict = "VOID (sanity gate failed)"
     elif beta < 0 and p < 0.05:
@@ -110,7 +128,8 @@ def main():
                                "fitted_sep": sep, "beta": beta, "p_perm": p,
                                "null_mean": float(null.mean()), "null_sd": float(null.std()),
                                "n_pairs": n, "self_patch_median": sp, "gate_pass": bool(gate),
-                               "verdict": verdict, "nperm": a.nperm}, indent=1))
+                               "verdict": verdict, "nperm": a.nperm, "beta_signed_exploratory": beta_signed,
+                               "p_signed_exploratory": p_signed}, indent=1))
     print("wrote", out)
 
 
