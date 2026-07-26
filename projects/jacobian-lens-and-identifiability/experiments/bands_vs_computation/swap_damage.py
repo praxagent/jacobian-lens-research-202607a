@@ -38,13 +38,17 @@ def main():
     ap.add_argument("--prompts", default=str(HERE / "prompts_frozen.json"))
     ap.add_argument("--out", required=True)
     ap.add_argument("--device", default="cpu")
+    # float32 everywhere by default, on GPU too: a bf16 precision floor manufactured a finding
+    # once already in this campaign (see ../geometry_causality/results.md), and D values here
+    # are small KLs where that floor would bite.
+    ap.add_argument("--dtype", default="float32", choices=["float32", "bfloat16"])
     a = ap.parse_args()
     import transformers
 
     tok = transformers.AutoTokenizer.from_pretrained(a.model)
     if tok.pad_token is None:
         tok.pad_token = tok.eos_token
-    dtype = torch.float32 if a.device == "cpu" else torch.bfloat16
+    dtype = getattr(torch, a.dtype)
     model = transformers.AutoModelForCausalLM.from_pretrained(
         a.model, torch_dtype=dtype).to(a.device).eval()
     layers = model.model.layers if hasattr(model, "model") else model.transformer.h

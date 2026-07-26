@@ -15,10 +15,56 @@ import torch
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
-ATLAS = ROOT / "experiments/jspace_atlas"
 sys.path.insert(0, str(ROOT))
-sys.path.insert(0, str(ATLAS))
 from common.cka import linear_cka                    # noqa: E402
+
+
+def fitted_seg(M):
+    """(b1, b2, within_mean - between_mean) for the best 3 contiguous segments.
+
+    Vendored verbatim from jspace_atlas/atlas_stage_a.py so this runner ships with no atlas
+    dependency chain: importing that module pulls in cka_layers, which is not needed here and
+    broke a pod run. Any change there must be mirrored here; the two are asserted equal by
+    test_fitted_seg_matches_atlas() below when both are importable.
+    """
+    L = M.shape[0]
+    S = M.cumsum(0).cumsum(1)
+
+    def block_sum(a, b):
+        t = S[b - 1, b - 1]
+        if a > 0:
+            t = t - S[a - 1, b - 1] - S[b - 1, a - 1] + S[a - 1, a - 1]
+        return t
+
+    best = (-1e9, 1, 2)
+    for b1 in range(2, L - 3):
+        for b2 in range(b1 + 2, L - 1):
+            score = 0.0
+            for a, b in ((0, b1), (b1, b2), (b2, L)):
+                nn = b - a
+                score += (block_sum(a, b) - nn) / max(nn * nn - nn, 1)
+            if score > best[0]:
+                best = (score, b1, b2)
+    _, b1, b2 = best
+    mask = np.ones((L, L), bool)
+    np.fill_diagonal(mask, False)
+    seg_id = np.zeros(L, int)
+    seg_id[b1:b2] = 1
+    seg_id[b2:] = 2
+    same = seg_id[:, None] == seg_id[None, :]
+    return b1, b2, float(M[mask & same].mean()) - float(M[mask & ~same].mean())
+
+
+def test_fitted_seg_matches_atlas(M):
+    """Assert the vendored copy agrees with the atlas original, when it can be imported."""
+    try:
+        sys.path.insert(0, str(ROOT / "experiments/jspace_atlas"))
+        from atlas_stage_a import fitted_seg as orig
+    except Exception as e:
+        return f"skipped ({type(e).__name__})"
+    a, b = fitted_seg(M), orig(M)
+    assert a[0] == b[0] and a[1] == b[1] and abs(a[2] - b[2]) < 1e-9, (a, b)
+    return "PASS"
 
 
 def band_sep(M):
@@ -44,11 +90,10 @@ def main():
     ap.add_argument("--device", default="cuda")
     a = ap.parse_args()
     import transformers
-    from atlas_stage_a import fitted_seg
 
     tok = transformers.AutoTokenizer.from_pretrained(a.model)
     model = transformers.AutoModelForCausalLM.from_pretrained(
-        a.model, torch_dtype=torch.bfloat16, output_hidden_states=True).to(a.device).eval()
+        a.model, torch_dtype=torch.bfloat16).to(a.device).eval()
 
     # same frozen prose prompts Test C uses, so the two tests share an input distribution
     texts = json.load(open(a.prompts))["prose"][:a.n_prompts]
@@ -56,7 +101,11 @@ def main():
     with torch.no_grad():
         for p in texts:
             ids = tok(p, return_tensors="pt").input_ids.to(a.device)
-            hs = model(ids).hidden_states               # tuple[L+1] of [1, seq, d]
+            # request on the FORWARD call, not the constructor: some architectures
+            # (qwen3.5's hybrid attention) silently ignore the config-time flag and return None
+            hs = model(ids, output_hidden_states=True).hidden_states
+            if hs is None:
+                raise SystemExit("hidden_states is None; this architecture needs another route")
             hh = [h[0].float().cpu() for h in hs]
             if acc is None:
                 acc = [[] for _ in hh]
@@ -86,6 +135,7 @@ def main():
             M[i, j] = M[j, i] = linear_cka(X[i], X[j])
     tri = M[np.triu_indices_from(M, 1)]
     b1, b2, sep = fitted_seg(M)
+    vendor_check = test_fitted_seg_matches_atlas(M)
 
     res = {"slug": a.slug, "model": a.model, "n_layers": L, "n_tokens": int(len(idx)),
            "n_prompts": len(texts),
@@ -99,6 +149,7 @@ def main():
            "act_mid_sep": float(band_sep(M)),
            "act_boundaries": [int(b1), int(b2)],
            "act_fitted_sep": float(sep),
+           "vendored_fitted_seg_check": vendor_check,
            "diag_ok": bool(np.allclose(np.diag(M), 1.0, atol=1e-4)),
            "degenerate": bool(np.median(tri) >= 0.999),
            "transformers": transformers.__version__, "torch": torch.__version__}
