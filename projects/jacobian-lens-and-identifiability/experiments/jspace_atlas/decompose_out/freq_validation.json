@@ -1,0 +1,12 @@
+{
+ "n_docs": 20000,
+ "n_tokens": 2903908,
+ "vocab": 256000,
+ "vocab_seen": 59798,
+ "corr_readout_vs_log_freq_all": -0.5498426311915089,
+ "corr_readout_vs_log_freq_seen_only": -0.590776558934536,
+ "corr_readout_vs_embed_norm_all": 0.48065374839517166,
+ "corr_readout_vs_embed_norm_seen_only": 0.4828071368346486,
+ "corr_logfreq_vs_embed_norm_seen_only": -0.279206106666788,
+ "frequency_beats_embed_norm": true
+}
