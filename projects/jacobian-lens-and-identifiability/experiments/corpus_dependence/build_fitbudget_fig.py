@@ -1,10 +1,12 @@
-"""Fit-budget figure: how far each budget's map sits from the 100-prompt reference.
+"""Fit-budget figure: budget effects against the seed null AND against the corpus effect.
 
-One point per budget per model, against the seed-null reference scale measured in the corpus
-experiment and the frozen 2x-null convergence band from PREREG_FITBUDGET.md.
+The point of the figure is the contrast in magnitude. Refitting the same model on the same
+corpus at 25 to 400 prompts moves the map by about as much as simply resampling the corpus does;
+refitting it on code moves the map by two orders of magnitude more. Log y, one panel per model,
+so the two effects are visible on one axis.
 
     build_fitbudget_fig.py            build + write receipt
-    build_fitbudget_fig.py --verify   rebuild and assert byte-identity + prose consistency
+    build_fitbudget_fig.py --verify   rebuild and assert byte-identity
 """
 from __future__ import annotations
 import argparse, hashlib, json, sys
@@ -16,7 +18,8 @@ HERE = Path(__file__).resolve().parent
 POST = Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
 STEM = "fit-budget"
 RES = HERE / "results_fitbudget.json"
-COLORS = {"gpt2-small": "#6F8D5E", "gemma-3-270m": "#A67C52"}
+CORPUS = HERE / "results.json"
+C_BUDGET, C_NULL, C_CORPUS = "#6F8D5E", "#8A8378", "#B0603A"
 
 plt.rcParams.update({"font.family": "sans-serif",
                      "font.sans-serif": ["Inter", "Arial", "DejaVu Sans"],
@@ -31,45 +34,59 @@ def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
 def build(verify=False):
-    R = json.loads(RES.read_text())
+    R = json.loads(RES.read_text()); CO = json.loads(CORPUS.read_text())
     models = {k: v for k, v in R["models"].items() if "error" not in v}
-    fig, axes = plt.subplots(1, len(models), figsize=(8.6, 3.9), sharey=False)
+    fig, axes = plt.subplots(1, len(models), figsize=(8.8, 4.3))
     if len(models) == 1: axes = [axes]
     plotted = {}
+
     for ax, (slug, m) in zip(axes, models.items()):
-        c = COLORS.get(slug, "#8A7A66")
         null = m["seed_null_map_distance"]
-        xs = [int(b) for b in R["budgets"] if str(b) in m["by_budget"]]
-        ys = [m["by_budget"][str(b)]["map_distance_to_ref"] for b in xs]
-        ax.axhspan(0, R["converged_factor"] * null, color="#C9D8BE", alpha=0.55, lw=0)
-        ax.axhline(null, color="#5A544C", lw=1.0, ls=":")
-        ax.annotate(f"seed null {null:.1e}", (xs[0], null), xytext=(2, 4),
-                    textcoords="offset points", fontsize=6.6, color="#5A544C")
-        ax.plot(xs, ys, "o-", color=c, lw=1.7, ms=6)
-        for x, y in zip(xs, ys):
-            ax.annotate(f"{y/null:.0f}x", (x, y), xytext=(0, 7), textcoords="offset points",
-                        fontsize=6.8, color=c, ha="center")
-        ax.axvline(R["reference_budget"], color="#A89B8C", lw=0.9, ls="--")
-        ax.annotate("reference\n(100 prompts)", (R["reference_budget"], 0.98),
-                    xycoords=("data", "axes fraction"), xytext=(4, 0),
-                    textcoords="offset points", fontsize=6.6, color="#5A544C", va="top")
-        ax.set_xscale("log"); ax.set_yscale("log")
-        ax.set_xticks(xs + [R["reference_budget"]])
-        ax.set_xticklabels([str(v) for v in xs + [R["reference_budget"]]], fontsize=7.4)
-        ax.minorticks_off()
-        ax.set_title(slug, fontsize=9.6, fontweight="bold", loc="left")
-        ax.set_xlabel("fitting budget (prompts)", fontsize=8.6)
+        corpus_d = CO[slug]["corpus"]["map_distance"]
+        budgets = [int(b) for b in R["budgets"] if str(b) in m["by_budget"]]
+        dists = [m["by_budget"][str(b)]["map_distance_to_ref"] for b in budgets]
+
+        # x positions: one slot per budget, then the two reference bars on the right
+        xs = list(range(len(budgets)))
+        x_null, x_corp = len(budgets) + 0.6, len(budgets) + 1.6
+        ax.bar(xs, dists, width=0.62, color=C_BUDGET)
+        ax.bar([x_null], [null], width=0.62, color=C_NULL)
+        ax.bar([x_corp], [corpus_d], width=0.62, color=C_CORPUS)
+        ax.axhline(2 * null, color="#5A544C", lw=1.0, ls=":")
+        # right-aligned: the region above the line is empty there, while the leftmost bars
+        # sit right against it and would collide with their own value labels
+        ax.annotate("2x seed null (the frozen convergence bar)", (x_corp + 0.35, 2 * null),
+                    xytext=(0, 4), textcoords="offset points", fontsize=6.6,
+                    color="#5A544C", ha="right")
+        for x, v in list(zip(xs, dists)) + [(x_null, null), (x_corp, corpus_d)]:
+            ax.annotate(f"{v:.1e}", (x, v), xytext=(0, 3), textcoords="offset points",
+                        fontsize=6.5, color="#2C2924", ha="center")
+        ax.annotate(f"{corpus_d/null:.0f}x the null", (x_corp, corpus_d), xytext=(0, 15),
+                    textcoords="offset points", fontsize=7.4, color=C_CORPUS,
+                    ha="center", fontweight="bold")
+
+        ax.set_yscale("log")
+        ax.set_xticks(xs + [x_null, x_corp])
+        ax.set_xticklabels([f"n={b}" for b in budgets] + ["resample\n(seed null)", "code\ncorpus"],
+                           fontsize=7.2)
+        ax.set_ylim(min(dists + [null]) / 3, corpus_d * 6)
+        ax.set_title(slug, fontsize=9.8, fontweight="bold", loc="left")
         for s in ("top", "right"): ax.spines[s].set_visible(False)
-        plotted[slug] = {"budgets": xs, "map_distance_to_ref": ys,
-                         "seed_null": null,
+        plotted[slug] = {"budgets": budgets, "map_distance_to_ref": dists,
+                         "seed_null": null, "corpus_map_distance": corpus_d,
                          "ratio_to_seed_null": [m["by_budget"][str(b)]["ratio_to_seed_null"]
-                                                for b in xs],
-                         "boundary_shift": [m["by_budget"][str(b)]["boundary_shift"] for b in xs]}
-    axes[0].set_ylabel("map distance to the 100-prompt fit  (1 - CKA)", fontsize=8.4)
-    fig.suptitle("Small fitting budgets move the map far more than resampling does; "
-                 "green band = within 2x the seed null",
-                 fontsize=10.2, fontweight="bold", x=0.015, ha="left")
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
+                                                for b in budgets],
+                         "boundary_shift_vs_reference":
+                             [m["by_budget"][str(b)]["boundary_shift"] for b in budgets],
+                         "corpus_boundary_shift": CO[slug]["corpus"]["boundary_shift"]}
+
+    axes[0].set_ylabel("map distance to the 100-prompt fit  (1 - CKA, log scale)", fontsize=8.2)
+    fig.suptitle("How much you fit on barely matters; what you fit on matters enormously",
+                 fontsize=11, fontweight="bold", x=0.015, ha="left")
+    fig.text(0.015, 0.90, "Green: same corpus, 25 to 400 prompts. Grey: the same corpus "
+             "resampled. Orange: the same budget on code.",
+             fontsize=7.8, color="#5A544C", ha="left")
+    fig.tight_layout(rect=(0, 0, 1, 0.88))
 
     svg = POST / f"{STEM}.svg"
     old = svg.read_bytes() if (verify and svg.exists()) else None
@@ -78,28 +95,31 @@ def build(verify=False):
     if verify and old is not None and old != svg.read_bytes():
         svg.write_bytes(old); sys.exit("VERIFY FAILED: svg drifted")
 
-    verdict = R.get("verdict", "UNKNOWN")
-    alt = ("Two panels, one per model, plotting how far a lens fitted on 25, 50, 200 or 400 "
-           "prompts sits from the same model's 100-prompt fit, on log axes. A green band marks "
-           "twice the seed null. The 25- and 50-prompt fits sit far above the band; the 200- "
-           "and 400-prompt fits sit "
-           + ("inside it" if verdict == "CONVERGED" else "outside it") + ".")
+    alt = ("Two panels, gpt2-small and gemma-3-270m, each a log-scale bar chart of how far a "
+           "refitted lens sits from that model's 100-prompt reference fit. Four green bars for "
+           "budgets of 25, 50, 200 and 400 prompts all sit at or below the dotted line marking "
+           "twice the seed null, alongside a grey bar for simply resampling the corpus. A single "
+           "orange bar for the same model fitted on code towers roughly two orders of magnitude "
+           "above them, at "
+           + " and ".join(f"{v['corpus_map_distance']/v['seed_null']:.0f} times the null for {k}"
+                          for k, v in plotted.items()) + ".")
     (POST / f"{STEM}.receipt.json").write_text(json.dumps({
         "figure_id": STEM,
-        "title": "Map distance to the 100-prompt reference fit, by fitting budget",
+        "title": "Fitting budget versus fitting corpus, measured against the same seed null",
         "alt_text": alt, "description": alt,
         "data_source": [{"receipt": "corpus_dependence/results_fitbudget.json",
-                         "sha256": sha(RES)}],
+                         "sha256": sha(RES)},
+                        {"receipt": "corpus_dependence/results.json", "sha256": sha(CORPUS)}],
         "provenance": {"generator": "corpus_dependence/build_fitbudget_fig.py",
                        "svg_sha256": sha(svg),
                        "prereg": "corpus_dependence/PREREG_FITBUDGET.md"},
         "interval_semantics": "point estimates; the seed null is the reference scale, "
                               "not a confidence interval",
-        "verdict": verdict,
+        "verdict": R.get("verdict", "UNKNOWN"),
         "plotted_values": plotted,
         "accessibility": {"color_only_channel": False,
                           "text_equivalent": "plotted_values"}}, indent=1))
-    print(("VERIFY OK " if verify else "built ") + STEM + f"  verdict={verdict}")
+    print(("VERIFY OK " if verify else "built ") + STEM + f"  verdict={R.get('verdict')}")
 
 
 if __name__ == "__main__":

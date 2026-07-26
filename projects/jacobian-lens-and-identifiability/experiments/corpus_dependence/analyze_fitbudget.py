@@ -28,7 +28,13 @@ BUDGETS = [25, 50, 200, 400]
 REFERENCE = 100                      # the corpus experiment's wiki_a fit
 CONVERGED_FACTOR = 2.0               # frozen: "within ~2x the seed null"
 
-from analyze import cka_from_grams, band_stats, fitted_boundaries  # noqa: E402
+# import THIS directory's analyze.py by path: geometry_causality/ has a same-named module
+# that runs work at import time, and it is earlier on sys.path.
+import importlib.util as _ilu  # noqa: E402
+_spec = _ilu.spec_from_file_location("cd_analyze", HERE / "analyze.py")
+_cd = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_cd)
+cka_from_grams, band_stats, fitted_boundaries = (_cd.cka_from_grams, _cd.band_stats,
+                                                 _cd.fitted_boundaries)
 
 
 def load_map(path: Path, Mprobe):

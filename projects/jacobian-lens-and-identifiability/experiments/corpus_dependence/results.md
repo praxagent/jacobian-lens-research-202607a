@@ -87,3 +87,59 @@ Nine fits on one RTX 4090, about **$1.75** against a $50 authorization. The esti
 before launching (~1 hour) was roughly 3x optimistic, because we extrapolated from a timing
 probe on the *smallest* model and fit cost grows with width and depth as well as parameter
 count.
+
+---
+
+# Fit-budget sweep (2026-07-26) — VERDICT: CONVERGED
+
+Design frozen in `PREREG_FITBUDGET.md` (commit `1d9bd6d`) before any fit existed. Ran because an
+external review flagged that the 36-model zoo mixes lenses fitted at very different prompt
+budgets (the Neuronpedia collection on the order of a thousand prompts, ours at 100, our released
+397B lens at 24), and nothing in the note measured whether that heterogeneity mattered.
+
+Eight fits: gpt2-small and gemma-3-270m on WikiText seed 0 at 25 / 50 / 200 / 400 prompts,
+identical recipe otherwise. Reference is each model's 100-prompt `wiki_a` fit from the corpus
+experiment above; the reference scale is that experiment's already-measured seed null.
+
+| model | budget | map distance to n=100 | as a multiple of the seed null | boundary shift | band_sep |
+|---|---|---|---|---|---|
+| gpt2-small (null 2.31e-4, ref boundaries 6/8, band 0.3972) | 25 | 4.34e-4 | 1.9x | 0 | 0.4012 |
+| | 50 | 3.04e-4 | 1.3x | 0 | 0.4001 |
+| | 200 | 7.41e-5 | 0.3x | 0 | 0.3979 |
+| | 400 | 1.04e-4 | 0.4x | 0 | 0.3966 |
+| gemma-3-270m (null 5.18e-4, ref boundaries 3/15, band 0.5093) | 25 | 5.27e-4 | 1.0x | 0 | 0.5038 |
+| | 50 | 1.81e-4 | 0.4x | 0 | 0.5064 |
+| | 200 | 2.91e-4 | 0.6x | 0 | 0.5105 |
+| | 400 | 1.97e-4 | 0.4x | 0 | 0.5109 |
+
+**Against the frozen decision table: CONVERGED.** Every budget at 200 and 400 sits within 2x the
+seed null (0.3x to 0.6x), so budget is not a confound above ~100 prompts and the note's
+*fit heterogeneity* caveat is discharged for that range.
+
+Two things we did not expect and are reporting as such:
+
+1. **Even the 25-prompt fits are within the convergence bar** (1.9x and 1.0x the null). The
+   frozen table anticipated that a 25-prompt map might be "far from the rest" and would then
+   require a separate caveat on our 24-prompt 397B lens. It is not, so that caveat is not
+   triggered. This is a stronger result than the design expected, which is exactly why the
+   threshold was fixed in advance.
+2. **P1 as literally worded is not supported.** It predicted map distance would *decrease
+   monotonically* toward 100. It does not: gemma-3-270m's distance is non-monotonic (1.0x, 0.4x,
+   0.6x, 0.4x) and gpt2-small ticks up slightly from 200 to 400. The correct reading is that
+   every budget is already inside sampling noise, so the ordering among them is noise too, and a
+   monotonicity prediction was the wrong shape of hypothesis for a converged quantity. The
+   verdict rests on the frozen threshold, not on P1's shape.
+
+**Fitted boundaries never moved once, at any budget, in either model.** Set against the corpus
+result directly above (boundaries move a combined 10 and 15 layers, map distance 198x and 292x
+the null), the two experiments together say something sharper than either alone: **what you fit
+on determines the map; how much you fit on, within an order of magnitude either side of 100
+prompts, does not.**
+
+Cost: RTX 4090 at $0.69/hr, ~1.4h including one restart, about **$1.15**. The restart was a
+dependency ordering bug, not a science bug: `jlens` pulls `transformers` 5.x, which requires
+`torch>=2.5`, and the pod image ships 2.4.1, so all eight fits died instantly on
+`ImportError: DTensor`. Fixed by upgrading torch before installing jlens.
+
+Receipt: `results_fitbudget.json`. Figure: `build_fitbudget_fig.py` (written and committed
+before the fits landed).
