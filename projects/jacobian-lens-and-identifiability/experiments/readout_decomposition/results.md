@@ -69,3 +69,34 @@ which given our corpus-dependence result is worth stating rather than glossing.
 ## Cost
 
 One RTX 3090 for the forward passes, about **$0.10**; everything else local and free.
+
+---
+
+## Direction 3 identified: an orthographic axis, not a prior
+
+We decoded all four directions to tokens, which we had only ever done for the top one.
+
+**Directions 0, 1 and 2 are the same kind of object.** All three share a positive pole of rare
+multilingual tokens and `<unused>` slots (`miniaturka`, `收納`, `剪影`, `стоковая`) against a
+negative pole of common function words. That matches their near-identical regression fits
+(adj `R^2` 0.572, 0.559, 0.593) and confirms they are variants of one prior-like axis.
+
+**Direction 3 is not.** Its poles are:
+
+| pole | tokens |
+|---|---|
+| + | `.` `,` `.[` `;` `.",` `..` `!.` `.,` `,.` — ordinary sentence punctuation |
+| - | `` `―` `‐` `„` `ﬂ` `‗` `∼` `ﬁrst` `` `` `‟` `` — private-use-area glyphs and typographic ligatures |
+
+The negative pole is Symbol/Wingdings private-use codepoints and ligatures (`ﬂ`, `ﬁrst`), which
+are the characteristic residue of **PDF-extracted or OCR'd text**. So the fourth component of the
+invariant readout subspace is an **orthographic / text-encoding axis**: clean typed punctuation
+at one end, extraction artifacts at the other.
+
+This also explains why our feature set failed on it (`R^2` 0.330, model prior 0.034). Our
+`is_punct` feature tested only ASCII punctuation, so it captured the positive pole and missed the
+negative one entirely, and nothing in the seven features encoded "private-use glyph or ligature".
+The direction was not unexplainable, it was **unmeasured by the features we chose**.
+
+The invariant subspace is therefore: three prior-like components carrying ~70% of the readout
+energy, plus at least one orthographic component carrying ~4%. Free to run; no GPU.
