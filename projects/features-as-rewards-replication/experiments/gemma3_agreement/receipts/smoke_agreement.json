@@ -1,0 +1,230 @@
+{
+ "what": "Gemma-3-12B label-free reader-agreement (frozen README design); SCORE AGREEMENT ONLY -- correlated readers may agree for reasons unrelated to hallucination (I05); no detection-validity claim",
+ "model": "gpt2",
+ "primary_layer": 6,
+ "head_layer": 12,
+ "n_completions": 4,
+ "n_spans": 19,
+ "gen": {
+  "greedy": true,
+  "seed": 0,
+  "max_new_tokens": 768
+ },
+ "extractor": "regex (smoke)",
+ "spearman": {
+  "logit_lens": {
+   "logit_lens": 1.0,
+   "native_head": 0.637,
+   "random_null": 0.13,
+   "heuristic": -0.019
+  },
+  "native_head": {
+   "logit_lens": 0.637,
+   "native_head": 1.0,
+   "random_null": 0.056,
+   "heuristic": -0.344
+  },
+  "random_null": {
+   "logit_lens": 0.13,
+   "native_head": 0.056,
+   "random_null": 1.0,
+   "heuristic": 0.365
+  },
+  "heuristic": {
+   "logit_lens": -0.019,
+   "native_head": -0.344,
+   "random_null": 0.365,
+   "heuristic": 1.0
+  }
+ },
+ "top_decile_overlap": {
+  "logit_lens": {
+   "logit_lens": 1.0,
+   "native_head": 1.0,
+   "random_null": 1.0,
+   "heuristic": 0.0
+  },
+  "native_head": {
+   "logit_lens": 1.0,
+   "native_head": 1.0,
+   "random_null": 1.0,
+   "heuristic": 0.0
+  },
+  "random_null": {
+   "logit_lens": 1.0,
+   "native_head": 1.0,
+   "random_null": 1.0,
+   "heuristic": 0.0
+  },
+  "heuristic": {
+   "logit_lens": 0.0,
+   "native_head": 0.0,
+   "random_null": 0.0,
+   "heuristic": 1.0
+  }
+ },
+ "per_span": [
+  {
+   "cid": "g3:0",
+   "entity": "The Marshmallow",
+   "logit_lens": 6.79362678527832,
+   "native_head": 4.972192764282227,
+   "random_null": 25.531394958496094,
+   "heuristic": 5.0656849797248675
+  },
+  {
+   "cid": "g3:0",
+   "entity": " Experiment",
+   "logit_lens": 16.254451751708984,
+   "native_head": 4.483007907867432,
+   "random_null": 25.55743980407715,
+   "heuristic": 3.833213344056216
+  },
+  {
+   "cid": "g3:0",
+   "entity": " Walter Mischel",
+   "logit_lens": 11.499842643737793,
+   "native_head": 5.599605560302734,
+   "random_null": 26.362695693969727,
+   "heuristic": 5.833213344056217
+  },
+  {
+   "cid": "g3:0",
+   "entity": " Marshmallow Company",
+   "logit_lens": 9.079852104187012,
+   "native_head": 1.4564975500106812,
+   "random_null": 24.327850341796875,
+   "heuristic": 5.296734039911517
+  },
+  {
+   "cid": "g3:0",
+   "entity": " He",
+   "logit_lens": 4.118830680847168,
+   "native_head": 1.9639596939086914,
+   "random_null": 26.605234146118164,
+   "heuristic": 3.833213344056216
+  },
+  {
+   "cid": "g3:0",
+   "entity": " Marshmallow Effect",
+   "logit_lens": 8.183609008789062,
+   "native_head": 1.8516193628311157,
+   "random_null": 27.762983322143555,
+   "heuristic": 5.161579003875461
+  },
+  {
+   "cid": "g3:0",
+   "entity": " Effect",
+   "logit_lens": 5.5869646072387695,
+   "native_head": 2.6033759117126465,
+   "random_null": 27.446626663208008,
+   "heuristic": 3.4277482359480516
+  },
+  {
+   "cid": "g3:0",
+   "entity": "The Marsh",
+   "logit_lens": 10.190032958984375,
+   "native_head": 7.134854316711426,
+   "random_null": 25.511783599853516,
+   "heuristic": 4.0284943878391655
+  },
+  {
+   "cid": "g3:1",
+   "entity": "If",
+   "logit_lens": 8.571414947509766,
+   "native_head": 5.615967273712158,
+   "random_null": 19.43075180053711,
+   "heuristic": 3.1400661634962708
+  },
+  {
+   "cid": "g3:1",
+   "entity": " French Revolution",
+   "logit_lens": 4.595419406890869,
+   "native_head": 3.7242519855499268,
+   "random_null": 21.528186798095703,
+   "heuristic": 4.427748235948052
+  },
+  {
+   "cid": "g3:1",
+   "entity": "The French",
+   "logit_lens": 7.877353668212891,
+   "native_head": 1.5390281677246094,
+   "random_null": 20.027862548828125,
+   "heuristic": 4.283907199722162
+  },
+  {
+   "cid": "g3:1",
+   "entity": " Revolution",
+   "logit_lens": 0.2319694608449936,
+   "native_head": 1.1029890775680542,
+   "random_null": 22.38520622253418,
+   "heuristic": 3.4277482359480516
+  },
+  {
+   "cid": "g3:1",
+   "entity": " History",
+   "logit_lens": 5.7297468185424805,
+   "native_head": 1.1310498714447021,
+   "random_null": 22.445144653320312,
+   "heuristic": 3.833213344056216
+  },
+  {
+   "cid": "g3:1",
+   "entity": " Jean",
+   "logit_lens": 9.733439445495605,
+   "native_head": 2.9247384071350098,
+   "random_null": 19.503725051879883,
+   "heuristic": 3.833213344056216
+  },
+  {
+   "cid": "g3:1",
+   "entity": "Jacques Rousseau",
+   "logit_lens": 2.8356926441192627,
+   "native_head": 0.6729104518890381,
+   "random_null": 19.77588653564453,
+   "heuristic": 6.833213344056216
+  },
+  {
+   "cid": "g3:1",
+   "entity": " 1789",
+   "logit_lens": 8.101320266723633,
+   "native_head": 0.6170220375061035,
+   "random_null": 20.42617416381836,
+   "heuristic": 4.833213344056216
+  },
+  {
+   "cid": "g3:2",
+   "entity": "If",
+   "logit_lens": 8.571414947509766,
+   "native_head": 5.615967273712158,
+   "random_null": 19.43075180053711,
+   "heuristic": 3.1400661634962708
+  },
+  {
+   "cid": "g3:3",
+   "entity": "If",
+   "logit_lens": 8.571414947509766,
+   "native_head": 5.615967273712158,
+   "random_null": 19.43075180053711,
+   "heuristic": 3.1400661634962708
+  },
+  {
+   "cid": "g3:3",
+   "entity": " Sikh",
+   "logit_lens": 17.48686408996582,
+   "native_head": 9.269078254699707,
+   "random_null": 34.23441696166992,
+   "heuristic": 3.833213344056216
+  }
+ ],
+ "args": {
+  "smoke": true,
+  "n": 300,
+  "device": "cpu",
+  "primary_layer": null,
+  "sae_path": null,
+  "sae_format": "gemmascope",
+  "out": "/home/ubuntu/PRAX/research-and-replications/projects/features-as-rewards-replication/experiments/gemma3_agreement/receipts/smoke_agreement.json"
+ },
+ "seconds": 45.3
+}
