@@ -1,0 +1,46 @@
+{
+ "n": 10,
+ "note": "single-token answers verified per model at run time; a prompt whose answer is not a single token in a given tokenizer is dropped FOR THAT MODEL and the drop is recorded in that model's receipt",
+ "prompts": [
+  {
+   "prompt": "The capital city of France is called",
+   "answer": " Paris"
+  },
+  {
+   "prompt": "The capital city of Japan is called",
+   "answer": " Tokyo"
+  },
+  {
+   "prompt": "The capital city of Italy is called",
+   "answer": " Rome"
+  },
+  {
+   "prompt": "The largest planet in our solar system is called",
+   "answer": " Jupiter"
+  },
+  {
+   "prompt": "The chemical symbol for water is H2",
+   "answer": "O"
+  },
+  {
+   "prompt": "The first President of the United States was George",
+   "answer": " Washington"
+  },
+  {
+   "prompt": "The language mainly spoken in Brazil is",
+   "answer": " Portuguese"
+  },
+  {
+   "prompt": "The ocean between Europe and North America is the",
+   "answer": " Atlantic"
+  },
+  {
+   "prompt": "The currency used in Japan is the",
+   "answer": " yen"
+  },
+  {
+   "prompt": "The scientist who developed the theory of relativity was Albert",
+   "answer": " Einstein"
+  }
+ ]
+}

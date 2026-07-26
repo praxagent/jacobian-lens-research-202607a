@@ -25,6 +25,16 @@
   2
  ],
  "act_fitted_sep": 0.6695740414517266,
+ "std_act_offdiag_median": 0.6565152704715729,
+ "std_act_offdiag_min": 0.4876500070095062,
+ "std_act_range": 0.3438246548175812,
+ "std_act_mid_sep": 0.0713430903851986,
+ "std_act_boundaries": [
+  1,
+  2
+ ],
+ "std_boundary_shift_lens_vs_act": 0,
+ "act_range": 0.9036824330687523,
  "vendored_fitted_seg_check": "PASS",
  "diag_ok": true,
  "degenerate": false,

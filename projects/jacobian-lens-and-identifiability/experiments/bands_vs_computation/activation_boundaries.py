@@ -129,13 +129,25 @@ def main():
     X = [stacked[l + 1][idx].astype(np.float32) for l in lens_layers]
     L = len(X)
 
-    M = np.eye(L)
-    for i in range(L):
-        for j in range(i + 1, L):
-            M[i, j] = M[j, i] = linear_cka(X[i], X[j])
+    def cka_map(feats):
+        n_ = len(feats); Mm = np.eye(n_)
+        for i in range(n_):
+            for j in range(i + 1, n_):
+                Mm[i, j] = Mm[j, i] = linear_cka(feats[i], feats[j])
+        return Mm
+
+    M = cka_map(X)
     tri = M[np.triu_indices_from(M, 1)]
     b1, b2, sep = fitted_seg(M)
     vendor_check = test_fitted_seg_matches_atlas(M)
+
+    # PREREG_B2 robustness check: linear CKA is invariant to isotropic scaling but NOT to
+    # per-dimension scaling, so residual-norm growth can inflate it toward 1 without the
+    # representations being alike. Standardise each layer per dimension and re-measure.
+    Xs = [(x - x.mean(0)) / np.where(x.std(0) > 1e-8, x.std(0), 1.0) for x in X]
+    Ms = cka_map(Xs)
+    tris = Ms[np.triu_indices_from(Ms, 1)]
+    sb1, sb2, ssep = fitted_seg(Ms)
 
     res = {"slug": a.slug, "model": a.model, "n_layers": L, "n_tokens": int(len(idx)),
            "n_prompts": len(texts),
@@ -149,17 +161,26 @@ def main():
            "act_mid_sep": float(band_sep(M)),
            "act_boundaries": [int(b1), int(b2)],
            "act_fitted_sep": float(sep),
+           "std_act_offdiag_median": float(np.median(tris)),
+           "std_act_offdiag_min": float(tris.min()),
+           "std_act_range": float(tris.max() - tris.min()),
+           "std_act_mid_sep": float(band_sep(Ms)),
+           "std_act_boundaries": [int(sb1), int(sb2)],
+           "std_boundary_shift_lens_vs_act": int(abs(lens_b[0] - int(sb1))
+                                                 + abs(lens_b[1] - int(sb2))),
+           "act_range": float(tri.max() - tri.min()),
            "vendored_fitted_seg_check": vendor_check,
            "diag_ok": bool(np.allclose(np.diag(M), 1.0, atol=1e-4)),
            "degenerate": bool(np.median(tri) >= 0.999),
            "transformers": transformers.__version__, "torch": torch.__version__}
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-    np.savez_compressed(a.out + ".npz", cka=M)
+    np.savez_compressed(a.out + ".npz", cka=M, cka_standardised=Ms)
     Path(a.out + ".json").write_text(json.dumps(res, indent=1))
     print(f"ACTB {a.slug}: L={L} lens_b={lens_b} act_b={res['act_boundaries']} "
           f"shift={res['boundary_shift_lens_vs_act']} "
           f"mid_sep={res['act_mid_sep']:+.4f} offdiag_median={res['act_offdiag_median']:.4f} "
-          f"diag_ok={res['diag_ok']} degenerate={res['degenerate']}", flush=True)
+          f"range={res['act_range']:.4f} | std: b={res['std_act_boundaries']} "
+          f"range={res['std_act_range']:.4f} mid_sep={res['std_act_mid_sep']:+.4f}", flush=True)
 
 
 if __name__ == "__main__":
