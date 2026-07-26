@@ -83,8 +83,9 @@ def build(verify=False):
     axes[0].set_ylabel("map distance to the 100-prompt fit  (1 - CKA, log scale)", fontsize=8.2)
     fig.suptitle("How much you fit on barely matters; what you fit on matters enormously",
                  fontsize=11, fontweight="bold", x=0.015, ha="left")
-    fig.text(0.015, 0.90, "Green: same corpus, 25 to 400 prompts. Grey: the same corpus "
-             "resampled. Orange: the same budget on code.",
+    allb = sorted({b for v in plotted.values() for b in v["budgets"]})
+    fig.text(0.015, 0.90, f"Green: same corpus, {allb[0]} to {allb[-1]} prompts. Grey: the same "
+             "corpus resampled. Orange: the same budget on code.",
              fontsize=7.8, color="#5A544C", ha="left")
     fig.tight_layout(rect=(0, 0, 1, 0.88))
 
@@ -95,9 +96,10 @@ def build(verify=False):
     if verify and old is not None and old != svg.read_bytes():
         svg.write_bytes(old); sys.exit("VERIFY FAILED: svg drifted")
 
+    blist = ", ".join(str(b) for b in allb[:-1]) + f" and {allb[-1]}"
     alt = ("Two panels, gpt2-small and gemma-3-270m, each a log-scale bar chart of how far a "
-           "refitted lens sits from that model's 100-prompt reference fit. Four green bars for "
-           "budgets of 25, 50, 200 and 400 prompts all sit at or below the dotted line marking "
+           f"refitted lens sits from that model's 100-prompt reference fit. {len(allb)} green "
+           f"bars for budgets of {blist} prompts all sit at or below the dotted line marking "
            "twice the seed null, alongside a grey bar for simply resampling the corpus. A single "
            "orange bar for the same model fitted on code towers roughly two orders of magnitude "
            "above them, at "

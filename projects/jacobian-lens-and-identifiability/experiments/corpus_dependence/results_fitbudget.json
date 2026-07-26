@@ -4,7 +4,8 @@
   25,
   50,
   200,
-  400
+  400,
+  1000
  ],
  "converged_factor": 2.0,
  "models": {
@@ -61,10 +62,21 @@
      ],
      "band_sep": 0.3966,
      "ratio_to_seed_null": 0.4492496250519378
+    },
+    "1000": {
+     "map_distance_to_ref": 9.382582076811197e-05,
+     "boundary_shift": 0,
+     "band_shift": 0.00036429144286864723,
+     "boundaries": [
+      6,
+      8
+     ],
+     "band_sep": 0.3969,
+     "ratio_to_seed_null": 0.4058769542758203
     }
    },
    "converged": true,
-   "still_falling_at_400": false,
+   "still_falling_at_top": false,
    "low_budget_far": false
   },
   "gemma-3-270m": {
@@ -120,10 +132,21 @@
      ],
      "band_sep": 0.5109,
      "ratio_to_seed_null": 0.3800098735038588
+    },
+    "1000": {
+     "map_distance_to_ref": 0.00018124225207694078,
+     "boundary_shift": 0,
+     "band_shift": 0.0053087922537493615,
+     "boundaries": [
+      3,
+      15
+     ],
+     "band_sep": 0.5147,
+     "ratio_to_seed_null": 0.3498526735363561
     }
    },
    "converged": true,
-   "still_falling_at_400": true,
+   "still_falling_at_top": false,
    "low_budget_far": false
   }
  },

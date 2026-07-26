@@ -107,13 +107,15 @@ experiment above; the reference scale is that experiment's already-measured seed
 | | 50 | 3.04e-4 | 1.3x | 0 | 0.4001 |
 | | 200 | 7.41e-5 | 0.3x | 0 | 0.3979 |
 | | 400 | 1.04e-4 | 0.4x | 0 | 0.3966 |
+| | **1000** | **9.42e-5** | **0.4x** | **0** | **0.3969** |
 | gemma-3-270m (null 5.18e-4, ref boundaries 3/15, band 0.5093) | 25 | 5.27e-4 | 1.0x | 0 | 0.5038 |
 | | 50 | 1.81e-4 | 0.4x | 0 | 0.5064 |
 | | 200 | 2.91e-4 | 0.6x | 0 | 0.5105 |
 | | 400 | 1.97e-4 | 0.4x | 0 | 0.5109 |
+| | **1000** | **1.81e-4** | **0.3x** | **0** | **0.5147** |
 
-**Against the frozen decision table: CONVERGED.** Every budget at 200 and 400 sits within 2x the
-seed null (0.3x to 0.6x), so budget is not a confound above ~100 prompts and the note's
+**Against the frozen decision table: CONVERGED.** Every budget at 200 and above sits within 2x
+the seed null (0.3x to 0.6x), so budget is not a confound above ~100 prompts and the note's
 *fit heterogeneity* caveat is discharged for that range.
 
 Two things we did not expect and are reporting as such:
@@ -143,3 +145,34 @@ dependency ordering bug, not a science bug: `jlens` pulls `transformers` 5.x, wh
 
 Receipt: `results_fitbudget.json`. Figure: `build_fitbudget_fig.py` (written and committed
 before the fits landed).
+
+## Amendment 1 run (2026-07-26): 1,000 prompts — VERDICT UNCHANGED, CONVERGED
+
+Frozen in `PREREG_FITBUDGET.md` Amendment 1 (commit `e09bb2e`) before the fits, and explicitly
+disclosed there as **not blind**: the 25/50/200/400 results had been fully inspected first.
+
+The original sweep stopped at 400 prompts, which discharged the fit-heterogeneity caveat over a
+range that **excludes the budget the public lenses actually use**. The Neuronpedia collection
+fits on the order of a thousand WikiText prompts, and those lenses are 35 of the 36 rows in our
+zoo, so a discharge that stops at 400 does not cover the population the caveat was raised about.
+
+Two fits at n=1,000, same recipe, same reference, same analyzer, threshold deliberately
+unchanged at 2x the seed null. Results are folded into the table above:
+
+- gpt2-small: map distance **9.42e-5**, **0.4x** the seed null, boundaries unmoved at 6/8.
+- gemma-3-270m: map distance **1.81e-4**, **0.3x** the seed null, boundaries unmoved at 3/15.
+
+Both are comfortably inside the bar, so the verdict stands and now covers the range the public
+lenses occupy. Across all five budgets (25 to 1,000, a **40-fold** span) neither model's fitted
+boundaries moved a single layer, and no budget exceeded 1.9x the seed null.
+
+We had pre-committed that a miss here would **withdraw** the note's discharge of the caveat and
+force us to report that the public lenses sit in a regime our own fits never reach. It did not
+miss, but the commitment is on the record either way.
+
+Residual scope, unchanged and still worth stating: two small models, one corpus, one seed. The
+sweep says budget does not matter for these two models on WikiText; it does not say budget cannot
+matter for a 70B model or on a different distribution.
+
+Cost: RTX A5000 at $0.27/hr, ~2.75h, about **$0.74**. Running total for the fit-budget question,
+both runs, about **$1.89**.

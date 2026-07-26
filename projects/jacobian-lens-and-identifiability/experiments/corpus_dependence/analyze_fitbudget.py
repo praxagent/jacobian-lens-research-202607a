@@ -116,7 +116,7 @@ def main():
                 print(f"   n={n:<4d} map_dist={r['map_distance_to_ref']:.6f} "
                       f"({r['ratio_to_seed_null']:6.1f}x null)  bshift={r['boundary_shift']:<3d} "
                       f"band={r['band_sep']:.4f}  boundaries={r['boundaries']}", flush=True)
-            print(f"   -> converged at 200/400: {m['converged']};  "
+            print(f"   -> converged at {'/'.join(str(b) for b in HIGH)}: {m['converged']};  "
                   f"25-prompt far: {m['low_budget_far']}", flush=True)
         except Exception as e:
             print(f"{slug}: FAILED {type(e).__name__}: {str(e)[:160]}", flush=True)
