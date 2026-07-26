@@ -1,0 +1,164 @@
+# Results: two tests of what the J-space depth bands are
+
+Design frozen in [`PREREG.md`](PREREG.md) (commit `98b1503`) before any data, with Amendment 1
+(index alignment for Test B) frozen after a mechanical CPU smoke and before any Test B statistic.
+
+Both tests returned the outcome we predicted in advance, and both predictions were the ones that
+cost us more. Neither is a positive result. Together they close one door we had left open and
+tighten what the atlas can be said to be.
+
+---
+
+# Test B: lens boundaries do NOT track activation boundaries
+
+**Frozen verdict: BANDS ARE A READOUT PROPERTY.**
+
+| model | L | lens boundaries | activation boundaries | agreement | null median | p |
+|---|---|---|---|---|---|---|
+| pythia-70m-deduped | 5 | 1 / 2 | 1 / 2 | **0** | 2.0 | 0.318 |
+| qwen3.5-0.8b | 23 | 7 / 15 | 6 / 11 | 5 | 6.0 | 0.307 |
+| gemma-3-270m | 17 | 3 / 15 | 12 / 14 | 10 | 10.0 | 0.680 |
+| gemma-2-9b | 41 | 5 / 19 | 15 / 23 | 14 | 14.0 | 0.814 |
+| gemma-2-2b | 25 | 2 / 4 | 19 / 21 | 34 | 19.0 | 1.000 |
+
+Pooled mean normalised agreement **0.501** against a null median of **0.459**: the lens
+boundaries are, if anything, marginally *worse* than a random segmentation of the same block
+sizes at landing where the activations reorganise. **p = 0.608**, and only 2 of 5 usable models
+beat their own null median, neither significantly.
+
+**Anchor gate: PASS, but barely.** gemma-2-9b's activation band separation came back **+0.0812**
+against the previously measured +0.110, a difference of 0.0288 against a tolerance of 0.030. It
+passes the frozen gate with 4% of the tolerance to spare. We are reporting that margin rather
+than just the word PASS, because a gate that squeaks through is weaker evidence of pipeline
+health than one that clears comfortably, and this run uses 48 prompts where the original used
+more.
+
+## Three models excluded, and this compromised the design
+
+`gpt2-small`, `qwen3-4b` and `llama3.1-8b` produced **degenerate** activation maps: off-diagonal
+CKA medians of 0.9993, 0.9990 and 0.9998. Under linear CKA on 4,096 sampled token positions,
+their raw activations are very nearly indistinguishable from one layer to the next, so there is
+no activation structure for lens boundaries to agree or disagree with. The frozen sanity gate
+excludes them, and we followed it.
+
+**This is a flaw in our own decision rule and we are stating it plainly.** The positive verdict
+required "pooled `p < 0.05` **and** at least 6 of 8 models individually beating their own null
+median". With three models excluded, only five remained, so **BANDS TRACK REPRESENTATIONS became
+unreachable regardless of the data**. A frozen rule that can only return one of its outcomes is
+not a test.
+
+Two things keep this from invalidating the result. First, the pooled `p` of 0.608 is nowhere near
+0.05, so the null verdict is carried by the p-criterion alone and does not depend on the broken
+clause. Second, the direction of the point estimate is *away* from agreement, not toward it. But
+a reader should treat the verdict as "the data show no agreement" and not as "the frozen test
+was passed cleanly", because it was not.
+
+## What this does and does not say
+
+**Says:** on the models where activation CKA has any dynamic range, the depth boundaries fitted
+to the *lens* do not mark where the *representations* reorganise. Combined with the earlier
+gemma-2-9b dissociation, that supports reading the atlas as a map of the model's first-order
+**output linearization** rather than of its representational depth organisation.
+
+**Does not say:** that the bands are meaningless. Agreement between two descriptive maps was
+never going to establish causation, and a disagreement does not establish absence. It also does
+not say activations lack depth structure in general; in three models our own instrument could
+not resolve any, which is a limitation of linear CKA on raw activations as much as a fact about
+those models.
+
+---
+
+# Test C: the corpus-instability rescue fails
+
+**Frozen verdict: NO PURCHASE.**
+
+The idea under test was ours, and it was the most promising door left open: because fitted
+boundaries move up to a combined fifteen layers with the fitting corpus, every earlier causal
+test had large measurement error in its independent variable, which would attenuate a real
+effect toward null. If so, boundaries fitted on the corpus the damage is measured on should
+predict that damage better than boundaries fitted on the other corpus.
+
+They do not.
+
+| model | damage corpus | matched beta | mismatched beta | gates |
+|---|---|---|---|---|
+| gpt2-small **(control)** | prose | -0.2211 | -0.2211 | PASS |
+| gpt2-small **(control)** | code | -0.1953 | -0.1953 | PASS |
+| gemma-3-270m | prose | -0.8262 | -0.4160 | PASS |
+| gemma-3-270m | code | -0.9271 | -1.4180 | **FAIL** (median D 6.81, band is [0.05, 5.0]) |
+| qwen3.5-0.8b | prose | -0.3727 | -0.5395 | PASS |
+| qwen3.5-0.8b | code | -0.2420 | +0.1494 | PASS |
+
+- **C1 (does any segmentation predict damage?): no.** Pooled matched `beta` = **-0.464**, i.e.
+  cross-boundary pairs suffer *less* damage than within-block pairs, the opposite of the
+  direction three earlier rounds predicted. No individual cell reaches significance against its
+  own random-segmentation null; the smallest p is 0.160.
+- **C2 (does the fitting corpus matter?): no.** Pooled matched-minus-mismatched = **-0.036**,
+  essentially zero and the wrong sign. Boundaries fitted on code predict damage on prose about as
+  well as boundaries fitted on prose do, which is to say neither predicts it.
+
+**The mechanical control did its job.** gpt2-small's WikiText and code lenses fit identical
+boundaries (6/8), so its matched and mismatched arms are the same regression by construction and
+its C2 must be exactly zero. It came out **exactly 0.0**, to floating point. The pipeline is
+doing what it claims.
+
+**One cell is out of dynamic range and we are not using it.** gemma-3-270m's damage on code has
+median `D` of 6.81 nats against a frozen calibration band of [0.05, 5.0]: swapping activations
+between layers of a 270m model on code is a saturating intervention. That cell is reported and
+excluded from interpretation, which is what the frozen gate requires.
+
+## Honest reading
+
+We wrote in the pre-registration, before running, that this test is underpowered by construction:
+two contrast models, both small, both with lopsided fitted blocks, in exactly the setting the v1
+post-mortem identified as weak for detecting a boundary. We committed to calling a null here
+**weak evidence**, and we are doing that.
+
+But C2 is the part that was well identified. It is a within-model paired contrast where model,
+layer, position, distance and prompts are literally identical across arms, and only the
+segmentation label changes. A large effect would have shown up even here, and what we see is
+-0.036 with the sign against us. The corpus-instability explanation for the block campaign's
+nulls is not supported.
+
+---
+
+# Where this leaves the block question
+
+Adding these two to the three earlier designs: **five designs, eleven models, no evidence that
+J-space depth bands partition computation**, and now direct evidence that the bands do not track
+where representations reorganise either.
+
+The published position moves from *inconclusive* toward *negative*, but not all the way, and the
+reason is specific rather than hedging: Test B's frozen rule could not have returned a positive
+once three models were excluded, and Test C was underpowered by its own pre-registration. What
+we can now say is stronger than before and still bounded:
+
+> The depth bands are a well-replicated description of the **first-order readout geometry**. They
+> are not a map of representational reorganisation, and five increasingly careful attempts have
+> failed to show them partitioning computation. We think the most likely account is that the
+> atlas describes how the output linearization rotates with depth, which is a real and useful
+> thing to have mapped, and is not the same thing as a computational stage.
+
+We are stopping here. The remaining ideas we can think of (ignition-depth alignment, routing
+alignment in MoE models) test different constructs rather than repairing this one.
+
+## Cost
+
+Test B: 8 models, forward passes only, RTX A6000 at $0.53/hr, about **$1.10** including three
+environment failures documented below. Test C: ran on the same warm pod, marginal cost ~**$0.10**.
+
+## What went wrong on the way, for the next person
+
+1. **`atlas_stage_a` imports `cka_layers`.** The local CPU smoke passed because both live in the
+   same directory here; shipping only the one file broke every model on the pod. `fitted_seg` is
+   now vendored into the runner with an assert that it stays identical to the atlas original.
+2. **qwen3.5 silently ignores `output_hidden_states` at construction** and returns `None`. The
+   flag now goes on the forward call, and a `None` raises immediately instead of crashing three
+   lines later in a list comprehension.
+3. **The `DTensor` trap, hit for the second time in one day.** `pip install -U transformers`
+   pulls 5.x, which needs torch >= 2.5, onto an image shipping 2.4.1. It is written down in our
+   own checkpoint file and we still did it. Upgrade torch first.
+4. **Test C could not run on this box at all.** 7.6GB RAM with 5GB already in use, against a
+   617MB logits tensor per forward pass and 145 passes per cell. It died silently because the
+   launching command piped through `tail`, which buffers until exit. Moved to the warm GPU pod,
+   where all six cells took minutes.

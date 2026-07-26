@@ -1,0 +1,39 @@
+{
+ "slug": "gpt2-small",
+ "model": "openai-community/gpt2",
+ "n_layers": 11,
+ "n_tokens": 2996,
+ "n_prompts": 48,
+ "lens_layers": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "lens_boundaries": [
+  2,
+  4
+ ],
+ "alignment": "activation position k == lens source layer lens_layers[k]; block l output taken as hidden_states[l+1]",
+ "boundary_shift_lens_vs_act": 10,
+ "act_offdiag_median": 0.9992850968545425,
+ "act_offdiag_min": 0.8638688768629936,
+ "act_mid_sep": 0.01737792005511929,
+ "act_boundaries": [
+  7,
+  9
+ ],
+ "act_fitted_sep": -0.01786979263813049,
+ "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)",
+ "diag_ok": true,
+ "degenerate": true,
+ "transformers": "5.14.1",
+ "torch": "2.6.0+cu124"
+}

@@ -1,0 +1,141 @@
+{
+ "nperm": 1000,
+ "models": {
+  "pythia-70m-deduped": {
+   "n_layers": 5,
+   "lens_boundaries": [
+    1,
+    2
+   ],
+   "act_boundaries": [
+    1,
+    2
+   ],
+   "agreement": 0,
+   "agreement_norm": 0.0,
+   "null_median": 2.0,
+   "null_mean": 2.082,
+   "null_sd": 1.643555901087639,
+   "p_one_sided": 0.318,
+   "beats_null_median": true,
+   "act_mid_sep": 0.42207047170500167,
+   "act_offdiag_median": 0.32242470986286725,
+   "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)"
+  },
+  "gemma-3-270m": {
+   "n_layers": 17,
+   "lens_boundaries": [
+    3,
+    15
+   ],
+   "act_boundaries": [
+    12,
+    14
+   ],
+   "agreement": 10,
+   "agreement_norm": 0.5882352941176471,
+   "null_median": 10.0,
+   "null_mean": 9.551,
+   "null_sd": 7.322390251823512,
+   "p_one_sided": 0.68,
+   "beats_null_median": false,
+   "act_mid_sep": 0.10305777723365084,
+   "act_offdiag_median": 0.8876753636083918,
+   "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)"
+  },
+  "gemma-2-2b": {
+   "n_layers": 25,
+   "lens_boundaries": [
+    2,
+    4
+   ],
+   "act_boundaries": [
+    19,
+    21
+   ],
+   "agreement": 34,
+   "agreement_norm": 1.36,
+   "null_median": 19.0,
+   "null_mean": 18.385,
+   "null_sd": 12.32666925815729,
+   "p_one_sided": 1.0,
+   "beats_null_median": false,
+   "act_mid_sep": 0.01956209817127086,
+   "act_offdiag_median": 0.979399060551257,
+   "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)"
+  },
+  "gemma-2-9b": {
+   "n_layers": 41,
+   "lens_boundaries": [
+    5,
+    19
+   ],
+   "act_boundaries": [
+    15,
+    23
+   ],
+   "agreement": 14,
+   "agreement_norm": 0.34146341463414637,
+   "null_median": 14.0,
+   "null_mean": 13.175,
+   "null_sd": 4.513355182123384,
+   "p_one_sided": 0.814,
+   "beats_null_median": false,
+   "act_mid_sep": 0.08124693330111221,
+   "act_offdiag_median": 0.9655366003016541,
+   "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)"
+  },
+  "qwen3.5-0.8b": {
+   "n_layers": 23,
+   "lens_boundaries": [
+    7,
+    15
+   ],
+   "act_boundaries": [
+    6,
+    11
+   ],
+   "agreement": 5,
+   "agreement_norm": 0.21739130434782608,
+   "null_median": 6.0,
+   "null_mean": 6.055,
+   "null_sd": 0.8160729134090898,
+   "p_one_sided": 0.307,
+   "beats_null_median": true,
+   "act_mid_sep": 0.10883425130966495,
+   "act_offdiag_median": 0.7007072129097849,
+   "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)"
+  }
+ },
+ "failed": [
+  {
+   "slug": "gpt2-small",
+   "reason": "degenerate activation map",
+   "act_offdiag_median": 0.9992850968545425
+  },
+  {
+   "slug": "qwen3-4b",
+   "reason": "degenerate activation map",
+   "act_offdiag_median": 0.9990136068544189
+  },
+  {
+   "slug": "llama3.1-8b",
+   "reason": "degenerate activation map",
+   "act_offdiag_median": 0.9998327244092013
+  }
+ ],
+ "anchor_gate": {
+  "status": "PASS",
+  "act_mid_sep": 0.08124693330111221,
+  "target": 0.11,
+  "abs_diff": 0.02875306669888779
+ },
+ "pooled": {
+  "n_models_used": 5,
+  "obs_mean_agreement_norm": 0.5014180026199239,
+  "pooled_null_median": 0.45938194747676375,
+  "p_one_sided": 0.608,
+  "n_models_beating_own_null_median": 2
+ },
+ "verdict": "BANDS ARE A READOUT PROPERTY"
+}

@@ -1,0 +1,33 @@
+{
+ "slug": "pythia-70m-deduped",
+ "model": "EleutherAI/pythia-70m-deduped",
+ "n_layers": 5,
+ "n_tokens": 3099,
+ "n_prompts": 48,
+ "lens_layers": [
+  0,
+  1,
+  2,
+  3,
+  4
+ ],
+ "lens_boundaries": [
+  1,
+  2
+ ],
+ "alignment": "activation position k == lens source layer lens_layers[k]; block l output taken as hidden_states[l+1]",
+ "boundary_shift_lens_vs_act": 0,
+ "act_offdiag_median": 0.32242470986286725,
+ "act_offdiag_min": 0.06222220657797691,
+ "act_mid_sep": 0.42207047170500167,
+ "act_boundaries": [
+  1,
+  2
+ ],
+ "act_fitted_sep": 0.6921634830248952,
+ "vendored_fitted_seg_check": "skipped (ModuleNotFoundError)",
+ "diag_ok": true,
+ "degenerate": false,
+ "transformers": "5.14.1",
+ "torch": "2.6.0+cu124"
+}
