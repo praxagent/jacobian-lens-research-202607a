@@ -1,6 +1,6 @@
 """Fit-budget analysis. Design frozen in PREREG_FITBUDGET.md before any fit existed.
 
-Refits of gpt2-small and gemma-3-270m on WikiText seed 0 at budgets 25/50/200/400 prompts,
+Refits of gpt2-small and gemma-3-270m on WikiText seed 0 at budgets 25/50/200/400/1000 prompts,
 compared to the 100-prompt reference (`*_wiki_a.pt`, from the corpus experiment) with the
 identical measures used there. The SEED NULL from that experiment is the reference scale.
 
@@ -24,7 +24,7 @@ MODELS = {
     "gpt2-small":   ("openai-community/gpt2", "gpt2"),
     "gemma-3-270m": ("google/gemma-3-270m", "g270m"),
 }
-BUDGETS = [25, 50, 200, 400]
+BUDGETS = [25, 50, 200, 400, 1000]   # 1000 added by PREREG_FITBUDGET.md Amendment 1
 REFERENCE = 100                      # the corpus experiment's wiki_a fit
 CONVERGED_FACTOR = 2.0               # frozen: "within ~2x the seed null"
 
@@ -96,11 +96,14 @@ def main():
                  "reference_band_sep": round(sref, 4), "by_budget": rows}
 
             # frozen rules
-            hi = [rows[str(n)]["ratio_to_seed_null"] for n in (200, 400) if str(n) in rows]
+            HIGH = tuple(b for b in BUDGETS if b >= 200)
+            hi = [rows[str(n)]["ratio_to_seed_null"] for n in HIGH if str(n) in rows]
             m["converged"] = bool(hi) and all(r <= CONVERGED_FACTOR for r in hi)
-            if "200" in rows and "400" in rows:
-                m["still_falling_at_400"] = (rows["400"]["map_distance_to_ref"]
-                                             < rows["200"]["map_distance_to_ref"] * 0.8)
+            have = sorted(b for b in BUDGETS if str(b) in rows)
+            if len(have) >= 2:
+                top, prev = str(have[-1]), str(have[-2])
+                m["still_falling_at_top"] = (rows[top]["map_distance_to_ref"]
+                                             < rows[prev]["map_distance_to_ref"] * 0.8)
             m["low_budget_far"] = ("25" in rows and rows["25"]["ratio_to_seed_null"]
                                    > CONVERGED_FACTOR)
             out["models"][slug] = m
