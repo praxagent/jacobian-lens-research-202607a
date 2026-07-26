@@ -1,0 +1,15 @@
+top-4 energy shares: [0.48410001397132874, 0.148499995470047, 0.066600002348423, 0.04170000180602074] (sum 0.741)
+per-token effects computed
+features built; 59798/256000 tokens seen, 423 unused/special
+GATE reproduce corr(top dir, log_unigram) = -0.5908 (expected -0.591) -> PASS
+  dir 0 (share 0.484): adj R2 = 0.5717  [prior alone 0.455, unigram alone 0.349]
+      betas: model_prior=-0.301  log_unigram=-0.170  is_unused=+0.021  embed_norm=+0.203  word_initial=+0.035  tok_len=-0.114  is_punct=+0.001
+  dir 1 (share 0.148): adj R2 = 0.5591  [prior alone 0.443, unigram alone 0.344]
+      betas: model_prior=-0.067  log_unigram=-0.040  is_unused=+0.005  embed_norm=+0.046  word_initial=+0.007  tok_len=-0.027  is_punct=-0.000
+  dir 2 (share 0.067): adj R2 = 0.5933  [prior alone 0.479, unigram alone 0.352]
+      betas: model_prior=-0.044  log_unigram=-0.026  is_unused=+0.003  embed_norm=+0.025  word_initial=-0.008  tok_len=-0.021  is_punct=+0.000
+  dir 3 (share 0.042): adj R2 = 0.3296  [prior alone 0.034, unigram alone 0.012]
+      betas: model_prior=-0.001  log_unigram=-0.001  is_unused=+0.000  embed_norm=-0.002  word_initial=-0.008  tok_len=-0.008  is_punct=+0.000
+
+VERDICT (top direction adj R2 = 0.5717): PARTLY SETTLED
+DECOMPOSE_DONE

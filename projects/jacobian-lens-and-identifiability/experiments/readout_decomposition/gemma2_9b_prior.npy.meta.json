@@ -1,0 +1,10 @@
+{
+ "model": "google/gemma-2-9b",
+ "n_docs": 200,
+ "seq_len": 128,
+ "n_positions": 23383,
+ "sum_p": 1.0000000960139026,
+ "vocab": 256000,
+ "transformers": "4.57.6",
+ "torch": "2.4.1+cu124"
+}
