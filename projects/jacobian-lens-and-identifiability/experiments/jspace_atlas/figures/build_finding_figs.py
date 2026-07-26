@@ -25,17 +25,21 @@ for slug,d in pv.items():
     ls="--" if slug=="gemma-3-1b" else "-"
     ax.plot(d["x"],d["cka"],color=c,lw=1.6,ls=ls,alpha=0.9)
     ends.append((d["cka"][-1],slug,c))
+# counts derived from the data, never hardcoded: a pair "rewrites early layers most" if its
+# minimum same-depth CKA falls in the first third of the stack.
+NP=len(pv); NE=sum(1 for d in pv.values() if d["argmin_reldepth"]<=1/3)
+WORDS={6:"Six",7:"Seven",8:"Eight",9:"Nine",10:"Ten"}
 ys=None
 for v,slug,c in sorted(ends):
     y=v if ys is None else max(v,ys+0.045)
     ax.annotate(slug,(1.005,y),xytext=(4,0),textcoords="offset points",fontsize=6.8,color=c,va="center"); ys=y
 ax.set_xlabel("relative depth",fontsize=9); ax.set_ylabel("CKA(base layer, instruct layer at same depth)",fontsize=8.6)
 ax.set_xlim(0,1.22); ax.set_ylim(0,1.05)
-ax.set_title("Instruct tuning rewrites early layers most (6/7 pairs); gemma-3-1b rewrites all depths",fontsize=10.4,fontweight="bold",loc="left")
+ax.set_title(f"Instruct tuning rewrites early layers most ({NE}/{NP} pairs); gemma-3-1b rewrites all depths",fontsize=10.4,fontweight="bold",loc="left")
 for s in("top","right"): ax.spines[s].set_visible(False)
 fig.tight_layout(); fig.savefig(POST/"pt-vs-it.svg",format="svg",metadata={"Date":None}); fig.savefig(POST/"pt-vs-it.png",dpi=200); plt.close(fig)
 rec("pt-vs-it","Base-vs-instruct same-depth CKA by relative depth",
- "Seven curves of base-instruct CKA by relative depth: six rise from a low start (early layers most changed) toward near-1 late; the dashed gemma-3-1b curve sits near 0.03 at all depths.",
+ f"{WORDS.get(NP,NP)} curves of base-instruct CKA by relative depth: {WORDS.get(NE,NE).lower()} dip lowest in the early layers before rising toward near-1 late; the dashed gemma-3-1b curve sits near 0.03 at all depths.",
  [{"receipt":"jspace_atlas/atlas_out/pt_vs_it.json","sha256":sha(A/"pt_vs_it.json")}],
  {k:{"early":v["early_mean"],"late":v["late_mean"]} for k,v in pv.items()})
 # --- fig 2: outlier layers ---
