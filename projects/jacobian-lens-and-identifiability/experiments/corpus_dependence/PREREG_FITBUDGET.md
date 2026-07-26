@@ -42,3 +42,51 @@ same prominence as the corpus result.
 
 Eight fits on one RTX 4090, estimated **under $3** against remaining budget. Fitting cost scales
 with prompt count, so the 400-prompt fits dominate.
+
+---
+
+## Amendment 1 (2026-07-26): extend the sweep to 1,000 prompts
+
+**Frozen before the 1,000-prompt fits ran. Written after the 25/50/200/400 results were fully
+inspected, and that is disclosed here rather than hidden.**
+
+### Trigger
+
+The original sweep returned CONVERGED, which discharged the fit-heterogeneity caveat between 25
+and 400 prompts. It does not reach the budget the **public Neuronpedia lenses actually use**,
+which is on the order of a thousand WikiText prompts, and those lenses are 35 of the 36 rows in
+our zoo. Discharging a caveat over a range that excludes the population it was raised about is
+not discharging it. TJ asked for the range to be closed properly.
+
+### What had been inspected at the time of writing
+
+Everything in `results_fitbudget.json` and the ledger entry in `results.md`: all eight
+map distances, the ratios to the seed null, the zero boundary movement, and the failure of the
+original P1 monotonicity prediction. This amendment is therefore **not blind**, and its result
+should be read as confirmatory of a pre-existing threshold rather than as an independent test.
+
+### Design
+
+Two additional fits, `gpt2-small` and `gemma-3-270m` on WikiText seed 0 at **1,000 prompts**,
+identical recipe and identical reference (each model's 100-prompt `wiki_a` fit). Same three
+measures, same seed-null reference scale, same analyzer, unchanged.
+
+### Decision rule (unchanged, deliberately)
+
+The bar stays exactly what it was: **map distance within 2x the seed null** counts as converged.
+We are not renegotiating the threshold to accommodate a new point. If either 1,000-prompt fit
+exceeds it, the verdict for the whole sweep changes to NOT CONVERGED at the high end, the note's
+discharge of the fit-heterogeneity caveat is withdrawn, and we report that the public lenses sit
+in a regime our own fits do not reach. That outcome is worse for us than the alternative and we
+commit to it in the same words either way.
+
+### Prediction
+
+Distances at 1,000 land within 2x the null, like every other budget. We state it so that a miss
+is on the record. We do **not** predict monotonicity, having learned from P1 that ordering among
+converged points is noise.
+
+### Cost
+
+Two fits, roughly 2.5x the wall-clock of the 400-prompt pair. One RTX 4090 at $0.69/hr for about
+1.5 hours including model download, estimated **under $1.50**.
