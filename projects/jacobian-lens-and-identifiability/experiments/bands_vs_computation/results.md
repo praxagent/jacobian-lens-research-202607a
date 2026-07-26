@@ -162,3 +162,61 @@ environment failures documented below. Test C: ran on the same warm pod, margina
    617MB logits tensor per forward pass and 145 passes per cell. It died silently because the
    launching command piped through `tail`, which buffers until exit. Moved to the warm GPU pod,
    where all six cells took minutes.
+
+---
+
+# Test B re-run (2026-07-26): verdict unchanged, and the instrument understood
+
+Design frozen in [`PREREG_B2.md`](PREREG_B2.md), with full disclosure that we had already seen
+the first run's results. Twelve models, four analysis cells reported side by side as committed.
+
+**Anchor gate: PASS, exactly.** gemma-2-9b's raw activation band separation reproduced at
+`+0.0812` against a target of `+0.0812`, using **0% of the tolerance**. Contrast this with the
+first run's anchor, which used 96% of its tolerance; the pipeline reproduces itself precisely.
+
+## All four cells give the same verdict
+
+| map | gate | usable models | observed | null median | p | beat own null |
+|---|---|---|---|---|---|---|
+| raw | old (median) | 8 | 0.683 | 0.539 | 0.865 | 3/8 |
+| raw | **repaired (range)** | **10** | **0.560** | **0.541** | **0.569** | **5/10** |
+| standardised | old | 12 | 0.730 | 0.548 | 0.960 | 3/12 |
+| standardised | repaired | 12 | 0.730 | 0.548 | 0.960 | 3/12 |
+
+**Verdict under every cell: BANDS ARE A READOUT PROPERTY.** The conclusion does not depend on the
+defective gate, and it survives the instrument being fixed. The repaired gate does exactly what
+it should: it restores `gpt2-small`, `qwen3-4b` and `qwen2.5-7b-it`, drops `gemma-2-2b` and
+`llama3.1-8b`, and moves the observed agreement from 0.683 to 0.560, closer to the null but still
+not beating it.
+
+## The standardisation check: hypothesis confirmed, conclusion unchanged
+
+Per-dimension standardisation transforms the maps exactly as predicted. `llama3.1-8b`'s
+off-diagonal range goes from **0.002 to 0.839**; `gpt2-small`'s from 0.136 to 0.514. Saturated
+activation CKA really was residual-norm growth dominating the Gram matrix, and **no model is
+degenerate once standardised**, which is why all twelve become usable.
+
+And it does not rescue boundary agreement. It makes it **worse**: 0.730 observed against a 0.548
+null, with only 3 of 12 models beating their own. Giving the activation map more dynamic range to
+express structure does not make the lens boundaries any better at finding it.
+
+## The claim we said this could overturn survives, and strengthens
+
+We pre-registered that this check could overturn our own Gemma headline, since that claim rests
+on this instrument. It does not. gemma-2-9b's activation band separation under standardisation is
+**+0.2086**, against a lens band separation of +0.005. The dissociation between structured
+activations and a flat lens is **larger** under the corrected measurement, not smaller. We would
+have reported the opposite with the same prominence.
+
+## What the re-run changes about the first run
+
+The first Test B was right about its conclusion and wrong about its method in two ways we have
+now fixed and documented: a usability gate on the wrong statistic, and a decision rule whose
+positive branch became unreachable after any exclusion. TJ asked for this re-run over our
+recommendation not to bother. The recommendation was wrong: the gate defect was real, it would
+have shipped, and the conclusion is now supported by twelve models across four analysis choices
+instead of five models under a broken rule.
+
+## Cost
+
+Twelve models, forward passes only, shared pod with the ignition test. About **$2** total.

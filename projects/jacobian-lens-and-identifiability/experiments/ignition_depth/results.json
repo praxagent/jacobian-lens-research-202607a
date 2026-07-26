@@ -1,0 +1,64 @@
+{
+ "nperm": 1000,
+ "models": {
+  "gemma-2-9b": {
+   "n_layers_lens": 41,
+   "lens_late_boundary": 19,
+   "lens_late_reldepth": 0.4634146341463415,
+   "median_ignition_reldepth": 0.8048780487804879,
+   "n_ignited": 9,
+   "n_prompts_used": 10,
+   "final_layer_correct": 9,
+   "gate_final_head": true,
+   "gap": 0.34146341463414637,
+   "null_median": 0.14634146341463417,
+   "p_one_sided": 1.0,
+   "beats_null_median": false
+  },
+  "qwen3.5-0.8b": {
+   "n_layers_lens": 23,
+   "lens_late_boundary": 15,
+   "lens_late_reldepth": 0.6521739130434783,
+   "median_ignition_reldepth": 0.9782608695652174,
+   "n_ignited": 8,
+   "n_prompts_used": 10,
+   "final_layer_correct": 8,
+   "gate_final_head": true,
+   "gap": 0.32608695652173914,
+   "null_median": 0.32608695652173914,
+   "p_one_sided": 1.0,
+   "beats_null_median": false
+  }
+ },
+ "unusable": [
+  {
+   "slug": "gemma-3-270m",
+   "n_ignited": 2,
+   "n_prompts_used": 10,
+   "final_layer_correct": 2,
+   "reason": "too few ignited"
+  },
+  {
+   "slug": "gpt2-small",
+   "n_ignited": 0,
+   "n_prompts_used": 10,
+   "final_layer_correct": 0,
+   "reason": "too few ignited"
+  },
+  {
+   "slug": "qwen3-1.7b",
+   "n_ignited": 5,
+   "n_prompts_used": 10,
+   "final_layer_correct": 5,
+   "reason": "head gate failed"
+  },
+  {
+   "slug": "qwen3-4b",
+   "n_ignited": 1,
+   "n_prompts_used": 10,
+   "final_layer_correct": 1,
+   "reason": "too few ignited"
+  }
+ ],
+ "verdict": "NO VERDICT (too few usable models)"
+}
