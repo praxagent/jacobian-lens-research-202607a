@@ -100,3 +100,46 @@ The direction was not unexplainable, it was **unmeasured by the features we chos
 
 The invariant subspace is therefore: three prior-like components carrying ~70% of the readout
 energy, plus at least one orthographic component carrying ~4%. Free to run; no GPU.
+
+---
+
+# v2 (2026-07-26): the residual is a missing feature, not a missing functional form
+
+Design frozen in [`PREREG_V2.md`](PREREG_V2.md) before any v2 run, with an explicit disclosure
+that the script hypothesis came from having already decoded the directions into tokens. Both
+gates passed: the unigram correlation reproduced at `-0.5908` against `-0.591`, and M0 reproduced
+v1's adjusted `R^2` exactly at 0.5717.
+
+| model | contents | adjusted `R^2` | features |
+|---|---|---|---|
+| M0 | the frozen v1 seven | 0.5717 | 7 |
+| M1 | M0 + script/byte (H1) | **0.6234** | 12 |
+| M2 | M0 + binned `model_prior` (H2) | 0.5882 | 26 |
+| M3 | M0 + H1 + H2 | **0.6291** | 31 |
+
+- **H1 supported, but only just.** Script and byte-level features add **+0.0517** against a
+  pre-registered threshold of 0.05. That is a 3% margin over the bar, and we are reporting the
+  margin rather than the word SUPPORTED, because a result that clears its threshold by a
+  thirtieth is weaker than one that clears it by a mile.
+- **H2 not supported.** Entering `model_prior` as twenty equal-count bins, which can absorb any
+  shape, adds only **+0.0165** for nineteen extra parameters. The linear-in-log-probability form
+  v1 assumed was close to right, so the residual is not a functional-form problem.
+- Overlap between the two is **+0.0108**, small, so they are explaining largely different things.
+
+**Verdict: PARTLY SETTLED**, unchanged from v1, against thresholds that were also unchanged.
+Both our pre-declared predictions were correct: H1 supported, H2 not, verdict not reaching
+SETTLED.
+
+## What this actually tells us
+
+The direction is legible as *the model's default output tendency, modulated by writing system*.
+Adding "is this token non-Latin, is it CJK, how many bytes per character" recovers a real slice of
+what the model prior alone misses, which fits the token decode where direction 0's positive pole
+is dominated by rare CJK and Cyrillic fragments.
+
+**37% of the top direction remains unexplained** after twelve interpretable features and a
+flexible functional form. We are stopping here rather than adding features until the number looks
+good. The honest summary for the note is unchanged in kind and slightly better in degree: a
+low-dimensional, largely prior-facing axis with a script component, still not fully accounted for.
+
+Cost: **$0**, CPU, all inputs already local.

@@ -1,0 +1,40 @@
+{
+ "gates": {
+  "corr": -0.590776558934536,
+  "corr_pass": true,
+  "m0_reproduces_v1": true,
+  "void": false
+ },
+ "models": {
+  "M0": {
+   "adj_r2": 0.5717025778124232,
+   "n_features": 7
+  },
+  "M1": {
+   "adj_r2": 0.6234276949994533,
+   "n_features": 12
+  },
+  "M2": {
+   "adj_r2": 0.5881561678277089,
+   "n_features": 26
+  },
+  "M3": {
+   "adj_r2": 0.6290967382594717,
+   "n_features": 31
+  },
+  "H1_betas": {
+   "is_non_latin": 0.18596605491612272,
+   "is_cjk": 0.0004976537658743241,
+   "is_cyrillic_or_greek": -0.006072308072263482,
+   "bytes_per_char": 0.00039250676714213306,
+   "is_continuation": -0.01687061338171788
+  }
+ },
+ "n_seen": 59798,
+ "H1_gain": 0.0517251171870301,
+ "H1_supported": true,
+ "H2_gain": 0.01645359001528568,
+ "H2_supported": false,
+ "overlap": 0.01078454675526741,
+ "verdict": "PARTLY SETTLED"
+}
