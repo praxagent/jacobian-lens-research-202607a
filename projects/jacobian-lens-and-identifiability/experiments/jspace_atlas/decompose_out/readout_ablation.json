@@ -1,0 +1,28 @@
+{
+ "qwen3-4b": {
+  "slug": "qwen3-4b",
+  "flat_lens": false,
+  "n_layers": 35,
+  "d": 2560,
+  "n_probe": 2011,
+  "rank_used": 1024,
+  "rank_energy_share": 0.88867,
+  "readout_participation_ratio": 830.35,
+  "top1_share": 0.0118,
+  "top4_share": 0.0266,
+  "top16_share": 0.0607,
+  "top64_share": 0.1561,
+  "band_sep_by_k": {
+   "0": 0.0623,
+   "1": 0.0656,
+   "2": 0.0825,
+   "4": 0.0787,
+   "8": 0.0787,
+   "16": 0.0784,
+   "32": 0.0747,
+   "64": 0.0753,
+   "128": 0.0743
+  },
+  "atlas_mid_sep": 0.0383
+ }
+}
