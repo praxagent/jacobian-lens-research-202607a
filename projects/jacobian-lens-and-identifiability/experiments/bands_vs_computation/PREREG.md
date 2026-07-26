@@ -193,3 +193,25 @@ money on; if it does not, we have not learned much and will say so.
 
 `swap_v2.py` on three sub-1B models runs on this box's CPU, as the v1 round did. Estimated
 **$0**, with a small GPU as fallback if CPU wall-clock is impractical.
+
+---
+
+## Amendment 1 (2026-07-26): index alignment for Test B, frozen before any Test B data
+
+**Trigger.** A CPU smoke of the runner (`pythia-70m-deduped`, 8 prompts, no statistic computed)
+revealed that the activation map and the lens map do not automatically live in the same index
+space: a model with `L` blocks yields `L` activation positions, while its lens covers a subset
+of source layers, typically `L-1`. Comparing boundary indices across the two without alignment
+compares different layers.
+
+**What had been inspected.** Only that the runner executes and produces a non-degenerate map.
+No agreement statistic, no null, and no model in the frozen set beyond the mechanical smoke.
+
+**Change.** The activation map is restricted to **exactly the lens's own source layers**, read
+from the `layers` array of the cached lens `.npz`, with block `l`'s output taken as
+`hidden_states[l+1]` (index 0 being the embedding). Boundary indices are then directly
+comparable and the primary statistic is computed in raw layers, with the depth normalisation
+`agreement / L` retained for pooling across models.
+
+This is a correctness fix to the measurement, not a change to the hypothesis, the model set, the
+null, the decision rules or the prediction, all of which stand exactly as frozen above.

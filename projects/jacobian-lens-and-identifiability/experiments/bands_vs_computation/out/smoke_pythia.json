@@ -1,0 +1,19 @@
+{
+ "slug": "pythia-70m-deduped",
+ "model": "EleutherAI/pythia-70m-deduped",
+ "n_layers": 6,
+ "n_tokens": 512,
+ "n_prompts": 8,
+ "act_offdiag_median": 0.1690967082977295,
+ "act_offdiag_min": 0.012148470617830753,
+ "act_mid_sep": 0.6666047716280445,
+ "act_boundaries": [
+  2,
+  4
+ ],
+ "act_fitted_sep": 0.3484065466715644,
+ "diag_ok": true,
+ "degenerate": false,
+ "transformers": "5.13.0",
+ "torch": "2.4.1+cpu"
+}
