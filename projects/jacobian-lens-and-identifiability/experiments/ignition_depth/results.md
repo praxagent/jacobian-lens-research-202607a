@@ -16,9 +16,9 @@ design's fault, not the models'.**
 | qwen3-4b | 1/10 | | | | | excluded, too few ignited |
 | gpt2-small | 0/10 | | | | | excluded, too few ignited |
 
-Four of six models were excluded, leaving two, below the frozen minimum of three. The frozen
-rule therefore issues **no verdict**, and we are not going to quietly pool two models and call it
-a null.
+Four of six models were excluded, leaving two. The analyzer refuses to pool fewer than three
+models and issues **no verdict**; that floor is not in `PREREG.md` (see the 2026-09-05 note at the
+end of this file for what the frozen rule returns when applied literally to the two).
 
 **Correction (2026-09-05).** The "lens late boundary" column above came from the own-vocabulary
 atlas map (`atlas_out/<slug>.npz`); `PREREG.md` specifies the shared-vocabulary map, which lives in
@@ -73,3 +73,14 @@ all point the same way, we are recording this as attempted and not pursuing it f
 Ran on the shared pod alongside the Test B re-run. Marginal cost **under $1**. Receipts carry the
 full per-layer rank trajectory and top-10 for every prompt, so a different definition of ignition
 can be evaluated without renting a GPU again.
+
+**The minimum of three models is not in the pre-registration (2026-09-05).** `PREREG.md` defines
+usability per model and a pooled rule, but no minimum number of usable models; `analyze.py`'s
+`len(rows) >= 3` floor was added at analysis time. Applied literally to the two usable models the
+frozen rule returns **NO ALIGNMENT** (pooled gap 0.358 vs null median 0.228, p = 0.90, 0/2 beat
+their own null; the size-permutation null has only three distinct values at this depth). We keep
+the NO VERDICT label because two models are not a basis for a verdict, and disclose the floor as a
+post-hoc rule. A reviewer also noted that qwen3-4b's receipt shows several answers (Paris, Tokyo,
+Rome, Jupiter) reaching rank 1 at intermediate layers while the final head prefers a function word,
+so "answers one of ten" is a statement about the final-layer head under this prompt format, not
+about whether the answer is ever readable; a redesigned prompt set should check both.

@@ -296,3 +296,19 @@ standardised map; lens boundaries for 3 of 12 (gemma-2-9b, gemma-3-270m, qwen3-1
 Reading: where the test can be checked on identified boundaries it returns the same null; for
 most of the models it cannot be checked at all. Labelled exploratory (rule frozen after the
 spreads were seen). Receipt: `results_B3_ident.json`.
+
+## Null sensitivity (2026-09-05): the pre-registered null has at most six distinct values
+
+The frozen null permutes the three block sizes, which yields at most 6 segmentations (about 5
+distinct agreement values per model). A reviewer flagged that this makes the pooled p coarse. As a
+sensitivity check, `results_B2_uniform_null.txt` re-scores the shared-probe re-run against a
+UNIFORM null over all legal 3-segmentations (1,000 draws, about 31 distinct values per model):
+
+| cell | k | observed | null median (sizes / uniform) | p (sizes / uniform) | beat own null (sizes / uniform) |
+|---|---|---|---|---|---|
+| raw, old | 8 | 0.715 | 0.554 / 0.507 | 0.881 / 0.990 | 2/8 / 1/8 |
+| raw, repaired | 10 | 0.601 | 0.568 / 0.520 | 0.613 / 0.824 | 4/10 / 3/10 |
+| standardised, both gates | 12 | 0.743 | 0.561 / 0.515 | 0.965 / 0.997 | 4/12 / 3/12 |
+
+Same verdict in every cell; the richer null puts the observed agreement further from
+significance, not closer. Exploratory (not pre-registered).

@@ -1,0 +1,12 @@
+
+== null: sizes-permuted (PREREG) ==
+  raw map, old gate            k= 8 obs=0.7148 null=0.5535 p=0.8810 2/8 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 5.1)
+  raw map, new gate            k=10 obs=0.6013 null=0.5679 p=0.6130 4/10 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 4.7)
+  standardised map, old gate   k=12 obs=0.7427 null=0.5608 p=0.9650 4/12 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 4.9)
+  standardised map, new gate   k=12 obs=0.7427 null=0.5608 p=0.9650 4/12 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 4.9)
+
+== null: uniform (sensitivity) ==
+  raw map, old gate            k= 8 obs=0.7148 null=0.5070 p=0.9900 1/8 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 30.4)
+  raw map, new gate            k=10 obs=0.6013 null=0.5199 p=0.8240 3/10 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 31.0)
+  standardised map, old gate   k=12 obs=0.7427 null=0.5153 p=0.9970 3/12 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 30.8)
+  standardised map, new gate   k=12 obs=0.7427 null=0.5153 p=0.9970 3/12 beat -> BANDS ARE A READOUT PROPERTY   (mean distinct null values per model: 30.8)
