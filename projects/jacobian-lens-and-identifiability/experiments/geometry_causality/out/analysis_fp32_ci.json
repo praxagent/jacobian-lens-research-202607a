@@ -1,0 +1,116 @@
+{
+ "gpt2-small C32 (local-calibrated dose)": {
+  "file": "out/gpt2-small_C32.json",
+  "dtype": "torch.float32",
+  "n_prompts": 200,
+  "n_layers": 11,
+  "median_A": 2.071585710584626,
+  "ci95_A": [
+   1.945622081153109,
+   2.1957660327449893
+  ],
+  "ratio": 7.937399562414116,
+  "ratio_ci95": [
+   6.997983815097591,
+   8.986882667111828
+  ],
+  "median_C": 0.053050292516440695,
+  "calibration_arm": "local",
+  "dtype_flag": "float32"
+ },
+ "gemma-3-270m C32 (local-calibrated dose)": {
+  "file": "out/gemma-3-270m_C32.json",
+  "dtype": "torch.float32",
+  "n_prompts": 200,
+  "n_layers": 17,
+  "median_A": 2.414515285646338,
+  "ci95_A": [
+   2.307778142245481,
+   2.5175528429551792
+  ],
+  "ratio": 11.184347829540965,
+  "ratio_ci95": [
+   10.052065565028514,
+   12.398219120164573
+  ],
+  "median_C": 0.08626472982192566,
+  "calibration_arm": "local",
+  "dtype_flag": "float32"
+ },
+ "gemma-3-270m ladder (extended, float32)": {
+  "file": "out/gemma_ladder.json",
+  "dtype": "torch.float32",
+  "n_prompts": 200,
+  "n_layers": 17,
+  "median_A": 2.4244737763401334,
+  "ci95_A": [
+   2.314774195077248,
+   2.5294263960287426
+  ],
+  "ratio": 11.29628348333321,
+  "ratio_ci95": [
+   10.122636919410434,
+   12.546307460487034
+  ],
+  "median_C": 0.0769084196919619,
+  "calibration_arm": "local",
+  "dtype_flag": "float32"
+ },
+ "gpt2-small bf16 (original P1 run, for reference)": {
+  "file": "out/gpt2-small.json",
+  "dtype": "torch.bfloat16",
+  "n_prompts": 200,
+  "n_layers": 11,
+  "median_A": 1.308471702835262,
+  "ci95_A": [
+   1.2214197232894144,
+   1.3825143198766932
+  ],
+  "ratio": 3.700513903470257,
+  "ratio_ci95": [
+   3.3920000181802985,
+   3.9849083764768665
+  ],
+  "median_C": 0.1761961442076302,
+  "calibration_arm": null,
+  "dtype_flag": null
+ },
+ "gemma-3-270m bf16 (original P1 run, for reference)": {
+  "file": "out/gemma-3-270m.json",
+  "dtype": "torch.bfloat16",
+  "n_prompts": 200,
+  "n_layers": 17,
+  "median_A": 2.0932442193245797,
+  "ci95_A": [
+   1.9956723689127076,
+   2.1779191338684094
+  ],
+  "ratio": 8.111186995066719,
+  "ratio_ci95": [
+   7.357148082911001,
+   8.827917418630015
+  ],
+  "median_C": 0.9996191011502353,
+  "calibration_arm": null,
+  "dtype_flag": null
+ },
+ "qwen3.5-0.8b bf16 (original P1 run; no float32 per-prompt receipt exists)": {
+  "file": "out/qwen3.5-0.8b.json",
+  "dtype": "torch.bfloat16",
+  "n_prompts": 200,
+  "n_layers": 23,
+  "median_A": 2.0053993820904576,
+  "ci95_A": [
+   1.7595195030776485,
+   2.221323240924717
+  ],
+  "ratio": 7.429060337994567,
+  "ratio_ci95": [
+   5.8096452069956666,
+   9.219522447312219
+  ],
+  "median_C": 0.11437423949916069,
+  "calibration_arm": null,
+  "dtype_flag": null
+ }
+}

@@ -1,0 +1,8 @@
+gpt2-small C32 (local-calibrated dose)                                 dtype=torch.float32   P=200 L=11  A=+2.072 [+1.946,+2.196]  ratio= 7.94x [7.00,8.99]  C=0.0531
+gemma-3-270m C32 (local-calibrated dose)                               dtype=torch.float32   P=200 L=17  A=+2.415 [+2.308,+2.518]  ratio=11.18x [10.05,12.40]  C=0.0863
+gemma-3-270m ladder (extended, float32)                                dtype=torch.float32   P=200 L=17  A=+2.424 [+2.315,+2.529]  ratio=11.30x [10.12,12.55]  C=0.0769
+gpt2-small bf16 (original P1 run, for reference)                       dtype=torch.bfloat16  P=200 L=11  A=+1.308 [+1.221,+1.383]  ratio= 3.70x [3.39,3.98]  C=0.1762
+gemma-3-270m bf16 (original P1 run, for reference)                     dtype=torch.bfloat16  P=200 L=17  A=+2.093 [+1.996,+2.178]  ratio= 8.11x [7.36,8.83]  C=0.9996
+qwen3.5-0.8b bf16 (original P1 run; no float32 per-prompt receipt exists) dtype=torch.bfloat16  P=200 L=23  A=+2.005 [+1.760,+2.221]  ratio= 7.43x [5.81,9.22]  C=0.1144
+
+note: the bf16 kl_random in the original files is (L, 8) per-draw means; the C32 files store the same shape; the estimator is unchanged.

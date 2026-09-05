@@ -319,3 +319,24 @@ Two OOM failures preceded this run, and the cause was neither the model nor the 
 process from an earlier attempt was still resident and holding 18 GB of the card. It was killed
 by exact PID after listing GPU processes, per the pattern-matching hazard in the GPU playbook.
 Total for this amendment: about **$0.20**.
+
+## float32 prompt-level intervals (2026-09-05, CPU, from existing receipts)
+
+The note had said no prompt-level intervals existed for the float32 pass. The float32 C-run
+receipts (`out/gpt2-small_C32.json`, `out/gemma-3-270m_C32.json`, `out/gemma_ladder.json`) store
+`kl_aligned` for all 200 prompts per layer, so the frozen estimator (`analyze.py::boot`, 2,000
+prompt resamples, median over layers of log(KL_aligned / mean KL_random)) applies unchanged.
+`out/analysis_fp32_ci.{json,txt}`:
+
+| model | receipt | dose | A (95% CI) | ratio (95% CI) |
+|---|---|---|---|---|
+| gpt2-small | `_C32` | local-calibrated | +2.072 [+1.946, +2.196] | **7.9x** [7.0, 9.0] |
+| gemma-3-270m | `_C32` | local-calibrated | +2.415 [+2.308, +2.518] | **11.2x** [10.1, 12.4] |
+| gemma-3-270m | `gemma_ladder` | extended ladder | +2.424 [+2.315, +2.529] | 11.3x [10.1, 12.6] |
+| qwen3.5-0.8b | none in float32 (the July fp32 C run OOMed in `lm_head`) | | | pending a GPU re-run |
+
+Two honest notes. The sweep-dose point estimates quoted as headline (7.5x, 9.1x, from
+`*_sweep32.json`, which stores per-layer aggregates only) sit inside gpt2-small's interval and
+**below** gemma-3-270m's: gemma's float32 advantage is 2.21 log units at the sweep doses and 2.42
+at the C-run dose, so "flat with dose" holds to about 0.2 log units for that model in float32, not
+exactly. And inference remains conditional on the eight realised random directions per layer.

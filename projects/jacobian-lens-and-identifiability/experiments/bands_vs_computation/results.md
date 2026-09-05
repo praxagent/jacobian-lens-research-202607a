@@ -275,3 +275,24 @@ corpus relocates the boundaries by 10 to 15 layers, was an artifact, so the cros
 almost nothing to cross. It should no longer be cited as evidence against the corpus-instability
 explanation, and the "five designs" count in the note should describe it that way. The
 gemma-3-270m code cell still fails its calibration gate (median D 6.806) and stays excluded.
+
+# Test B restricted to identified boundaries (2026-09-05, rule frozen in PREREG_B3_IDENT.md)
+
+`analyze_B3_ident.py`. A model enters a cell only if it passes that cell's usability gate and
+both its shared-probe lens boundaries and that cell's activation boundaries are identified (both
+near-optimal spreads <= 0.25 at tol 0.05; `../jspace_atlas/boundary_identifiability.py`).
+
+| cell | admitted | observed | null median | p | beat own null | verdict |
+|---|---|---|---|---|---|---|
+| raw, old gate | 3 (gemma-2-2b, gemma-3-1b, olmo-3-1025-7b) | | | | | NO VERDICT (< 4) |
+| raw, repaired gate | 3 (gemma-3-1b, gpt2-small, olmo-3-1025-7b) | | | | | NO VERDICT (< 4) |
+| standardised, old gate | 4 (gemma-3-1b, gpt2-small, qwen3-4b, qwen3.5-0.8b) | 0.669 | 0.538 | 0.853 | 1/4 | BANDS ARE A READOUT PROPERTY |
+| standardised, repaired gate | same 4 | 0.669 | 0.538 | 0.853 | 1/4 | BANDS ARE A READOUT PROPERTY |
+
+Sensitivity: at tol 0.15 one model is admitted anywhere (gemma-3-1b, standardised); at tol 0.35
+none. Activation boundaries are unidentified for 5 of 12 models on the raw map and 6 of 12 on the
+standardised map; lens boundaries for 3 of 12 (gemma-2-9b, gemma-3-270m, qwen3-1.7b).
+
+Reading: where the test can be checked on identified boundaries it returns the same null; for
+most of the models it cannot be checked at all. Labelled exploratory (rule frozen after the
+spreads were seen). Receipt: `results_B3_ident.json`.

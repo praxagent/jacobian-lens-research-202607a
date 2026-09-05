@@ -1,0 +1,1482 @@
+{
+ "prereg": "PREREG_B3_IDENT.md",
+ "spread_max": 0.25,
+ "tols": [
+  0.05,
+  0.15,
+  0.35
+ ],
+ "models": {
+  "gemma-2-2b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     2,
+     7
+    ],
+    "lens_spreads": [
+     0.0,
+     0.0
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      19,
+      21
+     ],
+     "act_spreads": [
+      0.08,
+      0.04
+     ],
+     "act_identified": true,
+     "agreement": 31,
+     "null_median": 16.0,
+     "admitted_old": true,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      21,
+      23
+     ],
+     "act_spreads": [
+      0.76,
+      0.2
+     ],
+     "act_identified": false,
+     "agreement": 35,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     2,
+     7
+    ],
+    "lens_spreads": [
+     0.24,
+     0.48
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      19,
+      21
+     ],
+     "act_spreads": [
+      0.2,
+      0.2
+     ],
+     "act_identified": true,
+     "agreement": 31,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      21,
+      23
+     ],
+     "act_spreads": [
+      0.76,
+      0.28
+     ],
+     "act_identified": false,
+     "agreement": 35,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     2,
+     7
+    ],
+    "lens_spreads": [
+     0.32,
+     0.76
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      19,
+      21
+     ],
+     "act_spreads": [
+      0.68,
+      0.44
+     ],
+     "act_identified": false,
+     "agreement": 31,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      21,
+      23
+     ],
+     "act_spreads": [
+      0.76,
+      0.36
+     ],
+     "act_identified": false,
+     "agreement": 35,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "gemma-2-9b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     5,
+     17
+    ],
+    "lens_spreads": [
+     0.0,
+     0.4146341463414634
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      15,
+      23
+     ],
+     "act_spreads": [
+      0.024390243902439025,
+      0.024390243902439025
+     ],
+     "act_identified": true,
+     "agreement": 16,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      34,
+      37
+     ],
+     "act_spreads": [
+      0.8536585365853658,
+      0.24390243902439024
+     ],
+     "act_identified": false,
+     "agreement": 49,
+     "null_median": 23.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     5,
+     17
+    ],
+    "lens_spreads": [
+     0.04878048780487805,
+     0.5609756097560976
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      15,
+      23
+     ],
+     "act_spreads": [
+      0.04878048780487805,
+      0.04878048780487805
+     ],
+     "act_identified": true,
+     "agreement": 16,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      34,
+      37
+     ],
+     "act_spreads": [
+      0.8536585365853658,
+      0.3170731707317073
+     ],
+     "act_identified": false,
+     "agreement": 49,
+     "null_median": 23.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     5,
+     17
+    ],
+    "lens_spreads": [
+     0.8048780487804879,
+     0.8536585365853658
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      15,
+      23
+     ],
+     "act_spreads": [
+      0.14634146341463414,
+      0.17073170731707318
+     ],
+     "act_identified": true,
+     "agreement": 16,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      34,
+      37
+     ],
+     "act_spreads": [
+      0.8536585365853658,
+      0.8536585365853658
+     ],
+     "act_identified": false,
+     "agreement": 49,
+     "null_median": 23.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "gemma-3-1b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     6,
+     10
+    ],
+    "lens_spreads": [
+     0.08,
+     0.0
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      17,
+      19
+     ],
+     "act_spreads": [
+      0.04,
+      0.04
+     ],
+     "act_identified": true,
+     "agreement": 20,
+     "null_median": 13.0,
+     "admitted_old": true,
+     "admitted_new": true
+    },
+    "standardised": {
+     "act_boundaries": [
+      20,
+      23
+     ],
+     "act_spreads": [
+      0.08,
+      0.04
+     ],
+     "act_identified": true,
+     "agreement": 27,
+     "null_median": 16.0,
+     "admitted_old": true,
+     "admitted_new": true
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     6,
+     10
+    ],
+    "lens_spreads": [
+     0.08,
+     0.08
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      17,
+      19
+     ],
+     "act_spreads": [
+      0.32,
+      0.24
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 13.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      20,
+      23
+     ],
+     "act_spreads": [
+      0.12,
+      0.08
+     ],
+     "act_identified": true,
+     "agreement": 27,
+     "null_median": 16.0,
+     "admitted_old": true,
+     "admitted_new": true
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     6,
+     10
+    ],
+    "lens_spreads": [
+     0.36,
+     0.76
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      17,
+      19
+     ],
+     "act_spreads": [
+      0.52,
+      0.52
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 13.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      20,
+      23
+     ],
+     "act_spreads": [
+      0.76,
+      0.2
+     ],
+     "act_identified": false,
+     "agreement": 27,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "gemma-3-270m": {
+   "tol0.05": {
+    "lens_boundaries": [
+     3,
+     15
+    ],
+    "lens_spreads": [
+     0.0,
+     0.5882352941176471
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      12,
+      14
+     ],
+     "act_spreads": [
+      0.058823529411764705,
+      0.058823529411764705
+     ],
+     "act_identified": true,
+     "agreement": 10,
+     "null_median": 10.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      13,
+      15
+     ],
+     "act_spreads": [
+      0.058823529411764705,
+      0.0
+     ],
+     "act_identified": true,
+     "agreement": 10,
+     "null_median": 12.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     3,
+     15
+    ],
+    "lens_spreads": [
+     0.058823529411764705,
+     0.5882352941176471
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      12,
+      14
+     ],
+     "act_spreads": [
+      0.23529411764705882,
+      0.17647058823529413
+     ],
+     "act_identified": true,
+     "agreement": 10,
+     "null_median": 10.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      13,
+      15
+     ],
+     "act_spreads": [
+      0.058823529411764705,
+      0.058823529411764705
+     ],
+     "act_identified": true,
+     "agreement": 10,
+     "null_median": 12.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     3,
+     15
+    ],
+    "lens_spreads": [
+     0.6470588235294118,
+     0.5882352941176471
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      12,
+      14
+     ],
+     "act_spreads": [
+      0.5882352941176471,
+      0.5882352941176471
+     ],
+     "act_identified": false,
+     "agreement": 10,
+     "null_median": 10.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      13,
+      15
+     ],
+     "act_spreads": [
+      0.6470588235294118,
+      0.058823529411764705
+     ],
+     "act_identified": false,
+     "agreement": 10,
+     "null_median": 12.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "gpt2-small": {
+   "tol0.05": {
+    "lens_boundaries": [
+     2,
+     4
+    ],
+    "lens_spreads": [
+     0.18181818181818182,
+     0.18181818181818182
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      7,
+      9
+     ],
+     "act_spreads": [
+      0.0,
+      0.0
+     ],
+     "act_identified": true,
+     "agreement": 10,
+     "null_median": 5.0,
+     "admitted_old": false,
+     "admitted_new": true
+    },
+    "standardised": {
+     "act_boundaries": [
+      2,
+      9
+     ],
+     "act_spreads": [
+      0.0,
+      0.0
+     ],
+     "act_identified": true,
+     "agreement": 5,
+     "null_median": 5.0,
+     "admitted_old": true,
+     "admitted_new": true
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     2,
+     4
+    ],
+    "lens_spreads": [
+     0.2727272727272727,
+     0.2727272727272727
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      7,
+      9
+     ],
+     "act_spreads": [
+      0.09090909090909091,
+      0.09090909090909091
+     ],
+     "act_identified": true,
+     "agreement": 10,
+     "null_median": 5.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      2,
+      9
+     ],
+     "act_spreads": [
+      0.0,
+      0.0
+     ],
+     "act_identified": true,
+     "agreement": 5,
+     "null_median": 5.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     2,
+     4
+    ],
+    "lens_spreads": [
+     0.2727272727272727,
+     0.2727272727272727
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      7,
+      9
+     ],
+     "act_spreads": [
+      0.2727272727272727,
+      0.2727272727272727
+     ],
+     "act_identified": false,
+     "agreement": 10,
+     "null_median": 5.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      2,
+      9
+     ],
+     "act_spreads": [
+      0.45454545454545453,
+      0.09090909090909091
+     ],
+     "act_identified": false,
+     "agreement": 5,
+     "null_median": 5.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "llama3.1-8b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     13,
+     17
+    ],
+    "lens_spreads": [
+     0.12903225806451613,
+     0.12903225806451613
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      21,
+      24
+     ],
+     "act_spreads": [
+      0.3548387096774194,
+      0.2903225806451613
+     ],
+     "act_identified": false,
+     "agreement": 15,
+     "null_median": 13.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      17,
+      21
+     ],
+     "act_spreads": [
+      0.22580645161290322,
+      0.45161290322580644
+     ],
+     "act_identified": false,
+     "agreement": 8,
+     "null_median": 9.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     13,
+     17
+    ],
+    "lens_spreads": [
+     0.45161290322580644,
+     0.2903225806451613
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      21,
+      24
+     ],
+     "act_spreads": [
+      0.5483870967741935,
+      0.45161290322580644
+     ],
+     "act_identified": false,
+     "agreement": 15,
+     "null_median": 13.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      17,
+      21
+     ],
+     "act_spreads": [
+      0.6129032258064516,
+      0.5483870967741935
+     ],
+     "act_identified": false,
+     "agreement": 8,
+     "null_median": 9.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     13,
+     17
+    ],
+    "lens_spreads": [
+     0.5483870967741935,
+     0.5161290322580645
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      21,
+      24
+     ],
+     "act_spreads": [
+      0.7096774193548387,
+      0.6451612903225806
+     ],
+     "act_identified": false,
+     "agreement": 15,
+     "null_median": 13.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      17,
+      21
+     ],
+     "act_spreads": [
+      0.7419354838709677,
+      0.6774193548387096
+     ],
+     "act_identified": false,
+     "agreement": 8,
+     "null_median": 9.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "olmo-3-1025-7b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     15,
+     18
+    ],
+    "lens_spreads": [
+     0.06451612903225806,
+     0.0
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      2,
+      4
+     ],
+     "act_spreads": [
+      0.0,
+      0.03225806451612903
+     ],
+     "act_identified": true,
+     "agreement": 27,
+     "null_median": 23.0,
+     "admitted_old": true,
+     "admitted_new": true
+    },
+    "standardised": {
+     "act_boundaries": [
+      2,
+      25
+     ],
+     "act_spreads": [
+      0.0,
+      0.8064516129032258
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 14.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     15,
+     18
+    ],
+    "lens_spreads": [
+     0.5161290322580645,
+     0.16129032258064516
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      2,
+      4
+     ],
+     "act_spreads": [
+      0.06451612903225806,
+      0.06451612903225806
+     ],
+     "act_identified": true,
+     "agreement": 27,
+     "null_median": 23.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      2,
+      25
+     ],
+     "act_spreads": [
+      0.8064516129032258,
+      0.8064516129032258
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 14.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     15,
+     18
+    ],
+    "lens_spreads": [
+     0.5806451612903226,
+     0.5161290322580645
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      2,
+      4
+     ],
+     "act_spreads": [
+      0.41935483870967744,
+      0.8064516129032258
+     ],
+     "act_identified": false,
+     "agreement": 27,
+     "null_median": 23.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      2,
+      25
+     ],
+     "act_spreads": [
+      0.8064516129032258,
+      0.8064516129032258
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 14.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "pythia-70m-deduped": {
+   "tol0.05": {
+    "admitted": false,
+    "why": "too small / no shared map"
+   },
+   "tol0.15": {
+    "admitted": false,
+    "why": "too small / no shared map"
+   },
+   "tol0.35": {
+    "admitted": false,
+    "why": "too small / no shared map"
+   }
+  },
+  "qwen2.5-7b-it": {
+   "tol0.05": {
+    "lens_boundaries": [
+     2,
+     4
+    ],
+    "lens_spreads": [
+     0.14814814814814814,
+     0.18518518518518517
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      3,
+      6
+     ],
+     "act_spreads": [
+      0.7407407407407407,
+      0.7407407407407407
+     ],
+     "act_identified": false,
+     "agreement": 3,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      3,
+      23
+     ],
+     "act_spreads": [
+      0.0,
+      0.7037037037037037
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     2,
+     4
+    ],
+    "lens_spreads": [
+     0.5185185185185185,
+     0.6296296296296297
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      3,
+      6
+     ],
+     "act_spreads": [
+      0.7407407407407407,
+      0.7407407407407407
+     ],
+     "act_identified": false,
+     "agreement": 3,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      3,
+      23
+     ],
+     "act_spreads": [
+      0.7777777777777778,
+      0.7407407407407407
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     2,
+     4
+    ],
+    "lens_spreads": [
+     0.6666666666666666,
+     0.7037037037037037
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      3,
+      6
+     ],
+     "act_spreads": [
+      0.7777777777777778,
+      0.7407407407407407
+     ],
+     "act_identified": false,
+     "agreement": 3,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      3,
+      23
+     ],
+     "act_spreads": [
+      0.7777777777777778,
+      0.7407407407407407
+     ],
+     "act_identified": false,
+     "agreement": 20,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "qwen3-1.7b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     3,
+     5
+    ],
+    "lens_spreads": [
+     0.5185185185185185,
+     0.5185185185185185
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      23,
+      25
+     ],
+     "act_spreads": [
+      0.25925925925925924,
+      0.2222222222222222
+     ],
+     "act_identified": false,
+     "agreement": 40,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      21,
+      25
+     ],
+     "act_spreads": [
+      0.48148148148148145,
+      0.4074074074074074
+     ],
+     "act_identified": false,
+     "agreement": 38,
+     "null_median": 18.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     3,
+     5
+    ],
+    "lens_spreads": [
+     0.5925925925925926,
+     0.6296296296296297
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      23,
+      25
+     ],
+     "act_spreads": [
+      0.48148148148148145,
+      0.48148148148148145
+     ],
+     "act_identified": false,
+     "agreement": 40,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      21,
+      25
+     ],
+     "act_spreads": [
+      0.5185185185185185,
+      0.4444444444444444
+     ],
+     "act_identified": false,
+     "agreement": 38,
+     "null_median": 18.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     3,
+     5
+    ],
+    "lens_spreads": [
+     0.6666666666666666,
+     0.7037037037037037
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      23,
+      25
+     ],
+     "act_spreads": [
+      0.6296296296296297,
+      0.6296296296296297
+     ],
+     "act_identified": false,
+     "agreement": 40,
+     "null_median": 20.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      21,
+      25
+     ],
+     "act_spreads": [
+      0.6296296296296297,
+      0.5925925925925926
+     ],
+     "act_identified": false,
+     "agreement": 38,
+     "null_median": 18.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "qwen3-4b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     3,
+     23
+    ],
+    "lens_spreads": [
+     0.02857142857142857,
+     0.05714285714285714
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      6,
+      8
+     ],
+     "act_spreads": [
+      0.0,
+      0.7142857142857143
+     ],
+     "act_identified": false,
+     "agreement": 18,
+     "null_median": 29.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      6,
+      25
+     ],
+     "act_spreads": [
+      0.0,
+      0.14285714285714285
+     ],
+     "act_identified": true,
+     "agreement": 5,
+     "null_median": 16.0,
+     "admitted_old": true,
+     "admitted_new": true
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     3,
+     23
+    ],
+    "lens_spreads": [
+     0.05714285714285714,
+     0.14285714285714285
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      6,
+      8
+     ],
+     "act_spreads": [
+      0.7714285714285715,
+      0.7714285714285715
+     ],
+     "act_identified": false,
+     "agreement": 18,
+     "null_median": 29.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      6,
+      25
+     ],
+     "act_spreads": [
+      0.8,
+      0.34285714285714286
+     ],
+     "act_identified": false,
+     "agreement": 5,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     3,
+     23
+    ],
+    "lens_spreads": [
+     0.7142857142857143,
+     0.7142857142857143
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      6,
+      8
+     ],
+     "act_spreads": [
+      0.8,
+      0.8
+     ],
+     "act_identified": false,
+     "agreement": 18,
+     "null_median": 29.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      6,
+      25
+     ],
+     "act_spreads": [
+      0.8285714285714286,
+      0.8285714285714286
+     ],
+     "act_identified": false,
+     "agreement": 5,
+     "null_median": 16.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  },
+  "qwen3.5-0.8b": {
+   "tol0.05": {
+    "lens_boundaries": [
+     2,
+     15
+    ],
+    "lens_spreads": [
+     0.21739130434782608,
+     0.043478260869565216
+    ],
+    "lens_identified": true,
+    "raw": {
+     "act_boundaries": [
+      6,
+      11
+     ],
+     "act_spreads": [
+      0.5652173913043478,
+      0.43478260869565216
+     ],
+     "act_identified": false,
+     "agreement": 8,
+     "null_median": 11.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      19,
+      21
+     ],
+     "act_spreads": [
+      0.17391304347826086,
+      0.13043478260869565
+     ],
+     "act_identified": true,
+     "agreement": 23,
+     "null_median": 12.0,
+     "admitted_old": true,
+     "admitted_new": true
+    }
+   },
+   "tol0.15": {
+    "lens_boundaries": [
+     2,
+     15
+    ],
+    "lens_spreads": [
+     0.2608695652173913,
+     0.08695652173913043
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      6,
+      11
+     ],
+     "act_spreads": [
+      0.7391304347826086,
+      0.5217391304347826
+     ],
+     "act_identified": false,
+     "agreement": 8,
+     "null_median": 11.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      19,
+      21
+     ],
+     "act_spreads": [
+      0.5652173913043478,
+      0.2608695652173913
+     ],
+     "act_identified": false,
+     "agreement": 23,
+     "null_median": 12.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   },
+   "tol0.35": {
+    "lens_boundaries": [
+     2,
+     15
+    ],
+    "lens_spreads": [
+     0.5652173913043478,
+     0.34782608695652173
+    ],
+    "lens_identified": false,
+    "raw": {
+     "act_boundaries": [
+      6,
+      11
+     ],
+     "act_spreads": [
+      0.7391304347826086,
+      0.7391304347826086
+     ],
+     "act_identified": false,
+     "agreement": 8,
+     "null_median": 11.0,
+     "admitted_old": false,
+     "admitted_new": false
+    },
+    "standardised": {
+     "act_boundaries": [
+      19,
+      21
+     ],
+     "act_spreads": [
+      0.7391304347826086,
+      0.5652173913043478
+     ],
+     "act_identified": false,
+     "agreement": 23,
+     "null_median": 12.0,
+     "admitted_old": false,
+     "admitted_new": false
+    }
+   }
+  }
+ },
+ "verdicts": {
+  "tol0.05_raw_old": {
+   "label": "raw map, old gate",
+   "n_usable": 3,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.05_raw_new": {
+   "label": "raw map, new gate",
+   "n_usable": 3,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.05_standardised_old": {
+   "label": "standardised map, old gate",
+   "n_usable": 4,
+   "models": [
+    "gemma-3-1b",
+    "gpt2-small",
+    "qwen3-4b",
+    "qwen3.5-0.8b"
+   ],
+   "obs_mean_agreement_norm": 0.6693506493506494,
+   "pooled_null_median": 0.5379841897233202,
+   "p_one_sided": 0.853,
+   "n_beating_own_null_median": 1,
+   "verdict": "BANDS ARE A READOUT PROPERTY"
+  },
+  "tol0.05_standardised_new": {
+   "label": "standardised map, new gate",
+   "n_usable": 4,
+   "models": [
+    "gemma-3-1b",
+    "gpt2-small",
+    "qwen3-4b",
+    "qwen3.5-0.8b"
+   ],
+   "obs_mean_agreement_norm": 0.6693506493506494,
+   "pooled_null_median": 0.5379841897233202,
+   "p_one_sided": 0.853,
+   "n_beating_own_null_median": 1,
+   "verdict": "BANDS ARE A READOUT PROPERTY"
+  },
+  "tol0.15_raw_old": {
+   "label": "raw map, old gate",
+   "n_usable": 0,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.15_raw_new": {
+   "label": "raw map, new gate",
+   "n_usable": 0,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.15_standardised_old": {
+   "label": "standardised map, old gate",
+   "n_usable": 1,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.15_standardised_new": {
+   "label": "standardised map, new gate",
+   "n_usable": 1,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.35_raw_old": {
+   "label": "raw map, old gate",
+   "n_usable": 0,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.35_raw_new": {
+   "label": "raw map, new gate",
+   "n_usable": 0,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.35_standardised_old": {
+   "label": "standardised map, old gate",
+   "n_usable": 0,
+   "verdict": "NO VERDICT (too few usable models)"
+  },
+  "tol0.35_standardised_new": {
+   "label": "standardised map, new gate",
+   "n_usable": 0,
+   "verdict": "NO VERDICT (too few usable models)"
+  }
+ }
+}
