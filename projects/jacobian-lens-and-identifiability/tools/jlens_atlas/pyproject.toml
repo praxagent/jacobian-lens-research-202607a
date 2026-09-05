@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jlens-atlas"
+version = "0.1.0"
+description = "Layer x layer CKA maps, band statistics and boundary identifiability for Jacobian lenses"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
+dependencies = ["numpy", "torch", "huggingface_hub", "safetensors", "transformers", "pyyaml"]
+
+[project.optional-dependencies]
+plot = ["matplotlib"]
+
+[tool.setuptools]
+packages = ["jlens_atlas"]
+
+[tool.setuptools.package-data]
+jlens_atlas = ["data/*.json"]
