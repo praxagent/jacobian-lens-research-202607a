@@ -41,3 +41,22 @@ gemma-2-9b 0.41, gemma-2-9b-it 0.41, gemma-2-2b-it 0.40, gemma-3-12b 0.32, gpt-o
 The 397B (`qwen35-397b-own`) is identified at 0.08 / 0.07. Full table:
 `atlas_out/boundary_identifiability.{json,csv}`; figure `boundary-identifiability.svg` in the
 note bundle (`--verify` passes).
+
+## Distance-only (Toeplitz) surrogate (2026-09-05, CPU, exploratory)
+
+A reviewer noted that the random-transport null cannot separate "three phases" from smooth decay
+of similarity with layer distance. For each map, a Toeplitz surrogate replaces every cell by the
+mean CKA at that layer distance; band statistics of the surrogate measure how much of the
+statistic distance decay alone produces. `atlas_out/toeplitz_surrogate.{json,txt}`.
+
+- **397B (release map, own probe):** mid_sep 0.343 real vs **0.275** surrogate (80% of the released
+  statistic is reproduced by distance decay); fitted separation 0.407 vs 0.282, an excess of
+  **+0.125**; fitted boundaries (13, 46) real vs (11, 48) surrogate. Shared probe: 0.386 vs 0.313,
+  fitted 0.472 vs 0.326, excess **+0.146**, the largest in the zoo.
+- **Zoo (shared probe, 36 maps):** excess fitted separation median **+0.017**, positive for
+  **29 of 36**; seven lenses (gemma-3-12b, gemma-3-27b-it, gemma-4-e2b, gpt2-small,
+  qwen2.5-7b-it, qwen3-1.7b, gpt-oss-20b) have no block structure beyond distance decay.
+
+Reading: the fixed-thirds `mid_sep` is a weak discriminator of blocks against distance decay; the
+397B's blocks are real departures from it (the largest we measured), but the released number
+should be read with the surrogate's 0.275 beside it. Not pre-registered; added after review.
