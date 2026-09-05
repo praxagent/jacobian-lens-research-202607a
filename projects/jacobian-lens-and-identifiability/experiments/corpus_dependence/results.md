@@ -1,9 +1,65 @@
 # Results: a J-lens depth map is substantially a property of the fitting corpus
 
 Design frozen in [`PREREG.md`](PREREG.md) before any fit (commit `4b4f7d5`). Nine fits, three
-models, identical recipe, on one RTX 4090. **Verdict: CORPUS MATTERS, 3 of 3 models.**
+models, identical recipe, on one RTX 4090. **Verdict: CORPUS MATTERS, 3 of 3 models** (on the
+map-distance measure; see the correction below for what changed about the boundaries).
 
-## The seed null is essentially zero, which is what makes the rest meaningful
+> **CORRECTION, 2026-09-05. The map statistic `analyze.py` used before this date was not CKA.**
+> It built each layer's d x d readout covariance `G_l = J_l^T M J_l` and scored a layer pair with
+> `<G_i, G_j>_F / (|G_i| |G_j|)`, the cosine between two self-covariances. Linear CKA of the readout
+> geometries `D_l = U_c J_l` is `|J_j^T M J_i|_F^2 / (|J_i^T M J_i|_F |J_j^T M J_j|_F)`, which needs
+> the cross-gram. `PREREG.md` defines map distance as `1 - CKA` between the "layer-by-layer
+> readout-geometry maps", i.e. the atlas's maps, so the implementation deviated from the
+> pre-registered statistic. The two statistics give very different maps from the same lens (our
+> gpt2-small `wiki_a` fit: off-diagonal range [0.942, 0.997] under CKA, [0.027, 0.820] under the
+> old formula), and every fitted boundary reported in the superseded sections below was fitted on
+> the wrong map. The analyzer now computes the pre-registered statistic (`cka_from_readout`),
+> asserts at run time that it equals `common.cka.linear_cka` on explicit geometries (agreement to
+> 1e-6 on all three models), and keeps the old formula behind `--legacy`; the superseded output is
+> preserved as `results_legacy_selfgram.json`. Caught by a fresh reviewer noticing that the public
+> Neuronpedia fit and our own fit of the same model disagreed by a map distance of 0.45 under the
+> old statistic while their per-layer geometries agree at CKA 0.9992 (`fit_our_own/results.md`);
+> under CKA the two fits agree to 0.003, i.e. seed-null scale.
+
+## Corrected results (2026-09-05, linear CKA, shared probe, same nine fits)
+
+| model | layers | wiki_a | wiki_b | code | seed shift | corpus shift | map distance, seed | map distance, corpus | ratio |
+|---|---|---|---|---|---|---|---|---|---|
+| gpt2-small | 11 | (2, 4) | (2, 4) | (2, 4) | 0 | 0 | 0.0028 | 0.2390 | **84x** |
+| gemma-3-270m | 17 | (3, 15) | (3, 12) | (3, 15) | **3** | 0 | 0.0001 | 0.1193 | **888x** |
+| qwen3.5-0.8b | 23 | (6, 15) | (6, 15) | (5, 15) | 0 | 1 | 0.0005 | 0.0440 | **86x** |
+
+Band separation (fixed thirds, CKA map), wiki_a / wiki_b / code: gpt2-small 0.0149 / 0.0152 /
+0.0050; gemma-3-270m 0.1343 / 0.1379 / 0.0241; qwen3.5-0.8b 0.1130 / 0.1112 / 0.1232.
+
+**What survives.** P1, the map-distance test: the corpus effect exceeds the seed null in 3 of 3
+models, by 84x to 888x, so the frozen verdict **CORPUS MATTERS** stands on the pre-registered
+measure. The map really does move when the lens is fitted on code, and for gpt2-small it moves
+more than the superseded numbers said.
+
+**What does not survive.** P2 and the whole boundary story. Under the pre-registered statistic the
+fitted boundaries move by 0, 0 and 1 layers when the corpus changes, and by 0, 3 and 0 layers when
+only the WikiText sample changes. The "combined 10 and 15 layers" relocation, the "qwen3.5-0.8b
+keeps its band strength and moves its blocks" reading, the "summary statistic would have hidden
+this" section, and the claim that a seed resample leaves boundaries "on exactly the same layers"
+were all artifacts of fitting boundaries on the wrong map. The corrected picture is less dramatic:
+fitting on code changes how strong the bands are (gemma-3-270m 0.134 to 0.024, gpt2-small 0.015 to
+0.005) and reshapes the off-diagonal map, but leaves the boundary positions about where seed noise
+already puts them.
+
+**Consequences.** Test C in `../bands_vs_computation` took its segmentation labels from this
+file's boundaries; with corrected boundaries two of its three models have identical labels in both
+arms and the third differs by one layer, so Test C no longer has a contrast to test (see its
+ledger). The fit-budget sweep below was re-analysed with the corrected statistic (second
+correction block, further down). The note's summary sentence about boundaries moving "a combined
+fifteen layers" is withdrawn. Figures `corpus-dependence` and `fit-budget` were regenerated from
+the corrected receipts and their titles and alt text now derive from the data instead of carrying
+the old story hardcoded.
+
+The sections that follow, up to the fit-budget sweep, are the **superseded** pre-correction
+analysis, kept verbatim for the record.
+
+## [SUPERSEDED 2026-09-05] The seed null is essentially zero, which is what makes the rest meaningful
 
 Refitting the same model on a **different WikiText sample** changes almost nothing:
 
@@ -18,7 +74,7 @@ maps are near-identical. So the fitting procedure is highly reproducible, and th
 gate in the pre-registration is satisfied in the good direction: the null is small but non-zero,
 so we can actually detect a difference against it.
 
-## Changing the corpus moves the map by 87x to 292x the seed null
+## [SUPERSEDED 2026-09-05] Changing the corpus moves the map by 87x to 292x the seed null
 
 | model | layers | wiki_a | wiki_b | **code** | corpus boundary shift | map distance vs seed null |
 |---|---|---|---|---|---|---|
@@ -31,7 +87,7 @@ orders of magnitude, and in two of three models the fitted boundaries relocate a
 the network's depth: qwen3.5-0.8b's early/mid boundary moves from layer 15 to layer 4, and
 gemma-3-270m's from layer 3 to layer 12.
 
-## Two distinct ways the map changes, which the summary statistic hides
+## [SUPERSEDED 2026-09-05] Two distinct ways the map changes, which the summary statistic hides
 
 The models do not all fail the same way, and the band statistic alone would have missed it.
 
@@ -47,7 +103,7 @@ the blocks are equally strong and in completely different places.
 
 **gemma-3-270m: both.** Boundaries move 10 layers and band separation falls from 0.509 to 0.369.
 
-## What this means for the atlas, stated plainly
+## [SUPERSEDED 2026-09-05 where it concerns boundaries] What this means for the atlas, stated plainly
 
 Every lens in our 36-model atlas, and every public lens we used, was fitted on WikiText. This
 result says the fitted depth boundaries are **not** a stable property of the model alone: they
@@ -90,7 +146,39 @@ count.
 
 ---
 
-# Fit-budget sweep (2026-07-26) — VERDICT: CONVERGED
+# Fit-budget sweep (2026-07-26) — VERDICT: CONVERGED (re-analysed 2026-09-05: still CONVERGED, but the 25-prompt caveat is now triggered)
+
+> **CORRECTION, 2026-09-05.** Same statistic defect as the corpus experiment (correction block at
+> the top of this file); re-analysed with linear CKA on the same fits, same reference, same frozen
+> rules. Superseded output preserved as `results_fitbudget_legacy_selfgram.json`.
+>
+> | model | budget | map distance to n=100 (CKA) | x seed null | boundary shift | band_sep |
+> |---|---|---|---|---|---|
+> | gpt2-small (seed null 2.84e-3, ref boundaries 2/4, band 0.0149) | 25 | 5.02e-3 | 1.8x | **4** (4/6) | 0.0158 |
+> | | 50 | 2.26e-3 | 0.8x | 0 | 0.0155 |
+> | | 200 | 3.95e-4 | 0.1x | 0 | 0.0147 |
+> | | 400 | 7.05e-4 | 0.2x | 0 | 0.0144 |
+> | | 1000 | 7.20e-4 | 0.3x | 0 | 0.0145 |
+> | gemma-3-270m (seed null 1.34e-4, ref boundaries 3/15, band 0.1343) | 25 | 1.91e-3 | **14.2x** | **3** (3/12) | 0.1371 |
+> | | 50 | 4.89e-4 | **3.6x** | **3** (3/12) | 0.1342 |
+> | | 200 | 1.31e-4 | 1.0x | 0 | 0.1276 |
+> | | 400 | 1.40e-4 | 1.0x | 0 | 0.1302 |
+> | | 1000 | 7.3e-5 | 0.5x | 0 | 0.1342 |
+>
+> **Against the frozen decision table: still CONVERGED.** Every budget at 200 and above sits within
+> 2x the seed null (0.1x to 1.0x), so the discharge of the fit-heterogeneity caveat for the range
+> the public ~1,000-prompt lenses occupy stands. **But the 25-prompt caveat is now TRIGGERED**:
+> gemma-3-270m at 25 prompts sits 14.2x the seed null and at 50 prompts 3.6x, with its boundaries
+> at both budgets on 3/12 rather than the reference 3/15 (the same alternative its seed resample
+> produces, so the boundary itself is not well identified for this model); gpt2-small's 25-prompt
+> boundaries also move (4/6 vs 2/4). Under the frozen rule "25-prompt map far from the rest -> the
+> 24-prompt 397B lens is caveated", **the caveat on our released 397B lens applies**, and the two
+> paragraphs below that said it did not are withdrawn. Corrected statement: fitting budget is
+> inside the seed null from about 200 prompts up (from 50 for gpt2-small), so the public lenses
+> and our 100-prompt fits are comparable; a 24-prompt fit is not shown to be, and the 397B map
+> should be read with that caveat. Also withdrawn: "fitted boundaries never moved once, at any
+> budget" (they moved at 25 and 50 prompts). The text below is the superseded analysis, kept for
+> the record.
 
 Design frozen in `PREREG_FITBUDGET.md` (commit `1d9bd6d`) before any fit existed. Ran because an
 external review flagged that the 36-model zoo mixes lenses fitted at very different prompt

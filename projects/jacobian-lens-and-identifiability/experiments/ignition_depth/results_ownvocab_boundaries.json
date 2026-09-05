@@ -3,39 +3,21 @@
  "models": {
   "gemma-2-9b": {
    "n_layers_lens": 41,
-   "lens_late_boundary": 17,
-   "lens_boundaries_shared_probe": [
-    5,
-    17
-   ],
-   "lens_boundaries_own_vocab": [
-    5,
-    19
-   ],
-   "lens_boundary_source": "shared-probe",
-   "lens_late_reldepth": 0.4146341463414634,
+   "lens_late_boundary": 19,
+   "lens_late_reldepth": 0.4634146341463415,
    "median_ignition_reldepth": 0.8048780487804879,
    "n_ignited": 9,
    "n_prompts_used": 10,
    "final_layer_correct": 9,
    "gate_final_head": true,
-   "gap": 0.39024390243902446,
-   "null_median": 0.09756097560975618,
+   "gap": 0.34146341463414637,
+   "null_median": 0.14634146341463417,
    "p_one_sided": 1.0,
    "beats_null_median": false
   },
   "qwen3.5-0.8b": {
    "n_layers_lens": 23,
    "lens_late_boundary": 15,
-   "lens_boundaries_shared_probe": [
-    2,
-    15
-   ],
-   "lens_boundaries_own_vocab": [
-    7,
-    15
-   ],
-   "lens_boundary_source": "shared-probe",
    "lens_late_reldepth": 0.6521739130434783,
    "median_ignition_reldepth": 0.9782608695652174,
    "n_ignited": 8,
@@ -44,7 +26,7 @@
    "gate_final_head": true,
    "gap": 0.32608695652173914,
    "null_median": 0.32608695652173914,
-   "p_one_sided": 0.68,
+   "p_one_sided": 1.0,
    "beats_null_median": false
   }
  },
@@ -78,6 +60,5 @@
    "reason": "too few ignited"
   }
  ],
- "lens_boundary_probe": "shared-probe map (PREREG; corrected 2026-09-05)",
  "verdict": "NO VERDICT (too few usable models)"
 }

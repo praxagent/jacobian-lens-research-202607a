@@ -1,8 +1,11 @@
 """Corpus-dependence figure: seed null versus corpus effect.
 
 Left: fitted boundary positions on each model's depth axis, for two WikiText seeds and code.
-The two seeds coincide exactly; code moves.
 Right: map distance on a log axis, seed null against corpus, per model.
+
+Every number and every claim in the titles and alt text is derived from results.json at build
+time (a 2026-09-05 correction of the map statistic changed the boundary story, and the previous
+version of this script had the old story hardcoded in its title and alt text).
 """
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt, numpy as np, json, hashlib, argparse
@@ -39,8 +42,11 @@ def build():
         ax.text(L + 0.4, y, f"{slug}\n{L} layers, shift {shift}", fontsize=8, va="center", color="#5A544C")
     ax.set_yticks([]); ax.set_xlabel("layer index", fontsize=9.5)
     ax.set_xlim(-0.5, 30); ax.set_ylim(-0.6, len(ORDER) - 0.2)
-    ax.set_title("Fitted block boundaries: two WikiText seeds coincide, code does not",
-                 fontsize=10.6, fontweight="bold", loc="left")
+    seed_shifts = [d[s]["seed_null"]["boundary_shift"] for s in ORDER]
+    corp_shifts = [d[s]["corpus"]["boundary_shift"] for s in ORDER]
+    ax.set_title(f"Fitted block boundaries: seed resample moves them {min(seed_shifts)} to "
+                 f"{max(seed_shifts)} layers, code {min(corp_shifts)} to {max(corp_shifts)}",
+                 fontsize=10.2, fontweight="bold", loc="left")
     ax.plot([], [], marker="v", ls="", color=WIKI, label="WikiText (two seeds)")
     ax.plot([], [], marker="^", ls="", color=CODE, label="code")
     ax.legend(fontsize=8.5, frameon=False, loc="lower right")
@@ -57,8 +63,9 @@ def build():
     ax2.set_yscale("log"); ax2.set_xticks(x)
     ax2.set_xticklabels([s.replace("-", "-\n", 1) for s in ORDER], fontsize=8.4)
     ax2.set_ylabel("map distance  (1 - CKA between maps)", fontsize=9)
-    ax2.set_title("Corpus moves the map ~100x more", fontsize=10.6,
-                  fontweight="bold", loc="left")
+    ratios = [b_ / a_ for a_, b_ in zip(seed, corp)]
+    ax2.set_title(f"Corpus moves the map {min(ratios):.0f}x to {max(ratios):.0f}x the seed null",
+                  fontsize=10.2, fontweight="bold", loc="left")
     ax2.legend(fontsize=8, frameon=False, loc="lower left")
     ax2.set_ylim(top=max(corp)*3.5)
     for s in ("top", "right"): ax2.spines[s].set_visible(False)
@@ -67,11 +74,18 @@ def build():
     fig.savefig(POST / f"{STEM}.svg", format="svg", metadata={"Date": None})
     fig.savefig(POST / f"{STEM}.png", dpi=170); plt.close(fig)
 
-    alt = ("Two panels. Left: depth axes for three models with fitted block boundaries marked. "
-           "The two WikiText seeds place boundaries on identical layers in every model; the "
-           "code-fitted boundaries sit elsewhere, moving 10 layers in gemma-3-270m and 15 in "
-           "qwen3.5-0.8b, and not at all in gpt2-small. Right: log-scale bars of map distance, "
-           "showing the corpus effect exceeding the seed null by 292x, 198x and 87x.")
+    def shift_phrase(kind):
+        parts = []
+        for s in ORDER:
+            sh = d[s][kind]["boundary_shift"]
+            parts.append(f"{'not at all' if sh == 0 else str(sh) + ' layer' + ('s' if sh != 1 else '')} in {s}")
+        return ", ".join(parts)
+    alt = ("Two panels. Left: depth axes for three models with fitted block boundaries marked "
+           "for two WikiText seeds and for code. Resampling WikiText moves the fitted boundaries "
+           f"{shift_phrase('seed_null')}; fitting on code moves them {shift_phrase('corpus')}. "
+           "Right: log-scale bars of map distance, showing the corpus effect exceeding the seed "
+           "null by " + ", ".join(f"{r:.0f}x" for r in ratios) + " for "
+           + ", ".join(ORDER) + " respectively.")
     (POST / f"{STEM}.receipt.json").write_text(json.dumps({
         "figure_id": STEM,
         "title": "Corpus dependence of fitted J-lens depth boundaries",
@@ -80,9 +94,12 @@ def build():
         "provenance": {"generator": "corpus_dependence/build_fig.py",
                        "svg_sha256": sha(POST / f"{STEM}.svg")},
         "interval_semantics": "descriptive; seed null is a single same-corpus refit per model",
+        "statistic": d.get("_statistic", "unrecorded"),
         "plotted_values": {s: {"boundaries": d[s]["boundaries"], "band_sep": d[s]["band_sep"],
                                "seed_map_distance": d[s]["seed_null"]["map_distance"],
-                               "corpus_map_distance": d[s]["corpus"]["map_distance"]} for s in ORDER},
+                               "corpus_map_distance": d[s]["corpus"]["map_distance"],
+                               "seed_boundary_shift": d[s]["seed_null"]["boundary_shift"],
+                               "corpus_boundary_shift": d[s]["corpus"]["boundary_shift"]} for s in ORDER},
         "accessibility": {"color_only_channel": False, "text_equivalent": "plotted_values"},
     }, indent=1))
     for s in ORDER:

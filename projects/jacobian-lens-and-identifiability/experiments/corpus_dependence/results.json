@@ -1,44 +1,45 @@
 {
+ "_statistic": "linear CKA of shared-probe readout geometry (corrected 2026-09-05)",
  "gpt2-small": {
   "n_layers": 11,
   "n_probe": 4096,
   "band_sep": {
-   "wiki_a": 0.3972,
-   "wiki_b": 0.3974,
-   "code": 0.2921
+   "wiki_a": 0.0149,
+   "wiki_b": 0.0152,
+   "code": 0.005
   },
   "boundaries": {
    "wiki_a": [
-    6,
-    8
+    2,
+    4
    ],
    "wiki_b": [
-    6,
-    8
+    2,
+    4
    ],
    "code": [
-    6,
-    8
+    2,
+    4
    ]
   },
   "seed_null": {
    "boundary_shift": 0,
-   "map_distance": 0.00023116814044177314,
-   "band_shift": 0.00020569993648666962
+   "map_distance": 0.0028388407456151343,
+   "band_shift": 0.0003612935543060303
   },
   "corpus": {
    "boundary_shift": 0,
-   "map_distance": 0.06743452155890028,
-   "band_shift": 0.10507620087203884
+   "map_distance": 0.23901610827058872,
+   "band_shift": 0.009841473773121723
   }
  },
  "gemma-3-270m": {
   "n_layers": 17,
   "n_probe": 4096,
   "band_sep": {
-   "wiki_a": 0.5093,
-   "wiki_b": 0.52,
-   "code": 0.3686
+   "wiki_a": 0.1343,
+   "wiki_b": 0.1379,
+   "code": 0.0241
   },
   "boundaries": {
    "wiki_a": [
@@ -47,55 +48,55 @@
    ],
    "wiki_b": [
     3,
-    15
+    12
    ],
    "code": [
-    12,
-    14
+    3,
+    15
    ]
   },
   "seed_null": {
-   "boundary_shift": 0,
-   "map_distance": 0.0005180530714398168,
-   "band_shift": 0.010647082427102772
+   "boundary_shift": 3,
+   "map_distance": 0.00013445368265396773,
+   "band_shift": 0.003596605857213442
   },
   "corpus": {
-   "boundary_shift": 10,
-   "map_distance": 0.10277003553602038,
-   "band_shift": 0.1407882724371221
+   "boundary_shift": 0,
+   "map_distance": 0.11933852349315599,
+   "band_shift": 0.11020332276821132
   }
  },
  "qwen3.5-0.8b": {
   "n_layers": 23,
   "n_probe": 4096,
   "band_sep": {
-   "wiki_a": 0.2556,
-   "wiki_b": 0.2554,
-   "code": 0.255
+   "wiki_a": 0.113,
+   "wiki_b": 0.1112,
+   "code": 0.1232
   },
   "boundaries": {
    "wiki_a": [
-    15,
-    19
+    6,
+    15
    ],
    "wiki_b": [
-    15,
-    19
+    6,
+    15
    ],
    "code": [
-    4,
+    5,
     15
    ]
   },
   "seed_null": {
    "boundary_shift": 0,
-   "map_distance": 0.00017257502747569653,
-   "band_shift": 0.000139018470820651
+   "map_distance": 0.0005135628487213939,
+   "band_shift": 0.0017668484444065546
   },
   "corpus": {
-   "boundary_shift": 15,
-   "map_distance": 0.014987114700948823,
-   "band_shift": 0.0006002777621948452
+   "boundary_shift": 1,
+   "map_distance": 0.04398504485138932,
+   "band_shift": 0.010260664259216568
   }
  },
  "_verdict": {

@@ -20,6 +20,14 @@ Four of six models were excluded, leaving two, below the frozen minimum of three
 rule therefore issues **no verdict**, and we are not going to quietly pool two models and call it
 a null.
 
+**Correction (2026-09-05).** The "lens late boundary" column above came from the own-vocabulary
+atlas map (`atlas_out/<slug>.npz`); `PREREG.md` specifies the shared-vocabulary map, which lives in
+`atlas_out/shared_maps/`. `analyze.py` now fits the boundary on the shared map (own values kept in
+the output; `--own-vocab-boundaries` reproduces the table above). Corrected rows: gemma-2-9b late
+boundary 0.415 (17/41), gap 0.390, null median 0.098, p = 1.000, does not beat its null;
+qwen3.5-0.8b unchanged at 0.652, gap 0.326, null median 0.326, p = 0.680. Verdict unchanged:
+**NO VERDICT** (2 usable models). Superseded output: `results_ownvocab_boundaries.json`.
+
 ## Why it failed, plainly
 
 **The prompt set was too hard for half the frozen model set.** We chose ten factual completions

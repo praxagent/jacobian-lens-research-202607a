@@ -14,6 +14,14 @@ Repaired decision rule, scaling with the number of usable models k (k >= 4 requi
                                                      -> BANDS TRACK REPRESENTATIONS
   pooled p >= 0.05                                   -> BANDS ARE A READOUT PROPERTY
   otherwise                                          -> MIXED
+
+CORRECTION (2026-09-05). PREREG.md specifies the boundaries of each model's SHARED-vocabulary
+lens map. The runner read `jspace_atlas/atlas_out/<slug>.npz`, the file the prereg itself named,
+but that file is Stage A's OWN-vocabulary map (see atlas_stage_a.py's docstring); the shared maps
+live in `atlas_out/shared_maps/<slug>.npz`. Every per-model receipt therefore carries own-vocabulary
+lens boundaries, and for 5 of the 12 models the two probes disagree by 3 to 9 layers. This analyzer
+now fits the boundaries from the shared maps (`--lens-maps`), keeps the own-vocabulary values in the
+output for the record, and reproduces the superseded numbers with `--own-vocab-boundaries`.
 """
 from __future__ import annotations
 import argparse, glob, json
@@ -21,7 +29,42 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
+SHARED_MAPS = HERE.parent / "jspace_atlas/atlas_out/shared_maps"
 NPERM = 1000
+
+
+def fitted_seg(M):
+    """Vendored from jspace_atlas/atlas_stage_a.py (same objective, equality-checked there by
+    activation_boundaries.test_fitted_seg_matches_atlas): the 3 contiguous segments maximising
+    mean within-block CKA. Returns (b1, b2)."""
+    L = M.shape[0]; S = M.cumsum(0).cumsum(1)
+
+    def block_sum(a, b):
+        t = S[b - 1, b - 1]
+        if a > 0:
+            t = t - S[a - 1, b - 1] - S[b - 1, a - 1] + S[a - 1, a - 1]
+        return t
+    best = (-1e9, 1, 2)
+    for b1 in range(2, L - 3):
+        for b2 in range(b1 + 2, L - 1):
+            score = 0.0
+            for a, b in ((0, b1), (b1, b2), (b2, L)):
+                n = b - a
+                score += (block_sum(a, b) - n) / max(n * n - n, 1)
+            if score > best[0]:
+                best = (score, b1, b2)
+    return int(best[1]), int(best[2])
+
+
+def shared_boundaries(maps_dir, slug, L):
+    """Lens boundaries from the shared-probe map; None if no map or too few layers to segment."""
+    f = Path(maps_dir) / f"{slug}.npz"
+    if not f.exists():
+        return None
+    M = np.load(f)["cka"]
+    if M.shape[0] != L or L < 8:
+        return None
+    return list(fitted_seg(M))
 OLD_MEDIAN_GATE = 0.999
 NEW_RANGE_GATE = 0.10
 MIN_USABLE = 4
@@ -70,6 +113,10 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", default=str(HERE / "outB"))
     ap.add_argument("--out", default=str(HERE / "results_B2.json"))
+    ap.add_argument("--lens-maps", default=str(SHARED_MAPS),
+                    help="dir of shared-probe lens maps <slug>.npz (PREREG); boundaries are fitted here")
+    ap.add_argument("--own-vocab-boundaries", action="store_true",
+                    help="reproduce the SUPERSEDED pre-2026-09-05 numbers (own-vocab boundaries)")
     a = ap.parse_args()
 
     recs = {}
@@ -80,7 +127,11 @@ def main():
         recs[d["slug"]] = d
 
     out = {"nperm": NPERM, "old_median_gate": OLD_MEDIAN_GATE,
-           "new_range_gate": NEW_RANGE_GATE, "n_models_run": len(recs), "models": {}}
+           "new_range_gate": NEW_RANGE_GATE, "n_models_run": len(recs),
+           "lens_boundary_probe": ("own-vocabulary map (SUPERSEDED; deviates from PREREG)"
+                                   if a.own_vocab_boundaries else
+                                   "shared-probe map (PREREG; corrected 2026-09-05)"),
+           "models": {}}
 
     variants = {}   # (map_kind, gate) -> list of usable rows
     for kind in ("raw", "standardised"):
@@ -88,8 +139,14 @@ def main():
             variants[(kind, gate)] = []
 
     for slug, d in recs.items():
-        L = d["n_layers"]; lb = d["lens_boundaries"]
-        m = {"n_layers": L, "lens_boundaries": lb}
+        L = d["n_layers"]; lb_own = d["lens_boundaries"]
+        lb_shared = shared_boundaries(a.lens_maps, slug, L)
+        lb = lb_own if (a.own_vocab_boundaries or lb_shared is None) else lb_shared
+        m = {"n_layers": L, "lens_boundaries": lb,
+             "lens_boundaries_own_vocab": lb_own,
+             "lens_boundaries_shared_probe": lb_shared,
+             "lens_boundary_source": ("own-vocab" if (a.own_vocab_boundaries or lb_shared is None)
+                                      else "shared-probe")}
         for kind, bkey, medkey, rngkey in (
                 ("raw", "act_boundaries", "act_offdiag_median", "act_range"),
                 ("standardised", "std_act_boundaries", "std_act_offdiag_median",
@@ -114,7 +171,8 @@ def main():
                 variants[(kind, "new")].append(row)
         out["models"][slug] = m
 
-    print(f"{'model':22s} {'L':>3s} {'lens':>9s} | {'raw b':>9s} {'agr':>4s} {'rng':>6s} "
+    print(f"lens boundaries: {out['lens_boundary_probe']}")
+    print(f"{'model':22s} {'L':>3s} {'lens':>9s} {'(own)':>9s} | {'raw b':>9s} {'agr':>4s} {'rng':>6s} "
           f"{'gates':>9s} | {'std b':>9s} {'agr':>4s} {'rng':>6s} {'gates':>9s}")
     for slug, m in out["models"].items():
         r, s_ = m.get("raw", {}), m.get("standardised", {})
@@ -122,7 +180,8 @@ def main():
             if not x: return "-"
             return ("old-EX " if x["excluded_old_gate"] else "old-ok ") + \
                    ("new-EX" if x["excluded_new_gate"] else "new-ok")
-        print(f"{slug:22s} {m['n_layers']:3d} {str(m['lens_boundaries']):>9s} | "
+        print(f"{slug:22s} {m['n_layers']:3d} {str(m['lens_boundaries']):>9s} "
+              f"{str(m['lens_boundaries_own_vocab']):>9s} | "
               f"{str(r.get('boundaries','-')):>9s} {r.get('agreement','-'):>4} "
               f"{r.get('range',0):6.3f} {g(r):>9s} | "
               f"{str(s_.get('boundaries','-')):>9s} {s_.get('agreement','-'):>4} "

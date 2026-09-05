@@ -10,6 +10,12 @@ Frozen rules:
   pooled p >= 0.05                     -> NO ALIGNMENT
   otherwise                            -> MIXED
 A model is usable if at least 5 of its prompts ignite.
+
+CORRECTION (2026-09-05). PREREG.md names the late boundary of the cached SHARED-vocabulary lens
+map. `jspace_atlas/atlas_out/<slug>.npz` is Stage A's OWN-vocabulary map; the shared maps are in
+`atlas_out/shared_maps/`. The first analysis used the own-vocabulary `seg`. This version fits the
+boundary on the shared map, records both, and reproduces the old numbers with
+`--own-vocab-boundaries`. The verdict (NO VERDICT, 2 usable models) does not depend on it.
 """
 from __future__ import annotations
 import argparse, glob, json
@@ -18,8 +24,31 @@ import numpy as np
 
 HERE = Path(__file__).resolve().parent
 ATLAS = HERE.parent / "jspace_atlas/atlas_out"
+SHARED_MAPS = ATLAS / "shared_maps"
 NPERM = 1000
 MIN_IGNITED = 5
+
+
+def fitted_seg(M):
+    """Vendored from jspace_atlas/atlas_stage_a.py: 3 contiguous segments maximising mean
+    within-block CKA. Returns (b1, b2)."""
+    L = M.shape[0]; S = M.cumsum(0).cumsum(1)
+
+    def block_sum(a, b):
+        t = S[b - 1, b - 1]
+        if a > 0:
+            t = t - S[a - 1, b - 1] - S[b - 1, a - 1] + S[a - 1, a - 1]
+        return t
+    best = (-1e9, 1, 2)
+    for b1 in range(2, L - 3):
+        for b2 in range(b1 + 2, L - 1):
+            score = 0.0
+            for a, b in ((0, b1), (b1, b2), (b2, L)):
+                n = b - a
+                score += (block_sum(a, b) - n) / max(n * n - n, 1)
+            if score > best[0]:
+                best = (score, b1, b2)
+    return int(best[1]), int(best[2])
 
 
 def null_gaps(b1, b2, L, target, nperm, seed=0):
@@ -39,9 +68,14 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", default=str(HERE / "out"))
     ap.add_argument("--out", default=str(HERE / "results.json"))
+    ap.add_argument("--own-vocab-boundaries", action="store_true",
+                    help="reproduce the SUPERSEDED pre-2026-09-05 numbers (own-vocab late boundary)")
     a = ap.parse_args()
 
-    out = {"nperm": NPERM, "models": {}, "unusable": []}
+    out = {"nperm": NPERM, "models": {}, "unusable": [],
+           "lens_boundary_probe": ("own-vocabulary map (SUPERSEDED; deviates from PREREG)"
+                                   if a.own_vocab_boundaries else
+                                   "shared-probe map (PREREG; corrected 2026-09-05)")}
     rows = []
     for f in sorted(glob.glob(str(Path(a.runs) / "*.json"))):
         if "smoke" in f:
@@ -61,12 +95,20 @@ def main():
                                                else "head gate failed")})
             continue
         z = np.load(ATLAS / f"{slug}.npz")
-        b1, b2 = [int(v) for v in z["seg"]]
+        own_b1, own_b2 = [int(v) for v in z["seg"]]
         L = int(z["cka"].shape[0])
+        zs = SHARED_MAPS / f"{slug}.npz"
+        if a.own_vocab_boundaries or not zs.exists() or L < 8:
+            b1, b2, src = own_b1, own_b2, "own-vocab"
+        else:
+            b1, b2 = fitted_seg(np.load(zs)["cka"]); src = "shared-probe"
         target = d["median_ignition_reldepth"]
         gap = abs(target - b2 / L)
         nd = null_gaps(b1, b2, L, target, NPERM)
         m = {"n_layers_lens": L, "lens_late_boundary": b2,
+             "lens_boundaries_shared_probe": [b1, b2] if src == "shared-probe" else None,
+             "lens_boundaries_own_vocab": [own_b1, own_b2],
+             "lens_boundary_source": src,
              "lens_late_reldepth": b2 / L,
              "median_ignition_reldepth": target,
              "n_ignited": d["n_ignited"], "n_prompts_used": d["n_prompts_used"],

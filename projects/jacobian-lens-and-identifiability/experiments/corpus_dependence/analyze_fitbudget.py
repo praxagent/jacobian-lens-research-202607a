@@ -33,18 +33,21 @@ CONVERGED_FACTOR = 2.0               # frozen: "within ~2x the seed null"
 import importlib.util as _ilu  # noqa: E402
 _spec = _ilu.spec_from_file_location("cd_analyze", HERE / "analyze.py")
 _cd = _ilu.module_from_spec(_spec); _spec.loader.exec_module(_cd)
-cka_from_grams, band_stats, fitted_boundaries = (_cd.cka_from_grams, _cd.band_stats,
-                                                 _cd.fitted_boundaries)
+band_stats, fitted_boundaries = _cd.band_stats, _cd.fitted_boundaries
+# CORRECTION 2026-09-05: the map statistic is linear CKA of the shared-probe readout geometry
+# (cka_from_readout), the same statistic as the atlas. The first run of this analyzer used the
+# self-gram cosine now kept as legacy_selfgram_similarity; see analyze.py's module docstring.
+LEGACY = False
 
 
 def load_map(path: Path, Mprobe):
     d = torch.load(path, map_location="cpu", weights_only=False)
     J = d["J"]; layers = sorted(J.keys())
-    Gs = []
-    for l in layers:
-        Jl = J[l].float().numpy()
-        Gs.append((Jl.T @ Mprobe @ Jl).astype(np.float32))
-    return cka_from_grams(Gs), d["d_model"]
+    Js = [J[l].float().numpy() for l in layers]
+    if LEGACY:
+        return _cd.legacy_selfgram_similarity([(Jl.T @ Mprobe @ Jl).astype(np.float32)
+                                               for Jl in Js]), d["d_model"]
+    return _cd.cka_from_readout(Js, Mprobe), d["d_model"]
 
 
 def map_distance(Cx, Cy):

@@ -12,67 +12,67 @@
   "gpt2-small": {
    "n_layers": 11,
    "n_probe": 4096,
-   "seed_null_map_distance": 0.00023116814044177314,
+   "seed_null_map_distance": 0.0028388407456151343,
    "reference_boundaries": [
-    6,
-    8
+    2,
+    4
    ],
-   "reference_band_sep": 0.3972,
+   "reference_band_sep": 0.0149,
    "by_budget": {
     "25": {
-     "map_distance_to_ref": 0.00043387230257463383,
-     "boundary_shift": 0,
-     "band_shift": 0.004003392183221877,
+     "map_distance_to_ref": 0.005016266685923032,
+     "boundary_shift": 4,
+     "band_shift": 0.0009022305409113196,
      "boundaries": [
-      6,
-      8
+      4,
+      6
      ],
-     "band_sep": 0.4012,
-     "ratio_to_seed_null": 1.876868939402651
+     "band_sep": 0.0158,
+     "ratio_to_seed_null": 1.7670123601231045
     },
     "50": {
-     "map_distance_to_ref": 0.00030380624749859475,
+     "map_distance_to_ref": 0.0022615236679501827,
      "boundary_shift": 0,
-     "band_shift": 0.0028411964885890484,
+     "band_shift": 0.0006896114597718661,
      "boundaries": [
-      6,
-      8
+      2,
+      4
      ],
-     "band_sep": 0.4001,
-     "ratio_to_seed_null": 1.3142219637965975
+     "band_sep": 0.0155,
+     "ratio_to_seed_null": 0.7966363282066196
     },
     "200": {
-     "map_distance_to_ref": 7.381149858864955e-05,
+     "map_distance_to_ref": 0.0003950541597856905,
      "boundary_shift": 0,
-     "band_shift": 0.0006710615319510671,
+     "band_shift": 0.00011854618787765503,
      "boundaries": [
-      6,
-      8
+      2,
+      4
      ],
-     "band_sep": 0.3979,
-     "ratio_to_seed_null": 0.31929788615157917
+     "band_sep": 0.0147,
+     "ratio_to_seed_null": 0.1391603810097097
     },
     "400": {
-     "map_distance_to_ref": 0.00010385220041742027,
+     "map_distance_to_ref": 0.000704817182100248,
      "boundary_shift": 0,
-     "band_shift": 0.0006258787664895626,
+     "band_shift": 0.0004429258406162262,
      "boundaries": [
-      6,
-      8
+      2,
+      4
      ],
-     "band_sep": 0.3966,
-     "ratio_to_seed_null": 0.4492496250519378
+     "band_sep": 0.0144,
+     "ratio_to_seed_null": 0.2482764076107146
     },
     "1000": {
-     "map_distance_to_ref": 9.382582076811197e-05,
+     "map_distance_to_ref": 0.0007200962733552307,
      "boundary_shift": 0,
-     "band_shift": 0.00036429144286864723,
+     "band_shift": 0.0003167570879062387,
      "boundaries": [
-      6,
-      8
+      2,
+      4
      ],
-     "band_sep": 0.3969,
-     "ratio_to_seed_null": 0.4058769542758203
+     "band_sep": 0.0145,
+     "ratio_to_seed_null": 0.25365856625366867
     }
    },
    "converged": true,
@@ -82,74 +82,74 @@
   "gemma-3-270m": {
    "n_layers": 17,
    "n_probe": 4096,
-   "seed_null_map_distance": 0.0005180530714398168,
+   "seed_null_map_distance": 0.00013445368265396773,
    "reference_boundaries": [
     3,
     15
    ],
-   "reference_band_sep": 0.5093,
+   "reference_band_sep": 0.1343,
    "by_budget": {
     "25": {
-     "map_distance_to_ref": 0.0005265185162519614,
-     "boundary_shift": 0,
-     "band_shift": 0.005531980982050211,
+     "map_distance_to_ref": 0.0019096503439932633,
+     "boundary_shift": 3,
+     "band_shift": 0.0028197338183721943,
      "boundaries": [
       3,
-      15
+      12
      ],
-     "band_sep": 0.5038,
-     "ratio_to_seed_null": 1.0163408833550909
+     "band_sep": 0.1371,
+     "ratio_to_seed_null": 14.203034876389156
     },
     "50": {
-     "map_distance_to_ref": 0.0001813429242762954,
-     "boundary_shift": 0,
-     "band_shift": 0.0029012457364134825,
+     "map_distance_to_ref": 0.0004885721903145068,
+     "boundary_shift": 3,
+     "band_shift": 0.00010769201649563076,
      "boundaries": [
       3,
-      15
+      12
      ],
-     "band_sep": 0.5064,
-     "ratio_to_seed_null": 0.3500470015017802
+     "band_sep": 0.1342,
+     "ratio_to_seed_null": 3.633758337225351
     },
     "200": {
-     "map_distance_to_ref": 0.0002911441811850324,
+     "map_distance_to_ref": 0.0001312255415065744,
      "boundary_shift": 0,
-     "band_shift": 0.0011554995086044961,
+     "band_shift": 0.006666889455583358,
      "boundaries": [
       3,
       15
      ],
-     "band_sep": 0.5105,
-     "ratio_to_seed_null": 0.561996824718865
+     "band_sep": 0.1276,
+     "ratio_to_seed_null": 0.9759906825631446
     },
     "400": {
-     "map_distance_to_ref": 0.0001968652821461303,
+     "map_distance_to_ref": 0.00014031168010275596,
      "boundary_shift": 0,
-     "band_shift": 0.0015680299864875291,
+     "band_shift": 0.004013870987627177,
      "boundaries": [
       3,
       15
      ],
-     "band_sep": 0.5109,
-     "ratio_to_seed_null": 0.3800098735038588
+     "band_sep": 0.1302,
+     "ratio_to_seed_null": 1.0435688880598717
     },
     "1000": {
-     "map_distance_to_ref": 0.00018124225207694078,
+     "map_distance_to_ref": 7.328821230501159e-05,
      "boundary_shift": 0,
-     "band_shift": 0.0053087922537493615,
+     "band_shift": 7.071312930839735e-05,
      "boundaries": [
       3,
       15
      ],
-     "band_sep": 0.5147,
-     "ratio_to_seed_null": 0.3498526735363561
+     "band_sep": 0.1342,
+     "ratio_to_seed_null": 0.5450814797957403
     }
    },
    "converged": true,
-   "still_falling_at_top": false,
-   "low_budget_far": false
+   "still_falling_at_top": true,
+   "low_budget_far": true
   }
  },
  "verdict": "CONVERGED",
- "low_budget_caveat": false
+ "low_budget_caveat": true
 }

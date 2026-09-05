@@ -220,3 +220,58 @@ instead of five models under a broken rule.
 ## Cost
 
 Twelve models, forward passes only, shared pod with the ignition test. About **$2** total.
+
+---
+
+# Correction (2026-09-05): Test B used own-vocabulary lens boundaries; the design says shared
+
+`PREREG.md` and `PREREG_B2.md` compare activation boundaries to the boundaries of each model's
+**shared-vocabulary** lens map, and name `../jspace_atlas/atlas_out/<slug>.npz` as that cached map.
+That file is Stage A's **own-vocabulary** map (`atlas_stage_a.py`, first line of its docstring); the
+shared-probe maps live in `atlas_out/shared_maps/`. Both Test B runs, and the ignition test, took
+their lens boundaries from the own-vocabulary file. For 5 of the 12 re-run models the two probes
+place the boundaries 3 to 9 layers apart (gemma-2-2b 2/4 vs 2/7, llama3.1-8b 4/17 vs 13/17,
+olmo-3-1025-7b 9/18 vs 15/18, qwen2.5-7b-it 4/6 vs 2/4, qwen3.5-0.8b 7/15 vs 2/15).
+
+`analyze_B2.py` now fits the lens boundaries on the shared maps (the own-vocabulary values stay in
+the output for the record; `--own-vocab-boundaries` reproduces the superseded numbers exactly).
+The activation maps are unchanged (cached in `outB/`), so no GPU was needed.
+
+| map | gate | usable models | observed | null median | p | beat own null | superseded (own-vocab): obs / null / p |
+|---|---|---|---|---|---|---|---|
+| raw | old (median) | 8 | 0.715 | 0.554 | 0.881 | 2/8 | 0.683 / 0.539 / 0.865 |
+| raw | **repaired (range)** | **10** | **0.601** | **0.568** | **0.613** | **4/10** | 0.560 / 0.541 / 0.569 |
+| standardised | old | 12 | 0.743 | 0.561 | 0.965 | 4/12 | 0.730 / 0.548 / 0.960 |
+| standardised | repaired | 12 | 0.743 | 0.561 | 0.965 | 4/12 | 0.730 / 0.548 / 0.960 |
+
+**Verdict under every cell, on the pre-registered probe: BANDS ARE A READOUT PROPERTY.** The
+conclusion is unchanged; the numbers the note quotes must be these, and the deviation is
+disclosed. Anchor gate unaffected (activation side). Superseded output:
+`results_B2_ownvocab_boundaries.json`.
+
+One thing this exposed that the note did not say: the fitted three-segmentation is poorly
+identified for about a third of the zoo. On the shared maps, the set of segmentations within 5% of
+the objective's range of the optimum spans 0.4 to 0.85 of the depth for at least one boundary in
+gemma-3-27b-it, qwen3-14b, qwen3-1.7b, llama3.3-70b-it, gemma-4-e2b, gemma-4-e4b, gemma-3-270m,
+gemma-2-9b and gemma-3-4b-it (the 397B is well identified: 0.08 and 0.07 of depth). Any test that
+uses "the boundary" as a variable is, for those models, comparing noise with noise, which biases
+Test B toward its null. That is a limitation of Test B we had not stated, and a reason to add an
+identifiability gate to any future boundary-based design.
+
+# Test C after the corpus correction (2026-09-05): no contrast left to test
+
+Test C took its segmentation labels from `../corpus_dependence/results.json`. That file was
+produced with a statistic that is not CKA (see the correction at the top of the corpus ledger).
+Under the pre-registered statistic the WikiText and code boundaries are identical for gpt2-small
+(2/4) and gemma-3-270m (3/15) and differ by one layer for qwen3.5-0.8b (6/15 vs 5/15). Re-running
+`analyze_C.py --runs outC` on the corrected labels: the mechanical control still returns
+C2 = 0.0 exactly (VOID = False), gemma-3-270m becomes a second identical-label model (C2 = 0 by
+construction), and the only contrast model gives C2 = +0.012 (matched minus mismatched), with
+pooled matched beta -0.500. The superseded values were C2 = -0.036 and beta -0.464
+(`results_C_legacy_selfgram_boundaries.json`).
+
+The honest status of Test C is therefore **moot rather than null**: its premise, that the fitting
+corpus relocates the boundaries by 10 to 15 layers, was an artifact, so the crossed design has
+almost nothing to cross. It should no longer be cited as evidence against the corpus-instability
+explanation, and the "five designs" count in the note should describe it that way. The
+gemma-3-270m code cell still fails its calibration gate (median D 6.806) and stays excluded.

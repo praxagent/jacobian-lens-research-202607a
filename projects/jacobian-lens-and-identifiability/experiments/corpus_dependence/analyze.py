@@ -10,6 +10,18 @@ Measures per pair, on the shared-vocabulary probe:
   boundary_shift  |b1_x - b1_y| + |b2_x - b2_y|   (layers)
   map_distance    1 - CKA between the two lenses' layer-by-layer maps
   band_shift      |mid_sep_x - mid_sep_y|
+
+CORRECTION (2026-09-05). The first version of this analyzer built each layer's d x d readout
+covariance G_l = J_l^T M J_l and scored a layer pair with <G_i, G_j>_F / (|G_i| |G_j|). That is a
+cosine between two SELF-covariances, not linear CKA: CKA of the readout geometries D_l = U_c J_l
+is |D_j^T D_i|_F^2 / (|D_i^T D_i|_F |D_j^T D_j|_F) with D_j^T D_i = J_j^T M J_i, i.e. it needs the
+CROSS-gram. The two statistics give very different maps for the same lens (gpt2-small: off-diagonal
+range [0.94, 1.00] under CKA, [0.03, 0.82] under the old formula), so the fitted boundaries and
+map distances reported before this date were computed on a map that is not the atlas's map and
+not the map PREREG.md names. `cka_from_readout` below is the pre-registered statistic and is
+checked against `common.cka.linear_cka` on real geometries at run time. The old formula is kept
+as `legacy_selfgram_similarity` behind `--legacy` so the superseded ledger numbers remain
+regenerable; do not use it for new results.
 """
 from __future__ import annotations
 import argparse, json, sys
@@ -30,12 +42,53 @@ MODELS = {
 ARMS = ["wiki_a", "wiki_b", "code"]
 
 
-def cka_from_grams(Gs):
+def cka_from_readout(Js, M):
+    """Layer x layer LINEAR CKA of the readout geometries D_l = U_c J_l, from the Jacobians and
+    the centered probe covariance M = U_c^T U_c, without forming D:
+        CKA(D_i, D_j) = |J_j^T M J_i|_F^2 / (|J_i^T M J_i|_F |J_j^T M J_j|_F).
+    Identical to common.cka.linear_cka(D_i, D_j); the atlas, shared_maps.py and every other map in
+    this campaign use that statistic."""
+    n = len(Js); MJ = [M @ J for J in Js]
+    self_norm = [np.linalg.norm(Js[i].T @ MJ[i], "fro") for i in range(n)]
+    C = np.eye(n)
+    for i in range(n):
+        for j in range(i + 1, n):
+            cross = np.linalg.norm(Js[j].T @ MJ[i], "fro") ** 2
+            C[i, j] = C[j, i] = float(cross / (self_norm[i] * self_norm[j]))
+    return C
+
+
+def legacy_selfgram_similarity(Gs):
+    """SUPERSEDED 2026-09-05, see module docstring. Cosine between d x d self-covariances
+    G_l = J_l^T M J_l. NOT linear CKA. Kept only so the pre-correction numbers can be regenerated
+    with --legacy."""
     n = len(Gs); nrm = [np.linalg.norm(g, "fro") for g in Gs]; C = np.eye(n)
     for i in range(n):
         for j in range(i + 1, n):
             C[i, j] = C[j, i] = float(np.sum(Gs[i] * Gs[j]) / (nrm[i] * nrm[j]))
     return C
+
+
+def probe_UM(slug, hf_id, d):
+    """Centered shared-probe rows U_c (n x d) and M = U_c^T U_c, built exactly as
+    run_geometry_causality.probe_M builds M; U_c is kept so the CKA identity can be checked."""
+    import run_geometry_causality as rg
+    strings = json.load(open(rg.SHARED_TOKENS))["strings"]
+    ids = rg.resolve_ids_inline(hf_id, strings)
+    idlist = [ids[s] for s in strings if s in ids]
+    Us, dd = rg.probe_rows_inline(hf_id, idlist)
+    assert dd == d, f"probe d {dd} != model d {d}"
+    Uc = (Us - Us.mean(0, keepdims=True)).astype(np.float32)
+    return Uc, (Uc.T @ Uc).astype(np.float32), len(idlist)
+
+
+def check_cka_identity(Js, M, Uc, C, tol=1e-4):
+    """Assert the cross-gram CKA equals linear_cka on explicit geometries for the first pair."""
+    from common.cka import linear_cka
+    D0, D1 = Uc @ Js[0], Uc @ Js[1]
+    ref = linear_cka(D0, D1)
+    assert abs(ref - C[0, 1]) < tol, f"CKA identity check failed: {ref:.6f} vs {C[0, 1]:.6f}"
+    return ref
 
 
 def band_stats(M):
@@ -54,26 +107,33 @@ def fitted_boundaries(M):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--fits", required=True)
     ap.add_argument("--out", default=str(HERE / "results.json"))
+    ap.add_argument("--legacy", action="store_true",
+                    help="reproduce the SUPERSEDED pre-2026-09-05 self-gram numbers (not CKA)")
     a = ap.parse_args()
-    import run_geometry_causality as rg
+    sys.path.insert(0, str(HERE.parents[1]))   # for common.cka
 
-    out = {}
+    out = {"_statistic": ("legacy self-gram cosine (SUPERSEDED, not CKA)" if a.legacy else
+                          "linear CKA of shared-probe readout geometry (corrected 2026-09-05)")}
     for slug, (hf_id, pfx) in MODELS.items():
         try:
             maps, seps, bnds = {}, {}, {}
-            Mprobe = None
+            Uc = Mprobe = None
             for arm in ARMS:
                 d = torch.load(Path(a.fits) / f"{pfx}_{arm}.pt", map_location="cpu",
                                weights_only=False)
                 J = d["J"]; layers = sorted(J.keys())
                 if Mprobe is None:
-                    Mprobe, nprobe = rg.probe_M(slug, hf_id, d["d_model"])
-                # readout gram per layer: G_l = J^T M J  (the object CKA compares)
-                Gs = []
-                for l in layers:
-                    Jl = J[l].float().numpy()
-                    Gs.append((Jl.T @ Mprobe @ Jl).astype(np.float32))
-                C = cka_from_grams(Gs)
+                    Uc, Mprobe, nprobe = probe_UM(slug, hf_id, d["d_model"])
+                Js = [J[l].float().numpy() for l in layers]
+                if a.legacy:
+                    C = legacy_selfgram_similarity([(Jl.T @ Mprobe @ Jl).astype(np.float32)
+                                                    for Jl in Js])
+                else:
+                    C = cka_from_readout(Js, Mprobe)
+                    ref = check_cka_identity(Js, Mprobe, Uc, C)
+                    if arm == "wiki_a":
+                        print(f"   [{slug}] CKA identity check: linear_cka(D0,D1)={ref:.6f} "
+                              f"cross-gram={C[0, 1]:.6f}", flush=True)
                 maps[arm] = C; seps[arm] = band_stats(C); bnds[arm] = fitted_boundaries(C)
             def cmp(x, y):
                 Cx, Cy = maps[x], maps[y]
@@ -101,7 +161,7 @@ def main():
             print(f"{slug}: FAILED {type(e).__name__}: {str(e)[:120]}", flush=True)
             out[slug] = {"error": f"{type(e).__name__}"}
 
-    ok = {k: v for k, v in out.items() if "error" not in v}
+    ok = {k: v for k, v in out.items() if not k.startswith("_") and "error" not in v}
     if ok:
         exceeds = sum(1 for v in ok.values() if v["corpus"]["map_distance"] > v["seed_null"]["map_distance"])
         verdict = ("CORPUS MATTERS" if exceeds == len(ok) else

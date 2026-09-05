@@ -4,12 +4,12 @@
   "gpt2-small": {
    "boundaries": {
     "wiki_a": [
-     2,
-     4
+     6,
+     8
     ],
     "code": [
-     2,
-     4
+     6,
+     8
     ]
    },
    "cells": {
@@ -21,19 +21,19 @@
      "median_D_far": 1.7007001638412476,
      "n_layers": 12,
      "wiki_a": {
-      "beta": -0.06801088252201556,
+      "beta": -0.22105546710710203,
       "n_pairs": 132,
-      "null_mean": -0.11760371047498355,
-      "null_sd": 0.07264508726247401,
-      "p_two_sided": 1.0,
+      "null_mean": -0.0876804043754673,
+      "null_sd": 0.08778491306041093,
+      "p_two_sided": 0.346,
       "matched": true
      },
      "code": {
-      "beta": -0.06801088252201556,
+      "beta": -0.22105546710710203,
       "n_pairs": 132,
-      "null_mean": -0.11760371047498355,
-      "null_sd": 0.07264508726247401,
-      "p_two_sided": 1.0,
+      "null_mean": -0.0876804043754673,
+      "null_sd": 0.08778491306041093,
+      "p_two_sided": 0.346,
       "matched": false
      }
     },
@@ -45,19 +45,19 @@
      "median_D_far": 1.7854393124580383,
      "n_layers": 12,
      "wiki_a": {
-      "beta": -0.06547889343551044,
+      "beta": -0.19527358663553376,
       "n_pairs": 132,
-      "null_mean": -0.08269529527707475,
-      "null_sd": 0.030633946553235963,
-      "p_two_sided": 1.0,
+      "null_mean": -0.08092694098978856,
+      "null_sd": 0.09670628794989206,
+      "p_two_sided": 0.346,
       "matched": false
      },
      "code": {
-      "beta": -0.06547889343551044,
+      "beta": -0.19527358663553376,
       "n_pairs": 132,
-      "null_mean": -0.08269529527707475,
-      "null_sd": 0.030633946553235963,
-      "p_two_sided": 1.0,
+      "null_mean": -0.08092694098978856,
+      "null_sd": 0.09670628794989206,
+      "p_two_sided": 0.346,
       "matched": true
      }
     }
@@ -65,8 +65,8 @@
    "segmentations_identical": true,
    "C2_matched_minus_mismatched": 0.0,
    "C1_matched_betas": [
-    -0.06801088252201556,
-    -0.06547889343551044
+    -0.22105546710710203,
+    -0.19527358663553376
    ]
   },
   "gemma-3-270m": {
@@ -76,8 +76,8 @@
      15
     ],
     "code": [
-     3,
-     15
+     12,
+     14
     ]
    },
    "cells": {
@@ -97,11 +97,11 @@
       "matched": true
      },
      "code": {
-      "beta": -0.8261845960813713,
+      "beta": -0.4159632495190384,
       "n_pairs": 306,
-      "null_mean": -0.08531483587141593,
-      "null_sd": 0.8273464022434788,
-      "p_two_sided": 0.666,
+      "null_mean": 0.06583615503484509,
+      "null_sd": 0.6591682905446775,
+      "p_two_sided": 0.827,
       "matched": false
      }
     },
@@ -121,30 +121,30 @@
       "matched": false
      },
      "code": {
-      "beta": -1.4179590113371694,
+      "beta": -0.9271050174043873,
       "n_pairs": 306,
-      "null_mean": -0.4780228398705365,
-      "null_sd": 1.0369784740835448,
-      "p_two_sided": 0.666,
+      "null_mean": -0.20433783739384306,
+      "null_sd": 1.1368441493027919,
+      "p_two_sided": 0.677,
       "matched": true
      }
     }
    },
-   "segmentations_identical": true,
-   "C2_matched_minus_mismatched": 0.0,
+   "segmentations_identical": false,
+   "C2_matched_minus_mismatched": 0.04031632368522459,
    "C1_matched_betas": [
     -0.8261845960813713,
-    -1.4179590113371694
+    -0.9271050174043873
    ]
   },
   "qwen3.5-0.8b": {
    "boundaries": {
     "wiki_a": [
-     6,
-     15
+     15,
+     19
     ],
     "code": [
-     5,
+     4,
      15
     ]
    },
@@ -157,18 +157,18 @@
      "median_D_far": 0.3998252600431442,
      "n_layers": 24,
      "wiki_a": {
-      "beta": -0.39227791157987724,
+      "beta": -0.3727319977034422,
       "n_pairs": 552,
-      "null_mean": -0.2288109820536713,
-      "null_sd": 0.10883119086675379,
-      "p_two_sided": 0.307,
+      "null_mean": -0.24100622240210595,
+      "null_sd": 0.20410533635388295,
+      "p_two_sided": 0.509,
       "matched": true
      },
      "code": {
-      "beta": -0.4976926166697336,
+      "beta": -0.5395302106038709,
       "n_pairs": 552,
-      "null_mean": -0.18580639642357338,
-      "null_sd": 0.17639294768391844,
+      "null_mean": -0.06411261842976954,
+      "null_sd": 0.2935059160585681,
       "p_two_sided": 0.16,
       "matched": false
      }
@@ -181,33 +181,33 @@
      "median_D_far": 0.8437077403068542,
      "n_layers": 24,
      "wiki_a": {
-      "beta": -0.14931821843989054,
+      "beta": 0.14943420857099649,
       "n_pairs": 552,
-      "null_mean": -0.1744907987035942,
-      "null_sd": 0.10447490197668031,
-      "p_two_sided": 1.0,
+      "null_mean": -0.21517285111785797,
+      "null_sd": 0.35378832073895355,
+      "p_two_sided": 0.669,
       "matched": false
      },
      "code": {
-      "beta": -0.22991874674819823,
+      "beta": -0.2420116071455293,
       "n_pairs": 552,
-      "null_mean": -0.18207166355594134,
-      "null_sd": 0.09858093314661098,
-      "p_two_sided": 0.465,
+      "null_mean": -0.13477924054759602,
+      "null_sd": 0.20365888270738514,
+      "p_two_sided": 0.669,
       "matched": true
      }
     }
    },
    "segmentations_identical": false,
-   "C2_matched_minus_mismatched": 0.012407088390774326,
+   "C2_matched_minus_mismatched": -0.11232380140804857,
    "C1_matched_betas": [
-    -0.39227791157987724,
-    -0.22991874674819823
+    -0.3727319977034422,
+    -0.2420116071455293
    ]
   }
  },
  "control_c2": 0.0,
  "control_void": false,
- "C2_pooled": 0.012407088390774326,
- "C1_pooled_matched_beta": -0.4999716736173571
+ "C2_pooled": -0.03600373886141199,
+ "C1_pooled_matched_beta": -0.4640603786795609
 }

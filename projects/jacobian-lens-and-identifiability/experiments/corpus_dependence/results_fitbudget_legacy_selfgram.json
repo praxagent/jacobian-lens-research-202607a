@@ -1,0 +1,155 @@
+{
+ "reference_budget": 100,
+ "budgets": [
+  25,
+  50,
+  200,
+  400,
+  1000
+ ],
+ "converged_factor": 2.0,
+ "models": {
+  "gpt2-small": {
+   "n_layers": 11,
+   "n_probe": 4096,
+   "seed_null_map_distance": 0.00023116814044177314,
+   "reference_boundaries": [
+    6,
+    8
+   ],
+   "reference_band_sep": 0.3972,
+   "by_budget": {
+    "25": {
+     "map_distance_to_ref": 0.00043387230257463383,
+     "boundary_shift": 0,
+     "band_shift": 0.004003392183221877,
+     "boundaries": [
+      6,
+      8
+     ],
+     "band_sep": 0.4012,
+     "ratio_to_seed_null": 1.876868939402651
+    },
+    "50": {
+     "map_distance_to_ref": 0.00030380624749859475,
+     "boundary_shift": 0,
+     "band_shift": 0.0028411964885890484,
+     "boundaries": [
+      6,
+      8
+     ],
+     "band_sep": 0.4001,
+     "ratio_to_seed_null": 1.3142219637965975
+    },
+    "200": {
+     "map_distance_to_ref": 7.381149858864955e-05,
+     "boundary_shift": 0,
+     "band_shift": 0.0006710615319510671,
+     "boundaries": [
+      6,
+      8
+     ],
+     "band_sep": 0.3979,
+     "ratio_to_seed_null": 0.31929788615157917
+    },
+    "400": {
+     "map_distance_to_ref": 0.00010385220041742027,
+     "boundary_shift": 0,
+     "band_shift": 0.0006258787664895626,
+     "boundaries": [
+      6,
+      8
+     ],
+     "band_sep": 0.3966,
+     "ratio_to_seed_null": 0.4492496250519378
+    },
+    "1000": {
+     "map_distance_to_ref": 9.382582076811197e-05,
+     "boundary_shift": 0,
+     "band_shift": 0.00036429144286864723,
+     "boundaries": [
+      6,
+      8
+     ],
+     "band_sep": 0.3969,
+     "ratio_to_seed_null": 0.4058769542758203
+    }
+   },
+   "converged": true,
+   "still_falling_at_top": false,
+   "low_budget_far": false
+  },
+  "gemma-3-270m": {
+   "n_layers": 17,
+   "n_probe": 4096,
+   "seed_null_map_distance": 0.0005180530714398168,
+   "reference_boundaries": [
+    3,
+    15
+   ],
+   "reference_band_sep": 0.5093,
+   "by_budget": {
+    "25": {
+     "map_distance_to_ref": 0.0005265185162519614,
+     "boundary_shift": 0,
+     "band_shift": 0.005531980982050211,
+     "boundaries": [
+      3,
+      15
+     ],
+     "band_sep": 0.5038,
+     "ratio_to_seed_null": 1.0163408833550909
+    },
+    "50": {
+     "map_distance_to_ref": 0.0001813429242762954,
+     "boundary_shift": 0,
+     "band_shift": 0.0029012457364134825,
+     "boundaries": [
+      3,
+      15
+     ],
+     "band_sep": 0.5064,
+     "ratio_to_seed_null": 0.3500470015017802
+    },
+    "200": {
+     "map_distance_to_ref": 0.0002911441811850324,
+     "boundary_shift": 0,
+     "band_shift": 0.0011554995086044961,
+     "boundaries": [
+      3,
+      15
+     ],
+     "band_sep": 0.5105,
+     "ratio_to_seed_null": 0.561996824718865
+    },
+    "400": {
+     "map_distance_to_ref": 0.0001968652821461303,
+     "boundary_shift": 0,
+     "band_shift": 0.0015680299864875291,
+     "boundaries": [
+      3,
+      15
+     ],
+     "band_sep": 0.5109,
+     "ratio_to_seed_null": 0.3800098735038588
+    },
+    "1000": {
+     "map_distance_to_ref": 0.00018124225207694078,
+     "boundary_shift": 0,
+     "band_shift": 0.0053087922537493615,
+     "boundaries": [
+      3,
+      15
+     ],
+     "band_sep": 0.5147,
+     "ratio_to_seed_null": 0.3498526735363561
+    }
+   },
+   "converged": true,
+   "still_falling_at_top": false,
+   "low_budget_far": false
+  }
+ },
+ "verdict": "CONVERGED",
+ "low_budget_caveat": false
+}

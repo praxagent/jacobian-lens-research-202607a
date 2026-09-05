@@ -81,9 +81,18 @@ def build(verify=False):
                          "corpus_boundary_shift": CO[slug]["corpus"]["boundary_shift"]}
 
     axes[0].set_ylabel("map distance to the 100-prompt fit  (1 - CKA, log scale)", fontsize=8.2)
-    fig.suptitle("How much you fit on barely matters; what you fit on matters enormously",
-                 fontsize=11, fontweight="bold", x=0.015, ha="left")
     allb = sorted({b for v in plotted.values() for b in v["budgets"]})
+    # Title and alt text are DERIVED from the data: which budgets clear the frozen 2x bar.
+    over = {k: [b for b, r in zip(v["budgets"], v["ratio_to_seed_null"]) if r > 2.0]
+            for k, v in plotted.items()}
+    first_ok = {}
+    for k, v in plotted.items():
+        ok = [b for b, r in zip(v["budgets"], v["ratio_to_seed_null"]) if r <= 2.0]
+        first_ok[k] = min(ok) if ok else None
+    conv_from = max(b for b in first_ok.values() if b is not None) if any(first_ok.values()) else None
+    fig.suptitle((f"Budget is inside the seed null from {conv_from} prompts up; the corpus is not"
+                  if conv_from else "Budget never enters the seed null; the corpus is far outside it"),
+                 fontsize=11, fontweight="bold", x=0.015, ha="left")
     fig.text(0.015, 0.90, f"Green: same corpus, {allb[0]} to {allb[-1]} prompts. Grey: the same "
              "corpus resampled. Orange: the same budget on code.",
              fontsize=7.8, color="#5A544C", ha="left")
@@ -97,12 +106,14 @@ def build(verify=False):
         svg.write_bytes(old); sys.exit("VERIFY FAILED: svg drifted")
 
     blist = ", ".join(str(b) for b in allb[:-1]) + f" and {allb[-1]}"
+    over_phrase = "; ".join(
+        (f"for {k} the bars at {', '.join(str(b) for b in bs)} prompts sit above the line"
+         if bs else f"for {k} every bar sits at or below the line") for k, bs in over.items())
     alt = ("Two panels, gpt2-small and gemma-3-270m, each a log-scale bar chart of how far a "
            f"refitted lens sits from that model's 100-prompt reference fit. {len(allb)} green "
-           f"bars for budgets of {blist} prompts all sit at or below the dotted line marking "
-           "twice the seed null, alongside a grey bar for simply resampling the corpus. A single "
-           "orange bar for the same model fitted on code towers roughly two orders of magnitude "
-           "above them, at "
+           f"bars for budgets of {blist} prompts are compared with a dotted line marking twice "
+           f"the seed null: {over_phrase}. A grey bar shows simply resampling the corpus. A single "
+           "orange bar for the same model fitted on code sits far above all of them, at "
            + " and ".join(f"{v['corpus_map_distance']/v['seed_null']:.0f} times the null for {k}"
                           for k, v in plotted.items()) + ".")
     (POST / f"{STEM}.receipt.json").write_text(json.dumps({
@@ -118,6 +129,8 @@ def build(verify=False):
         "interval_semantics": "point estimates; the seed null is the reference scale, "
                               "not a confidence interval",
         "verdict": R.get("verdict", "UNKNOWN"),
+        "low_budget_caveat": R.get("low_budget_caveat"),
+        "statistic": CO.get("_statistic", "unrecorded"),
         "plotted_values": plotted,
         "accessibility": {"color_only_channel": False,
                           "text_equivalent": "plotted_values"}}, indent=1))
