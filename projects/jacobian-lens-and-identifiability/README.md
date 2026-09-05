@@ -42,6 +42,22 @@ models + the 397B; `experiments/behavioral/results.md`). Still tracked:
   exclusion** (Stroop-like conscious control), **error-monitoring** (failure tokens in
   J-space).
 
+## Tools
+
+- [`tools/jlens_atlas/`](tools/jlens_atlas/): `python -m jlens_atlas --neuronpedia <slug> --model <hf_id>`
+  reproduces the atlas recipe on any Jacobian lens (layer x layer linear CKA of the readout geometry on
+  the shared or own probe, fixed-thirds and fitted band statistics, boundary identifiability, the
+  random-transport null, receipts). `selftest.py` reproduces the cached gpt2-small maps byte for byte.
+
+## Corrections (2026-09-05)
+
+A fresh review found two analysis defects, both corrected with the superseded numbers kept regenerable:
+the corpus-dependence and fit-budget experiments had scored maps with a cosine of self-covariances
+that is not CKA (see the correction block at the top of `experiments/corpus_dependence/results.md`),
+and the boundary-agreement and ignition tests had used own-vocabulary lens boundaries against
+shared-probe pre-registrations (`experiments/bands_vs_computation/results.md`,
+`experiments/ignition_depth/results.md`). Verdicts survived; several headline numbers changed.
+
 ## Run it
 
 ```bash
