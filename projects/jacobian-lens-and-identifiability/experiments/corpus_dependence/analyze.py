@@ -145,6 +145,9 @@ def main():
                 return {"boundary_shift": abs(bnds[x][0] - bnds[y][0]) + abs(bnds[x][1] - bnds[y][1]),
                         "map_distance": 1.0 - cka,
                         "band_shift": abs(seps[x] - seps[y])}
+            (HERE / "maps").mkdir(exist_ok=True)
+            np.savez_compressed(HERE / "maps" / f"{slug}.npz", **{k: v.astype(np.float32) for k, v in maps.items()},
+                                statistic=np.array(out["_statistic"]))
             out[slug] = {"n_layers": maps["wiki_a"].shape[0], "n_probe": nprobe,
                          "band_sep": {k: round(v, 4) for k, v in seps.items()},
                          "boundaries": {k: list(v[:2]) for k, v in bnds.items()},
