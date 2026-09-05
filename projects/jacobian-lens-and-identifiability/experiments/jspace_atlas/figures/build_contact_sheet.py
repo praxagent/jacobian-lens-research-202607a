@@ -1,5 +1,6 @@
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt, numpy as np, csv, json, hashlib
+plt.rcParams["svg.fonttype"] = "none"
 from pathlib import Path
 OUT=Path("projects/jacobian-lens-and-identifiability/experiments/jspace_atlas/atlas_out")
 POST=Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
@@ -22,10 +23,10 @@ for k,r in enumerate(R):
     ax.text(0.5,-0.09,f"sep {float(r['fitted_sep']):+.2f}",transform=ax.transAxes,
             ha="center",fontsize=7,color="#5A544C")
     for sp in ax.spines.values(): sp.set_edgecolor(FAM[fam(r['slug'])]); sp.set_linewidth(1.3)
-fig.suptitle("Layer x layer CKA maps, all 36 lenses (sorted by fitted band separation)",
+fig.suptitle("Layer x layer CKA maps, all 36 lenses on their OWN vocabulary (sorted by fitted band separation; not comparable across models)",
              fontsize=13,fontweight="bold",x=0.02,ha="left",color="#2C2924")
 fig.text(0.02,0.005,"same magma scale 0 to 1 as the 397B hero map; title color = family; "
-         "bright diagonal blocks = depth phases. Qwen and Llama band; Gemma stays smooth.",
+         "bright diagonal blocks = depth phases. Own-vocabulary measurement: the family contrast here is largely a probe effect, see the shared-probe sheet.",
          fontsize=8.5,color="#5A544C")
 fig.tight_layout(rect=(0,0.02,1,0.965))
 fig.savefig(POST/"zoo-contact-sheet.svg",format="svg",metadata={"Date":None})

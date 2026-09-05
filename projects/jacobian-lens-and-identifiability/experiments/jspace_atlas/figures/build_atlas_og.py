@@ -11,7 +11,7 @@ axL=fig.add_axes([0,0,0.52,1]); axL.axis("off")
 axL.text(0.09,0.76,"An Atlas",fontsize=60,fontweight="bold",color="#2C2924",transform=axL.transAxes)
 axL.text(0.09,0.63,"of Depth",fontsize=60,fontweight="bold",color="#2C2924",transform=axL.transAxes)
 axL.text(0.095,0.48,"CKA maps of 36 Jacobian lenses",fontsize=19,color="#5A544C",transform=axL.transAxes)
-axL.text(0.095,0.38,"5 families  .  500x scale  .  null-controlled",fontsize=16,color="#6F8D5E",transform=axL.transAxes)
+axL.text(0.095,0.38,"8 lineages  .  5,700x scale  .  two controls",fontsize=16,color="#6F8D5E",transform=axL.transAxes)
 axL.text(0.095,0.13,"praxagent.ai",fontsize=17,color="#A67C52",transform=axL.transAxes)
 # 3x4 strip of 12 spread across the sorted range
 pick=[R[i] for i in np.linspace(0,len(R)-1,12).astype(int)]

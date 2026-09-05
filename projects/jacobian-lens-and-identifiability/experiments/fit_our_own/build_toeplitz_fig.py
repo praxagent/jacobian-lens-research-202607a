@@ -29,7 +29,7 @@ plt.rcParams.update({"font.family": "sans-serif", "font.sans-serif": ["Inter", "
                      "figure.facecolor": "#F7F4F0", "axes.facecolor": "#F7F4F0",
                      "savefig.facecolor": "#F7F4F0", "text.color": "#2C2924",
                      "axes.edgecolor": "#A89B8C", "xtick.color": "#5A544C", "ytick.color": "#5A544C",
-                     "axes.labelcolor": "#2C2924", "svg.hashsalt": "prax-toeplitz"})
+                     "axes.labelcolor": "#2C2924", "svg.hashsalt": "prax-toeplitz", "svg.fonttype": "none"})
 
 
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
@@ -57,7 +57,7 @@ def build(verify=False):
     ms_real, ms_t = mid_sep(M), mid_sep(T)
     b1, b2, fs_real = fitted_seg(M); tb1, tb2, fs_t = fitted_seg(T)
     zoo = json.loads(ZOO.read_text()) if ZOO.exists() else {}
-    fig, axes = plt.subplots(1, 3, figsize=(12.4, 4.3))
+    fig, axes = plt.subplots(1, 3, figsize=(13.2, 4.4), constrained_layout=True)
     im0 = axes[0].imshow(M, origin="lower", cmap="magma", vmin=0, vmax=1)
     axes[0].set_title(f"released map, mid_sep {ms_real:+.3f}", fontsize=9.8, fontweight="bold", loc="left")
     axes[1].imshow(T, origin="lower", cmap="magma", vmin=0, vmax=1)
@@ -69,12 +69,11 @@ def build(verify=False):
         ax.set_xlabel("source layer", fontsize=8.5); ax.set_ylabel("source layer", fontsize=8.5)
         for b in (b1, b2):
             ax.axhline(b - 0.5, color="white", lw=0.8, ls="--", alpha=0.8); ax.axvline(b - 0.5, color="white", lw=0.8, ls="--", alpha=0.8)
-    fig.colorbar(im0, ax=axes[:2].tolist(), fraction=0.025, pad=0.02, label="linear CKA")
-    fig.colorbar(im2, ax=axes[2], fraction=0.05, pad=0.02, label="real minus surrogate")
+    fig.colorbar(im0, ax=axes[:2].tolist(), fraction=0.02, pad=0.01, shrink=0.85, label="linear CKA")
+    fig.colorbar(im2, ax=axes[2], fraction=0.04, pad=0.01, shrink=0.85, label="real minus surrogate")
     frac = ms_t / ms_real if ms_real else float("nan")
     fig.suptitle(f"Qwen3.5-397B lens: a distance-only surrogate reproduces {100*frac:.0f}% of the released mid_sep; "
                  f"the fitted separation exceeds it by {fs_real - fs_t:+.3f}", fontsize=10.6, fontweight="bold", x=0.01, ha="left")
-    fig.tight_layout(rect=(0, 0, 1, 0.93))
     svg = POST / f"{STEM}.svg"
     old = svg.read_bytes() if (verify and svg.exists()) else None
     fig.savefig(svg, format="svg", metadata={"Date": None}); fig.savefig(POST / f"{STEM}.png", dpi=170); plt.close(fig)

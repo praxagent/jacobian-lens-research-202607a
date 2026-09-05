@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt, numpy as np, json, hashlib
 from pathlib import Path
 HERE=Path(__file__).resolve().parent; B=HERE.parent/"atlas_out/stageB"
 POST=Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jspace-atlas-campaign")
-plt.rcParams.update({"font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
+plt.rcParams.update({"svg.fonttype": "none", "font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
  "figure.facecolor":"#F7F4F0","axes.facecolor":"#F7F4F0","savefig.facecolor":"#F7F4F0",
  "text.color":"#2C2924","axes.edgecolor":"#A89B8C","xtick.color":"#5A544C","ytick.color":"#5A544C",
  "axes.labelcolor":"#2C2924","svg.hashsalt":"prax-stageb"})

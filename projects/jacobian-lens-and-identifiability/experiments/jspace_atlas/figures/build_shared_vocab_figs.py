@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt, numpy as np, csv, json, hashlib
 from pathlib import Path
 HERE=Path(__file__).resolve().parent; A=HERE.parent/"atlas_out"
 POST=Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
-plt.rcParams.update({"font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
+plt.rcParams.update({"svg.fonttype": "none", "font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
  "figure.facecolor":"#F7F4F0","axes.facecolor":"#F7F4F0","savefig.facecolor":"#F7F4F0",
  "text.color":"#2C2924","axes.edgecolor":"#A89B8C","xtick.color":"#5A544C","ytick.color":"#5A544C",
  "axes.labelcolor":"#2C2924","svg.hashsalt":"prax-sharedvocab"})
@@ -28,7 +28,7 @@ for ax,M,lab,ms in [(axes[0],Mo,f"own vocabulary (256k tokens)\nmid_sep {own[s]:
     ax.set_title(lab,fontsize=9.5); ax.set_xticks([]);ax.set_yticks([])
     ax.set_xlabel("source layer",fontsize=8)
 fig.colorbar(im,ax=axes,shrink=0.8,label="CKA")
-fig.suptitle("Same lens, same layers: the vocabulary decides whether you see the bands (gemma-3-27b)",
+fig.suptitle("Same lens, same layers: the probe decides whether you see the bands (gemma-3-27b)",
              fontsize=11,fontweight="bold",x=0.02,ha="left")
 fig.savefig(POST/"gemma-own-vs-shared.svg",format="svg",metadata={"Date":None},bbox_inches="tight")
 fig.savefig(POST/"gemma-own-vs-shared.png",dpi=200,bbox_inches="tight"); plt.close(fig)
@@ -55,10 +55,11 @@ for s in gem:
         ax.plot([1,1.02],[sh[s],ypos[s]],color=c,lw=0.5,alpha=0.5)
 ax.set_xticks([0,1]); ax.set_xticklabels(["own\nvocabulary","shared\nvocabulary"],fontsize=9)
 ax.set_ylabel("band separation (mid_sep)",fontsize=9); ax.set_xlim(-0.15,1.45); ax.set_ylim(-0.01,0.32)
-ax.set_title("Two kinds of flat: most Gemmas hide bands behind their vocabulary (clay);\ngemma-2's distilled students stay genuinely flat (gray)",fontsize=10.4,fontweight="bold",loc="left")
+_rev=sum(1 for s in gem if sh[s]-own[s]>0.02); _flat=sum(1 for s in gem if s in DISTILLED)
+ax.set_title(f"Two kinds of flat: {_rev} of {len(gem)} Gemma lenses revive on the shared probe (clay);\nthe {_flat} gemma-2 small checkpoints stay flat on both (gray)",fontsize=10.4,fontweight="bold",loc="left")
 from matplotlib.lines import Line2D
 ax.legend(handles=[Line2D([0],[0],color="#A67C52",marker="o",label="revives on shared vocab (incl. gemma-2-27b teacher)"),
-                   Line2D([0],[0],color="#7F786D",marker="o",label="gemma-2 distilled students, stay flat")],
+                   Line2D([0],[0],color="#7F786D",marker="o",label="gemma-2 small checkpoints (2b, 9b), stay flat")],
           fontsize=7.8,loc="upper left",frameon=False)
 for sp in("top","right"): ax.spines[sp].set_visible(False)
 fig.tight_layout()

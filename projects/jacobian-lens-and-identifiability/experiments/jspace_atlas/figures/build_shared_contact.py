@@ -1,5 +1,6 @@
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt, numpy as np, csv, json, hashlib
+plt.rcParams["svg.fonttype"] = "none"
 from pathlib import Path
 HERE=Path(__file__).resolve().parent; A=HERE.parent/"atlas_out"; SM=A/"shared_maps"
 POST=Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
@@ -24,7 +25,7 @@ for k,s in enumerate(R):
 fig.suptitle("The same 36 lenses, measured on a SHARED vocabulary (sorted by fitted band separation)",
              fontsize=13,fontweight="bold",x=0.02,ha="left",color="#2C2924")
 fig.text(0.02,0.005,"compare to the own-vocabulary contact sheet above: the Gemma maps (clay) that were pale there now show real structure; "
-         "the family split softens once the vocabulary-size floor is removed.",fontsize=8.5,color="#5A544C")
+         "the family split softens once the token-set confound is removed.",fontsize=8.5,color="#5A544C")
 fig.tight_layout(rect=(0,0.02,1,0.965))
 fig.savefig(POST/"zoo-contact-shared.svg",format="svg",metadata={"Date":None})
 fig.savefig(POST/"zoo-contact-shared.png",dpi=150); plt.close(fig)

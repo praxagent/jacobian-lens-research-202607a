@@ -21,7 +21,7 @@ RES = HERE / "results_fitbudget.json"
 CORPUS = HERE / "results.json"
 C_BUDGET, C_NULL, C_CORPUS = "#6F8D5E", "#8A8378", "#B0603A"
 
-plt.rcParams.update({"font.family": "sans-serif",
+plt.rcParams.update({"svg.fonttype": "none", "font.family": "sans-serif",
                      "font.sans-serif": ["Inter", "Arial", "DejaVu Sans"],
                      "figure.facecolor": "#F7F4F0", "axes.facecolor": "#F7F4F0",
                      "savefig.facecolor": "#F7F4F0", "text.color": "#2C2924",

@@ -129,7 +129,7 @@ def compute():
 def build_fig(out, verify=False):
     import matplotlib; matplotlib.use("Agg")
     import matplotlib.pyplot as plt
-    plt.rcParams.update({"font.family": "sans-serif",
+    plt.rcParams.update({"svg.fonttype": "none", "font.family": "sans-serif",
                          "font.sans-serif": ["Inter", "Arial", "DejaVu Sans"],
                          "figure.facecolor": "#F7F4F0", "axes.facecolor": "#F7F4F0",
                          "savefig.facecolor": "#F7F4F0", "text.color": "#2C2924",

@@ -33,7 +33,7 @@ REPO = "https://github.com/praxagent/jacobian-lens-research-202607a"
 SUMMARY_REL = ("projects/jacobian-lens-and-identifiability/experiments/"
                "jspace_atlas/atlas_out/summary.csv")
 
-plt.rcParams.update({
+plt.rcParams.update({"svg.fonttype": "none", 
     "svg.hashsalt": "praxagent-atlas", "font.family": "sans-serif",
     "font.sans-serif": ["Inter", "Arial", "Helvetica", "DejaVu Sans"],
     "figure.facecolor": "#F7F4F0", "axes.facecolor": "#F7F4F0",
@@ -108,8 +108,10 @@ def fig_band_by_scale(R):
     ax.set_xscale("log")
     ax.set_xlabel("parameters (log scale)", fontsize=9)
     ax.set_ylabel("fitted band separation (higher = sharper depth phases)", fontsize=9)
-    ax.set_title("Depth-phase structure is a family trait, not a scale trend",
-                 fontsize=11, fontweight="bold", loc="left")
+    _x = np.array([params(r["slug"]) for r in R], float); _y = np.array([float(r["fitted_sep"]) for r in R])
+    _rho = float(np.corrcoef(np.argsort(np.argsort(np.log(_x))), np.argsort(np.argsort(_y)))[0, 1])
+    ax.set_title(f"Own-vocabulary fitted separation vs scale (rank correlation {_rho:+.2f}); superseded by the shared probe",
+                 fontsize=10.2, fontweight="bold", loc="left")
     from matplotlib.lines import Line2D
     ax.legend(handles=[Line2D([0], [0], marker="o", color="w", label=k,
               markerfacecolor=v, markersize=8) for k, v in FAM_COLOR.items()],
@@ -119,10 +121,11 @@ def fig_band_by_scale(R):
     fig.tight_layout()
     return save(fig, "zoo-band-by-scale",
                 "Fitted band separation vs scale, colored by family",
-                "Scatter of fitted band separation against parameter count on a log "
-                "x-axis, colored by family. Qwen (blue) and the Llama-70B sit high "
-                "(0.25-0.41); every Gemma (clay) sits near zero across a 270M-27B "
-                "span. Structure tracks family, not size.", vals)
+                f"Scatter of own-vocabulary fitted band separation against parameter count on a log "
+                f"x-axis, colored by family, rank correlation with size {_rho:+.2f} on this probe. "
+                "Most Qwen lenses and the Llama-70B sit high and every Gemma lens sits near zero on "
+                "its own vocabulary; the shared-probe measurement later in the note supersedes this "
+                "picture for cross-model comparison.", vals)
 
 
 def fig_mid_vs_fitted(R):
@@ -139,17 +142,18 @@ def fig_mid_vs_fitted(R):
     ax.set_xlim(lim); ax.set_ylim(lim)
     ax.set_xlabel("fixed-thirds mid_sep (the released statistic)", fontsize=9)
     ax.set_ylabel("data-fitted band separation", fontsize=9)
-    ax.set_title("The released statistic is conservative: fitted boundaries always "
-                 "separate more", fontsize=10.5, fontweight="bold", loc="left")
+    _below = sum(1 for r in R if float(r["fitted_sep"]) < float(r["mid_sep"]))
+    ax.set_title(f"Fixed-thirds mid_sep vs data-fitted separation: the fitted value is usually, "
+                 f"not always, larger ({_below} of {len(R)} below the line)", fontsize=10.2, fontweight="bold", loc="left")
     for s in ("top", "right"):
         ax.spines[s].set_visible(False)
     fig.tight_layout()
     return save(fig, "zoo-mid-vs-fitted",
                 "Fixed-thirds mid_sep vs data-fitted band separation",
-                "Scatter: every model lies on or above the y=x line, so the "
-                "data-fitted 3-segmentation always finds at least as much band "
-                "separation as the conservative fixed-thirds statistic; the 397B "
-                "moves from 0.34 to 0.41.", vals)
+                f"Scatter of fixed-thirds mid_sep against data-fitted band separation for all lenses, "
+                f"with the y equals x line. Most points lie above the line; {_below} of {len(R)} lie below it, "
+                "because the fit maximises mean within-block similarity while the reported statistic is "
+                "within minus between, so the two are not ordered in general.", vals)
 
 
 def fig_pr_curves(R):

@@ -12,7 +12,7 @@ HERE = Path(__file__).resolve().parent
 DEC = HERE.parent / "decompose_out"
 POST = Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
 STEM = "readout-concentration"
-plt.rcParams.update({"font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
+plt.rcParams.update({"svg.fonttype": "none", "font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
  "figure.facecolor":"#F7F4F0","axes.facecolor":"#F7F4F0","savefig.facecolor":"#F7F4F0",
  "text.color":"#2C2924","axes.edgecolor":"#A89B8C","xtick.color":"#5A544C","ytick.color":"#5A544C",
  "axes.labelcolor":"#2C2924","svg.hashsalt":"prax-ablation"})
@@ -37,7 +37,7 @@ def build():
     ax.set_xticklabels(["0","1","2","4","8","16","32","64","128"], fontsize=8)
     ax.set_xlabel("top readout eigendirections ablated (k)", fontsize=9.5)
     ax.set_ylabel("band separation", fontsize=9.5)
-    ax.set_title("Ablating top readout directions restores depth structure",
+    ax.set_title("Ablating top readout directions unmasks depth structure",
                  fontsize=10.2, fontweight="bold", loc="left")
     ax.legend(fontsize=8, frameon=False, loc="lower right")
     ax.axhline(0, color="#A89B8C", lw=0.8, ls=":")

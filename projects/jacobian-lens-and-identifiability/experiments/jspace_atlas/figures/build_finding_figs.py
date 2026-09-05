@@ -2,9 +2,11 @@
 import matplotlib; matplotlib.use("Agg")
 import matplotlib.pyplot as plt, numpy as np, json, csv, hashlib
 from pathlib import Path
+import sys; sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from atlas_stage_a import fitted_seg
 HERE=Path(__file__).resolve().parent; A=HERE.parent/"atlas_out"
 POST=Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
-plt.rcParams.update({"font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
+plt.rcParams.update({"svg.fonttype": "none", "font.family":"sans-serif","font.sans-serif":["Inter","Arial","DejaVu Sans"],
  "figure.facecolor":"#F7F4F0","axes.facecolor":"#F7F4F0","savefig.facecolor":"#F7F4F0",
  "text.color":"#2C2924","axes.edgecolor":"#A89B8C","xtick.color":"#5A544C","ytick.color":"#5A544C",
  "axes.labelcolor":"#2C2924","svg.hashsalt":"prax-findings"})
@@ -68,7 +70,7 @@ for s in order:
 a2.set_yticks([]); a2.set_xlabel("outlier position (relative depth)",fontsize=8.6)
 a2.set_title("where outliers sit, one row per model (grouped by family)",fontsize=8.6)
 for s in("top","right","left"): a2.spines[s].set_visible(False)
-fig.suptitle("Outlier layers are a Gemma trait, and they live at the stack edges",fontsize=11,fontweight="bold",x=0.02,ha="left")
+fig.suptitle("Outlier layers concentrate in the Gemma lenses and sit at the stack edges (own-vocabulary maps, exploratory)",fontsize=11,fontweight="bold",x=0.02,ha="left")
 fig.tight_layout(rect=(0,0,1,0.92)); fig.savefig(POST/"zoo-outliers.svg",format="svg",metadata={"Date":None}); fig.savefig(POST/"zoo-outliers.png",dpi=200); plt.close(fig)
 rec("zoo-outliers","Outlier-layer census by family and depth position",
  "Left: percent of layers flagged as outliers per family (gemma 11.8 percent, all others 2.6 to 4.3). Right: outlier positions by relative depth, one row per model; ticks cluster near depth 0 and 1.",
@@ -79,16 +81,18 @@ R={r["slug"]:r for r in csv.DictReader(open(A/"summary.csv"))}
 ex=["qwen35-397b-own","llama3.3-70b-it","qwen3.5-27b","gemma-3-27b"]
 fig,axes=plt.subplots(1,4,figsize=(11.2,3.3))
 for ax,s in zip(axes,ex):
-    d=np.load(A/f"{s}.npz"); M=d["cka"]; L=M.shape[0]; b1,b2=d["seg"]
+    M=np.load(A/"shared_maps"/f"{s}.npz")["cka"]; L=M.shape[0]; b1,b2,_=fitted_seg(M)
     ax.imshow(M,vmin=0,vmax=1,cmap="magma",origin="lower")
     for b in (b1,b2):
         ax.axvline(b-0.5,color="#EAF1E5",lw=1.4,ls="--"); ax.axhline(b-0.5,color="#EAF1E5",lw=1.4,ls="--")
     ax.set_xticks([]); ax.set_yticks([])
     ax.set_title(f"{s.replace('-own','')}\nfitted bands ({int(b1)},{int(b2)}) of {L}",fontsize=8)
-fig.suptitle("Fitted three-block anatomy: early / mid-band / late (dashed = data-chosen boundaries)",fontsize=11,fontweight="bold",x=0.02,ha="left")
+fig.suptitle("Fitted three-block anatomy on the shared probe: early / mid-band / late (dashed = data-chosen boundaries)",fontsize=11,fontweight="bold",x=0.02,ha="left")
 fig.tight_layout(rect=(0,0,1,0.88)); fig.savefig(POST/"block-anatomy.svg",format="svg",metadata={"Date":None}); fig.savefig(POST/"block-anatomy.png",dpi=200); plt.close(fig)
-rec("block-anatomy","Fitted 3-block boundaries on four exemplar maps",
- "Four CKA maps with dashed data-fitted boundaries: the 397B (13,46 of 59), Llama-70B (37,51 of 79), qwen3.5-27b (14,51 of 63), and gemma-3-27b whose fit finds only a thin early sliver (6,10 of 61).",
- [{"receipt":f"jspace_atlas/atlas_out/{s}.npz","sha256":sha(A/f"{s}.npz")} for s in ex],
- {s:[int(x) for x in np.load(A/f"{s}.npz")["seg"]] for s in ex})
+_segs={s:[int(x) for x in fitted_seg(np.load(A/"shared_maps"/f"{s}.npz")["cka"])[:2]] for s in ex}
+_Ls={s:int(np.load(A/"shared_maps"/f"{s}.npz")["cka"].shape[0]) for s in ex}
+rec("block-anatomy","Fitted 3-block boundaries on four exemplar shared-probe maps",
+ "Four shared-probe CKA maps with dashed data-fitted boundaries: "+"; ".join(f"{s.replace('-own','')} ({_segs[s][0]},{_segs[s][1]} of {_Ls[s]})" for s in ex)+".",
+ [{"receipt":f"jspace_atlas/atlas_out/shared_maps/{s}.npz","sha256":sha(A/"shared_maps"/f"{s}.npz")} for s in ex],
+ _segs)
 print("3 finding figures built")
