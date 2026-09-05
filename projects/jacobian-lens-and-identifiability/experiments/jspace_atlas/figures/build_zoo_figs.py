@@ -128,6 +128,43 @@ def fig_band_by_scale(R):
                 "picture for cross-model comparison.", vals)
 
 
+def fig_band_by_scale_shared(R):
+    """Shared-probe twin of fig_band_by_scale: the instrument the note endorses for cross-model comparison."""
+    sh = {r["slug"]: float(r["fitted_sep"]) for r in csv.DictReader(open(OUT_A / "shared_summary.csv"))}
+    RR = [r for r in R if r["slug"] in sh]
+    fig, ax = plt.subplots(figsize=(8.2, 4.6))
+    vals = {}
+    for r in RR:
+        pth, y, f = params(r["slug"]), sh[r["slug"]], fam(r["slug"])
+        ax.scatter(pth, y, s=54, c=FAM_COLOR[f], edgecolor="#2C2924", linewidth=0.5, zorder=3)
+        vals[r["slug"]] = y
+    for lab in ("qwen35-397b-own", "llama3.3-70b-it", "gemma-3-27b", "gemma-2-9b"):
+        r = next((x for x in RR if x["slug"] == lab), None)
+        if r is not None:
+            ax.annotate(lab.replace("-own", ""), (params(lab), sh[lab]), textcoords="offset points",
+                        xytext=(6, 5), fontsize=7.5, color="#5A544C")
+    _x = np.array([params(r["slug"]) for r in RR], float); _y = np.array([sh[r["slug"]] for r in RR])
+    _rho = float(np.corrcoef(np.argsort(np.argsort(np.log(_x))), np.argsort(np.argsort(_y)))[0, 1])
+    ax.axhline(0, color="#A89B8C", lw=0.9, ls=(0, (5, 4)))
+    ax.set_xscale("log")
+    ax.set_xlabel("parameters (log scale)", fontsize=9)
+    ax.set_ylabel("fitted band separation, shared probe", fontsize=9)
+    ax.set_title(f"Shared-probe fitted separation vs scale: a loose size trend (rank correlation {_rho:+.2f}), families interleaved",
+                 fontsize=10.2, fontweight="bold", loc="left")
+    from matplotlib.lines import Line2D
+    ax.legend(handles=[Line2D([0], [0], marker="o", color="w", label=k, markerfacecolor=v, markersize=8)
+                       for k, v in FAM_COLOR.items()], fontsize=8, loc="upper left", frameon=False)
+    for sp in ("top", "right"):
+        ax.spines[sp].set_visible(False)
+    fig.tight_layout()
+    return save(fig, "zoo-band-by-scale-shared",
+                "Fitted band separation vs scale on the shared probe, colored by family",
+                f"Scatter of shared-probe fitted band separation against parameter count on a log x-axis, "
+                f"colored by family, for {len(RR)} lenses. Rank correlation with size {_rho:+.2f}. Gemma, Qwen, "
+                "Llama and OLMo lenses interleave rather than separating by family; the lowest values are the "
+                "gemma-2 2B and 9B checkpoints and the smallest models generally.", vals)
+
+
 def fig_mid_vs_fitted(R):
     fig, ax = plt.subplots(figsize=(7.4, 4.6))
     vals = {}
@@ -189,7 +226,7 @@ def fig_pr_curves(R):
 
 def build(verify=False):
     R = rows()
-    figs = [fig_band_by_scale(R), fig_mid_vs_fitted(R), fig_pr_curves(R)]
+    figs = [fig_band_by_scale(R), fig_band_by_scale_shared(R), fig_mid_vs_fitted(R), fig_pr_curves(R)]
     ent = []
     for stem, vals in figs:
         for k, v in vals.items():
