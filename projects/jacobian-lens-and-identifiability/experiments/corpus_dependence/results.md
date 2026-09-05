@@ -264,3 +264,14 @@ matter for a 70B model or on a different distribution.
 
 Cost: RTX A5000 at $0.27/hr, ~2.75h, about **$0.74**. Running total for the fit-budget question,
 both runs, about **$1.89**.
+
+## 8B extension (2026-09-05): gate override recorded
+
+`PREREG_8B.md` (commit `73fb7cb`) gated the three llama3.1-8b fits on a timing probe (skip if three
+100-prompt fits extrapolate to more than 8 h). The probe's conservative rule attributed the whole
+warm 2-prompt run (270 s, which includes model load) to the prompts and returned 11.25 h, so the
+script skipped the fits. After inspecting the probe (about 3 h per fit realistic) the lead
+overrode the gate and launched the same three fits directly (`/workspace/llama_fits.sh` on pod
+`aln7lne2jgdcnv`, RTX A6000 at $0.53/hr, about $5 total). Nothing about the design, the
+predictions or the analysis changed; only the cost gate was overridden, and it is recorded here
+before any 8B result exists.

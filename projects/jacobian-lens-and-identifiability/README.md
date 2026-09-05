@@ -21,15 +21,26 @@ lineage (via Jean-Rémi King's thread) that predates and contextualizes J-space.
 
 ## Replication status
 
-Honest state of each experiment. **CPU** = runs free on the dev box; **GPU** = needs
-RunPod (real LLM or scale).
+Honest state of each experiment, one row per directory. **CPU** = runs free on the dev box; **GPU** =
+needed RunPod. Verdicts are the ledgers' words; every row links its `results.md`.
 
-| Experiment | Targets | Compute | Status |
+| Experiment | Question | Compute | Verdict (see ledger) |
 |---|---|---|---|
-| [`nonlinear_ica_sparsity`](experiments/nonlinear_ica_sparsity/) | #1 (linear corollary + nonlinear mechanism) | CPU | **run** — linear mode *directionally* reproduces (sparsity+L1 helps only when structure exists); not yet crisp. Nonlinear flow path executes. See its `results.md`. |
-| [`beyond_structural_sparsity`](experiments/beyond_structural_sparsity/) | #2 (undercomplete / dependent sources) | CPU | planned — config variations of the flagship (undercomplete `m>n`, dependent subspaces) |
-| [`diverse_dictionary_learning`](experiments/diverse_dictionary_learning/) | #3 (dependency vs latent sparsity) | CPU (small) → GPU (scale) | planned — decoder-Jacobian-L1 vs latent-L1 on a small VAE; the SAE-relevant one |
-| [`jacobian_lens`](experiments/jacobian_lens/) | #4/#5 (J-lens readout) + eliebak CKA explorer | **CPU** (CKA via pre-fitted lenses) / **GPU** (fitting + causal) | **run** — 35-of-38-lens uniform sweep + nulls + shared-vocab (tokenizer-confound) re-sweep + precision A/B (see its `results.md`); behavioral battery (swap + ignition, 23 models) in [`behavioral/`](experiments/behavioral/); own-fit validation + the **397B frontier fit** (mid_sep 0.343, lens published on HF) in [`fit_our_own/`](experiments/fit_our_own/). Write-up: praxagent blog (moved out of this repo; numbers in this experiment's `results.md`). |
+| [`nonlinear_ica_sparsity`](experiments/nonlinear_ica_sparsity/) | structural sparsity of the mixing Jacobian implies identifiability (#1) | CPU | linear mode directionally reproduces; nonlinear path executes; not crisp |
+| [`beyond_structural_sparsity`](experiments/beyond_structural_sparsity/) | undercomplete / dependent sources (#2) | CPU | planned, not run |
+| [`diverse_dictionary_learning`](experiments/diverse_dictionary_learning/) | dependency vs latent sparsity (#3) | CPU/GPU | planned, not run |
+| [`jacobian_lens`](experiments/jacobian_lens/) | CKA sweep over the public lens collection; shared-vocab re-sweep; precision A/B | CPU | run; shared probe overturns the own-vocabulary family split |
+| [`behavioral`](experiments/behavioral/) | do lens band statistics predict behaviour (23 models) | GPU | run; correlations survive the shared probe (+0.53) but band is neither necessary nor sufficient |
+| [`fit_our_own`](experiments/fit_our_own/) | fit our own lenses; the 397B frontier fit; consumer-path integrity gate | GPU | run; 397B lens released (mid_sep +0.343, reproduced to 2e-8); 24-prompt budget now caveated |
+| [`lens_demo`](experiments/lens_demo/) | pre-registered readout audit and steering on the 397B | GPU | run; 32/50 steered swaps flip vs 0/50 controls |
+| [`jspace_atlas`](experiments/jspace_atlas/) | 36-lens atlas, cross-model matrix, Tier-1 arms, readout decomposition, identifiability, Toeplitz surrogate | CPU (+ Tier-1 GPU) | run; both cross-model predictions failed; 20/35 lenses have identified boundaries; 80% of the 397B statistic is distance decay |
+| [`readout_decomposition`](experiments/readout_decomposition/) | what the invariant gemma-2 readout direction encodes | CPU | run; the model's own prior modulated by writing system, 37% unexplained |
+| [`sae_x_jspace`](experiments/sae_x_jspace/) | SAE features read through the J-space | GPU | run; bidirectional on 6 deception features |
+| [`block_patching`](experiments/block_patching/) | do band boundaries act as barriers to activation transfer (v1, v2, v2.1) | GPU | run; nulls, one position artifact, one non-replication; design not identified |
+| [`geometry_causality`](experiments/geometry_causality/) | equal-norm perturbation: lens direction vs random vs comparator | GPU | run; lens beats random 5x to 11x (float32, prompt intervals); dose caveat |
+| [`bands_vs_computation`](experiments/bands_vs_computation/) | Test B (lens vs activation boundaries, 12 models), Test C (corpus instability), identified-only Test B | GPU + CPU | run; readout property in every cell (shared probe); Test C moot after the corpus correction |
+| [`corpus_dependence`](experiments/corpus_dependence/) | does the map depend on the fitting corpus; fit budget; 8B extension | GPU | run; map moves 84x to 888x the seed null, boundaries barely; converged from 200 prompts; 25-prompt caveat triggered; 8B pending |
+| [`ignition_depth`](experiments/ignition_depth/) | does ignition depth track the late boundary | GPU | run; no verdict (2 usable models; prompt set too hard for half the set) |
 
 ### Candidate replications from the Dehaene & Naccache commentary
 

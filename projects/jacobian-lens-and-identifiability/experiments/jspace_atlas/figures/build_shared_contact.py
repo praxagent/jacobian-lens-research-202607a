@@ -12,20 +12,20 @@ def fam(s):
 sh={r["slug"]:float(r["fitted_sep"]) for r in csv.DictReader(open(A/"shared_summary.csv"))}
 own={r["slug"]:float(r["fitted_sep"]) for r in csv.DictReader(open(A/"summary.csv"))}
 R=sorted(sh, key=lambda s:-sh[s])
-n=len(R); cols=6; rows=(n+cols-1)//cols
-fig,axes=plt.subplots(rows,cols,figsize=(13,13.6)); fig.patch.set_facecolor("#F7F4F0")
+n=len(R); cols=4; rows=(n+cols-1)//cols
+fig,axes=plt.subplots(rows,cols,figsize=(7.8,18.6)); fig.patch.set_facecolor("#F7F4F0")
 for ax in axes.flat: ax.axis("off")
 for k,s in enumerate(R):
     ax=axes.flat[k]; M=np.load(SM/f"{s}.npz")["cka"]
     ax.imshow(M,vmin=0,vmax=1,cmap="magma",origin="lower"); ax.axis("on"); ax.set_xticks([]); ax.set_yticks([])
     name=s.replace("-own","").replace("-deduped","")
-    ax.set_title(name,fontsize=8.2,color=FAM[fam(s)],fontweight="bold",pad=2)
-    ax.text(0.5,-0.09,f"sep {sh[s]:+.2f}",transform=ax.transAxes,ha="center",fontsize=7,color="#5A544C")
+    ax.set_title(name,fontsize=10,color=FAM[fam(s)],fontweight="bold",pad=2)
+    ax.text(0.5,-0.09,f"sep {sh[s]:+.2f}",transform=ax.transAxes,ha="center",fontsize=8.6,color="#5A544C")
     for sp in ax.spines.values(): sp.set_edgecolor(FAM[fam(s)]); sp.set_linewidth(1.3)
 fig.suptitle("The same 36 lenses, measured on a SHARED vocabulary (sorted by fitted band separation)",
-             fontsize=13,fontweight="bold",x=0.02,ha="left",color="#2C2924")
+             fontsize=11,fontweight="bold",x=0.02,ha="left",color="#2C2924")
 fig.text(0.02,0.005,"compare to the own-vocabulary contact sheet above: the Gemma maps (clay) that were pale there now show real structure; "
-         "the family split softens once the token-set confound is removed.",fontsize=8.5,color="#5A544C")
+         "the family split softens once the token-set confound is removed.",fontsize=8,color="#5A544C",wrap=True)
 fig.tight_layout(rect=(0,0.02,1,0.965))
 fig.savefig(POST/"zoo-contact-shared.svg",format="svg",metadata={"Date":None})
 fig.savefig(POST/"zoo-contact-shared.png",dpi=150); plt.close(fig)

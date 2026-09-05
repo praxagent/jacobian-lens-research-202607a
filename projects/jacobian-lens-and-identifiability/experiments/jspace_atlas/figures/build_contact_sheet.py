@@ -11,23 +11,23 @@ def fam(s):
     return "other"
 R=list({r["slug"]:r for r in csv.DictReader(open(OUT/"summary.csv"))}.values())
 R=sorted(R,key=lambda r:float(r["fitted_sep"]),reverse=True)
-n=len(R); cols=6; rows=(n+cols-1)//cols
-fig,axes=plt.subplots(rows,cols,figsize=(13,13.6)); fig.patch.set_facecolor("#F7F4F0")
+n=len(R); cols=4; rows=(n+cols-1)//cols
+fig,axes=plt.subplots(rows,cols,figsize=(7.8,18.6)); fig.patch.set_facecolor("#F7F4F0")
 for ax in axes.flat: ax.axis("off")
 for k,r in enumerate(R):
     ax=axes.flat[k]; d=np.load(OUT/f"{r['slug']}.npz"); M=d["cka"]
     ax.imshow(M,vmin=0,vmax=1,cmap="magma",origin="lower"); ax.axis("on")
     ax.set_xticks([]); ax.set_yticks([])
     name=r["slug"].replace("-own","").replace("-deduped","")
-    ax.set_title(f"{name}",fontsize=8.2,color=FAM[fam(r['slug'])],fontweight="bold",pad=2)
+    ax.set_title(f"{name}",fontsize=10,color=FAM[fam(r['slug'])],fontweight="bold",pad=2)
     ax.text(0.5,-0.09,f"sep {float(r['fitted_sep']):+.2f}",transform=ax.transAxes,
-            ha="center",fontsize=7,color="#5A544C")
+            ha="center",fontsize=8.6,color="#5A544C")
     for sp in ax.spines.values(): sp.set_edgecolor(FAM[fam(r['slug'])]); sp.set_linewidth(1.3)
 fig.suptitle("Layer x layer CKA maps, all 36 lenses on their OWN vocabulary (sorted by fitted band separation; not comparable across models)",
-             fontsize=13,fontweight="bold",x=0.02,ha="left",color="#2C2924")
+             fontsize=11,fontweight="bold",x=0.02,ha="left",color="#2C2924")
 fig.text(0.02,0.005,"same magma scale 0 to 1 as the 397B hero map; title color = family; "
          "bright diagonal blocks = depth phases. Own-vocabulary measurement: the family contrast here is largely a probe effect, see the shared-probe sheet.",
-         fontsize=8.5,color="#5A544C")
+         fontsize=8,color="#5A544C",wrap=True)
 fig.tight_layout(rect=(0,0.02,1,0.965))
 fig.savefig(POST/"zoo-contact-sheet.svg",format="svg",metadata={"Date":None})
 fig.savefig(POST/"zoo-contact-sheet.png",dpi=150); plt.close(fig)

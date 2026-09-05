@@ -1,0 +1,670 @@
+{
+ "closure": {
+  "summary": "Closure audit of 23 findings from the 2026-07-25 (R1) and 2026-07-26 (R2) reviews against the current draft (index.md, 1,842 lines). Tally: 2 fixed (R1-S03 open-question triage; R2-S02 technical descriptions), 20 partial, 1 open (R2-F02 alt texts). The revision did real work: a statistic-definitions table (L185-211), corrected 5,700-fold scale and 36/35/34/38 counts, a fully specified perturbation estimand (L1099-1126), a defined boundary-shift metric and 'WikiText-versus-code fitting condition' scoping (L1231-1247, L1281-1287), unigram-frequency validation of the prior axis (L604-616), a 'What pre-registered means here' section (L1463-1480), primary-source references for Gemma/WikiText/HSIC/kernel alignment, and hedged key_result wording on probe dependence (L26-30). What is still not closed, and why it matters most: (1) Vocabulary-size causation survives on secondary summary surfaces: the lesson panel (L801-804 'vocabulary size silently sets the floor and a big vocabulary buries the answer'), the shared-contact-sheet caption (L421 'was, in large part, a vocabulary-size effect'), the Gemma-zeros warning panel (L322-325), and the front-matter summary (L8 'Vocabulary crowding is our leading explanation'), which directly contradicts the body's 'Crowding is out' (L739) and open question 5 (L1392-1395). (2) The fixed-vs-fitted fix introduced a new defect: the definitions table (L201-203) and the figure caption/alt (L331-336) still assert fitted_sep >= mid_sep always, while the correction paragraph (L338-349) says 5 of 36 violate it; the five values quoted there are the shared-probe values from atlas_out/shared_summary.csv, not the own-vocabulary summary.csv the paragraph names and the figure receipt hashes (own-vocab summary.csv has a different violator set: gpt2-small, qwen3-1.7b, gemma-4-e2b, qwen2.5-7b-it, gemma-3-27b-it; gpt-oss-20b is not a violator there). These numbers are not in provenance.json. (3) Chronology and counts remain stale: 'three pre-registered designs across six models' (L947), 'Five designs, eleven models' (L1067, L1365, L1550) against 'twelve models' for Test B alone (L1035; union across the five designs is now 15), 'tried to establish it twice' (L1435), 'two withdrawn claims' (L961) vs 'four' (L1636), a garbled tense patch in the appendix (L1755-1757), and ignition-depth/boundary-plasticity still listed as future probes (L938-942, L1078-1079) though both are reported. No pre-data commit is cited in the note; the ledgers hold them (09e5bf7, 4b4f7d5, 1d9bd6d, e09bb2e, 98b1503, 8705791, 86aa050, 3e10ff9). (4) Mechanism language persists: 'tuning a model to answer rewrites its early layers' (L570), 'pulls the early layers' readout into agreement with the late layers'' (L558, L565-567), 'already settled (it is the model)' (L449, contradicting the scope caveat at L438-441), and 'restores structure' in the claims matrix (L1548). (5) Perturbation: the body correctly separates bf16 inference from float32 point estimates (L1112-1119), but the claims matrix re-attaches 'prompt-level bootstraps for #14' to the float32 ratios (L1551, L1563), and the note does not disclose that qwen3.5-0.8b's C = 0.045 is a bf16 value while the other two are float32 (geometry_causality/results.md L300-304). (6) Inline alt texts were not touched: pt-vs-it says 'Seven' curves (L833) while its receipt says eight; the corpus alt implies all models move (L1226) while its receipt says two of three; the contact-sheet alt names no probe (L295). (7) References: the PrimeIntellect 33B/950B ecosystem claim is retained uncited (L85-87, L1511-1512); the body still says Gao et al. 'introduced' the participation ratio (L354) while the reference entry disclaims exactly that (L1795-1797); the community explorer and own release are not revision-pinned; the CKA panel still says CKA is invariant to 'the transformations a network can apply without changing its computation' (L163-164). Em-dash check: zero occurrences.",
+  "items": [
+   {
+    "id": "R1-B01",
+    "title": "Conflicting scales, counts, and statistic identities",
+    "status": "partial",
+    "evidence": "Fixed elements: L8 'a 5,700-fold scale span' and L289-290 'a 5,700-fold range of parameters, from a 70M Pythia to the 0.4T Qwen'; definitions table L192-199 ('mid_sep (fixed)', 'fitted_sep', 'own-vocabulary', 'shared-probe', 'public fit', 'independent fit'); L209-211 '36 lenses in the atlas, 35 with a computable readout covariance, 34 with both ..., 38 tokenizers'; L204-207 reconciles qwen3-4b ('a low-separation model on the shared probe and sits in a higher-separation family range on own-vocabulary'); '.472' and '.202' no longer appear anywhere in the note; L765 'gpt-oss-20b is by far the most concentrated model (35% ...)' is now the only concentration superlative. Still conflicting: L201-203 'A fitted_sep is always at least as large as the mid_sep on the same map' versus L338-349 'the guarantee does not, and our own released summary.csv disproves it ... It happens in 5 of our 36 models: gemma-4-e2b (mid_sep +0.081, fitted -0.018), qwen3-1.7b (+0.082, +0.007), qwen2.5-7b-it (+0.014, +0.002), gpt2-small (+0.015, +0.003), gpt-oss-20b (+0.057, +0.051)'. Those five values match experiments/jspace_atlas/atlas_out/shared_summary.csv (shared probe), not summary.csv (own vocabulary), which is the file the paragraph names and the file zoo-mid-vs-fitted.receipt.json hashes; own-vocab summary.csv (pinned de50888 and local) has violators gpt2-small (0.015/0.0014), qwen3-1.7b (0.0758/0.0414), gemma-4-e2b (0.0468/-0.0109), qwen2.5-7b-it (0.0029/0.002), gemma-3-27b-it (0.009/-0.0024), and gpt-oss-20b is NOT a violator there (0.0756/0.0921). None of the five quoted values is in provenance.json.",
+    "remaining": "Reconcile L201-203 with L338-349 (drop the 'always' guarantee from the table). Restate the correction on the probe it was computed on and cite shared_summary.csv (or recompute on summary.csv and list gemma-3-27b-it instead of gpt-oss-20b); add the values to provenance.json. Fix L327-329 'the fixed-thirds mid_sep we released ... is deliberately conservative, and the whole zoo confirms it' and the caption/alt at L331-336, which still assert the ordering the correction retracts."
+   },
+   {
+    "id": "R1-B02",
+    "title": "Vocabulary-size mechanism is not established",
+    "status": "partial",
+    "evidence": "Fixed: key_result L26-30 'Note we do not establish vocabulary size as the cause: the two probes differ in which tokens they contain ... a shared probe, which removes the token-set confound but does not by itself equalise model-specific baselines'; L372-374 'Every probe here contains the same 4,096 rows, so what differs across models is which tokens are sampled ... not how many rows there are'; L387-391 'This equalises which tokens are compared across models. It does not by itself equalise the null floor'; L380-385 per-checkpoint caveat (Qwen3.5 248,320 vs Gemma 256k/262k); L897-898 '(crowding is the natural explanation, but this comparison does not isolate it)'. Still asserting vocabulary size as cause: summary L8 'Vocabulary crowding is our leading explanation but is not isolated by this comparison'; lesson panel L801-804 'It is the wrong question across models, because vocabulary size silently sets the floor and a big vocabulary buries the answer'; L421 'The apparent family split of the own-vocabulary grid was, in large part, a vocabulary-size effect'; L322-325 'exactly the wrong probe for a family with an unusually large vocabulary'. Contradiction: L739 'Crowding is out' and L1392-1395 'every tidy explanation we tested (vocabulary crowding ...) failed' versus the summary's 'leading explanation'.",
+    "remaining": "Rewrite the lesson panel (L801-808), the zoo-contact-shared caption (L421), the Gemma-zeros warning (L322-325) and the summary sentence (L8) to say probe-set dependence, not vocabulary size or crowding; resolve the summary/body contradiction on crowding (either it is the leading hypothesis or it is out)."
+   },
+   {
+    "id": "R1-B03",
+    "title": "Geometry, model mechanism, and metric behavior are conflated",
+    "status": "partial",
+    "evidence": "Fixed: L61-66 'readout-geometry regime ... Whether that means the network computes similarly at those depths is a further claim the instrument does not settle'; L248-250 null bounded to 'this random-transport baseline'; L546-547 '(They are not \"the same weights\": instruct tuning changes the weights ...)'; L780-783 'strongest measured correlate, and the one we can show actually does the masking in this statistic ... a demonstration about the measurement, not about restoring the network's computation'; L789-790 'the ablation is an operation on the statistic, not an intervention on the network'; L604-616 actual unigram-frequency validation (-0.591 with log frequency). Not replaced: L449 'The model-versus-fit question is already settled (it is the model)'; L570 'tuning a model to answer rewrites its early layers to read out what its late layers already do'; L558 'instruct tuning pulls the output-facing geometry toward a common answer-producing direction'; L565-567 'it pulls the early layers' readout into agreement with the late layers' answer-producing geometry, extending the invariant readout backward'; L1548 claims matrix 'Ablating top directions restores structure'; L258-259 'Whatever phase organization appears in the real atlas was put there by the fitted Jacobians'; L229-230 'late-stack blocks where computation turns toward committing outputs'; 'phases' on summary surfaces L7, L19.",
+    "remaining": "Replace 'settled' at L449 (it contradicts the scope caveat at L438-441), 'rewrites'/'pulls' at L558, L565-570, L578, and 'restores' at L1548 with associational/geometric wording; bound L229-230 and L258-259 to readout geometry."
+   },
+   {
+    "id": "R1-B04",
+    "title": "Perturbation result lacks a publication-grade estimand",
+    "status": "partial",
+    "evidence": "Fixed: L1099-1110 'At each lens layer we add a fixed-norm vector to the residual stream at all positions, and read the KL divergence ... over 200 held-out WikiText passages ... identical vector norm, verified to within 10^-6 relative, and epsilon = 0 reproduces the clean logits exactly ... The random floor is 8 independent unit vectors per layer, averaged. The reported ratio is exp(median_l log(KL_lens / mean KL_random)) ... 2,000-resample bootstrap over prompts; the per-model 95% intervals on the log ratio exclude zero: gpt2-small [+1.22, +1.38], gemma-3-270m [+2.00, +2.18], qwen3.5-0.8b [+1.76, +2.22]' (matches geometry_causality/results.md L18-22); L1121-1126 comparator defined as 'the unit-normalised gradient of the clean top-1 token's log-probability' and 'We had labelled it a ceiling; that was wrong'; L1118-1119 conditioning on the eight realised random directions stated. Not done: heading L1083 'The lens directions are real: 7.5x to 9.1x over an equal-norm random direction' still uses the 'real' framing the review asked to drop; L1133-1135 'picks directions that move the output several times more than chance' is fine, but L1128 'Confirmed in all three families' leads with the float32 magnitudes that carry no interval.",
+    "remaining": "Retitle L1083 to the bounded statement ('beat an equal-norm random direction by 7.5x to 9.1x'); see R2-B03 for the interval attachment residual."
+   },
+   {
+    "id": "R1-S01",
+    "title": "Available-model census is not population evidence",
+    "status": "partial",
+    "evidence": "Fixed: L309-310 'Both statements are descriptive of this collection of lenses on their own vocabularies'; L1189-1190 'This is a census of an opportunistically assembled collection, not a random sample of models, so read it as a striking association within these 36 rather than a law about training families'; L1564-1566 'Rows marked census are descriptive of the 36-lens collection and are not population inference, because the collection is a convenience sample with family clustering'; 'decides' no longer appears. Remaining: L317 'Scale alone plainly does not set the band'; L541-542 'instruct tuning flattens the readout, in every family, monotonically' (only three families have pairs: L555 alt 'across gemma-2, gemma-3 and llama'); L1188 'family membership is by far the strongest predictor'; no family-cluster uncertainty for rho +0.44 (L549) or -0.59 (L752).",
+    "remaining": "Bound L317, L541-542 and L1188 to 'in this collection' / 'in the three families with pairs'; add cluster-aware uncertainty or drop inferential verbs for the zoo correlations."
+   },
+   {
+    "id": "R1-S02",
+    "title": "Statistical claims need narrower presentation",
+    "status": "partial",
+    "evidence": "Fixed: exact n at L749 'with 34 models', L757 'among 34 observational data points', L762 'across 34 models'; claims matrix L1545-1546 labels rows 8 and 9 'exploratory, census'; mediation replaced at L754-757 'largely runs alongside readout concentration rather than independently of it ... We are describing a pattern of partial correlations ... not identifying a causal pathway'; perturbation intervals supplied L1109-1110. Remaining: no intervals for Spearman -0.59, +0.44, partial -0.39/+0.22; L752 'the strongest single correlate of lens flatness in this whole note' with no candidate-set definition or multiplicity context; L753-754 'width's own effect largely runs through it (partial +0.22)' is still mediation phrasing.",
+    "remaining": "Give bootstrap/cluster intervals for the zoo correlations or drop the comparative superlative; define the candidate set behind 'strongest single correlate'; reword 'runs through it'."
+   },
+   {
+    "id": "R1-S03",
+    "title": "Open questions: do-it or drop-it",
+    "status": "fixed",
+    "evidence": "Q1 dropped: L1374-1380 'Status: open. An outside review advised against a broader sweep ... We agree and are not running it.' Q2 downward dose ladder done: L1164-1168 'we extended the ladder four rungs further down, at which point every gate passed' (ledger Amendment 3, results.md L277-304); the .202-vs-.35 contradiction is gone (L765 gpt-oss-20b 35% is the only superlative). Q3 not run. Q4 not run: L1456-1461 keeps the 397B split-half as priced future work. Q5 run as a separate pre-registered small-model study: L1208-1287, scoped at L1269-1273 'all scoped to WikiText-fitted lenses'. No surprise rhetoric around the perturbation result beyond L1159-1160 (tracked under R2-S04).",
+    "remaining": ""
+   },
+   {
+    "id": "R1-R01",
+    "title": "Bibliography inventory",
+    "status": "partial",
+    "evidence": "Fixed: Anthropic entry L1777-1784 'published 6 July 2026; title, date, author list and every quotation above verified against the live page 2026-07-26 ... Provisional'; Kornblith L1785-1791 'ICML 2019; arXiv:1905.00414 ... checked against the arXiv record on 2026-07-26; an earlier draft paraphrased ... has been corrected'; software/data split L1828-1842 'Anthropic's jlens library (Apache-2.0), commit 581d398' and 'Neuronpedia ... snapshot a4114d77...'; own release listed as artifact L1841-1842. Not done: L163-164 CKA panel still 'invariant to the transformations a network can apply without changing its computation (rotations, uniform scaling)'; jlens and Neuronpedia entries carry no URL or access date; community explorer L1834-1841 is a live URL, not an archived/pinned version, and 'a value an earlier independent run reproduces to four decimals' (L429) / 'reproduce an earlier independent run to four decimals (gemma-3-12b 0.1137, gemma-3-27b 0.2977)' (L806-807) names no result artifact or independence statement; PrimeIntellect ecosystem claim retained without any entry: L85-87 'independently, in recent community lens releases' and L1511-1512 'recent community J-lens releases at ~33B and ~950B scale ship exactly this'; own release L1841-1842 not revision-pinned.",
+    "remaining": "Narrow L163-164; add URLs/access dates to jlens and Neuronpedia entries; pin the explorer and identify the 'earlier independent run' artifact; either cite the PrimeIntellect inkling-jlens / Laguna-XS.2-jlens repos precisely or remove L85-87 and L1511-1512; pin the model-card revision."
+   },
+   {
+    "id": "R1-R02",
+    "title": "Missing or uncited support",
+    "status": "partial",
+    "evidence": "Fixed: Gao entry added L1792-1798 'We do not claim this paper introduced the measure'; Gemma 2 and Gemma 3 technical reports L1806-1811 ('Warrants: the 256k tokenizer, logit soft-capping, and that the 2B and 9B models are distilled'); WikiText-103 L1816-1820; prior-work wording narrowed L1138-1139 'We are not aware of a direct test of it, though we did not run a systematic literature search'. Not done: body L353-355 still says the participation ratio was '(introduced for neural dimensionality by Gao et al.; see References)', contradicting the entry; Gao entry has no version/date/access date; pre-registration citations: L1463-1480 defines the term but cites no pre-data commit in the text (ledgers hold them: geometry_causality 09e5bf7, corpus_dependence 4b4f7d5, fit-budget 1d9bd6d/e09bb2e, bands_vs_computation 98b1503, block_patching 8705791/86aa050/3e10ff9).",
+    "remaining": "Change L354 to match the reference entry; add commit hashes (or links to the PREREG files at those commits) to the pre-registration section or the claims matrix."
+   },
+   {
+    "id": "R1-F01",
+    "title": "Captions and alt text overstate corrected or tautological findings",
+    "status": "partial",
+    "evidence": "Fixed: contact-sheet caption L296-300 'Finding (own-vocabulary measurement, superseded later in this note) ... Read this as the measurement that motivated the probe investigation, not as a controlled cross-model comparison'; band-by-scale caption L313-318 adds 'the Gemma zeros turn out to be partly a measurement artifact, corrected below'. Not fixed: fixed-vs-fitted alt L331 'every model on or above the y equals x line' and caption L332-336 'every one of the 36 models lies on or above the line ... always finds at least as much separation ... the fixed-thirds number we release is the more conservative of the two', plus L327-329 'the whole zoo confirms it', all contradicted by the correction at L338-349 in the same caption; the receipt alt_text repeats the retracted claim; the correction's numbers are shared-probe values attributed to own-vocab summary.csv (see R1-B01); L317 'Scale alone plainly does not set the band' remains categorical.",
+    "remaining": "Rewrite the zoo-mid-vs-fitted alt, caption lead sentence, receipt alt_text and L327-329 to the corrected statement; source the five violators correctly."
+   },
+   {
+    "id": "R1-F02",
+    "title": "CKA incorrectly translated into percentage divergence",
+    "status": "partial",
+    "evidence": "Fixed: L477-479 'minimum CKA between any two layers at 0.975 and 0.971. (CKA is a normalised similarity, not a percentage distance, so we quote the range rather than converting it into a \"percent divergence\".)' Not fixed: L359-360 PR-curves caption still says 'rises toward the late layers in every family (readout widens as the model approaches committing an output)', the semantic interpretation the review asked to remove unless separately tested.",
+    "remaining": "Drop or hedge the parenthetical at L359-360."
+   },
+   {
+    "id": "R2-B01",
+    "title": "Probe dependence misidentified as vocabulary-size causation on summary surfaces",
+    "status": "partial",
+    "evidence": "Key result fixed: L23-30 'that reading is strongly probe-dependent ... Note we do not establish vocabulary size as the cause ... cross-model comparison needs a shared probe, which removes the token-set confound but does not by itself equalise model-specific baselines'. Explanatory section fixed: L372-378, L387-391. Summary partially fixed: L8 'these estimates turn out to be strongly probe-dependent ... Vocabulary crowding is our leading explanation but is not isolated by this comparison' but ends 'cross-model geometry comparisons need a shared probe' with no 'not sufficient' qualifier. Final lesson panel NOT fixed: L801-804 'because vocabulary size silently sets the floor and a big vocabulary buries the answer'. Anatomy section partly hedged: L896-898. Caption not fixed: L421 'was, in large part, a vocabulary-size effect'. Internal contradiction: L8 'leading explanation' vs L739 'Crowding is out' and L1392-1395.",
+    "remaining": "Rewrite L801-808, L421, L322-325 and the summary's last clauses per the review's wording ('own-vocabulary sampling changes token composition and produces probe-dependent contrast; shared strings remove that confound but leave unembedding- and dimension-dependent baselines'); reconcile crowding status across summary and body."
+   },
+   {
+    "id": "R2-B02",
+    "title": "Corpus-dependence effect overgeneralized; boundary shift undefined",
+    "status": "partial",
+    "evidence": "Fixed: L1240-1243 'Boundary shift is |b1,code - b1,wiki| + |b2,code - b2,wiki| ... Map distance is 1 - CKA between the two lenses' off-diagonal map profiles, and the 87x to 292x figures are ratios to the observed single seed comparison, not uncertainty intervals'; L1231-1232 'the largest movement of any single boundary is 9 layers in gemma-3-270m and 11 in qwen3.5-0.8b'; L1281-1283 'the honest name for what we varied is a WikiText-versus-code fitting condition, not a clean \"corpus\" variable'; L1245-1247 'That is a narrow statement, not a general claim of seed invariance: it is one resample pair per model, all under 1B'; summary L8 'move by a combined fifteen layers across the two boundaries'. Not fixed: L1275 'Reproducibility at fixed corpus is excellent, so published maps replicate'; L1383 'Fitted boundaries are seed-invariant'; inline alt L1226 'WikiText seeds coinciding and code sitting elsewhere' (receipt alt correctly says 'move in two of the three ... gpt2-small's boundaries do not move at all'); headline L1338-1339 'What you fit a Jacobian lens on determines the map' and summary L8 'a J-lens depth map is a property of the model as estimated over a text distribution' generalize from three sub-1B models without scope on the summary surface.",
+    "remaining": "Reword L1275 and L1383 to the two-sample statement; fix the inline alt at L1226; add scope ('in three models under 1B') to the summary and the L1338 pull quote."
+   },
+   {
+    "id": "R2-B03",
+    "title": "Perturbation uncertainty does not correspond to the headline estimates",
+    "status": "partial",
+    "evidence": "Body follows the review's alternative route: L1112-1119 'Those intervals belong to the bfloat16 run, and we are deliberately not attaching them to the float32 ratios quoted above ... the float32 pass is a point-estimate correction ... We did not compute prompt-level intervals for the float32 pass ... Inference is also conditional on the eight realised random directions per layer'; consistent with geometry_causality/results.md (bf16 CIs at L18-22, float32 ratios at L236-240, no float32 CI). Residuals: claims matrix L1551 row 14 statistic '7.5x, 9.1x, 8.1x' with L1563 'Uncertainty is reported where we computed it: prompt-level bootstraps for #14', which re-attaches the bf16 intervals to the float32 numbers; L1162-1164 'now in all three models: it recovers 0.053, 0.045 and 0.077' does not say that qwen3.5-0.8b's 0.045 is a bf16 value while the other two are float32 (ledger L253-260 'The qwen fp32 C run OOMed in lm_head ... was not repeated'; L300-304).",
+    "remaining": "Change L1563 to say the bootstrap applies to the bf16 inferential pass, not the float32 ratios in row 14; state the mixed precision of the three C values."
+   },
+   {
+    "id": "R2-B04",
+    "title": "Measurement effects promoted to model mechanisms",
+    "status": "partial",
+    "evidence": "Fixed: L438-441 'our refit used the same recipe and the same corpus family, so this rules out fit noise and the public lens's idiosyncrasies, not corpus dependence'; L1542 same scope in claims matrix; L509-511 'random Gaussian probe ... M becomes isotropic in expectation (the realized covariance of a finite draw is only approximately so)'; L780-783 'strongest measured correlate, and the one we can show actually does the masking in this statistic ... a demonstration about the measurement, not about restoring the network's computation'; L757-759 partial correlations as association. Not fixed: L449 'The model-versus-fit question is already settled (it is the model)'; L558 'instruct tuning pulls the output-facing geometry toward a common answer-producing direction'; L565-567 'it pulls the early layers' readout into agreement with the late layers' ... extending the invariant readout backward through the stack'; L570 'tuning a model to answer rewrites its early layers'; L578 'why does answering pull it constant'; L1548 'Ablating top directions restores structure'; L526-530 'The model routes information through a rotating representation while keeping the answer-facing projection constant at every depth' (mechanistic, from a measurement).",
+    "remaining": "Remove or hedge the directional 'pulled toward late' claims (L558, L565-570, L578) unless cross-checkpoint geometry is argued to establish direction; replace 'settled' at L449 and 'restores' at L1548."
+   },
+   {
+    "id": "R2-S01",
+    "title": "'Computational phases' and 'real structure' exceed the instrument",
+    "status": "partial",
+    "evidence": "Fixed: L61-66 'those two depths sit in one readout-geometry regime ... Whether that means the network computes similarly at those depths is a further claim the instrument does not settle'; L248-250 'the blocks in the real map are not produced by this random-transport baseline ... One cheap null does not exhaust the space of artifacts'. Not fixed: lead L16-17 'Every map ships with the random-transport control that says whether its structure is real'; L258-259 'Whatever phase organization appears in the real atlas was put there by the fitted Jacobians'; L229-230 'late-stack blocks where computation turns toward committing outputs'; key_result L19 'three clean depth phases' and og_image_alt L7 'depth phases' without the regime qualifier.",
+    "remaining": "Reword the lead's 'whether its structure is real', L258-259 and L229-230 to the bounded null statement; qualify 'phases' on the summary surfaces."
+   },
+   {
+    "id": "R2-S02",
+    "title": "CKA rationale and isotropic probe described too strongly",
+    "status": "fixed",
+    "evidence": "L108-111 'a transformer's residual stream is not free to rotate arbitrarily per layer, because skip connections carry a shared basis through the stack. Orthogonal invariance is therefore a comparison choice we are making ... rather than a symmetry the architecture forces on us'; L509-513 'Swap the real unembedding for a random Gaussian probe of the same shape and M becomes isotropic in expectation (the realized covariance of a finite draw is only approximately so) ... only the probe's covariance changes'; caption L517-519 'weighted by a random Gaussian probe instead of the real unembedding'. (The separate R1-R01 residual at L163-164, 'transformations a network can apply without changing its computation', is tracked there.)",
+    "remaining": ""
+   },
+   {
+    "id": "R2-S03",
+    "title": "Zoo correlations and outlier section interpreted as population laws",
+    "status": "partial",
+    "evidence": "Fixed: L749-750 '(Spearman +0.20, weak and of the wrong sign for the hypothesis; with 34 models that is an absence of evidence for a strong effect, not evidence of no relationship)'; L754-757 'in this collection, smaller models concentrate their readout more'; L1188-1190 'across the lenses we have, family membership is by far the strongest predictor ... a census of an opportunistically assembled collection, not a random sample'; L1199-1203 outlier census labeled exploratory and pending 'the shared-vocabulary recomputation'; 'decides' removed. Not fixed: L767-768 'gpt2-small and pythia-70m are flat with unconcentrated readouts simply because they are too shallow to have much depth structure at all'; L548-549 'And smaller models are flatter (rank correlation about +0.44 between size and structure)' stated as a surviving finding without collection-bounding at first mention.",
+    "remaining": "Hedge L767-768 ('consistent with') and bound L548-549 to the collection."
+   },
+   {
+    "id": "R2-S04",
+    "title": "Pre-registration and campaign chronology stale or unverifiable",
+    "status": "partial",
+    "evidence": "Done: L1463-1480 'What pre-registered means here' ('every design in this note was written to a Markdown file and committed to a public git repository before the corresponding data existed ... A reviewer suggested the more precise term git-prespecified, and that is what every use of \"pre-registered\" in this note means'); appendix tense patched at L1755-1756 'At the time this passage was written it was still in progress; it has since completed.' Not reconciled: L947 'We ran three pre-registered designs across six models'; L1067 and L1365 'Five designs, eleven models' and L1550 'five designs, eleven models' versus L1035 'ran it again on twelve models' (Test B alone is now 12; the union across the five designs is 15: the 12 Test-B models plus qwen3-8b, olmo-3-1125-32b, qwen3.5-27b; 'eleven' comes from bands_vs_computation/results.md L127 before the re-run); L1435 'We tried to establish it twice' and L1442 'run a third variant of the same idea'; L961 'including two withdrawn claims of our own' vs L1636 'published and then withdrew four claims'; L1755-1757 is garbled: 'it has since completed. The design was: which is smaller and actually identifiable: an aligned-versus-random ...'; L938-942 lists 'ignition-depth alignment' and 'boundary plasticity (... Tier 2 of our campaign)' as probes 'that would move it' though both are reported at L1008-1015 and L1208-1287; L1078-1079 'The ideas we can still think of, ignition-depth alignment and expert-routing alignment' after ignition was run; L1159-1160 'The correction runs in the direction we predicted before measuring it' cites no frozen record (the ledger's L190/L201 statement exists but is not referenced); no pre-data commit appears anywhere in the note.",
+    "remaining": "Reconcile every design/model/withdrawn-claim count (3 vs 5 designs; 6, 11, 12 models; 2 vs 4 withdrawn claims); rewrite L1755-1757; update L938-942 and L1078-1079; cite the ledger passage behind L1159; add the pre-data commit hashes per design."
+   },
+   {
+    "id": "R2-R01",
+    "title": "Inventory of included entries and their proper roles",
+    "status": "partial",
+    "evidence": "Each prior-work entry now carries a 'Warrants:' role (L1777-1820); Anthropic marked 'Provisional ... we adopt its terminology while explicitly declining its functional interpretation' (L1783-1784); Kornblith CCA rhetoric corrected (L1789-1791); Gao entry disclaims priority (L1795-1797); jlens commit and Neuronpedia snapshot given (L1830-1833). Not done: body L354 still says '(introduced for neural dimensionality by Gao et al.; see References)'; community explorer L1834-1841 not pinned to a version/snapshot; own release L1841-1842 'model card + the research repo's fit_our_own ledger' with no immutable revision; Neuronpedia fit-condition claim L1292 'on the order of a thousand WikiText prompts' has no cited metadata source.",
+    "remaining": "Fix L354; pin the explorer and the model card; cite the Neuronpedia metadata behind the ~1,000-prompt figure."
+   },
+   {
+    "id": "R2-R02",
+    "title": "Missing references and required live-source checks",
+    "status": "partial",
+    "evidence": "Done: reader benchmark linked L920-924 'In our reader benchmark (/posts/2026/07/features-as-rewards-reader-benchmark/) ... AUROC 0.722'; emergence-sweep and causal-flip anchors labeled 'both from unpublished campaign work' with ledger paths L925-935 (numbers match experiments/behavioral/results.md L15-16 '+0.739 ... +0.741' and lens_demo/results.md L87-88 '32/50 ... 0/50 each'); WikiText citation L1816-1820; Gemma 2/3 technical reports L1806-1811; global-workspace theory not adopted, terminology only (L1783-1784), so no Baars citation needed; Anthropic and Kornblith live checks dated 2026-07-26 (L1781, L1789). Not done: 33B/950B community release claim uncited (L1511-1512; L85-87); anchors 2 and 3 cite ledger paths without commit-pinned URLs; Gao entry lacks version/date/access date; Neuronpedia collection license not stated; pre-data commit chronology not in the note.",
+    "remaining": "Cite or remove the 33B/950B claim; commit-pin the two unpublished-anchor ledgers; complete the Gao and license details; add commits (see R2-S04)."
+   },
+   {
+    "id": "R2-F01",
+    "title": "Fitted-band and probe-size label inconsistencies",
+    "status": "partial",
+    "evidence": "Fixed: L1444-1446 'The 397B's visually apparent mid band (~layers 14 to 41; its fitted segmentation places boundaries at 13 and 46, and the two should not be conflated)'; L233-236 already separates visual from fixed-thirds. Not fixed: gemma-own-vs-shared caption L396 'on its own 256k-token vocabulary (mid_sep 0.025)' and inline alt L394 'on its own 256k vocabulary' (receipt alt likewise) were not relabeled '4,096 rows sampled from its 256k-token vocabulary'; the body clarification at L372-374 does not reach the panel.",
+    "remaining": "Relabel L394 and L396 (and the receipt alt) to the sampled-rows wording."
+   },
+   {
+    "id": "R2-F02",
+    "title": "Alt text omits conditions or has incorrect counts",
+    "status": "open",
+    "evidence": "Contact-sheet alt L295 'Grid of 36 CKA heatmaps sorted by band strength: Qwen and Llama lenses show bright blocky diagonals, Gemma lenses are smooth near-uniform maps' names no probe condition. Corpus alt L1226 'WikiText seeds coinciding and code sitting elsewhere' still implies every model moves, while its own receipt alt says 'The code-fitted boundaries move in two of the three ... gpt2-small's boundaries do not move at all'. pt-vs-it alt L833 'Seven base-vs-instruct CKA-by-depth curves: six rise from a low start, the dashed gemma-3-1b sits near zero throughout' (seven total) while the receipt alt says 'Eight curves ... seven dip lowest in the early layers ... the dashed gemma-3-1b curve' and the receipt plots eight pairs. None of the three inline alt texts was changed.",
+    "remaining": "Add 'own-vocabulary probe, probe-dependent' to L295; make L1226 say two of three models; make L833 say eight curves (seven rising plus the dashed gemma-3-1b); consider syncing inline alt text from the receipts, since 19 of 19 inline alts currently differ from their receipt alt_text."
+   }
+  ]
+ },
+ "stats": {
+  "lenses": 8,
+  "raw": 149,
+  "unique": 82,
+  "verified": 24,
+  "confirmed": 21,
+  "refuted": 3,
+  "passthrough": 27
+ },
+ "confirmed": [
+  {
+   "id": "F001",
+   "severity": "blocker",
+   "category": "overclaim",
+   "location": "summary L8; key_result L26-28; contact-shared caption L421; lesson panel L801-805; L322-325; L739; L1392-1395",
+   "problem": "Summary surfaces disagree with each other and with the body on the note's central measurement lesson. Qwen3.5 checkpoints (248,320 vocab, Gemma-scale, L383) are the most structured own-vocab lenses (qwen3.5-4b 0.2028) while gemma-3-12b at 262,208 is 0.0007, so size cannot set the floor. The shared probe is 4,096 ASCII-alphabetic strings vs a uniform 256k multilingual sample, so the comparison changes composition (frequency/script), not just count; no control isolates them. Flagged as R1-B02 and R2-B01; still open on the surfaces a quoter sees first (\u00a79.1).",
+   "fix": "One sentence propagated everywhere: 'the two probes differ in token composition; the shared probe removes that confound; vocabulary size/crowding is a candidate, tested as a mechanism for gemma-2 and not supported.' Rewrite L421 and L803-804, delete 'sets the floor'. Optional $0 control on cached lenses: own-vocab Gemma probe restricted to Latin script / top-frequency quartile.",
+   "lenses": [
+    "claims-vs-evidence",
+    "reader-structure",
+    "house-guide",
+    "positioning",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F002",
+   "severity": "blocker",
+   "category": "overclaim",
+   "location": "lead L16-17; L285-288; og-card text; zoo captions L300-360",
+   "problem": "Only the 397B has a random-transport CKA null (cka_397b.npz cka_null/mid_sep_null). Zoo Stage A computes a random-J null for the participation ratio only (pr_null); shared-probe maps carry no null; summary.csv/shared_summary.csv have no null column; emergence_null.csv covers 11 own-vocab models. The lead promises a control not shown for 35 of 36 maps, on the note's real differentiator vs Anthropic/Neuronpedia/eliebak (\u00a79.1 item 2).",
+   "fix": "Either compute a per-model random-transport mid_sep null on the cached lenses (CPU, minutes/model), add a null column to summary.csv with receipt and a null row to contact sheets; or narrow lead, L287 and og-card to 'the 397B map ships with its random-transport control; the zoo carries a participation-ratio null'.",
+   "lenses": [
+    "statistics",
+    "claims-vs-evidence",
+    "number-consistency",
+    "figures",
+    "positioning",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F003",
+   "severity": "blocker",
+   "category": "reproducibility",
+   "location": "Status line L43-45; Integrity L1501-1515; every prose number after L940",
+   "problem": "provenance.json has 8 entries, all 397B; zoo-provenance.json has zero numeric entries; build_cka_post.py --verify checks two figures and eight numbers. None of the Test B, Test C, ignition, geometry-causality, corpus, fit-budget, readout-decomposition, behavioral or zoo-partial numbers is machine-verified, which is how the stale Sep-5 numbers survived. 0 of 19 figure-notes link a generator or --verify path; ~15 tables carry no receipt link. Blocker-tier under AGENTS.md \u00a75.",
+   "fix": "Extend the manifest and --verify to every evidentiary number after L940 (results_B2.json, results_C.json, ignition results.json, geometry_causality out/*.json, corpus results.json, results_fitbudget.json, readout results all exist; plumbing only), add generator+verify links per figure-note, or narrow the Status sentence to the eight 397B numbers.",
+   "lenses": [
+    "statistics",
+    "house-guide",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F004",
+   "severity": "blocker",
+   "category": "reproducibility",
+   "location": "Artifact ledger row 'Released band statistic' L1521; provenance.json entries within_mid, early_mid, mid_late, consumer_gate_delta",
+   "problem": "The pinned URL is dead: artifacts/ is gitignored, band.json is absent from c6c7bb1, GitHub returns 404. Four of eight manifest entries and the ledger row point at bytes that do not exist publicly, and --verify has no URL/cat-file check, so a dead pinned link does not fail the build (\u00a75).",
+   "fix": "Commit band.json (un-ignore that artifact) at a new pin, re-pin manifest and ledger, add a cat-file/URL assertion to --verify.",
+   "lenses": [
+    "house-guide"
+   ]
+  },
+  {
+   "id": "F005",
+   "severity": "blocker",
+   "category": "correctness",
+   "location": "Reading the numbers table L201-203 (declared 'the authority' at L190); zoo-mid-vs-fitted.svg title, markdown alt L331, receipt alt_text; L327-329; build_zoo_figs.py L142",
+   "problem": "The note retracts this at L339-346 (five counterexamples) and the plot visibly shows five points below y=x, yet the glossary that calls itself authoritative, the image title, both alt texts and the receipt still assert it. Commit 7fe11a7 fixed the figure-note only. Image, alt or receipt pulled alone carries a false claim (\u00a79 rule 6, \u00a79.1). The caption also opens with 'A correction, from an external review'.",
+   "fix": "Rewrite L201-204 to 'usually but not always; the fit maximises within-block similarity while the statistic is within minus between; 5 of 36 score lower fitted; the two are not ordered'. Retitle figure from the data ('31 of 36 above the line'), regenerate receipt alt_text and markdown alt, drop the review attribution. build_zoo_figs.py, CPU.",
+   "lenses": [
+    "reader-structure",
+    "figures",
+    "house-guide",
+    "claims-vs-evidence",
+    "number-consistency"
+   ]
+  },
+  {
+   "id": "F006",
+   "severity": "minor",
+   "category": "number-mismatch",
+   "location": "Test B v1 table L994-1006; four-cell re-run table L1046-1051; ignition L1014; open question 2 L1367; claims rows 21, 24 (L1557, L1559)",
+   "problem": "PREREG.md, PREREG_B2.md and ignition PREREG.md name the shared-vocabulary lens map, but both Test B runs and the ignition run read atlas_out/<slug>.npz (own-vocab); 5 of 12 models differ by 3-9 layers (llama3.1-8b 4/17 vs 13/17, qwen3.5-0.8b 7/15 vs 2/15, olmo 9/18 vs 15/18). Corrected 2026-09-05: 0.715/0.554/0.881 (8), 0.601/0.568/0.613 (10, 4/10 beat own null), 0.743/0.561/0.965 (12); gemma-2-9b late boundary 0.415 (17/41), gap 0.390, p = 1.000. Verdicts unchanged, but every printed number matches only *_ownvocab_boundaries.json, a row labelled 'pre-registered' rests on an undisclosed protocol deviation, row 21 pairs the 12-model count with the 10-model cell, and the v1 table (p = 0.608, quoted in OQ2) was never re-analysed.",
+   "fix": "Replace the four cells, ignition sentence (0.463 -> 0.415), v1 boundary column (re-run analyze_B.py on shared maps, CPU minutes, or label superseded/own-vocab), row 21 ('repaired gate, 10 models, 0.601 vs 0.568, p = 0.613' or the 12-model cell consistently), and OQ2's p; add one sentence disclosing the probe deviation and correction. No compute.",
+   "lenses": [
+    "statistics",
+    "claims-vs-evidence",
+    "number-consistency",
+    "figures",
+    "house-guide",
+    "positioning",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F007",
+   "severity": "blocker",
+   "category": "reproducibility",
+   "location": "ignition paragraph L1010; claims row 24 L1559; 'What pre-registered means' L1463-1480",
+   "problem": "ignition_depth/PREREG.md (df53efc) contains no minimum model count; its gates are per-model (5 of 10 ignite; head gate 8/10) plus a pooled rule. The 'len(rows) >= 3' gate lives only in analyze.py, first committed in 16230a9 together with the data; the k>=4 floor is PREREG_B2's, for a different test. The rule moved the outcome conservatively (NO VERDICT rather than a 2-model NO ALIGNMENT), but L1466-1469's claim that every design was frozen before data is inaccurate here.",
+   "fix": "Say the minimum was set in the analyzer at analysis time and is conservative (or 'two usable models; we chose not to pool'), or apply the frozen pooled rule to the two models and report NO ALIGNMENT with a two-model caveat. One sentence.",
+   "lenses": [
+    "statistics",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F008",
+   "severity": "major",
+   "category": "overclaim",
+   "location": "Test C paragraph L1017-1024; 'Where that leaves it' L1067, L1071-1076; open question 2 L1364-1372; claims rows 13, 22 (L1550, L1560)",
+   "problem": "Test C's premise and labels came from the withdrawn corpus result (F009). Under corrected boundaries gpt2 (2/4) and gemma-3-270m (3/15) have identical labels in both arms and qwen differs by one layer; the sole contrast gives C2 = +0.012. The ledger calls it 'moot rather than null' and says it 'should no longer be cited as evidence against the corpus-instability explanation'. The note cites it exactly that way and counts it among five designs; 'eleven models' predates the 12-model re-run (union across designs is 15).",
+   "fix": "Rewrite Test C as moot (premise withdrawn), remove -0.036 from OQ2, set row 22 status 'moot: labels no longer differ after the corpus correction', recount to 'four informative designs plus one moot' and 'fifteen models' (or 12 in Test B) everywhere including the blockquote. No compute.",
+   "lenses": [
+    "statistics",
+    "claims-vs-evidence",
+    "number-consistency",
+    "figures",
+    "house-guide",
+    "positioning",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F009",
+   "severity": "major",
+   "category": "number-mismatch",
+   "location": "summary L8; 'The boundaries are not the model's alone' L1208-1287 (caption L1227-1232, table L1234-1238, 'The summary statistic would have hidden this' L1252-1265, L1275); Test C premise L1018; open question 4 L1381-1390; claims row 19 L1556; markdown alt L1226",
+   "problem": "corpus_dependence/analyze.py scored layer pairs with the cosine of self-covariances J^T M J, not the pre-registered linear CKA (synthetic check: 0.894 vs 0.911, and not rotation-invariant). Corrected 2026-09-05 (commit 4db4361): boundaries (2,4)/(2,4)/(2,4), (3,15)/(3,12)/(3,15), (6,15)/(6,15)/(5,15); corpus shifts 0/0/1, seed reseed moves gemma-3-270m by 3; ratios 84x/888x/86x; band_sep gpt2 0.0149->0.0050, gemma-3-270m 0.134->0.024, qwen 0.113->0.123. The ledger withdraws the fifteen-layer sentence by name. Only P1 (CORPUS MATTERS on map distance) survives. The bundle's corpus-dependence.{svg,png,receipt.json} were regenerated Sep 5 (uncommitted) and now say the opposite of the caption above them; index.md unchanged since 9cc0089.",
+   "fix": "Rewrite section, table, summary sentence, OQ4 ('ANSWERED, not in our favour' no longer accurate), row 19 and L1275 to the corrected result (map and band strength move with corpus; boundaries stay where seed noise puts them; reseed moved gemma-3-270m 3 layers); delete or invert 'summary statistic would have hidden this'; add a dated correction note per \u00a79.3 naming the statistic defect; cite eliebak v2 (see F048); copy receipt alt into markdown; commit regenerated figures with the prose. No compute.",
+   "lenses": [
+    "statistics",
+    "claims-vs-evidence",
+    "number-consistency",
+    "figures",
+    "house-guide",
+    "positioning",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F010",
+   "severity": "major",
+   "category": "number-mismatch",
+   "location": "summary L8; fit-budget L1289-1350 (caption L1313-1318, L1320-1326, boxed lesson L1338-1339); OQ4 L1386-1388; Limitations L1403-1410; registry intro L1579-1583; claims row 20 L1561; key_result/atlas figure-note (n=24 lens, no caveat); markdown alt L1312",
+   "problem": "Same defect as F009. Corrected (same fits, linear CKA): gemma-3-270m 25 prompts 14.2x the seed null, 50 prompts 3.6x, boundaries 3/12 at both; gpt2-small 25-prompt shift 4 (4/6); low_budget_caveat = true. Ledger: 'the 25-prompt caveat is now TRIGGERED ... the caveat on our released 397B lens applies'; CONVERGED holds from 200 prompts (50 for gpt2). The note reports a frozen rule as not triggered when it fired, and the headline 24-prompt 397B lens carries an unstated caveat; independently the 397B mid_sep drifted 0.3796 (n=16) -> 0.3434 (n=24). fit-budget.png (regenerated) shows two bars above the 2x line under a caption saying all sit below it.",
+   "fix": "Restate 'converged from 200 prompts up (50 for gpt2); 25- and 50-prompt fits move boundaries and exceed the bar in gemma-3-270m'; delete L1323-1326; add the triggered caveat beside +0.343 (key_result, atlas note, block-anatomy, Discussion), quoting the n=16->24 drift; update summary, boxed lesson, OQ4, Limitations ('between 25 and 400'), registry intro ('until that is read'), row 20 ('0.1x to 14.2x'); commit regenerated figures. Optional: warm-start the 397B to ~50 prompts (~$40-60, dominated by download).",
+   "lenses": [
+    "statistics",
+    "claims-vs-evidence",
+    "number-consistency",
+    "figures",
+    "house-guide",
+    "positioning",
+    "hostile"
+   ]
+  },
+  {
+   "id": "F011",
+   "severity": "minor",
+   "category": "overclaim",
+   "location": "key_result L22 vs body L546-549, L754-757; zoo-band-by-scale caption L317",
+   "problem": "The key_result clause is inherited from the own-vocab scatter the note labels superseded; the shared-probe regression gives Spearman +0.437 (p = 0.008, n = 36) and row 8 lists '+0.44 size'. A summary surface asserts the negation of a receipted body statistic (\u00a79.1).",
+   "fix": "Change L22 to 'scale is not sufficient (Gemma flat at 27B on own vocab); on the shared probe larger models band somewhat more, rho +0.44' or drop the scale clause.",
+   "lenses": [
+    "claims-vs-evidence",
+    "number-consistency",
+    "house-guide",
+    "positioning"
+   ]
+  },
+  {
+   "id": "F012",
+   "severity": "major",
+   "category": "clarity",
+   "location": "front matter: summary L8 (253 words), lead L9-17, key_result L18-30; body top L36-66",
+   "problem": "Sibling summaries run 38-115 words; this one is 253 in one paragraph (truncated at 300 chars on list surfaces). There is no abstract panel, no conceptual figure or claim ladder near the top, and none of the three surfaces carries the causal verdict (\u00a73 items 2-4).",
+   "fix": "Rewrite key_result as ~125 words in four short paragraphs (397B phases + null; shared-probe lesson with gemma-3-12b 0.001->0.114; corpus/budget scoping as corrected; readout-geometry verdict); cut summary to 60-90 words; open the lead with the result; add a short paragraph-broken abstract panel after the status line.",
+   "lenses": [
+    "reader-structure",
+    "house-guide"
+   ]
+  },
+  {
+   "id": "F013",
+   "severity": "major",
+   "category": "structure",
+   "location": "L47-67 (where \u00a73.2 block should sit); References 'Prior work' heading L1775; explorer entry L1833-1840",
+   "problem": "This is a study report, so \u00a73.2 applies in full. A zero-context reader cannot tell what is new: L367 calls the shared probe 'the single most important methodological point' yet L1833-1836 says the eliebak explorer already provides shared-probe CKA maps on 4,096 strings across 38 tokenizers, and the note never says whether it adopted or rebuilt that probe. Non-claims exist but are scattered (L261-266, L1069-1075, L1267-1288, L1351-1398).",
+   "fix": "Insert ~200 words after L66: prior work (Anthropic J-lens and three-block J-space; Neuronpedia collection; eliebak explorer's shared probe and Nanda's 'less clean' remark; state probe provenance); 4 contribution bullets (397B map + gate + null; 36-lens census on two probes; corpus/budget scoping; readout-geometry verdict 4/4 cells plus 7.5-9.1x); 3 non-claims (not activation similarity, not computational stages, boundaries WikiText-scoped, no vocab-size mechanism). Retitle L42 'study report'.",
+   "lenses": [
+    "reader-structure",
+    "house-guide",
+    "positioning"
+   ]
+  },
+  {
+   "id": "F014",
+   "severity": "major",
+   "category": "structure",
+   "location": "section order L47-1462; summary surfaces L1-31; blockquotes L1069-1075, L1338-1339; orphans L810-846, L1172-1207",
+   "problem": "Four spines (map release; gemma flatness; blocks-vs-computation plus the perturbation positive; corpus/budget) and two orphans. grep of L1-31 for 'computational|stage|readout geometry|perturb|7.5' returns nothing; a reader deciding whether to cite sees a heatmap plus a Gemma caveat and files it as an artifact note. The lead's 'whether its structure is real' invites the overread the body spends 3,000 words retracting.",
+   "fix": "Reorder around one spine using the L1069 blockquote as thesis: map + null; what the map depends on (probe, corpus, not budget); what it is not (one consolidated campaign section); what the directions are good for; open questions; Discussion. Put the readout-geometry verdict in key_result; change 'whether its structure is real' to 'whether its structure comes from the fitted Jacobians or the shared unembedding'.",
+   "lenses": [
+    "reader-structure",
+    "positioning"
+   ]
+  },
+  {
+   "id": "F015",
+   "severity": "major",
+   "category": "structure",
+   "location": "whole note (20,169 body words, 42 sections); Gemma story L453-809 (4,081 words); campaign L944-1082 + appendix L1650-1764; overlap with three-ways-a-lens-fools-you L259-330",
+   "problem": "Half the main flow is a single-model investigation (gemma-2) seven H3s deep, including one eigendirection regressed on seven features and an R\u00b2 clearing its bar by 0.0017. Redundancy adds ~1,500 words: Gemma recap L897-916; 'running sum/circularity' at L949-957, L974, L1436-1444, L1718-1730; bf16 story told three times; fit heterogeneity at L1289-1350, L1403-1410, L1582; v1 patching table twice. The note is four contributions (397B artifact; bands-are-readout-geometry; measurement lessons already in the sibling draft; equal-norm validity) and the ecosystem's readers must find the new science inside 5,000 words of Gemma dissection and 5,300 of null campaign.",
+   "fix": "Either the cut plan (own-vocab section 1,064->300; CKA derivation to appendix; Gemma story compressed to ~1,000 with four subsections moved out; delete recap and stale 'Other probes'; merge the three campaign sections with one table; tell the precision correction once; outliers to appendix; merge Unknown+Limitations; fold prereg/precision/integrity into one Reproducibility section; strip residue; trim appendix retelling: ~12,500 total, ~9,000 main argument), or split: ship the readout-geometry result with the perturbation positive as this note, append the 397B map to the lens-release post, fold the probe/corpus lessons into the sibling methods draft.",
+   "lenses": [
+    "reader-structure",
+    "positioning"
+   ]
+  },
+  {
+   "id": "F016",
+   "severity": "minor",
+   "category": "structure",
+   "location": "L96-99 skip instruction; 'What CKA actually measures, in detail' L101-184 (Step 3 at L172-183)",
+   "problem": "Step 3 defines mid_sep, the number in the lead, key_result and every figure, and sits inside the section the reader is told to skip; mid_sep is used seven times before its definition.",
+   "fix": "Move L172-183 to directly after L94, before the skip sentence; move the 776-word derivation L101-171 to an appendix or glossary page, keeping the panel L156-166 in flow.",
+   "lenses": [
+    "reader-structure"
+   ]
+  },
+  {
+   "id": "F017",
+   "severity": "major",
+   "category": "clarity",
+   "location": "~20 lines: L187, L281-282, L338, L380, L599, L611, L1099, L1205, L1378, L1465, L1478, L1484, L1529, L1569, L1575-1576, L1755-1756, L1797, L1822; dangling refs L284, L812; 'campaign note' L442, L805",
+   "problem": "\u00a73.1 voice rules forbid referring to earlier drafts, reviewer comments or revision history in the main argument; the note narrates its draft history in ~20 places including a section opener and a caption, reading as a changelog. L284 references a phrase that does not exist at the top; L812's 'below' resolves only to a References entry 1,000 lines away; 'campaign note' is named without a link (sibling jspace-atlas-campaign is draft: true).",
+   "fix": "Keep one sentence of review attribution in Integrity ('Two external reviews of earlier drafts led to the corrections marked in the claims matrix'); state each corrected claim directly; rewrite L284 and L812 as given by the reader lens; link or remove 'campaign note'.",
+   "lenses": [
+    "reader-structure",
+    "house-guide"
+   ]
+  },
+  {
+   "id": "F018",
+   "severity": "minor",
+   "category": "overclaim",
+   "location": "key_result L19-21; atlas figure-note L216-222; L224-233; control section L238-262; L873-887; Discussion L1447-1452; claims row 1",
+   "problem": "The random-J null has no depth ordering, so it cannot distinguish 'three phases' from 'CKA decays smoothly with layer distance'. A distance-only (Toeplitz) model reproduces 89% of off-diagonal variance, 80% of mid_sep (0.275 vs 0.343) and nearly the same fitted anatomy (11,48 vs 13,46). Adjacent-layer CKA is 0.979-1.000 at every interior layer; the 41/42 drop (0.983) is no sharper than 49/50; only layers 55-57 turn fast. Localised extra rotation near 11-13 and 41-45 exists, so 'regimes' is defensible; 'clean', 'sharp', 'brief fast turns' are not.",
+   "fix": "Add the distance-only null beside the random one (its mid_sep, fitted segmentation, residual map C - C_dist as a third panel) and rewrite the boundary prose to what adjacent-layer CKA shows. CPU, minutes.",
+   "lenses": [
+    "hostile"
+   ]
+  },
+  {
+   "id": "F019",
+   "severity": "minor",
+   "category": "structure",
+   "location": "'From one map to thirty-six' L268-363; panels L270-282, L322-325, L801-808, L261-266; figure-notes L296-299, L313-318",
+   "problem": "\u00a73.1 says qualify beside the claim, not open with a caveat stack; here the note spends a thousand words on results it tells the reader not to believe, then corrects them at L364. Panel L270 carries chat residue ('this panel is that fix'); L322-325 duplicates L270-282; L261-266 holds non-claims that belong in the \u00a73.2 block.",
+   "fix": "Collapse to ~300 words: one paragraph on the own-vocab first pass, one paired figure, mid-vs-fitted and PR curves to a short subsection or appendix; delete panel L322-325; rewrite L270-282 as one neutral warning ('maps here use each model's own vocabulary, not comparable across models; the shared probe follows in Measure it right'); move L261-266 content to the early block.",
+   "lenses": [
+    "reader-structure"
+   ]
+  },
+  {
+   "id": "F021",
+   "severity": "major",
+   "category": "figure",
+   "location": "zoo-contact-sheet.svg and zoo-contact-shared.svg (L295, L415); build_contact_sheet.py L21-23, build_shared_contact.py L21",
+   "problem": "Both sheets are 936pt wide with 8.2pt titles and 7pt 'sep' labels; in the 60rem column they render at ~6.3pt/5.4pt on desktop and half that on a phone, with no ticks or per-panel colorbar. The house legibility gate (\u00a74.1 item 5) fails for the figures the note calls most informative; the sep values are the only printed numbers.",
+   "fix": "Split each sheet into two plates at 720-760pt with 10-11pt labels, or show the 12 most informative maps per probe and point to the receipt CSV; one shared colorbar per plate.",
+   "lenses": [
+    "figures"
+   ]
+  },
+  {
+   "id": "F024",
+   "severity": "major",
+   "category": "figure",
+   "location": "gemma-slope.svg title and legend (L404); build_shared_vocab_figs.py L58-61",
+   "problem": "The image hardcodes the distillation explanation the note rejects at L551-552 and the 'genuinely flat' characterisation revised at L697-729 ('masked, not missing'); a pulled figure carries the abandoned story. Labels sit far from points (g3-270m label near 0.28, point at 0.134) and five of thirteen clay lines are unlabeled.",
+   "fix": "Retitle 'Band separation, own vs shared probe, 17 Gemma lenses'; relabel gray 'gemma-2 2b/9b (base and it)'; fix label placement; regenerate.",
+   "lenses": [
+    "figures"
+   ]
+  }
+ ],
+ "refuted": [
+  {
+   "id": "F020",
+   "severity": "major",
+   "location": "zoo-contact-sheet.svg footer (L295); zoo-band-by-scale.svg title (L312); zoo-contact-shared.svg footer (L415); build_contact_sheet.py L27-28, build_zoo_figs.py L111, build_shared_contact.py L26-27",
+   "problem": "The note labels the first two figures superseded, yet both images carry the superseded conclusion as a hardcoded title/footer with no in-image marker (\u00a79 rule 6); the shared footer asserts the vocabulary-size mechanism key_result disclaims (F001). Interpretation belongs outside the plotting area (\u00a74.1 rule 5)."
+  },
+  {
+   "id": "F022",
+   "severity": "major",
+   "location": "zoo-band-by-scale figure-note L315; zoo-band-by-scale.receipt.json alt_text",
+   "problem": "Four of eleven Qwen lenses fall outside the range: qwen3-1.7b 0.0414, qwen3-4b 0.0718, qwen2.5-7b-it 0.002, qwen3.5-9b-pt 0.2087; the range describes six lenses, not the family. The alt (.25) also disagrees with the caption (.23; qwen3.5-0.8b is 0.2304)."
+  },
+  {
+   "id": "F023",
+   "severity": "major",
+   "location": "zoo-mid-vs-fitted caption correction paragraph L338-346; L327-329",
+   "problem": "Those pairs are shared_summary.csv values, but the figure and receipt plot own-vocab summary.csv, where the violators are gpt2-small (0.015/0.0014), qwen3-1.7b (0.0758/0.0414), gemma-4-e2b (0.0468/-0.0109), qwen2.5-7b-it (0.0029/0.002), gemma-3-27b-it (0.009/-0.0024); gpt-oss-20b is above the line on own vocab (0.0756/0.0921). None of the five values is in either provenance manifest."
+  }
+ ],
+ "passthrough": [
+  {
+   "id": "F056",
+   "severity": "minor",
+   "location": "'Reading the numbers' L197, L211; 'Measure it right' L388",
+   "problem": "shared_tokens.json lists 37 models and zoo_concentration.py says 'All 37 models resolve all 4,096 strings'; 38 is the eliebak explorer's count.",
+   "fix": "Change 38 to 37 in all three places, or cite the artifact that has 38."
+  },
+  {
+   "id": "F057",
+   "severity": "minor",
+   "location": "'The control that earns the picture' L238-266; L247, L254; lead L17-18",
+   "problem": "cka_heatmap_397b.py draws one random matrix per layer from one seeded generator, so -0.000113 is a single realisation with no spread; 'zero to three decimal places' is a property of that draw. The null's off-diagonal mean is 0.726 (0.7236-0.7286), not ~.75.",
+   "fix": "Draw 20-100 replicates on CPU and quote mean and range, or say 'one seeded draw'; '~.73'."
+  },
+  {
+   "id": "F058",
+   "severity": "minor",
+   "location": "zoo-pr-curves.svg (L357-362); pt-vs-it.svg (L833-838)",
+   "problem": "Both are method-only figures (\u00a79 rule 4): every zoo npz stores pr_null but the PR figure plots only real curves (own-vocab, unlabeled within panels); pt-vs-it has no 'same model, two fits' reference (gpt2 own vs Neuronpedia mean CKA 0.9992, min 0.999) so the reader cannot judge the gemma-2 0.02 dip; three curves unlabeled; x-axis runs to 1.2; markdown alt says 'Seven' curves for eight.",
+   "fix": "Add pr_null as a grey band (or plot pr/pr_null) and state own-vocab; draw a dotted 0.999 reference on pt-vs-it, label all eight curves, clip at 1.0, fix 'Seven'."
+  },
+  {
+   "id": "F059",
+   "severity": "minor",
+   "location": "L449; L558-570; L578; claims row 11 L1548; L229-230; L258-259",
+   "problem": "Measurement promoted to mechanism against the note's own scoping: L449 contradicts L438-441 (refit rules out fit noise, not corpus); L558-570 asserts a direction of change from a pair; 'restores' contradicts L782-790 ('an operation on the statistic'). R1-B03/R2-B04 residuals.",
+   "fix": "L449 'settled for fit noise, not for corpus'; 'is associated with' at L565-570; row 11 'unmasks structure in the statistic'; bound L229-230 and L258-259 to readout geometry."
+  },
+  {
+   "id": "F060",
+   "severity": "minor",
+   "location": "L580-617 and L618-696 (1,247 words); L983-1064",
+   "problem": "This is where an atlas reader leaves: by L618 the note has been about gemma-2-9b for 250 lines and is now about the fourth eigenvector of its readout covariance, at ledger-level detail. L983-1064 stacks a five-model table, a 150-word broken-rule panel, a four-cell table and a second panel for a verdict already given at L946-957.",
+   "fix": "Move L580-696 to an appendix with a two-sentence summary in place (PR 3.8; adj R\u00b2 0.455/0.629; 37% unexplained); in L983-1064 keep the three questions, one merged table and the second panel; move the v1 table and broken-rule narrative to the appendix."
+  },
+  {
+   "id": "F061",
+   "severity": "minor",
+   "location": "readout-concentration figure-note L715; L790",
+   "problem": "k=16 recovery is 0.0084->0.1565 = 18.6x (gemma-2-2b) and 0.0143->0.1622 = 11.3x (gemma-2-9b); rank_energy_share spans 0.9147 to 1.0.",
+   "fix": "'an eleven- to nineteen-fold recovery'; '91 to 100%'."
+  },
+  {
+   "id": "F062",
+   "severity": "minor",
+   "location": "closing panel L806-807; L429",
+   "problem": "behavioral_correlation_shared.csv has gemma-3-12b 0.1137 and gemma-2-9b 0.0047 but no gemma-3-27b row; 0.2977 appears only in current-run artifacts.",
+   "fix": "Cite gemma-2-9b 0.0047 instead, or point to the artifact where 0.2977 was independently produced."
+  },
+  {
+   "id": "F063",
+   "severity": "minor",
+   "location": "'Why blocks form' recap paragraph L897-916 (~330 words)",
+   "problem": "Third telling of the crowding verdict, violates the half-screen paragraph rule (\u00a72.1), and sits in a section whose stated job (why block counts differ) it does not address.",
+   "fix": "Replace with ~75 words: two reasons Gemma maps are pale, the shared probe restores most, gemma-2 flatness located in the readout and unmasked by deleting sixteen directions, width-concentration question open."
+  },
+  {
+   "id": "F064",
+   "severity": "minor",
+   "location": "L1004-1006 vs panel L1030-1033; zoo-mid-vs-fitted note L332-347",
+   "problem": "The gate was on the median; qwen3-4b's off-diagonal range is 0.957 (min 0.043), gpt2-small's 0.136, so 'everywhere' is false for two of three and the later panel says so. The mid-vs-fitted caption asserts a universal ordering then retracts it in the same caption (F005).",
+   "fix": "'because their median off-diagonal activation CKA exceeded 0.999, a gate the panel below shows was measuring the wrong thing'."
+  },
+  {
+   "id": "F065",
+   "severity": "minor",
+   "location": "L1099-1160 (L1109-1119, L1128-1140, L1154-1160)",
+   "problem": "Reader must assemble the timeline (bf16 run with bootstrap; precision floor; fp32 point estimates; no fp32 intervals) from three partial passes in a 977-word section.",
+   "fix": "One paragraph after the table stating the bf16 inferential test, the floor, the fp32 point estimates (bf16 3.7x/8.1x/7.4x) and the missing fp32 intervals; delete the other two."
+  },
+  {
+   "id": "F066",
+   "severity": "minor",
+   "location": "C paragraph L1161-1170; claims rows 14-15; footnote L1551, L1563; heading L1083",
+   "problem": "The C values mix precision and dose: gpt2 float32 at 0.0015625, qwen bfloat16 at 0.0125 (fp32 C run OOMed, not repeated), gemma float32 at 0.000781; no interval although C receipts store per-prompt KL. The frozen design and bootstrap belong to the bf16 pass (3.7x/8.1x/7.4x); the matrix re-attaches 'pre-registered' and the bootstrap to the fp32 magnitudes added after results (20bf822) with no amendment. 'Are real' is the one mechanism phrase left in the heading.",
+   "fix": "State precision per model and bootstrap C from receipts; row 14 'bf16 3.7x/8.1x/7.4x (pre-registered, CIs exclude zero); float32 point estimates 7.5x/9.1x/8.1x'; L1563 bootstraps apply to bf16; add '(bf16)' after 0.045; retitle L1083 'beat an equal-norm random direction by 7.5x to 9.1x'; optionally re-run qwen's C in float32 (<$0.20)."
+  },
+  {
+   "id": "F067",
+   "severity": "minor",
+   "location": "'Outlier layers' L1172-1207",
+   "problem": "Orphan on the probe the note declared wrong for cross-model comparison (L1201-1203 admits the shared recomputation is pending), interrupting the run from the one positive result to the corpus result; L1205 'approved follow-up' is chat residue.",
+   "fix": "Move to the appendix or cut to two sentences in 'What is still unknown'."
+  },
+  {
+   "id": "F068",
+   "severity": "minor",
+   "location": "corpus section L1208-1250",
+   "problem": "With boundary relocation withdrawn the corpus result is a map-level change carried only by a log-scale bar; the reader never sees a WikiText map beside a code map, so cannot see what an 888x move looks like or that band strength is what changes.",
+   "fix": "Add a three-map strip (wiki seed 0, wiki seed 1, code) for gemma-3-270m and gpt2-small with band_sep printed. CPU from cached fits."
+  },
+  {
+   "id": "F069",
+   "severity": "minor",
+   "location": "fit-budget verdict logic L1289-1350",
+   "problem": "PREREG_FITBUDGET.md has a 'distance still falling at 400 -> NOT CONVERGED' branch; analyze_fitbudget.py computes still_falling_at_top but verdicts on the within-2x rule only. Corrected gemma-3-270m falls 48% from 400 to 1,000 prompts (1.40e-4 to 7.3e-5), still_falling_at_top = true; both points inside the seed null, so defensible, but the analyzer resolves an ambiguous frozen rule favourably without saying so.",
+   "fix": "State the clause was evaluated and judged noise-level because both points sit inside the seed null, or re-word the rule as applied."
+  },
+  {
+   "id": "F070",
+   "severity": "minor",
+   "location": "Artifact ledger L1516-1524; References software L1828-1841; title '36'",
+   "problem": "Stray table cell; the gemma-2-9b lens the body relies on (Gemma Terms of Use) has no row; the reusable recipe is not shipped as named artifacts: shared_tokens.json (the probe convention that differentiates the note), summary.csv/shared_summary.csv as a benchmark table, and no 'atlas your own lens' script; '36' is undated while the collection grows.",
+   "fix": "Fix the cell; add rows for the gemma-2-9b lens (license), shared_tokens.json with its construction rule, the two CSVs (own/shared mid_sep, null, boundaries, identifiability width) and a pinned map+null script; date '36' to the snapshot."
+  },
+  {
+   "id": "F071",
+   "severity": "minor",
+   "location": "claims matrix row 8 L1545; row order L1555-1560",
+   "problem": "-0.16 appears nowhere in the body (body gives mean change -0.066 and 8/8 pairs, sign test p = 0.008); traceable to zoo_regression.json spearman.instruct -0.159 but no bundle receipt carries it, and the census rho is confounded with family and size. Rows print 19, 21, 23, 24, 22, 20.",
+   "fix": "Cite the paired 8/8 result in row 8 (note the census rho is weak and confounded) or add -0.16 to the body with its receipt; restore row order."
+  },
+  {
+   "id": "F072",
+   "severity": "minor",
+   "location": "campaign appendix table L1697",
+   "problem": "The three v1 models have balances 0.15, 0.16, 0.17; 0.29 is llama3.1-8b, never a v1 model.",
+   "fix": "'0.15 to 0.17'."
+  },
+  {
+   "id": "F073",
+   "severity": "minor",
+   "location": "campaign appendix L1754-1759",
+   "problem": "An unfinished sentence and a revision-history aside; the R2 patch inserted a tense note instead of rewriting and broke the sentence.",
+   "fix": "'So we cancelled that campaign too and ran the audit's own alternative, which is smaller and identifiable: an aligned-versus-random, equal-norm residual perturbation test ... That is the perturbation result reported in the main text.'"
+  },
+  {
+   "id": "F074",
+   "severity": "minor",
+   "location": "title L2; og_image_alt L7",
+   "problem": "The title names the artifact; the note now delivers a finding about it (readout geometry, shared-probe-only comparability, corpus-dependent, not computational stages). Sibling titles carry the finding; a menu reader cannot tell this from title or summary.",
+   "fix": "Keep 'An Atlas of Depth' and change the subtitle, e.g. 'what 36 Jacobian-lens CKA maps measure, and what they do not'; update og_image_alt."
+  },
+  {
+   "id": "F075",
+   "severity": "minor",
+   "location": "L85, L266 ('emergence sweep'); L442, L805 ('campaign note'); L442, L941, L1542 ('Tier-1/2'); L54, L91, L353 (first uses)",
+   "problem": "Internal nicknames and tiers with no link or gloss (\u00a73.1); zero glossary links although pages exist for jacobian-lens, residual-stream, unembedding, bootstrap, p-value, bf16, random-j; no proposal for CKA, participation ratio, HSIC. The emergence sweep is 36 models at L85, 23 at L926, 38 in fit_our_own/results.md.",
+   "fix": "Link or delete the nicknames; add glossary links at first use; propose stubs for centered-kernel-alignment, participation-ratio, hsic; use one sweep count with its definition."
+  },
+  {
+   "id": "F076",
+   "severity": "minor",
+   "location": "35 places, e.g. L502-503, L540, L582, L614, L620-650, L700-720, L973-975, L1100-1112",
+   "problem": "KaTeX auto-render skips code spans, so 35 expressions render as literal backslash-paren text.",
+   "fix": "Remove the surrounding backticks."
+  },
+  {
+   "id": "F077",
+   "severity": "minor",
+   "location": "all 19 SVGs and markdown embeds; cka_397b*.svg; gemma-activation-vs-lens.svg; zoo-readout-concentration.svg",
+   "problem": "Every SVG is a matplotlib export with text as paths: 0 <text>, 0 <title>/<desc>, no role; markdown alt differs from receipt alt_text in 19 of 19; contact-sheet receipts have no plotted_values. The 397B heatmaps use #000000 text unlike the other 17; gemma-activation-vs-lens renders an em dash in six panel titles; zoo-readout-concentration title says -0.58 while prose says -0.59 (receipt -0.585) and a label collides with the ringed cluster.",
+   "fix": "Set svg.fonttype='none', inject <title>/<desc> from receipt alt_text and role=\"img\" at write time, paste receipt alt into embeds; house text colors in cka_heatmap_397b.py; replace em dashes and Unicode operators; print -0.585 in both places."
+  },
+  {
+   "id": "F078",
+   "severity": "minor",
+   "location": "bundle corpus-dependence.* and fit-budget.* (uncommitted); receipts_index.json, zoo-receipts-index.json; all receipts",
+   "problem": "Six regenerated files are uncommitted in pre-blog, so git history holds the superseded figures while disk holds corrected ones; only 5 of 19 receipts are indexed; no receipt records generator SHA, plotting-library version or PNG hash; contact-sheet receipts list sources without SHA-256.",
+   "fix": "Commit the regenerated files with the prose correction; extend the index to all 19; have generators write generator_sha256, matplotlib version, png_sha256 and source hashes."
+  },
+  {
+   "id": "F079",
+   "severity": "nit",
+   "location": "gemma-own-vs-shared alt and note L394-396; L708",
+   "problem": "Registry gives gemma-3-27b 262,208 and gemma-2 256,000; '256k' is right only for gemma-2.",
+   "fix": "'262k' for the gemma-3 sentences."
+  },
+  {
+   "id": "F080",
+   "severity": "nit",
+   "location": "L492-496",
+   "problem": "Too cautious: on the standardised instrument the note endorses, gemma-2-9b (+0.209) and gemma-2-2b (+0.208) are at or above most structured models in the same run (gemma-3-1b 0.142, llama3.1-8b 0.139, qwen3.5-0.8b 0.177); the hedge is a raw-map artifact.",
+   "fix": "Drop the hedge or restate it on the standardised instrument with the zoo comparison."
+  },
+  {
+   "id": "F081",
+   "severity": "nit",
+   "location": "open question 2 L1369-1371",
+   "problem": "The re-run repaired that rule and the result held in every cell, so the cited reason no longer applies; the better reason to stop short of 'negative' is boundary identifiability (F041).",
+   "fix": "Swap the stale reason for the identifiability caveat."
+  },
+  {
+   "id": "F082",
+   "severity": "nit",
+   "location": "front matter L1-6; L1309, claims row 20; L857-860",
+   "problem": "Date predates most content; 11 of 17 sibling posts set author; \u00a78 prefers 'outcome-masked'; \u00a72 permits an em dash inside a direct quotation, so altering it was unnecessary.",
+   "fix": "Set the publish date and author; 'outcome-masked'; optionally restore the quotation verbatim."
+  }
+ ]
+}

@@ -41,11 +41,16 @@ def build_manifest():
     band_rel = "projects/jacobian-lens-and-identifiability/artifacts/lenses-397b/qwen35_397b_dm.band.json"
     ent = []
 
+    # artifacts/ is gitignored, so the band statistic is pinned to the Hugging Face release
+    # revision that added it (a31f2f4, 2026-07-10; sha256 checked against the local receipt).
+    HF_BAND = "https://huggingface.co/praxagent-org/jacobian-lens-qwen3.5-397b-a17b/blob/a31f2f4/band.json"
+    HF_NPZ = "https://huggingface.co/praxagent-org/jacobian-lens-qwen3.5-397b-a17b/blob/fc7db0a/cka/cka_397b.npz"
+
     def add(label, value, vstr, path, computation):
+        url = HF_BAND if path == band_rel else HF_NPZ if path == npz_rel else f"{REPO_URL}/blob/{PIN}/{path}"
         ent.append({"label": label, "value": float(value), "value_str": vstr,
                     "receipt": path, "receipt_sha256": sha(ROOT / path),
-                    "pinned_url": f"{REPO_URL}/blob/{PIN}/{path}",
-                    "computation": computation})
+                    "pinned_url": url, "computation": computation})
 
     add("mid_sep", d["mid_sep"], "+0.343363", npz_rel, "npz['mid_sep']")
     add("mid_sep.null", d["mid_sep_null"], "-0.000113", npz_rel, "npz['mid_sep_null']")
@@ -118,7 +123,7 @@ def main():
         for stem, (title, alt) in figs.items():
             (POST / f"{stem}.receipt.json").write_text(
                 json.dumps(fig_receipt(stem, title, alt), indent=1))
-        idx = {f"{st}.receipt.json": sha(POST / f"{st}.receipt.json") for st in figs}
+        idx = {rp.name: sha(rp) for rp in sorted(POST.glob("*.receipt.json"))}
         (POST / "receipts_index.json").write_text(json.dumps(idx, indent=1))
         man = build_manifest()
         (POST / "provenance.json").write_text(json.dumps(man, indent=1))
@@ -137,11 +142,21 @@ def main():
             fail.append("provenance.json drifted")
         fail += [f"prose missing: {e['label']} = {e['value_str']}"
                  for e in check_prose(man, POST / "index.md")]
+        idx_committed = json.loads((POST / "receipts_index.json").read_text())
+        idx_now = {rp.name: sha(rp) for rp in sorted(POST.glob("*.receipt.json"))}
+        if idx_committed != idx_now:
+            fail.append(f"receipts_index.json drifted ({len(idx_committed)} indexed, {len(idx_now)} present)")
+        # evidentiary numbers after the map sections: their own manifest + verifier
+        import subprocess
+        r = subprocess.run([sys.executable, str(HERE / "verify_note_numbers.py")], capture_output=True, text=True)
+        if r.returncode != 0:
+            fail.append("verify_note_numbers.py: " + (r.stdout + r.stderr).strip()[-600:])
         if fail:
             print("VERIFY FAILED:"); [print("  -", f) for f in fail]
             sys.exit(1)
         print(f"VERIFY OK: 2 figures byte-identical to committed artifacts, "
-              f"{len(man['entries'])} numbers re-derived, all present in prose")
+              f"{len(man['entries'])} 397B numbers re-derived, all receipts indexed, "
+              f"evidentiary numbers verified by verify_note_numbers.py")
 
 
 if __name__ == "__main__":
