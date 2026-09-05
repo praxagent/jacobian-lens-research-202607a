@@ -340,3 +340,24 @@ Two honest notes. The sweep-dose point estimates quoted as headline (7.5x, 9.1x,
 **below** gemma-3-270m's: gemma's float32 advantage is 2.21 log units at the sweep doses and 2.42
 at the C-run dose, so "flat with dose" holds to about 0.2 log units for that model in float32, not
 exactly. And inference remains conditional on the eight realised random directions per layer.
+
+## qwen3.5-0.8b float32 C run (2026-09-05, RTX A6000, about $0.15 of a shared pod)
+
+`out/qwen3.5-0.8b_C32.json`: `--dtype float32 --calib-arm local`, 200 frozen prompts, 23 layers,
+all four gates pass; this runner version stores the random arm per prompt (8 draws x 200), so the
+prompt bootstrap resamples both arms. Frozen estimator, 2,000 resamples:
+**A = +1.673 [+1.553, +1.796], ratio 5.3x [4.7, 6.0], C = 0.026.**
+
+This is lower than the 8.1x (A = +2.093) quoted as qwen's float32 headline, and the reason is
+dose, not precision. The July float32 sweep's own small-dose rungs put qwen at A = 1.62 to 1.69
+(about 5.2x), exactly where this run lands; the 8.1x came from the larger, bf16-matched dose. So
+for qwen the advantage is not flat across the two dose regimes (about 0.4 log units apart), while
+the P4 flatness claim holds within the small-dose rungs. gemma-3-270m shows the opposite sign of
+dose dependence (11.2x at the comparator dose, 9.1x at the bf16-matched dose) and gpt2-small
+almost none (7.9x vs 7.5x). The honest headline is therefore: at the comparator-calibrated
+(small) dose, with float32 and prompt-level intervals, the lens direction beats an equal-norm
+random direction by **7.9x [7.0, 9.0], 11.2x [10.1, 12.4] and 5.3x [4.7, 6.0]** in gpt2-small,
+gemma-3-270m and qwen3.5-0.8b; at the larger bf16-matched dose the point estimates are 7.5x,
+9.1x and 8.1x. P1 holds in every case by a wide margin; the magnitude carries a dose caveat of up
+to about 0.4 log units that the earlier text understated. C at the small dose: 0.053, 0.086 (gate
+fails, VOID) / 0.077 (extended ladder), 0.026.

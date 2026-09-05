@@ -112,5 +112,31 @@
   "median_C": 0.11437423949916069,
   "calibration_arm": null,
   "dtype_flag": null
+ },
+ "qwen3.5-0.8b C32 (local-calibrated dose, 2026-09-05 pod re-run)": {
+  "file": "out/qwen3.5-0.8b_C32.json",
+  "dtype": "torch.float32",
+  "n_prompts": 200,
+  "n_layers": 23,
+  "random_stored_per_prompt": true,
+  "median_A": 1.6734505427631405,
+  "ci95_A": [
+   1.5527435808788486,
+   1.7957614510573865
+  ],
+  "ratio": 5.3305293197216175,
+  "ratio_ci95": [
+   4.72441423049672,
+   6.024060002711029
+  ],
+  "median_C": 0.026432470177506676,
+  "calibration_arm": "local",
+  "dtype_flag": "float32",
+  "gates": {
+   "execution": true,
+   "equal_norm": true,
+   "linear_regime": true,
+   "sensitivity_local_beats_random": true
+  }
  }
 }

@@ -6,3 +6,10 @@ gemma-3-270m bf16 (original P1 run, for reference)                     dtype=tor
 qwen3.5-0.8b bf16 (original P1 run; no float32 per-prompt receipt exists) dtype=torch.bfloat16  P=200 L=23  A=+2.005 [+1.760,+2.221]  ratio= 7.43x [5.81,9.22]  C=0.1144
 
 note: the bf16 kl_random in the original files is (L, 8) per-draw means; the C32 files store the same shape; the estimator is unchanged.
+Traceback (most recent call last):
+  File "<stdin>", line 10, in <module>
+  File "<stdin>", line 7, in boot
+ValueError: operands could not be broadcast together with shapes (23,) (23,200) 
+shapes: aligned (23, 200) random (23, 8, 200) local (23, 200)
+
+[2026-09-05 pod re-run] qwen3.5-0.8b C32 (local-calibrated dose, 2026-09-05 pod re-run): P=200 L=23 random per prompt=True  A=+1.673 [+1.553,+1.796]  ratio= 5.33x [4.72,6.02]  C=0.0264  gates={'execution': True, 'equal_norm': True, 'linear_regime': True, 'sensitivity_local_beats_random': True}
