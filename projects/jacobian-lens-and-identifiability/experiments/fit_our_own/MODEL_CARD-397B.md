@@ -19,17 +19,24 @@ Workspace in Language Models* (2026).
 
 ## Headline measurement
 
-The layer×layer CKA of the lens's token geometry shows the strongest "workspace band"
-we have measured on any model:
+The layer×layer CKA of the lens's token geometry shows three depth regimes, with a mid band
+whose separation is the largest we have measured across 36 public lenses:
 
 ```
 mid_sep = +0.3434   (n=24; interim n=16 read +0.3796)
 within early/MID/late CKA = 0.890 / 0.937 / 0.814 (n=24)
 ```
 
-— 1.6× the strongest model in the 36-model Neuronpedia sweep (Qwen3-14B: 0.211). The
-workspace band **grows** to frontier scale in this lineage; it is not a small-model
-transient.
+Two controls travel with that number (see the atlas note for both): a Frobenius-matched
+random-transport null is featureless (mid_sep -0.000113), and a distance-only surrogate with the
+same similarity-versus-layer-distance profile reproduces 0.275 of the 0.343, so about a fifth of
+the statistic is block structure beyond smooth decay with layer distance. On that fitted statistic
+the 397B's excess over its surrogate (+0.125) is the largest among the 36 lenses. Cross-model
+comparisons of the band statistic are only meaningful on a shared probe (own-vocabulary values,
+including an earlier "1.6x Qwen3-14B" comparison in this card, are not comparable across models
+and have been withdrawn); on the shared probe the 397B's mid_sep is 0.386 and its fitted
+separation 0.472, the highest in the collection. We make no claim that the band grows with scale:
+across the collection banding tracks size only loosely (rank correlation about +0.4 to +0.5).
 
 ## Files
 
@@ -57,9 +64,14 @@ transient.
   backbone via `jlens.Layout(path="model.language_model")`, bf16,
   `attn_implementation="eager"`, `device_map="auto"` with an even 110 GiB/GPU cap,
   on 8×H200. ~10 min/prompt.
-- Prompt-count calibration: on smaller Qwen models the band statistic converges by
-  n≈16 (n=8 is under-converged); n=24 is safely in the converged regime. See the
-  [repo](https://github.com/praxagent/research-and-replications) for the curve.
+- Prompt-count calibration: on smaller Qwen models the **band statistic** converges by
+  n≈16 (n=8 is under-converged), and this lens's own interim read at n=16 (+0.380) is close to
+  its final n=24 read (+0.343). **A later fit-budget sweep tempers this**: on the whole
+  layer-by-layer map (linear CKA, two small models, seed-null reference), convergence holds from
+  about 200 prompts up, and one model at 25 prompts sits 14 times the seed null. Under that
+  experiment's frozen rule this 24-prompt lens carries a **budget caveat**: its band statistic is
+  reproducible, its full map should not be assumed converged. See the
+  [repo](https://github.com/praxagent/jacobian-lens-research-202607a) (`corpus_dependence`).
 
 ## Validation (what makes this trustworthy)
 
@@ -76,7 +88,7 @@ transient.
    Files: `evals_v2_397b.json`, `calg2_neuronpedia_calibration.log`. (An earlier eval,
    `evals_v1_misspecified.json`, used absolute agreement — the wrong metric — and is
    retained only as a transparency receipt.)
-3. **Function — the lens extracts workspace content (near-perfectly)**: Anthropic-style
+3. **Function, injected-concept readout**: Anthropic-style
    ignition test run through this lens on the 397B itself — interpolated concepts
    injected at a carrier slot resolve in the lens readout with **median share_span
    0.988** (full 0.006→0.995 sweep), 94.6% of 480 band-layer readouts resolving, 83.7%
@@ -107,9 +119,12 @@ transient.
 
 ## Caveats (read before using)
 
-- Fitted on **24 prompts** of English wikitext. Converged for the band statistic per our
-  calibration, but far fewer than Neuronpedia's n≈1000; per-token/direction analyses may
-  be noisier than band-level geometry. Fit lenses on more prompts before microscopy.
+- Fitted on **24 prompts** of English wikitext, far fewer than Neuronpedia's 1,000. The band
+  statistic is reproducible at this budget (n=16 vs n=24 above), but our fit-budget sweep can only
+  vouch for map-level convergence from about 200 prompts, so treat the map as budget-caveated and
+  fit lenses on more prompts before microscopy. Boundaries and bands are also corpus-conditional:
+  the same recipe on code moves the map by two orders of magnitude more than a WikiText resample
+  does (fitted boundaries barely move).
 - The lens targets the **text backbone only** (`model.language_model`); the vision tower
   and MTP heads are untouched.
 - bf16 fit; fp16 export loses a little precision vs the fp32 canonical file.
