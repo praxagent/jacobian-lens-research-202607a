@@ -22,7 +22,7 @@ for k,s in enumerate(R):
     ax.set_title(name,fontsize=10,color=FAM[fam(s)],fontweight="bold",pad=2)
     ax.text(0.5,-0.09,f"sep {sh[s]:+.2f}",transform=ax.transAxes,ha="center",fontsize=8.6,color="#5A544C")
     for sp in ax.spines.values(): sp.set_edgecolor(FAM[fam(s)]); sp.set_linewidth(1.3)
-fig.suptitle("The same 36 lenses, measured on a SHARED vocabulary (sorted by fitted band separation)",
+fig.suptitle("36 lenses on the SHARED probe, sorted by fitted band separation",
              fontsize=11,fontweight="bold",x=0.02,ha="left",color="#2C2924")
 fig.text(0.02,0.005,"compare to the own-vocabulary contact sheet above: the Gemma maps (clay) that were pale there now show real structure; "
          "the family split softens once the token-set confound is removed.",fontsize=8,color="#5A544C",wrap=True)

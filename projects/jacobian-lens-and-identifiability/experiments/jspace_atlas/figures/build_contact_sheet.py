@@ -23,7 +23,7 @@ for k,r in enumerate(R):
     ax.text(0.5,-0.09,f"sep {float(r['fitted_sep']):+.2f}",transform=ax.transAxes,
             ha="center",fontsize=8.6,color="#5A544C")
     for sp in ax.spines.values(): sp.set_edgecolor(FAM[fam(r['slug'])]); sp.set_linewidth(1.3)
-fig.suptitle("Layer x layer CKA maps, all 36 lenses on their OWN vocabulary (sorted by fitted band separation; not comparable across models)",
+fig.suptitle("36 lenses on their OWN vocabulary (not comparable across models)",
              fontsize=11,fontweight="bold",x=0.02,ha="left",color="#2C2924")
 fig.text(0.02,0.005,"same magma scale 0 to 1 as the 397B hero map; title color = family; "
          "bright diagonal blocks = depth phases. Own-vocabulary measurement: the family contrast here is largely a probe effect, see the shared-probe sheet.",
