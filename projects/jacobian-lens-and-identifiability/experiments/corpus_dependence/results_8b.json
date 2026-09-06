@@ -1,0 +1,48 @@
+{
+ "slug": "llama3.1-8b",
+ "prereg": "PREREG_8B.md (73fb7cb)",
+ "unembedding_tensor": "lm_head.weight",
+ "n_layers": 31,
+ "boundaries": {
+  "wiki_a": [
+   13,
+   17
+  ],
+  "wiki_b": [
+   13,
+   17
+  ],
+  "code": [
+   6,
+   17
+  ]
+ },
+ "band_sep": {
+  "wiki_a": 0.0996,
+  "wiki_b": 0.1144,
+  "code": 0.0929
+ },
+ "seed_null": {
+  "boundary_shift": 0,
+  "map_distance": 0.018275400548413923,
+  "band_shift": 0.014821277981981296
+ },
+ "corpus": {
+  "boundary_shift": 7,
+  "map_distance": 0.0912655599401927,
+  "band_shift": 0.006656451084129267
+ },
+ "corpus_over_seed_ratio": 4.9939020323203485,
+ "anchor": {
+  "public_vs_wiki_a_map_distance": 0.011126289647654053,
+  "public_boundaries": [
+   13,
+   17
+  ]
+ },
+ "anchor_ok": false,
+ "P1_map_moves_gt10x": false,
+ "P2_boundaries_stay_le_max2_seed": false,
+ "P3_band_changes_gt_seed": false,
+ "statement": "ANCHOR FAILED: our fit is not comparable to the public lens; no corpus statement at 8B"
+}

@@ -75,6 +75,10 @@ ENTRIES = [
     ("toeplitz.mid_sep", TZ, "plotted_values/mid_sep_toeplitz", lambda v: f"{v:.3f}", "0.275"),
     ("toeplitz.excess", TZ, "plotted_values", lambda d: f"+{d['fitted_sep_real']-d['fitted_sep_toeplitz']:.3f}", "+0.125"),
     ("toeplitz.zoo_median", TZ, "plotted_values/zoo_excess_median", lambda v: f"+{v:.3f}", "+0.017"),
+    ("corpus8b.anchor", E / "corpus_dependence/results_8b.json", "anchor/public_vs_wiki_a_map_distance", lambda v: f"{v:.3f}", "0.011"),
+    ("corpus8b.seed", E / "corpus_dependence/results_8b.json", "seed_null/map_distance", lambda v: f"{v:.3f}", "0.018"),
+    ("corpus8b.ratio", E / "corpus_dependence/results_8b.json", "corpus_over_seed_ratio", lambda v: f"{v:.0f}x", "5x"),
+    ("corpus8b.shift", E / "corpus_dependence/results_8b.json", "corpus/boundary_shift", lambda v: f"{v} layers", "7 layers"),
     ("ignition.gemma.late", IG, "models/gemma-2-9b/lens_late_reldepth", lambda v: f"{v:.3f}", "0.415"),
     ("ignition.qwen.late", IG, "models/qwen3.5-0.8b/lens_late_reldepth", lambda v: f"{v:.3f}", "0.652"),
 ]

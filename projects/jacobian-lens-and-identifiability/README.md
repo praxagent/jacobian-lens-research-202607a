@@ -39,7 +39,7 @@ needed RunPod. Verdicts are the ledgers' words; every row links its `results.md`
 | [`block_patching`](experiments/block_patching/) | do band boundaries act as barriers to activation transfer (v1, v2, v2.1) | GPU | run; nulls, one position artifact, one non-replication; design not identified |
 | [`geometry_causality`](experiments/geometry_causality/) | equal-norm perturbation: lens direction vs random vs comparator | GPU | run; lens beats random 5x to 11x (float32, prompt intervals); dose caveat |
 | [`bands_vs_computation`](experiments/bands_vs_computation/) | Test B (lens vs activation boundaries, 12 models), Test C (corpus instability), identified-only Test B | GPU + CPU | run; readout property in every cell (shared probe); Test C moot after the corpus correction |
-| [`corpus_dependence`](experiments/corpus_dependence/) | does the map depend on the fitting corpus; fit budget; 8B extension | GPU | run; map moves 84x to 888x the seed null, boundaries barely; converged from 200 prompts; 25-prompt caveat triggered; 8B pending |
+| [`corpus_dependence`](experiments/corpus_dependence/) | does the map depend on the fitting corpus; fit budget; 8B extension | GPU | run; map moves 84x to 888x the seed null, boundaries barely; converged from 200 prompts (two sub-300M models); 25-prompt caveat triggered; 8B arm failed its comparability anchor at 100 prompts (no statement) |
 | [`ignition_depth`](experiments/ignition_depth/) | does ignition depth track the late boundary | GPU | run; no verdict (2 usable models; prompt set too hard for half the set) |
 
 ### Candidate replications from the Dehaene & Naccache commentary

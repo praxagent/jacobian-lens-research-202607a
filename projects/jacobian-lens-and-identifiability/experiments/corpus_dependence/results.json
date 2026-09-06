@@ -3,6 +3,14 @@
  "gpt2-small": {
   "n_layers": 11,
   "n_probe": 4096,
+  "unembedding_tensor": "wte.weight",
+  "anchor_public_fit": {
+   "public_vs_wiki_a_map_distance": 0.0030737381519242435,
+   "public_boundaries": [
+    2,
+    4
+   ]
+  },
   "band_sep": {
    "wiki_a": 0.0149,
    "wiki_b": 0.0152,
@@ -36,6 +44,14 @@
  "gemma-3-270m": {
   "n_layers": 17,
   "n_probe": 4096,
+  "unembedding_tensor": "model.embed_tokens.weight",
+  "anchor_public_fit": {
+   "public_vs_wiki_a_map_distance": 0.0011274577421077625,
+   "public_boundaries": [
+    3,
+    15
+   ]
+  },
   "band_sep": {
    "wiki_a": 0.1343,
    "wiki_b": 0.1379,
@@ -69,6 +85,14 @@
  "qwen3.5-0.8b": {
   "n_layers": 23,
   "n_probe": 4096,
+  "unembedding_tensor": "model.language_model.embed_tokens.weight",
+  "anchor_public_fit": {
+   "public_vs_wiki_a_map_distance": 0.0030204926118719833,
+   "public_boundaries": [
+    2,
+    15
+   ]
+  },
   "band_sep": {
    "wiki_a": 0.113,
    "wiki_b": 0.1112,
@@ -99,9 +123,50 @@
    "band_shift": 0.010260664259216568
   }
  },
+ "llama3.1-8b": {
+  "n_layers": 31,
+  "n_probe": 4096,
+  "unembedding_tensor": "lm_head.weight",
+  "anchor_public_fit": {
+   "public_vs_wiki_a_map_distance": 0.011126289647654053,
+   "public_boundaries": [
+    13,
+    17
+   ]
+  },
+  "band_sep": {
+   "wiki_a": 0.0996,
+   "wiki_b": 0.1144,
+   "code": 0.0929
+  },
+  "boundaries": {
+   "wiki_a": [
+    13,
+    17
+   ],
+   "wiki_b": [
+    13,
+    17
+   ],
+   "code": [
+    6,
+    17
+   ]
+  },
+  "seed_null": {
+   "boundary_shift": 0,
+   "map_distance": 0.018275400548413923,
+   "band_shift": 0.014821277981981296
+  },
+  "corpus": {
+   "boundary_shift": 7,
+   "map_distance": 0.0912655599401927,
+   "band_shift": 0.006656451084129267
+  }
+ },
  "_verdict": {
-  "models_ok": 3,
-  "corpus_exceeds_null_in": 3,
+  "models_ok": 4,
+  "corpus_exceeds_null_in": 4,
   "verdict": "CORPUS MATTERS"
  }
 }

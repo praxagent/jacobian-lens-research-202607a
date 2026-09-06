@@ -275,3 +275,34 @@ overrode the gate and launched the same three fits directly (`/workspace/llama_f
 `aln7lne2jgdcnv`, RTX A6000 at $0.53/hr, about $5 total). Nothing about the design, the
 predictions or the analysis changed; only the cost gate was overridden, and it is recorded here
 before any 8B result exists.
+
+## 8B extension result (2026-09-06): anchor FAILED under the frozen rule; descriptive numbers only
+
+`PREREG_8B.md` (73fb7cb). Three llama3.1-8b lenses, 100 prompts each, RTX A6000, fits 18:04 to 03:51 UTC
+(receipt `fits/llama8b_fits_receipt.json`; the pod then sat idle ~10 h before fetch, total pod cost
+about $11). Probe rows from **`lm_head.weight`** (untied model; atlas-tool loader), identity check
+linear_cka vs Gram path 0.990939 vs 0.991035 (within the 1e-4 tolerance; fp32 Gram accumulation).
+`results_8b.json` applies the frozen table:
+
+| measure | value | frozen rule | outcome |
+|---|---|---|---|
+| anchor: our wiki_a vs public Neuronpedia shared map | **0.0111** (public boundaries 13/17, ours 13/17) | <= 0.01 | **FAIL** (by 0.001) |
+| seed null (wiki_a vs wiki_b) | map distance **0.0183**, boundary shift 0, band shift 0.0148 | reference | 6x to 180x the small models' seed nulls |
+| corpus (wiki_a vs code) | map distance 0.0913 = **5x** seed null, boundary shift **7** (13/17 to 6/17), band shift 0.0067 | P1 > 10x; P2 <= max(2, seed shift) | P1 fail, P2 fail, P3 fail |
+
+**Statement, per the table:** anchor failed, so *no corpus statement at 8B*. The run is reported as
+not comparable to the public lens rather than interpreted.
+
+**What the descriptive numbers say, labelled as description.** The anchor missed by a hair, and the
+reason is visible in the seed null: at 8B a 100-prompt fit sits 0.018 from its own resample, where
+the three small models sit 0.0001 to 0.003. A 100-prompt fit of an 8B lens is not converged the way
+100-prompt fits of sub-1B lenses are, which is consistent with the public collection's 1,000-prompt
+budget and extends the fit-budget caveat: "budget stops mattering at about 200 prompts" was measured
+on two models under 300M parameters and should not be assumed to hold at 8B. Against that larger
+null, fitting on code moved the map 5x (not the 84x to 888x seen on small models), moved the early
+boundary by 7 layers where the seed resample moved it by 0, and changed the band statistic by less
+than the seed null did. Whether those are corpus effects or under-convergence cannot be separated at
+this budget. The honest next step is a 400-prompt wiki_a / wiki_b / code triple at 8B (about 12 h on
+the same card, about $7), not a bigger model.
+
+Cost of this arm: about $11 including the idle time (see CLAUDE.md lesson 22).
