@@ -9,7 +9,8 @@ import matplotlib.pyplot as plt
 HERE = Path(__file__).resolve().parent
 POST = Path("/home/ubuntu/PRAX/pre-blog/blog-source/content/posts/2026/07/jlens-cka-397b")
 STEM = "corpus-maps"
-ORDER = ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b"]
+ORDER = ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b", "llama3.1-8b"]
+ORDER = [m for m in ORDER if m in json.load(open(Path(__file__).resolve().parent / "results.json"))]  # only models with results
 plt.rcParams.update({"svg.fonttype": "none", "font.family": "sans-serif", "font.sans-serif": ["Inter", "Arial", "DejaVu Sans"],
                      "figure.facecolor": "#F7F4F0", "axes.facecolor": "#F7F4F0", "savefig.facecolor": "#F7F4F0",
                      "text.color": "#2C2924", "axes.edgecolor": "#A89B8C", "xtick.color": "#5A544C",
@@ -44,7 +45,7 @@ def build(verify=False):
     fig.savefig(svg, format="svg", metadata={"Date": None}); fig.savefig(POST / f"{STEM}.png", dpi=150); plt.close(fig)
     if verify and old is not None and old != svg.read_bytes():
         svg.write_bytes(old); sys.exit("VERIFY FAILED: svg drifted")
-    alt = ("Three rows of three heatmaps, one row per model (gpt2-small, gemma-3-270m, qwen3.5-0.8b). Left: the layer-by-layer "
+    alt = (f"{len(ORDER)} rows of three heatmaps, one row per model ({', '.join(ORDER)}). Left: the layer-by-layer "
            "CKA map of the lens fitted on WikiText with its fitted boundaries dashed; middle: the same for the lens fitted on code; "
            "right: the cell-by-cell difference on a red-blue scale. " + " ".join(
                f"{s}: map distance {v['map_distance_corpus']:.3f} ({v['map_distance_corpus'] / v['map_distance_seed']:.0f} times the seed null), "

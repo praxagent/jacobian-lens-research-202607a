@@ -21,12 +21,13 @@ plt.rcParams.update({"svg.fonttype": "none", "font.family":"sans-serif","font.sa
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 WIKI, CODE = "#4B6787", "#B5544B"
-ORDER = ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b"]
+ORDER = ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b", "llama3.1-8b"]
+ORDER = [m for m in ORDER if m in json.load(open(Path(__file__).resolve().parent / "results.json"))]  # only models with results
 
 
 def build():
     d = json.load(open(HERE / "results.json"))
-    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(11.2, 4.6), gridspec_kw={"width_ratios": [1.5, 1]})
+    fig, (ax, ax2) = plt.subplots(1, 2, figsize=(11.2, 1.3 * len(ORDER) + 1.5), gridspec_kw={"width_ratios": [1.5, 1]})
 
     for row, slug in enumerate(ORDER):
         r = d[slug]; L = r["n_layers"]; y = len(ORDER) - 1 - row
@@ -41,7 +42,7 @@ def build():
         shift = r["corpus"]["boundary_shift"]
         ax.text(L + 0.4, y, f"{slug}\n{L} layers, shift {shift}", fontsize=8, va="center", color="#5A544C")
     ax.set_yticks([]); ax.set_xlabel("layer index", fontsize=9.5)
-    ax.set_xlim(-0.5, 30); ax.set_ylim(-0.6, len(ORDER) - 0.2)
+    ax.set_xlim(-0.5, max(d[m]["n_layers"] for m in ORDER) + 12); ax.set_ylim(-0.6, len(ORDER) - 0.2)
     seed_shifts = [d[s]["seed_null"]["boundary_shift"] for s in ORDER]
     corp_shifts = [d[s]["corpus"]["boundary_shift"] for s in ORDER]
     ax.set_title(f"Fitted block boundaries: seed resample moves them {min(seed_shifts)} to "

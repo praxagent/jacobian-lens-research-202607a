@@ -1,0 +1,9 @@
+{
+ "probe_cold_s": 306,
+ "probe_warm_s": 270,
+ "per_prompt_s_upper": 135.0,
+ "est_one_fit_h": 3.75,
+ "est_three_fits_h": 11.25,
+ "max_fit_hours": 8.0,
+ "go": false
+}

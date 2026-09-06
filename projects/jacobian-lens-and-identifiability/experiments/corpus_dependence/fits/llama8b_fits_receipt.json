@@ -1,0 +1,14 @@
+{
+ "llama8b_code.pt": {
+  "bytes": 1040196392,
+  "sha256": "1f83ca9e91397fa6"
+ },
+ "llama8b_wiki_a.pt": {
+  "bytes": 1040196462,
+  "sha256": "e3ea3a7f731623de"
+ },
+ "llama8b_wiki_b.pt": {
+  "bytes": 1040196462,
+  "sha256": "0772ec44037163e1"
+ }
+}
