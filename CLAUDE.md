@@ -177,6 +177,25 @@ the research:
    $35/hr one. Two failed/slow Llama attempts (perf wall, transient HF download timeout) also
    quietly added pod-hours; a run that dies at load still billed the download.
 
+## Lessons learned the cheap way (2026-09-06, the idle A6000 — a ~$5 lesson)
+
+22. **An unattended pod job needs a fetch plan, not just a done-marker.** Three 8B lens fits
+   finished at 03:51 UTC on a $0.53/hr A6000 and sat idle for ten hours because the launch
+   script could not terminate the pod (no API key on the pod, by design) and nobody was awake
+   to fetch. Cheap card, so ~$5; on an H200 node the same gap is ~$300. Before launching a job
+   that outlives the session: either (a) state the expected idle cost in the estimate and
+   accept it, (b) hand TJ the one-line fetch+terminate command in checkpoint.md (done, but
+   only useful if he is awake), or (c) have the job push its receipts somewhere durable
+   (HF dataset, S3) and stop the pod via the API from THIS box on a scheduled check. Never
+   put the RunPod key on the pod to let it kill itself.
+23. **Two pipelines that both say "CKA" are not the same statistic until proven equal.** The
+   corpus-dependence analyzer scored maps with a cosine of d x d self-covariances for six
+   weeks while every other map used token-Gram linear CKA; the headline it produced was an
+   artifact. Any new map statistic gets a run-time identity assertion against
+   `common.cka.linear_cka` on a real pair (now in `corpus_dependence/analyze.py`), and any
+   cached array a downstream test reads gets its probe named in the producer's docstring and
+   checked by the consumer (`atlas_out/<slug>.npz` is OWN vocab; `shared_maps/` is SHARED).
+
 ## Folder structure (built to add research easily)
 
 ```
