@@ -51,12 +51,7 @@ across the collection banding tracks size only loosely (rank correlation about +
 
 ## Fit configuration (exact)
 
-- jlens `fit()` — `J_l = E[∂h_final/∂h_l]` for each of the **59 source layers, indices
-  0–58** (every decoder layer except the last). Qwen3.5-397B-A17B has **60 layers total
-  (0–59)**; layer 59 is the **target** `h_final` that the lens transports *toward*, so it
-  is not itself a source. The artifact therefore holds 59 Jacobians
-  (`source_layers = [0, 1, …, 58]`). The workspace-readout demos use the middle-third
-  **band: layers 19–38** (20 layers).
+- jlens `fit()` — `J_l = E[∂h_final/∂h_l]` for each of the **59 source layers, indices 0–58** (every decoder layer except the last). Qwen3.5-397B-A17B has **60 layers total (0–59)**; layer 59 is the **target** `h_final` that the lens transports *toward*, so it is not itself a source. The artifact holds 59 Jacobians (`source_layers = [0, 1, …, 58]`). The workspace-readout demos use the middle-third **band: layers 19–38** (20 layers).
 - **n = 24 prompts**, wikitext-103 (`Salesforce/wikitext`, seed 0), `max_seq_len 128`,
   `dim_batch 16`
 - Model loaded as `Qwen3_5MoeForConditionalGeneration` (⚠️ NOT `AutoModelForCausalLM`,
@@ -68,9 +63,10 @@ across the collection banding tracks size only loosely (rank correlation about +
   n≈16 (n=8 is under-converged), and this lens's own interim read at n=16 (+0.380) is close to
   its final n=24 read (+0.343). **A later fit-budget sweep tempers this**: on the whole
   layer-by-layer map (linear CKA, two small models, seed-null reference), convergence holds from
-  about 200 prompts up, and one model at 25 prompts sits 14 times the seed null. Under that
-  experiment's frozen rule this 24-prompt lens carries a **budget caveat**: its band statistic is
-  reproducible, its full map should not be assumed converged. See the
+  about 200 prompts up, one model at 25 prompts sits 14 times the seed null, and an 8B lens at
+  100 prompts is still not converged. Under that experiment's frozen rule this 24-prompt lens
+  carries a **budget caveat**: its band statistic is reproducible, its full map should not be
+  assumed converged. See the
   [repo](https://github.com/praxagent/jacobian-lens-research-202607a) (`corpus_dependence`).
 
 ## Validation (what makes this trustworthy)
@@ -135,7 +131,7 @@ across the collection banding tracks size only loosely (rank correlation about +
 ## Provenance & links
 
 - Fit code, receipts, logs, and the full audit:
-  [praxagent/research-and-replications](https://github.com/praxagent/research-and-replications)
+  [praxagent/jacobian-lens-research-202607a](https://github.com/praxagent/jacobian-lens-research-202607a)
 - Blog write-up: [PENDING LINK]
 - Method: Anthropic, *Verbalizable Representations Form a Global Workspace in Language
   Models* (transformer-circuits, 2026) + [anthropics/jacobian-lens](https://github.com/anthropics/jacobian-lens)
@@ -144,3 +140,22 @@ across the collection banding tracks size only loosely (rank correlation about +
 
 License: Apache-2.0 (matching both the base model and jlens). Please cite/attribute
 `praxagent` and link the repo if you build on this artifact.
+
+
+## Layer x layer CKA atlas (added 2026-07-18)
+
+The full 59x59 centered-kernel-alignment matrix behind the released band statistic,
+recomputed via the hash-verified consumer path (this repo's lens + the base model's
+lm_head, seed-0 n_probe=4096): `cka/cka_397b.npz` + heatmaps. Correctness gate: the
+matrix reproduces the released mid_sep +0.343363 to |delta| = 2e-8. A Frobenius-matched
+random-transport control (`cka/cka_397b_null.png`) is structure-free (mid_sep -0.000):
+the early / mid-band / late block structure comes from the fitted lens, not from the
+shared unembedding. That null is necessary and not sufficient: a distance-only surrogate
+(every cell replaced by the mean CKA at that layer distance) reproduces 0.275 of the 0.343, so
+read the block structure as the fifth of the statistic that exceeds smooth decay with distance
+(fitted separation 0.407 real against 0.282 surrogate). Correction history: this card's earlier
+"1.6x Qwen3-14B", "grows to frontier scale", "safely converged" and "near-perfectly" wordings
+were withdrawn on 2026-09-06 after our own later measurements (36-lens atlas, fit-budget sweep,
+8B extension); the previous text is in this repository's commit history. Generator:
+`projects/jacobian-lens-and-identifiability/experiments/fit_our_own/cka_heatmap_397b.py`
+in the research repo (commit c6c7bb1).
