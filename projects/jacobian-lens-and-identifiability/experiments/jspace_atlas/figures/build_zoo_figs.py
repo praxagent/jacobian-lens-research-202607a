@@ -124,7 +124,7 @@ def fig_band_by_scale(R):
                 f"Scatter of own-vocabulary fitted band separation against parameter count on a log "
                 f"x-axis, colored by family, rank correlation with size {_rho:+.2f} on this probe. "
                 "Most Qwen lenses and the Llama-70B sit high and every Gemma lens sits near zero on "
-                "its own vocabulary; the shared-probe measurement later in the note supersedes this "
+                "its own vocabulary; the shared-probe measurement in the main text supersedes this "
                 "picture for cross-model comparison.", vals)
 
 

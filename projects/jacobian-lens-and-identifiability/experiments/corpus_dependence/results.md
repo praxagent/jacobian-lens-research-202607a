@@ -306,3 +306,16 @@ this budget. The honest next step is a 400-prompt wiki_a / wiki_b / code triple 
 the same card, about $7), not a bigger model.
 
 Cost of this arm: about $11 including the idle time (see CLAUDE.md lesson 22).
+
+## 2026-09-08: two pre-registrations frozen at 1e945a0, before any fit; four RTX A6000 pods launched
+
+- `PREREG_8B_v2.md`: second attempt at the 8B corpus question, 400 prompts per arm, identical recipe
+  and decision table, anchor gate unchanged. Disclosed as not blind to the first attempt's numbers.
+  **Estimate correction:** the "about 12 h, about $7" in the 2026-09-06 entry above was wrong; measured
+  throughput (9 h 47 min for three 100-prompt fits, about 117 s/prompt) gives about 39 GPU-hours,
+  run as three single-fit pods in parallel, about $21 at the $0.53/hr the pods were actually billed.
+- `PREREG_QWEN4B_BUDGET.md`: does the whole map converge as early as the band statistic on qwen3-4b
+  (100/100 reference + seed null; 8/16/24/48 budgets). One pod, about 4 to 5 h, about $2.50.
+- Pods: wmvdthi444t9ei (wiki_a), s1xvh70yk41kgt (wiki_b), vwzqmrntn4ml1x (code), t5sj00q2a338cs
+  (qwen3-4b), all created ~02:59-03:02 UTC; fetched, verified and terminated by a scheduled watcher.
+  Results are appended below when they land.
