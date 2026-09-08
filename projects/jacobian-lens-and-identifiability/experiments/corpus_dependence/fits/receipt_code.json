@@ -1,0 +1,18 @@
+{
+ "prereg": "PREREG_8B_v2.md",
+ "arm": "code",
+ "n_prompts": 400,
+ "corpus": "",
+ "file": "llama8b400_code.pt",
+ "bytes": 1040196497,
+ "sha256": "e62df42687c19bb8ad6e1443e6baba81f694aadac2efe41fabbaeac33fcbf058",
+ "n_layers": 31,
+ "d_model": 4096,
+ "all_finite": true,
+ "fit_wall_s": 45645,
+ "per_prompt_s": 114.1125,
+ "versions": {
+  "transformers": "5.16.1",
+  "torch": "2.6.0+cu124"
+ }
+}

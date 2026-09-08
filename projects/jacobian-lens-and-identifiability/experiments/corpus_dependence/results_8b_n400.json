@@ -1,0 +1,48 @@
+{
+ "slug": "llama3.1-8b-n400",
+ "prereg": "PREREG_8B_v2.md (1e945a0)",
+ "unembedding_tensor": "lm_head.weight",
+ "n_layers": 31,
+ "boundaries": {
+  "wiki_a": [
+   13,
+   17
+  ],
+  "wiki_b": [
+   13,
+   17
+  ],
+  "code": [
+   6,
+   17
+  ]
+ },
+ "band_sep": {
+  "wiki_a": 0.1066,
+  "wiki_b": 0.105,
+  "code": 0.098
+ },
+ "seed_null": {
+  "boundary_shift": 0,
+  "map_distance": 0.00045082709793409226,
+  "band_shift": 0.0015268842336588762
+ },
+ "corpus": {
+  "boundary_shift": 7,
+  "map_distance": 0.08789429917022629,
+  "band_shift": 0.008573399855531183
+ },
+ "corpus_over_seed_ratio": 194.96232496449406,
+ "anchor": {
+  "public_vs_wiki_a_map_distance": 0.0034121697229479997,
+  "public_boundaries": [
+   13,
+   17
+  ]
+ },
+ "anchor_ok": true,
+ "P1_map_moves_gt10x": true,
+ "P2_boundaries_stay_le_max2_seed": false,
+ "P3_band_changes_gt_seed": true,
+ "statement": "at 8B the corpus does move the boundaries; the small-model result was scale-limited"
+}

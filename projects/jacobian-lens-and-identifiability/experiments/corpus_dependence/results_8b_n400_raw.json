@@ -1,0 +1,49 @@
+{
+ "_statistic": "linear CKA of shared-probe readout geometry (corrected 2026-09-05)",
+ "llama3.1-8b-n400": {
+  "n_layers": 31,
+  "n_probe": 4096,
+  "unembedding_tensor": "lm_head.weight",
+  "anchor_public_fit": {
+   "public_vs_wiki_a_map_distance": 0.0034121697229479997,
+   "public_boundaries": [
+    13,
+    17
+   ]
+  },
+  "band_sep": {
+   "wiki_a": 0.1066,
+   "wiki_b": 0.105,
+   "code": 0.098
+  },
+  "boundaries": {
+   "wiki_a": [
+    13,
+    17
+   ],
+   "wiki_b": [
+    13,
+    17
+   ],
+   "code": [
+    6,
+    17
+   ]
+  },
+  "seed_null": {
+   "boundary_shift": 0,
+   "map_distance": 0.00045082709793409226,
+   "band_shift": 0.0015268842336588762
+  },
+  "corpus": {
+   "boundary_shift": 7,
+   "map_distance": 0.08789429917022629,
+   "band_shift": 0.008573399855531183
+  }
+ },
+ "_verdict": {
+  "models_ok": 1,
+  "corpus_exceeds_null_in": 1,
+  "verdict": "CORPUS MATTERS"
+ }
+}

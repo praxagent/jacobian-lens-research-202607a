@@ -21,12 +21,28 @@ plt.rcParams.update({"svg.fonttype": "none", "font.family":"sans-serif","font.sa
 def sha(p): return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 WIKI, CODE = "#4B6787", "#B5544B"
-ORDER = ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b", "llama3.1-8b"]
-ORDER = [m for m in ORDER if m in json.load(open(Path(__file__).resolve().parent / "results.json"))]  # only models with results
+N400 = Path(__file__).resolve().parent / "results_8b_n400_raw.json"   # PREREG_8B_v2.md, 2026-09-08
+
+
+def load_results():
+    """results.json plus, when present, the 400-prompt 8B attempt under its own slug. The figures show
+    the 400-prompt row in place of the 100-prompt one (which failed its anchor and stays in the ledger)."""
+    d = json.load(open(Path(__file__).resolve().parent / "results.json"))
+    if N400.exists():
+        d.update({k: v for k, v in json.load(open(N400)).items() if not k.startswith("_")})
+    return d
+
+
+LABEL = {"llama3.1-8b-n400": "llama3.1-8b (400 prompts)"}
+ORDER = ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b", "llama3.1-8b", "llama3.1-8b-n400"]
+_R0 = load_results()
+ORDER = [m for m in ORDER if m in _R0]  # only models with results
+if "llama3.1-8b-n400" in ORDER and "llama3.1-8b" in ORDER:
+    ORDER.remove("llama3.1-8b")
 
 
 def build():
-    d = json.load(open(HERE / "results.json"))
+    d = load_results()
     fig, (ax, ax2) = plt.subplots(1, 2, figsize=(11.2, 1.3 * len(ORDER) + 1.5), gridspec_kw={"width_ratios": [1.5, 1]})
 
     for row, slug in enumerate(ORDER):
@@ -40,7 +56,7 @@ def build():
         for b in co:
             ax.plot([b], [y - 0.16], marker="^", ms=11, color=CODE, zorder=3)
         shift = r["corpus"]["boundary_shift"]
-        ax.text(L + 0.4, y, f"{slug}\n{L} layers, shift {shift}", fontsize=8, va="center", color="#5A544C")
+        ax.text(L + 0.4, y, f"{LABEL.get(slug, slug)}\n{L} layers, shift {shift}", fontsize=8, va="center", color="#5A544C")
     ax.set_yticks([]); ax.set_xlabel("layer index", fontsize=9.5)
     ax.set_xlim(-0.5, max(d[m]["n_layers"] for m in ORDER) + 12); ax.set_ylim(-0.6, len(ORDER) - 0.2)
     seed_shifts = [d[s]["seed_null"]["boundary_shift"] for s in ORDER]
@@ -62,7 +78,7 @@ def build():
         ax2.text(i + w/2, b_ * 1.15, f"{b_/a_:.0f}x", ha="center", fontsize=9,
                  fontweight="bold", color=CODE)
     ax2.set_yscale("log"); ax2.set_xticks(x)
-    ax2.set_xticklabels([s.replace("-", "-\n", 1) for s in ORDER], fontsize=8.4)
+    ax2.set_xticklabels([LABEL.get(s, s).replace(" (", "\n(").replace("-", "-\n", 1) for s in ORDER], fontsize=8.4)
     ax2.set_ylabel("map distance  (1 - CKA between maps)", fontsize=9)
     ratios = [b_ / a_ for a_, b_ in zip(seed, corp)]
     ax2.set_title(f"Corpus moves the map {min(ratios):.0f}x to {max(ratios):.0f}x the seed null",
@@ -79,19 +95,20 @@ def build():
         parts = []
         for s in ORDER:
             sh = d[s][kind]["boundary_shift"]
-            parts.append(f"{'not at all' if sh == 0 else str(sh) + ' layer' + ('s' if sh != 1 else '')} in {s}")
+            parts.append(f"{'not at all' if sh == 0 else str(sh) + ' layer' + ('s' if sh != 1 else '')} in {LABEL.get(s, s)}")
         return ", ".join(parts)
-    alt = ("Two panels. Left: depth axes for three models with fitted block boundaries marked "
+    alt = (f"Two panels. Left: depth axes for {len(ORDER)} models with fitted block boundaries marked "
            "for two WikiText seeds and for code. Resampling WikiText moves the fitted boundaries "
            f"{shift_phrase('seed_null')}; fitting on code moves them {shift_phrase('corpus')}. "
            "Right: log-scale bars of map distance, showing the corpus effect exceeding the seed "
            "null by " + ", ".join(f"{r:.0f}x" for r in ratios) + " for "
-           + ", ".join(ORDER) + " respectively.")
+           + ", ".join(LABEL.get(s, s) for s in ORDER) + " respectively.")
     (POST / f"{STEM}.receipt.json").write_text(json.dumps({
         "figure_id": STEM,
         "title": "Corpus dependence of fitted J-lens depth boundaries",
         "alt_text": alt, "description": alt,
-        "data_source": [{"receipt": "corpus_dependence/results.json", "sha256": sha(HERE / "results.json")}],
+        "data_source": [{"receipt": "corpus_dependence/results.json", "sha256": sha(HERE / "results.json")}]
+                       + ([{"receipt": "corpus_dependence/results_8b_n400_raw.json", "sha256": sha(N400)}] if N400.exists() else []),
         "provenance": {"generator": "corpus_dependence/build_fig.py",
                        "svg_sha256": sha(POST / f"{STEM}.svg")},
         "interval_semantics": "descriptive; seed null is a single same-corpus refit per model",

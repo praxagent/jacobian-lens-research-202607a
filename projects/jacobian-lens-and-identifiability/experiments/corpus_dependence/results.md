@@ -369,3 +369,46 @@ near-1 pair), so the wide-model path and the identity reference now run in float
 2026-09-08); the small-model direct path is unchanged and its recorded results are byte-identical.
 The 2026-09-06 8B numbers above were computed on the float32 path (identity check within 9.6e-5) and
 stand as recorded.
+
+## 8B second attempt result (2026-09-08): 400 prompts per arm
+
+`PREREG_8B_v2.md` (1e945a0). Three llama3.1-8b lenses, 400 prompts each, one RTX A6000 pod per arm (wmvdthi444t9ei wiki_a, s1xvh70yk41kgt wiki_b, vwzqmrntn4ml1x code), fits 03:05 to 16:20 UTC, 38.5 GPU-hours in total at 115 s per prompt, about $20 at $0.53/hr; receipts `fits/receipt_{wiki_a,wiki_b,code}.json` (sha256, all finite, 31 lens layers). Probe rows from **`lm_head.weight`**; maps on the float64 Gram path (identity check in `maps/cache/llama8b400_run.log`). `results_8b_n400.json` applies the frozen table:
+
+| measure | 400 prompts (this attempt) | 100 prompts (2026-09-06) | frozen rule | outcome |
+|---|---|---|---|---|
+| anchor: our wiki_a vs public Neuronpedia shared map | **0.0034** (public boundaries (13, 17), ours (13, 17)) | 0.0111 | <= 0.01 | **PASS** |
+| seed null (wiki_a vs wiki_b) | map distance **0.0005**, boundary shift 0, band shift 0.0015 | 0.0183, 0, 0.0148 | reference | |
+| corpus (wiki_a vs code) | map distance **0.0879** = **195x** seed null, boundary shift **7** ((13, 17) to (6, 17)), band shift 0.0086 | 0.0913 = 5x, shift 7 ((13, 17) to (6, 17)), 0.0067 | P1 > 10x; P2 <= max(2, seed shift); P3 > seed band shift | P1 **pass**, P2 **fail**, P3 pass |
+| band_sep (thirds mid_sep) | wiki_a 0.1066, wiki_b 0.105, code 0.098 | 0.0996, 0.1144, 0.0929 | descriptive | |
+| boundaries | wiki_a (13, 17), wiki_b (13, 17), code (6, 17) | (13, 17), (13, 17), (6, 17) | | |
+
+**Statement, per the frozen table:** at 8B the corpus does move the boundaries; the small-model result was scale-limited.
+
+**Scoring the pre-registered predictions.** Anchor: predicted 0.003 to 0.006, observed 0.0034. Seed
+null: predicted about a quarter of 0.018 (about 0.005), observed 0.0005, forty times smaller than at
+100 prompts rather than four; the 100-prompt maps were noisier than a 1/n guess allowed for, and the
+prediction was wrong in the direction that makes the test sharper. P1: predicted to hold at about
+20x, observed 195x (the corpus distance barely changed, 0.091 to 0.088, while the null collapsed). P2:
+no prediction made; it fails, and it fails the same way it did at 100 prompts, an early boundary at 13
+on both WikiText seeds and on the public lens and at 6 on code, with the late boundary at 17 in every
+arm. P3 holds (band shift 0.0086 against a seed shift of 0.0015), descriptive only.
+
+**A check we did not pre-register, reported as description.** Is the 7-layer move a peaked objective
+relocating, or a flat one flipping between two answers? Applying the identifiability rule of the
+atlas (near-optimal set within 5% of the objective's range; identified if both spreads are at most a
+quarter of the depth) to the three 400-prompt maps: `wiki_a` early spread 0.03 (near-optimal early
+boundaries 13 to 14), late 0.10; `wiki_b` early 0.16 (9 to 14), late 0.10; `code` early 0.16 (4 to
+9), late 0.06. All three are identified, and the WikiText near-optimal sets do not contain 6 while the
+code set does not contain 13; on the code map the objective at (6, 17) is 2.878 against 2.861 at
+(13, 17), and on the `wiki_a` map 2.859 against 2.879. So this is a relocation of a well-identified
+boundary. The ledger entry above for 100 prompts had the same (6, 17) on code; at that budget the
+seed null was too large to call it.
+
+**Consequence for the notes.** The corpus section's headline, "the boundaries barely do", is true for
+the three sub-1B models and false at 8B: on converged fits, fitting on code moves llama3.1-8b's early
+boundary seven layers deeper into the stack while the map distance is 195 times the seed null. The
+atlas note now says both, its summary and open-questions item are amended, the corpus figures show
+the 400-prompt row in place of the 100-prompt one (which stays in this ledger and in the note's text
+as the first attempt), and the claims matrix gains row 31. Test C's premise (boundaries relocate with
+corpus), moot for the small models, holds at 8B; re-running that design at 8B is a follow-up we have
+not done. Cost of the second attempt: 38.5 GPU-hours, about $20; total for the 8B arm about $31.

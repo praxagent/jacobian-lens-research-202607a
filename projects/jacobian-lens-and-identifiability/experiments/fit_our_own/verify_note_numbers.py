@@ -31,6 +31,7 @@ CI = E / "geometry_causality/out/analysis_fp32_ci.json"
 CO = E / "corpus_dependence/results.json"
 FB = E / "corpus_dependence/results_fitbudget.json"
 QB = E / "corpus_dependence/results_qwen4b_budget.json"
+N4 = E / "corpus_dependence/results_8b_n400.json"
 ID = E / "jspace_atlas/atlas_out/boundary_identifiability.json"
 TZ = POST / "block-excess-397b.receipt.json"
 IG = E / "ignition_depth/results.json"
@@ -88,6 +89,12 @@ ENTRIES = [
     ("q4b.ratio48", QB, "by_budget/48/ratio_to_seed_null", lambda v: f"{v:.1f}x", "0.2x"),
     ("q4b.mid24shift", QB, "by_budget/24/mid_sep_shift", lambda v: f"{v:.4f}", "0.0056"),
     ("q4b.p1", QB, "predictions/P1_band_converged_16_24_48_not_8", lambda v: "does not replicate" if v is False else "replicates", "does not replicate"),
+    # 8B second attempt, PREREG_8B_v2.md (2026-09-08)
+    ("n400.anchor", N4, "anchor/public_vs_wiki_a_map_distance", lambda v: f"{v:.4f}", "0.0034"),
+    ("n400.seed", N4, "seed_null/map_distance", lambda v: f"{v:.4f}", "0.0005"),
+    ("n400.ratio", N4, "corpus_over_seed_ratio", lambda v: f"{v:.0f}x", "195x"),
+    ("n400.shift", N4, "corpus/boundary_shift", lambda v: f"{v} layers", "7 layers"),
+    ("n400.statement", N4, "statement", lambda v: "scale-limited" if "scale-limited" in v else v, "scale-limited"),
     ("ignition.gemma.late", IG, "models/gemma-2-9b/lens_late_reldepth", lambda v: f"{v:.3f}", "0.415"),
     ("ignition.qwen.late", IG, "models/qwen3.5-0.8b/lens_late_reldepth", lambda v: f"{v:.3f}", "0.652"),
 ]

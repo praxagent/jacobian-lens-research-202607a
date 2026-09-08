@@ -1,0 +1,18 @@
+{
+ "prereg": "PREREG_8B_v2.md",
+ "arm": "wiki_a",
+ "n_prompts": 400,
+ "corpus": "",
+ "file": "llama8b400_wiki_a.pt",
+ "bytes": 1040196567,
+ "sha256": "f68c152340c98f18b598d0845a7bd5b9ff152c64715e16a3afe40c87c77a0c0a",
+ "n_layers": 31,
+ "d_model": 4096,
+ "all_finite": true,
+ "fit_wall_s": 47411,
+ "per_prompt_s": 118.5275,
+ "versions": {
+  "transformers": "5.16.1",
+  "torch": "2.6.0+cu124"
+ }
+}
