@@ -42,6 +42,11 @@ BAND_FLOOR = 0.002
 
 
 def load_map(path, Uc, M):
+    """Map for one fit; cached to maps/cache/<fit>.<n_probe>.npz (the float64 Gram path takes minutes per
+    map on this box and the harness kills long background jobs when memory is tight)."""
+    cache = HERE / "maps" / "cache" / f"{Path(path).stem}.{Uc.shape[0]}.f64.npz"
+    if cache.exists():
+        z = np.load(cache); return z["C"], float(z["ident"])
     d = torch.load(path, map_location="cpu", weights_only=False)
     J = d["J"]; layers = sorted(J.keys())
     if d["d_model"] >= 2048:
@@ -50,6 +55,9 @@ def load_map(path, Uc, M):
         Js = [J[l].float().numpy() for l in layers]
     C = _cd.cka_from_readout(Js, M, Uc_for_gram=Uc)
     ident = _cd.check_cka_identity(Js, M, Uc, C)
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(cache, C=C, ident=ident, statistic=np.array("linear CKA, float64 Gram path"))
+    print(f"  cached {cache.name}  identity {ident:.6f} vs {C[0,1]:.6f}", flush=True)
     return C, float(ident)
 
 

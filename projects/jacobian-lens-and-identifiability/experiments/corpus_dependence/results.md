@@ -319,3 +319,53 @@ Cost of this arm: about $11 including the idle time (see CLAUDE.md lesson 22).
 - Pods: wmvdthi444t9ei (wiki_a), s1xvh70yk41kgt (wiki_b), vwzqmrntn4ml1x (code), t5sj00q2a338cs
   (qwen3-4b), all created ~02:59-03:02 UTC; fetched, verified and terminated by a scheduled watcher.
   Results are appended below when they land.
+
+## qwen3-4b budget test (2026-09-08): does the map converge as early as the band statistic?
+
+`PREREG_QWEN4B_BUDGET.md` (1e945a0). Six fits on one RTX A6000 (pod t5sj00q2a338cs, 03:09 to 07:34 UTC, 54 s per prompt, about $2.39 including setup), receipt `fits/receipt_q4b.json` (sha256 per file, all finite, 35 lens layers, d = 2560). Maps computed on the shared probe (4096 rows from `model.embed_tokens.weight`) with the float64 Gram path; identity check against `common.cka.linear_cka` 0.999673 on the reference map (float32 had failed it by 1.3e-4, see analyze.py). Cached maps: `maps/cache/q4b_*.f64.npz`.
+
+| fit | prompts | boundaries | fitted_sep | mid_sep | map distance to n=100 | x seed null | map converged | band converged | distance to public map |
+|---|---|---|---|---|---|---|---|---|---|
+| `wiki_a` (reference) | 100 | (3, 23) | 0.0527 | 0.0342 | 0 | 0 | | | 0.0206 |
+| `wiki_b` (seed null) | 100 | (3, 23) | 0.0568 | 0.0368 | **0.016594** | 1.0 | | | 0.0045 |
+| `n8` | 8 | (3, 23) | 0.0523 | 0.0319 | 0.079531 | **4.8x** | no | yes | 0.1692 |
+| `n16` | 16 | (4, 23) | 0.0535 | 0.0343 | 0.034447 | **2.1x** | no | yes | 0.0993 |
+| `n24` | 24 | (3, 23) | 0.0461 | 0.0285 | 0.043098 | **2.6x** | no | no | 0.1139 |
+| `n48` | 48 | (3, 23) | 0.0500 | 0.0317 | 0.003366 | **0.2x** | yes | yes | 0.0389 |
+| public Neuronpedia lens | ~1,000 | (3, 23) | 0.0567 | 0.0383 | 0.0206 (to wiki_a) | | | | 0 |
+
+Frozen bars: map distance <= 0.033189 (2x the seed null); |mid_sep shift| <= 0.0053 and |fitted_sep shift| <= 0.0081 (2x the seed shifts 0.0027 and 0.0040, floor 0.002). Seed boundary shift 0.
+Predictions: P1 (band converged at 16, 24, 48 and not at 8): **False**; P2 (map not converged at 16 and 24, converged at 48): **True**; anchor (reference within 0.01 of the public map, descriptive): **False** (0.0206).
+
+**Statement, per the frozen table:** P1 FAILS: the band statistic is not converged at 16 and 24 under this recipe; the July result does not replicate; reported as such.
+
+**What the numbers say, as description.** Three things. First, the failure of P1 is marginal and
+the bar is tight: the n=24 fit misses the mid_sep bar by 0.0003 (shift 0.0056 against a bar of
+0.0053) while its fitted_sep is inside its bar, and the n=8 fit, which the July table had as the lone
+under-converged outlier, passes both. On the shared probe the band statistic scatters within about
+0.006 of the reference at every budget from 8 to 48, the same width as the July table's own 0.050 to
+0.061 spread at n >= 16 and about twice the seed shift. The honest reading is that the statistic's
+budget-to-budget scatter is of the order of the bar we froze, so "converged by 16" is not something
+this recipe can distinguish from "noisy at every budget below 100". Second, the map result (P2) came
+out as predicted: 4.8x, 2.1x and 2.6x the seed null at 8, 16 and 24 prompts, inside the bar only at
+48 (0.2x). The 48-prompt figure is flattered by design: the budgets are nested prefixes of the
+100-prompt reference (same seed, same shuffle), so the n=48 fit shares 48 of its prompts with the fit
+it is compared to and its distance is biased low; the nesting biases the 24-prompt distance low as
+well (24 shared prompts), so an independent 24-prompt fit would sit further from the reference, not
+nearer. The July fit-budget sweep shares this design and this caveat, which we had not stated. Third,
+the 100-prompt fits are themselves unconverged at 4B: the seed null is 0.0166, six to 124 times the
+three small models' seed nulls and close to the 8B's 0.018 at the same budget, and the two 100-prompt
+fits sit 0.0206 and 0.0045 from the public thousand-prompt map. The fitted boundaries are (3, 23) at
+every budget but one (n=16 gives 4, 23), so what moves with budget is the map's off-diagonal profile,
+not the segmentation, the same shape as the corpus result.
+
+**Consequence for the notes.** The release note's parenthetical ("band statistic already converged by
+n≈16 on smaller Qwen") is not supported on the shared probe at the frozen bar, and the whole-map
+question it was standing in for comes out against a 24-prompt fit on this model. The release-note
+addendum says so; the atlas note's 24-prompt caveat on the 397B map stands, now scoped as "not
+established, and on a 4B proxy 2.6x the seed null". No 397B claim is made from a 4B proxy. Numerics:
+the float32 Gram path failed the identity check on this model by 1.3e-4 (0.999671 against 0.999797 on a
+near-1 pair), so the wide-model path and the identity reference now run in float64 (`analyze.py`,
+2026-09-08); the small-model direct path is unchanged and its recorded results are byte-identical.
+The 2026-09-06 8B numbers above were computed on the float32 path (identity check within 9.6e-5) and
+stand as recorded.

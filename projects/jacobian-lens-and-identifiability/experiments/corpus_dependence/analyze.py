@@ -67,20 +67,25 @@ def cka_from_readout(Js, M, Uc_for_gram=None):
         # CKA(i, j) = <K_i, K_j>_F / (|K_i|_F |K_j|_F). The Grams (n_layers x n_probe^2 float32, 2 GB
         # for 31 layers) are spilled to memory-mapped files so the 7.6 GB box never holds them all;
         # `Js` may be a list of callables that materialise one layer at a time.
+        # PRECISION (2026-09-08): everything on this path is float64. In float32 the Gram norms of a
+        # 4096 x 4096 matrix carry ~1e-4 of error, which the identity check caught on qwen3-4b
+        # (0.999671 vs 0.999797 on a near-1 pair). The 100-prompt 8B run of 2026-09-06 was computed
+        # in float32 (identity check 9.6e-5); its ledger entry says so.
         import tempfile, os
         tmp = tempfile.mkdtemp(prefix="cka_grams_")
+        Uc64 = Uc_for_gram.astype(np.float64)
         nrm = []
         for l in range(n):
             J = Js[l]() if callable(Js[l]) else Js[l]
-            D = (Uc_for_gram @ J).astype(np.float32); del J
-            K = np.memmap(os.path.join(tmp, f"K{l}.f32"), dtype=np.float32, mode="w+", shape=(D.shape[0], D.shape[0]))
+            D = Uc64 @ J.astype(np.float64); del J
+            K = np.memmap(os.path.join(tmp, f"K{l}.f64"), dtype=np.float64, mode="w+", shape=(D.shape[0], D.shape[0]))
             K[:] = D @ D.T; nrm.append(float(np.linalg.norm(K, "fro"))); K.flush(); del K, D
         C = np.eye(n)
         for i in range(n):
-            Ki = np.memmap(os.path.join(tmp, f"K{i}.f32"), dtype=np.float32, mode="r", shape=(Uc_for_gram.shape[0],) * 2)
+            Ki = np.memmap(os.path.join(tmp, f"K{i}.f64"), dtype=np.float64, mode="r", shape=(Uc64.shape[0],) * 2)
             for j in range(i + 1, n):
-                Kj = np.memmap(os.path.join(tmp, f"K{j}.f32"), dtype=np.float32, mode="r", shape=Ki.shape)
-                C[i, j] = C[j, i] = float(np.sum(Ki * Kj, dtype=np.float64) / (nrm[i] * nrm[j])); del Kj
+                Kj = np.memmap(os.path.join(tmp, f"K{j}.f64"), dtype=np.float64, mode="r", shape=Ki.shape)
+                C[i, j] = C[j, i] = float(np.sum(Ki * Kj) / (nrm[i] * nrm[j])); del Kj
             del Ki
         for f in os.listdir(tmp): os.remove(os.path.join(tmp, f))
         os.rmdir(tmp)
@@ -127,7 +132,8 @@ def check_cka_identity(Js, M, Uc, C, tol=1e-4):
     """Assert the cross-gram CKA equals linear_cka on explicit geometries for the first pair."""
     from common.cka import linear_cka
     J0 = Js[0]() if callable(Js[0]) else Js[0]; J1 = Js[1]() if callable(Js[1]) else Js[1]
-    D0, D1 = Uc @ J0, Uc @ J1
+    # reference in float64 so the check measures the statistic, not float32 accumulation
+    D0, D1 = Uc.astype(np.float64) @ J0.astype(np.float64), Uc.astype(np.float64) @ J1.astype(np.float64)
     ref = linear_cka(D0, D1)
     assert abs(ref - C[0, 1]) < tol, f"CKA identity check failed: {ref:.6f} vs {C[0, 1]:.6f}"
     return ref

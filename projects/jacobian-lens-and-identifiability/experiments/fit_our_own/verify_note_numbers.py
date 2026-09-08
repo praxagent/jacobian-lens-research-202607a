@@ -30,6 +30,7 @@ B3 = E / "bands_vs_computation/results_B3_ident.json"
 CI = E / "geometry_causality/out/analysis_fp32_ci.json"
 CO = E / "corpus_dependence/results.json"
 FB = E / "corpus_dependence/results_fitbudget.json"
+QB = E / "corpus_dependence/results_qwen4b_budget.json"
 ID = E / "jspace_atlas/atlas_out/boundary_identifiability.json"
 TZ = POST / "block-excess-397b.receipt.json"
 IG = E / "ignition_depth/results.json"
@@ -79,6 +80,14 @@ ENTRIES = [
     ("corpus8b.seed", E / "corpus_dependence/results_8b.json", "seed_null/map_distance", lambda v: f"{v:.3f}", "0.018"),
     ("corpus8b.ratio", E / "corpus_dependence/results_8b.json", "corpus_over_seed_ratio", lambda v: f"{v:.0f}x", "5x"),
     ("corpus8b.shift", E / "corpus_dependence/results_8b.json", "corpus/boundary_shift", lambda v: f"{v} layers", "7 layers"),
+    # qwen3-4b budget test, PREREG_QWEN4B_BUDGET.md (2026-09-08)
+    ("q4b.seed", QB, "seed_null/map_distance", lambda v: f"{v:.4f}", "0.0166"),
+    ("q4b.ratio8", QB, "by_budget/8/ratio_to_seed_null", lambda v: f"{v:.1f}x", "4.8x"),
+    ("q4b.ratio16", QB, "by_budget/16/ratio_to_seed_null", lambda v: f"{v:.1f}x", "2.1x"),
+    ("q4b.ratio24", QB, "by_budget/24/ratio_to_seed_null", lambda v: f"{v:.1f}x", "2.6x"),
+    ("q4b.ratio48", QB, "by_budget/48/ratio_to_seed_null", lambda v: f"{v:.1f}x", "0.2x"),
+    ("q4b.mid24shift", QB, "by_budget/24/mid_sep_shift", lambda v: f"{v:.4f}", "0.0056"),
+    ("q4b.p1", QB, "predictions/P1_band_converged_16_24_48_not_8", lambda v: "does not replicate" if v is False else "replicates", "does not replicate"),
     ("ignition.gemma.late", IG, "models/gemma-2-9b/lens_late_reldepth", lambda v: f"{v:.3f}", "0.415"),
     ("ignition.qwen.late", IG, "models/qwen3.5-0.8b/lens_late_reldepth", lambda v: f"{v:.3f}", "0.652"),
 ]

@@ -1,0 +1,82 @@
+{
+ "prereg": "PREREG_QWEN4B_BUDGET.md",
+ "model": "Qwen/Qwen3-4B",
+ "files": [
+  {
+   "file": "q4b_n16.pt",
+   "name": "n16",
+   "n_prompts": 16,
+   "seed": 0,
+   "fit_wall_s": 881,
+   "bytes": 458761261,
+   "sha256": "405cb0e9dee690f917fe6959379c4a3af22db9c41ee8bab2d58683d620a09134",
+   "n_layers": 35,
+   "d_model": 2560,
+   "all_finite": true
+  },
+  {
+   "file": "q4b_n24.pt",
+   "name": "n24",
+   "n_prompts": 24,
+   "seed": 0,
+   "fit_wall_s": 1312,
+   "bytes": 458761261,
+   "sha256": "57edd90cce00c4b9dc4657782afa139fd6b019681650ce5e6ca0c9915ec5ea39",
+   "n_layers": 35,
+   "d_model": 2560,
+   "all_finite": true
+  },
+  {
+   "file": "q4b_n48.pt",
+   "name": "n48",
+   "n_prompts": 48,
+   "seed": 0,
+   "fit_wall_s": 2586,
+   "bytes": 458761261,
+   "sha256": "c55c80119ef50599b20e932c34d88279dab3c87e94f4805c0df0b39589b2e932",
+   "n_layers": 35,
+   "d_model": 2560,
+   "all_finite": true
+  },
+  {
+   "file": "q4b_n8.pt",
+   "name": "n8",
+   "n_prompts": 8,
+   "seed": 0,
+   "fit_wall_s": 454,
+   "bytes": 458759558,
+   "sha256": "d6a4e90d0b3b3af7031af67bc22a7230f9d388ac83afd23e09c3cf0143c34a3a",
+   "n_layers": 35,
+   "d_model": 2560,
+   "all_finite": true
+  },
+  {
+   "file": "q4b_wiki_a.pt",
+   "name": "wiki_a",
+   "n_prompts": 100,
+   "seed": 0,
+   "fit_wall_s": 5379,
+   "bytes": 458761954,
+   "sha256": "9bd75240f6bc141f79bc87b4993e23d15de21817fab525a695ca22000631c46a",
+   "n_layers": 35,
+   "d_model": 2560,
+   "all_finite": true
+  },
+  {
+   "file": "q4b_wiki_b.pt",
+   "name": "wiki_b",
+   "n_prompts": 100,
+   "seed": 1,
+   "fit_wall_s": 5306,
+   "bytes": 458761954,
+   "sha256": "4428c201dd6e22802a5766de8b9bcd6e7b364e1abe45da3db477b10ed058f469",
+   "n_layers": 35,
+   "d_model": 2560,
+   "all_finite": true
+  }
+ ],
+ "versions": {
+  "transformers": "5.16.1",
+  "torch": "2.6.0+cu124"
+ }
+}

@@ -1,0 +1,131 @@
+{
+ "prereg": "PREREG_QWEN4B_BUDGET.md",
+ "slug": "qwen3-4b",
+ "hf_id": "Qwen/Qwen3-4B",
+ "reference_budget": 100,
+ "budgets": [
+  8,
+  16,
+  24,
+  48
+ ],
+ "n_layers": 35,
+ "n_probe": 4096,
+ "unembedding_tensor": "model.embed_tokens.weight",
+ "cka_identity_check_pair01": 0.9996731382454908,
+ "statistic": "linear CKA of shared-probe readout geometry (cka_from_readout)",
+ "reference": {
+  "boundaries": [
+   3,
+   23
+  ],
+  "fitted_sep": 0.05274,
+  "mid_sep": 0.03416
+ },
+ "wiki_b": {
+  "boundaries": [
+   3,
+   23
+  ],
+  "fitted_sep": 0.05679,
+  "mid_sep": 0.03682
+ },
+ "seed_null": {
+  "map_distance": 0.016594472363911095,
+  "boundary_shift": 0,
+  "mid_sep_shift": 0.0026599999999999957,
+  "fitted_sep_shift": 0.004049999999999998
+ },
+ "bars": {
+  "map": 0.03318894472782219,
+  "mid_sep": 0.005319999999999991,
+  "fitted_sep": 0.008099999999999996
+ },
+ "public_lens": {
+  "file": "experiments/jspace_atlas/atlas_out/shared_maps/qwen3-4b.npz",
+  "stats_same_functions": {
+   "boundaries": [
+    3,
+    23
+   ],
+   "fitted_sep": 0.05672,
+   "mid_sep": 0.03831
+  },
+  "npz_mid_sep": 0.03830656734756155,
+  "npz_fitted_sep": 0.05672440656306199,
+  "ref_vs_public_map_distance": 0.0205600312533184,
+  "wiki_b_vs_public_map_distance": 0.00447141482639013
+ },
+ "by_budget": {
+  "8": {
+   "boundaries": [
+    3,
+    23
+   ],
+   "fitted_sep": 0.05232,
+   "mid_sep": 0.03195,
+   "map_distance_to_ref": 0.07953121463470181,
+   "ratio_to_seed_null": 4.792632925627855,
+   "boundary_shift": 0,
+   "mid_sep_shift": 0.0022100000000000036,
+   "fitted_sep_shift": 0.0004200000000000037,
+   "map_converged": false,
+   "band_converged": true,
+   "public_map_distance": 0.1691646776678445
+  },
+  "16": {
+   "boundaries": [
+    4,
+    23
+   ],
+   "fitted_sep": 0.05352,
+   "mid_sep": 0.03428,
+   "map_distance_to_ref": 0.03444726520187902,
+   "ratio_to_seed_null": 2.0758276880675863,
+   "boundary_shift": 1,
+   "mid_sep_shift": 0.00011999999999999511,
+   "fitted_sep_shift": 0.000779999999999996,
+   "map_converged": false,
+   "band_converged": true,
+   "public_map_distance": 0.09925422622856661
+  },
+  "24": {
+   "boundaries": [
+    3,
+    23
+   ],
+   "fitted_sep": 0.04607,
+   "mid_sep": 0.02855,
+   "map_distance_to_ref": 0.043098177919598024,
+   "ratio_to_seed_null": 2.5971406004644044,
+   "boundary_shift": 0,
+   "mid_sep_shift": 0.005610000000000004,
+   "fitted_sep_shift": 0.006670000000000002,
+   "map_converged": false,
+   "band_converged": false,
+   "public_map_distance": 0.11389881595671836
+  },
+  "48": {
+   "boundaries": [
+    3,
+    23
+   ],
+   "fitted_sep": 0.05005,
+   "mid_sep": 0.03168,
+   "map_distance_to_ref": 0.0033655624315583887,
+   "ratio_to_seed_null": 0.20281225927241056,
+   "boundary_shift": 0,
+   "mid_sep_shift": 0.002480000000000003,
+   "fitted_sep_shift": 0.002690000000000005,
+   "map_converged": true,
+   "band_converged": true,
+   "public_map_distance": 0.03886275132955952
+  }
+ },
+ "predictions": {
+  "P1_band_converged_16_24_48_not_8": false,
+  "P2_map_not_16_24_yes_48": true,
+  "anchor_ref_within_0.01": false
+ },
+ "statement": "P1 FAILS: the band statistic is not converged at 16 and 24 under this recipe; the July result does not replicate; reported as such"
+}
