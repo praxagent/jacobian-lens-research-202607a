@@ -64,9 +64,13 @@ across the collection banding tracks size only loosely (rank correlation about +
   its final n=24 read (+0.343). **A later fit-budget sweep tempers this**: on the whole
   layer-by-layer map (linear CKA, two small models, seed-null reference), convergence holds from
   about 200 prompts up, one model at 25 prompts sits 14 times the seed null, and an 8B lens at
-  100 prompts is still not converged. Under that experiment's frozen rule this 24-prompt lens
-  carries a **budget caveat**: its band statistic is reproducible, its full map should not be
-  assumed converged. See the
+  100 prompts is still not converged. A pre-registered check on qwen3-4b (2026-09-08) then failed to
+  replicate the n≈16 calibration at its frozen bar: on the shared probe the band statistic scatters
+  within about 0.006 of a 100-prompt reference at every budget from 8 to 48, and the whole map at
+  24 prompts sits 2.6x the seed null (inside the bar only at 48). Under those experiments' frozen
+  rules this 24-prompt lens carries a **budget caveat**: its full map should not be assumed
+  converged, and its band statistic's prompt-count stability is not established beyond the ~0.006
+  scatter seen on a 4B proxy. See the
   [repo](https://github.com/praxagent/jacobian-lens-research-202607a) (`corpus_dependence`).
 
 ## Validation (what makes this trustworthy)
