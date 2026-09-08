@@ -119,12 +119,14 @@ across the collection banding tracks size only loosely (rank correlation about +
 
 ## Caveats (read before using)
 
-- Fitted on **24 prompts** of English wikitext, far fewer than Neuronpedia's 1,000. The band
-  statistic is reproducible at this budget (n=16 vs n=24 above), but our fit-budget sweep can only
-  vouch for map-level convergence from about 200 prompts, so treat the map as budget-caveated and
-  fit lenses on more prompts before microscopy. Boundaries and bands are also corpus-conditional:
-  the same recipe on code moves the map by two orders of magnitude more than a WikiText resample
-  does (fitted boundaries barely move).
+- Fitted on **24 prompts** of English wikitext, far fewer than Neuronpedia's 1,000. The two reads of
+  the band statistic at this budget agree (n=16 vs n=24 above), but a pre-registered qwen3-4b check
+  found the statistic's prompt-count stability not established beyond ~0.006 scatter, and our
+  fit-budget sweep can only vouch for map-level convergence from about 200 prompts, so treat the map
+  as budget-caveated and fit lenses on more prompts before microscopy. Boundaries and bands are also
+  corpus-conditional: the same recipe on code moves the map by two orders of magnitude more than a
+  WikiText resample does; the fitted boundaries barely move in three sub-1B models, and at 8B (400
+  prompts per fit) the early boundary moves seven layers with the corpus.
 - The lens targets the **text backbone only** (`model.language_model`); the vision tower
   and MTP heads are untouched.
 - bf16 fit; fp16 export loses a little precision vs the fp32 canonical file.
