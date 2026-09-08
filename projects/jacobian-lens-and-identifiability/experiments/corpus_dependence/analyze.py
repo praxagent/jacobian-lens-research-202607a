@@ -42,6 +42,14 @@ MODELS = {
     # lm_head.weight; the shared atlas tool's loader picks it (probe_rows_inline would not).
     "llama3.1-8b":  ("meta-llama/Llama-3.1-8B", "llama8b"),
 }
+# Second attempts and extensions that must NOT enter results.json by default (their earlier entries
+# stay on the record). Run them with `--only <slug> --out <file>`. The anchor map is the public
+# Neuronpedia lens of the same model, looked up through ANCHOR_SLUG.
+EXTRA_MODELS = {
+    # PREREG_8B_v2.md (2026-09-08): 400 prompts per arm, nested extensions of the 100-prompt fits
+    "llama3.1-8b-n400": ("meta-llama/Llama-3.1-8B", "llama8b400"),
+}
+ANCHOR_SLUG = {"llama3.1-8b-n400": "llama3.1-8b"}
 SHARED_MAPS = HERE.parents[1] / "experiments/jspace_atlas/atlas_out/shared_maps"
 ARMS = ["wiki_a", "wiki_b", "code"]
 
@@ -143,12 +151,24 @@ def main():
     ap.add_argument("--out", default=str(HERE / "results.json"))
     ap.add_argument("--legacy", action="store_true",
                     help="reproduce the SUPERSEDED pre-2026-09-05 self-gram numbers (not CKA)")
+    ap.add_argument("--only", nargs="+", metavar="SLUG",
+                    help="restrict to these slugs (MODELS or EXTRA_MODELS); requires an explicit "
+                         "--out so results.json is never partially rewritten")
     a = ap.parse_args()
+    todo = dict(MODELS)
+    if a.only:
+        if Path(a.out).resolve() == (HERE / "results.json").resolve():
+            sys.exit("--only requires an explicit --out: results.json holds every model's entry")
+        allm = {**MODELS, **EXTRA_MODELS}
+        unknown = [x for x in a.only if x not in allm]
+        if unknown:
+            sys.exit(f"unknown slug(s) {unknown}; known: {sorted(allm)}")
+        todo = {x: allm[x] for x in a.only}
     sys.path.insert(0, str(HERE.parents[1]))   # for common.cka
 
     out = {"_statistic": ("legacy self-gram cosine (SUPERSEDED, not CKA)" if a.legacy else
                           "linear CKA of shared-probe readout geometry (corrected 2026-09-05)")}
-    for slug, (hf_id, pfx) in MODELS.items():
+    for slug, (hf_id, pfx) in todo.items():
         try:
             maps, seps, bnds = {}, {}, {}
             Uc = Mprobe = None
@@ -188,7 +208,7 @@ def main():
                                 statistic=np.array(out["_statistic"]))
             # PREREG_8B anchor: our wiki_a map vs the public Neuronpedia shared map of the same model
             anchor = None
-            pub = SHARED_MAPS / f"{slug}.npz"
+            pub = SHARED_MAPS / f"{ANCHOR_SLUG.get(slug, slug)}.npz"
             if pub.exists():
                 Cp = np.load(pub)["cka"]
                 if Cp.shape == maps["wiki_a"].shape:

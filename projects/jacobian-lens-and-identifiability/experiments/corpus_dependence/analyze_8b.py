@@ -1,4 +1,4 @@
-"""Apply PREREG_8B.md's frozen decision table to the llama3.1-8b arm of results.json.
+"""Apply PREREG_8B.md's frozen decision table (also PREREG_8B_v2.md's, identical) to an 8B arm.
 
   anchor: our wiki_a map within 0.01 map distance of the public Neuronpedia shared map, else FAILED RUN
   P1:     corpus map distance > 10x the seed null
@@ -8,12 +8,19 @@
 Writes results_8b.json and prints the statement the decision table assigns.
 """
 from __future__ import annotations
-import json
+import argparse, json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-SLUG = "llama3.1-8b"
-R = json.loads((HERE / "results.json").read_text())
+ap = argparse.ArgumentParser()
+ap.add_argument("--results", default=str(HERE / "results.json"), help="analyze.py output holding the slug")
+ap.add_argument("--slug", default="llama3.1-8b")
+ap.add_argument("--prereg", default="PREREG_8B.md (73fb7cb)",
+                help="label recorded in the output; the 400-prompt second attempt passes PREREG_8B_v2.md")
+ap.add_argument("--out", default=str(HERE / "results_8b.json"))
+args = ap.parse_args()
+SLUG = args.slug
+R = json.loads(Path(args.results).read_text())
 d = R[SLUG]
 seed, corp = d["seed_null"], d["corpus"]
 anchor = d.get("anchor_public_fit") or {}
@@ -30,12 +37,12 @@ elif p1 and not p2:
     statement = "at 8B the corpus does move the boundaries; the small-model result was scale-limited"
 else:
     statement = "the corpus effect on the map shrinks with scale; reported as such"
-out = {"slug": SLUG, "prereg": "PREREG_8B.md (73fb7cb)", "unembedding_tensor": d.get("unembedding_tensor"),
+out = {"slug": SLUG, "prereg": args.prereg, "unembedding_tensor": d.get("unembedding_tensor"),
        "n_layers": d["n_layers"], "boundaries": d["boundaries"], "band_sep": d["band_sep"],
        "seed_null": seed, "corpus": corp, "corpus_over_seed_ratio": ratio, "anchor": anchor, "anchor_ok": anchor_ok,
        "P1_map_moves_gt10x": p1, "P2_boundaries_stay_le_max2_seed": p2, "P3_band_changes_gt_seed": p3,
        "statement": statement}
-(HERE / "results_8b.json").write_text(json.dumps(out, indent=1))
+Path(args.out).write_text(json.dumps(out, indent=1))
 print(f"{SLUG}: probe rows from {out['unembedding_tensor']}; L={d['n_layers']}")
 print(f"  boundaries wiki_a={tuple(d['boundaries']['wiki_a'])} wiki_b={tuple(d['boundaries']['wiki_b'])} code={tuple(d['boundaries']['code'])}")
 print(f"  band_sep {d['band_sep']}")
