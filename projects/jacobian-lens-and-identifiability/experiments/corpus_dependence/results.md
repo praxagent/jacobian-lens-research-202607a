@@ -353,7 +353,7 @@ out as predicted: 4.8x, 2.1x and 2.6x the seed null at 8, 16 and 24 prompts, ins
 it is compared to and its distance is biased low; the nesting biases the 24-prompt distance low as
 well (24 shared prompts), so an independent 24-prompt fit would sit further from the reference, not
 nearer. The July fit-budget sweep shares this design and this caveat, which we had not stated. Third,
-the 100-prompt fits are themselves unconverged at 4B: the seed null is 0.0166, six to 124 times the
+the 100-prompt fits are themselves unconverged at 4B: the seed null is 0.0166, six to 123 times the
 three small models' seed nulls and close to the 8B's 0.018 at the same budget, and the two 100-prompt
 fits sit 0.0206 and 0.0045 from the public thousand-prompt map. The fitted boundaries are (3, 23) at
 every budget but one (n=16 gives 4, 23), so what moves with budget is the map's off-diagonal profile,

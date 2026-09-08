@@ -56,7 +56,13 @@ def build(verify=False):
         plotted[slug] = {"map_distance_corpus": d, "map_distance_seed": n, "boundaries_wiki_a": ba, "boundaries_code": bc,
                          "max_abs_cell_change": lim, "offdiag_range_wiki_a": [float(A[~np.eye(len(A), dtype=bool)].min()), float(A[~np.eye(len(A), dtype=bool)].max())],
                          "offdiag_range_code": [float(B[~np.eye(len(B), dtype=bool)].min()), float(B[~np.eye(len(B), dtype=bool)].max())]}
-    fig.suptitle("Same model, same recipe, different fitting corpus: the map changes, the fitted boundaries barely do", fontsize=10.6, fontweight="bold", x=0.01, ha="left")
+    shifts = {s_: abs(v["boundaries_wiki_a"][0] - v["boundaries_code"][0]) + abs(v["boundaries_wiki_a"][1] - v["boundaries_code"][1])
+              for s_, v in plotted.items()}
+    moved = {s_: sh for s_, sh in shifts.items() if sh >= 2}
+    tail = (f"the fitted boundaries barely move, except in {', '.join(LABEL.get(k, k) for k in moved)} "
+            f"({'/'.join(str(v) for v in moved.values())} layers)" if moved else "the fitted boundaries barely move")
+    fig.suptitle(f"Same model, same recipe, different fitting corpus: the map changes; {tail}",
+                 fontsize=10.6, fontweight="bold", x=0.01, ha="left")
     svg = POST / f"{STEM}.svg"; old = svg.read_bytes() if (verify and svg.exists()) else None
     fig.savefig(svg, format="svg", metadata={"Date": None}); fig.savefig(POST / f"{STEM}.png", dpi=150); plt.close(fig)
     if verify and old is not None and old != svg.read_bytes():
@@ -68,7 +74,7 @@ def build(verify=False):
                f"boundaries {tuple(v['boundaries_wiki_a'])} on WikiText and {tuple(v['boundaries_code'])} on code, largest single-cell change {v['max_abs_cell_change']:.2f}."
                for s, v in plotted.items()))
     (POST / f"{STEM}.receipt.json").write_text(json.dumps({
-        "figure_id": STEM, "title": "WikiText versus code lens maps, three models", "alt_text": alt, "description": alt,
+        "figure_id": STEM, "title": f"WikiText versus code lens maps, {len(ORDER)} models", "alt_text": alt, "description": alt,
         "data_source": [{"receipt": f"corpus_dependence/maps/{s}.npz", "sha256": sha(HERE / "maps" / f"{s}.npz")} for s in ORDER] + [{"receipt": "corpus_dependence/results.json", "sha256": sha(HERE / "results.json")}]
                        + ([{"receipt": "corpus_dependence/results_8b_n400_raw.json", "sha256": sha(N400)}] if N400.exists() else []),
         "provenance": {"generator": "corpus_dependence/build_maps_fig.py", "svg_sha256": sha(svg)},
