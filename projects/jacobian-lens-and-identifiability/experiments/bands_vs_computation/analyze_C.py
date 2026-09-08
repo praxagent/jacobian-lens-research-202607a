@@ -27,6 +27,9 @@ CORPORA = ["prose", "code"]
 # which lens arm supplies boundaries for each damage corpus, per the frozen 2x2
 LENS_ARM = {"prose": "wiki_a", "code": "code"}
 NPERM = 1000
+# PREREG_C_8B.md (2026-09-08): boundaries for a run slug may come from another results file / slug
+EXTRA_RESULTS = [HERE.parent / "corpus_dependence/results_8b_n400_raw.json"]
+BOUNDARY_SLUG = {"llama3.1-8b": "llama3.1-8b-n400"}
 
 
 def design(D, blk):
@@ -69,15 +72,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", default=str(HERE / "out"))
     ap.add_argument("--out", default=str(HERE / "results_C.json"))
+    ap.add_argument("--models", nargs="+", default=["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b"],
+                    help="run slugs (PREREG.md set by default; PREREG_C_8B.md adds llama3.1-8b)")
     a = ap.parse_args()
 
     corpus = json.loads(CORPUS_RESULTS.read_text())
+    for extra in EXTRA_RESULTS:
+        if extra.exists():
+            corpus.update({k: v for k, v in json.loads(extra.read_text()).items() if not k.startswith("_")})
     out = {"nperm": NPERM, "models": {}}
 
-    for slug in ["gpt2-small", "gemma-3-270m", "qwen3.5-0.8b"]:
+    for slug in a.models:
         try:
-            bnds = corpus[slug]["boundaries"]          # {"wiki_a": [b1,b2], "code": [...], ...}
+            bnds = corpus[BOUNDARY_SLUG.get(slug, slug)]["boundaries"]          # {"wiki_a": [b1,b2], "code": [...], ...}
             m = {"boundaries": {k: bnds[k] for k in ("wiki_a", "code")}, "cells": {}}
+            nulls = {}
             identical = bnds["wiki_a"] == bnds["code"]
             m["segmentations_identical"] = identical
 
@@ -98,6 +107,7 @@ def main():
                         continue
                     beta, n = design(D, seg_labels(b1, b2, L))
                     nb = null_betas(D, b1, b2, L, NPERM, seed=0)
+                    nulls[(dc, arm)] = nb
                     cell[arm] = {"beta": beta, "n_pairs": n,
                                  "null_mean": float(nb.mean()), "null_sd": float(nb.std()),
                                  "p_two_sided": float((np.abs(nb - nb.mean())
@@ -114,6 +124,20 @@ def main():
             m["C2_matched_minus_mismatched"] = float(np.mean(diffs)) if diffs else None
             m["C1_matched_betas"] = [c[LENS_ARM[dc]]["beta"] for dc, c in m["cells"].items()
                                      if "beta" in c.get(LENS_ARM[dc], {})]
+            # PREREG_C_8B.md: pooled one-sided tests (added 2026-09-08; earlier fields untouched)
+            mt_nulls = [nulls[(dc, LENS_ARM[dc])] for dc in m["cells"] if (dc, LENS_ARM[dc]) in nulls]
+            if mt_nulls and m["C1_matched_betas"]:
+                k = min(len(x) for x in mt_nulls); pooled = np.mean([x[:k] for x in mt_nulls], axis=0)
+                obs = float(np.mean(m["C1_matched_betas"]))
+                m["C1_pooled_p"] = float((pooled >= obs).mean()); m["C1_pooled_beta"] = obs
+            d_nulls = []
+            for dc in m["cells"]:
+                mt, mm = LENS_ARM[dc], ("code" if LENS_ARM[dc] == "wiki_a" else "wiki_a")
+                if (dc, mt) in nulls and (dc, mm) in nulls:
+                    k = min(len(nulls[(dc, mt)]), len(nulls[(dc, mm)])); d_nulls.append(nulls[(dc, mt)][:k] - nulls[(dc, mm)][:k])
+            if d_nulls and m["C2_matched_minus_mismatched"] is not None:
+                k = min(len(x) for x in d_nulls); pooled = np.mean([x[:k] for x in d_nulls], axis=0)
+                m["C2_pooled_p"] = float((pooled >= m["C2_matched_minus_mismatched"]).mean())
             out["models"][slug] = m
 
             print(f"\n{slug}  L={m['cells'].get('prose',{}).get('n_layers','?')}  "
